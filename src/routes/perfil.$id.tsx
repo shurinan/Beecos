@@ -10,7 +10,7 @@ import { initials, openConversation } from "@/lib/data";
 
 export const Route = createFileRoute("/perfil/$id")({
   validateSearch: (s: Record<string, unknown>) => ({
-    post: typeof s.post === "string" ? s.post : undefined,
+    post: typeof s["post"] === "string" ? (s["post"] as string) : undefined,
   }),
   head: () => ({
     meta: [

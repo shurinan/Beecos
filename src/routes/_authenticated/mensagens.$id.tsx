@@ -89,7 +89,8 @@ function Chat() {
       .single();
     if (error) {
       setText(content);
-      return toast.error("Mensagem não enviada");
+      toast.error("Mensagem não enviada");
+      return;
     }
     qc.setQueryData<Msg[]>(["msgs", id], (old = []) =>
       old.some((x) => x.id === data.id) ? old : [...old, data],

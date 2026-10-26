@@ -56,7 +56,10 @@ function Painel() {
   async function saveProfile(e: React.FormEvent) {
     e.preventDefault();
     const { error } = await supabase.from("profiles").upsert({ id: userId, ...form, skills });
-    if (error) return toast.error("Erro ao salvar");
+    if (error) {
+      toast.error("Erro ao salvar");
+      return;
+    }
     toast.success("Perfil salvo");
     qc.invalidateQueries();
   }
@@ -70,7 +73,10 @@ function Painel() {
   async function createPost(e: React.FormEvent) {
     e.preventDefault();
     const { error } = await supabase.from("posts").insert({ ...post, user_id: userId });
-    if (error) return toast.error("Erro ao publicar");
+    if (error) {
+      toast.error("Erro ao publicar");
+      return;
+    }
     toast.success("Publicado!");
     setPost({ ...post, title: "", description: "", price: "" });
     qc.invalidateQueries();
