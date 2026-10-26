@@ -41,6 +41,6 @@ export async function openConversation(me: string, other: string, postId: string
     .insert({ user_a: me, user_b: other, post_id: postId })
     .select("id")
     .single();
-  if (error) throw error;
+  if (error) throw error; // may be LIMITE_CHATS from the free-plan limit
   return data.id;
 }

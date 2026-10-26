@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { PostCard, type PostWithAuthor } from "@/components/PostCard";
 import { useAuth } from "@/lib/auth";
 import { initials, openConversation } from "@/lib/data";
+import { limitMessage } from "@/lib/plans";
 
 export const Route = createFileRoute("/perfil/$id")({
   validateSearch: (s: Record<string, unknown>) => ({
@@ -53,8 +54,8 @@ function ProfilePage() {
     try {
       const conv = await openConversation(userId, id, post ?? null);
       navigate({ to: "/mensagens/$id", params: { id: conv } });
-    } catch {
-      toast.error("Não foi possível abrir a conversa");
+    } catch (e) {
+      toast.error(limitMessage(e) ?? "Não foi possível abrir a conversa");
     }
   }
 
