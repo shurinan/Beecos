@@ -59,29 +59,34 @@
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
+  --font-display: "Archivo Black", sans-serif;
+  --font-sans: "Hind", sans-serif;
+  --shadow-block: var(--shadow-block);
 }
 
 :root {
-  --radius: 0.625rem;
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.129 0.042 264.695);
+  --radius: 0.75rem;
+  --background: oklch(0.99 0.004 95);
+  --foreground: oklch(0.16 0.01 260);
   --card: oklch(1 0 0);
-  --card-foreground: oklch(0.129 0.042 264.695);
+  --card-foreground: oklch(0.16 0.01 260);
   --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.129 0.042 264.695);
-  --primary: oklch(0.208 0.042 265.755);
-  --primary-foreground: oklch(0.984 0.003 247.858);
-  --secondary: oklch(0.968 0.007 247.896);
-  --secondary-foreground: oklch(0.208 0.042 265.755);
-  --muted: oklch(0.968 0.007 247.896);
-  --muted-foreground: oklch(0.554 0.046 257.417);
-  --accent: oklch(0.968 0.007 247.896);
-  --accent-foreground: oklch(0.208 0.042 265.755);
+  --popover-foreground: oklch(0.16 0.01 260);
+  --primary: oklch(0.86 0.17 92);
+  --primary-foreground: oklch(0.16 0.01 260);
+  --secondary: oklch(0.28 0.04 260);
+  --secondary-foreground: oklch(0.98 0 0);
+  --muted: oklch(0.955 0.008 95);
+  --muted-foreground: oklch(0.48 0.02 260);
+  --accent: oklch(0.95 0.07 95);
+  --accent-foreground: oklch(0.16 0.01 260);
   --destructive: oklch(0.577 0.245 27.325);
-  --destructive-foreground: oklch(0.984 0.003 247.858);
-  --border: oklch(0.929 0.013 255.508);
-  --input: oklch(0.929 0.013 255.508);
-  --ring: oklch(0.704 0.04 256.788);
+  --destructive-foreground: oklch(0.98 0 0);
+  --border: oklch(0.16 0.01 260);
+  --input: oklch(0.16 0.01 260);
+  --ring: oklch(0.86 0.17 92);
+  --hazard: repeating-linear-gradient(-45deg, var(--primary) 0 14px, var(--foreground) 14px 28px);
+  --shadow-block: 4px 4px 0 0 var(--foreground);
   --chart-1: oklch(0.646 0.222 41.116);
   --chart-2: oklch(0.6 0.118 184.704);
   --chart-3: oklch(0.398 0.07 227.392);
@@ -141,4 +146,18 @@
     background-color: var(--color-background);
     color: var(--color-foreground);
   }
+}
+
+@utility hazard-stripe {
+  background: var(--hazard);
+}
+@utility block-card {
+  background: var(--card);
+  border: 2px solid var(--foreground);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-block);
+}
+@layer base {
+  body { font-family: var(--font-sans); }
+  h1, h2, h3 { font-family: var(--font-display); letter-spacing: -0.01em; }
 }

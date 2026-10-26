@@ -10,33 +10,99 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
+import { Route as AuthRouteImport } from './routes/auth'
+import { Route as AuthenticatedPainelRouteImport } from './routes/_authenticated/painel'
+import { Route as PerfilIdRouteImport } from './routes/perfil.$id'
+import { Route as AuthenticatedMensagensIndexRouteImport } from './routes/_authenticated/mensagens.index'
+import { Route as AuthenticatedMensagensIdRouteImport } from './routes/_authenticated/mensagens.$id'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
+  id: '/_authenticated',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthRoute = AuthRouteImport.update({
+  id: '/auth',
+  path: '/auth',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedPainelRoute = AuthenticatedPainelRouteImport.update({
+  id: '/painel',
+  path: '/painel',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const PerfilIdRoute = PerfilIdRouteImport.update({
+  id: '/perfil/$id',
+  path: '/perfil/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedMensagensIndexRoute =
+  AuthenticatedMensagensIndexRouteImport.update({
+    id: '/mensagens/',
+    path: '/mensagens/',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedMensagensIdRoute =
+  AuthenticatedMensagensIdRouteImport.update({
+    id: '/mensagens/$id',
+    path: '/mensagens/$id',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/auth': typeof AuthRoute
+  '/painel': typeof AuthenticatedPainelRoute
+  '/perfil/$id': typeof PerfilIdRoute
+  '/mensagens/$id': typeof AuthenticatedMensagensIdRoute
+  '/mensagens/': typeof AuthenticatedMensagensIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/auth': typeof AuthRoute
+  '/painel': typeof AuthenticatedPainelRoute
+  '/perfil/$id': typeof PerfilIdRoute
+  '/mensagens/$id': typeof AuthenticatedMensagensIdRoute
+  '/mensagens': typeof AuthenticatedMensagensIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
+  '/auth': typeof AuthRoute
+  '/_authenticated/painel': typeof AuthenticatedPainelRoute
+  '/perfil/$id': typeof PerfilIdRoute
+  '/_authenticated/mensagens/$id': typeof AuthenticatedMensagensIdRoute
+  '/_authenticated/mensagens/': typeof AuthenticatedMensagensIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    '/' | '/auth' | '/painel' | '/perfil/$id' | '/mensagens/$id' | '/mensagens/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    '/' | '/auth' | '/painel' | '/perfil/$id' | '/mensagens/$id' | '/mensagens'
+  id:
+    | '__root__'
+    | '/'
+    | '/_authenticated'
+    | '/auth'
+    | '/_authenticated/painel'
+    | '/perfil/$id'
+    | '/_authenticated/mensagens/$id'
+    | '/_authenticated/mensagens/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
+  AuthRoute: typeof AuthRoute
+  PerfilIdRoute: typeof PerfilIdRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -48,11 +114,71 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated': {
+      id: '/_authenticated'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof AuthenticatedRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth': {
+      id: '/auth'
+      path: '/auth'
+      fullPath: '/auth'
+      preLoaderRoute: typeof AuthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/painel': {
+      id: '/_authenticated/painel'
+      path: '/painel'
+      fullPath: '/painel'
+      preLoaderRoute: typeof AuthenticatedPainelRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/perfil/$id': {
+      id: '/perfil/$id'
+      path: '/perfil/$id'
+      fullPath: '/perfil/$id'
+      preLoaderRoute: typeof PerfilIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/mensagens/': {
+      id: '/_authenticated/mensagens/'
+      path: '/mensagens'
+      fullPath: '/mensagens/'
+      preLoaderRoute: typeof AuthenticatedMensagensIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/mensagens/$id': {
+      id: '/_authenticated/mensagens/$id'
+      path: '/mensagens/$id'
+      fullPath: '/mensagens/$id'
+      preLoaderRoute: typeof AuthenticatedMensagensIdRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
   }
 }
 
+interface AuthenticatedRouteRouteChildren {
+  AuthenticatedPainelRoute: typeof AuthenticatedPainelRoute
+  AuthenticatedMensagensIdRoute: typeof AuthenticatedMensagensIdRoute
+  AuthenticatedMensagensIndexRoute: typeof AuthenticatedMensagensIndexRoute
+}
+
+const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedPainelRoute: AuthenticatedPainelRoute,
+  AuthenticatedMensagensIdRoute: AuthenticatedMensagensIdRoute,
+  AuthenticatedMensagensIndexRoute: AuthenticatedMensagensIndexRoute,
+}
+
+const AuthenticatedRouteRouteWithChildren =
+  AuthenticatedRouteRoute._addFileChildren(AuthenticatedRouteRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
+  AuthRoute: AuthRoute,
+  PerfilIdRoute: PerfilIdRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
