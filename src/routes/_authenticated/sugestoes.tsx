@@ -73,7 +73,7 @@ function Suggestions() {
               </span>
               <span className="font-bold">{STATUS[s.status]}</span>
             </div>
-            <p className="whitespace-pre-wrap">{s.body}</p>
+            <p className="selectable whitespace-pre-wrap">{s.body}</p>
             <div className="flex gap-2">
               {s.status !== "read" && (
                 <Button size="sm" variant="outline" onClick={() => void mark(s.id, "read")}>
