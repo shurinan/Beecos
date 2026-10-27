@@ -8,11 +8,11 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { PostCard, type PostWithAuthor } from "@/components/PostCard";
 import { AdSlot } from "@/components/AdSlot";
-import { SkillChip, StarInput, Stars } from "@/components/profile-bits";
+import { SelfDeclared, SkillCard, StarInput, Stars } from "@/components/profile-bits";
 import { useAuth } from "@/lib/auth";
 import { initials, openConversation, timeAgo } from "@/lib/data";
 import { limitMessage } from "@/lib/plans";
-import { formatRating, sortSkills } from "@/lib/skills";
+import { SKILL_COLUMNS, formatRating, sortSkills, type ProfileSkill } from "@/lib/skills";
 
 export const Route = createFileRoute("/perfil/$id")({
   validateSearch: (s: Record<string, unknown>) => ({
@@ -49,7 +49,7 @@ function ProfilePage() {
     queryFn: async () => {
       const [p, skills, posts, stats, reviews] = await Promise.all([
         supabase.from("profiles").select("*").eq("id", id).maybeSingle(),
-        supabase.from("profile_skills").select("skill, level").eq("user_id", id),
+        supabase.from("profile_skills").select(SKILL_COLUMNS).eq("user_id", id),
         supabase
           .from("posts")
           .select("*, profiles(full_name, profile_skills(skill, level))")
@@ -67,7 +67,7 @@ function ProfilePage() {
       if (error) throw error;
       return {
         profile: p.data,
-        skills: sortSkills(skills.data ?? []),
+        skills: sortSkills((skills.data ?? []) as ProfileSkill[]),
         posts: (posts.data ?? []) as PostWithAuthor[],
         reviewCount: stats.data?.review_count ?? 0,
         avgRating: stats.data?.avg_rating ?? null,
@@ -158,14 +158,6 @@ function ProfilePage() {
 
         {pr.bio && <p className="mt-3">{pr.bio}</p>}
 
-        {data.skills.length > 0 && (
-          <div className="mt-3 flex flex-wrap gap-2">
-            {data.skills.map((s) => (
-              <SkillChip key={s.skill} skill={s.skill} level={s.level} />
-            ))}
-          </div>
-        )}
-
         {userId === id ? (
           <Button asChild variant="outline" className="mt-4 w-full">
             <Link to="/painel">Editar meu perfil</Link>
@@ -176,6 +168,16 @@ function ProfilePage() {
           </Button>
         )}
       </section>
+
+      {data.skills.length > 0 && (
+        <section className="space-y-2">
+          <h2 className="text-xl">Habilidades</h2>
+          <SelfDeclared />
+          {data.skills.map((sk) => (
+            <SkillCard key={sk.skill} skill={sk} />
+          ))}
+        </section>
+      )}
 
       <Reviews profileId={id} viewerId={userId} data={data} />
 

@@ -36,6 +36,13 @@
       "when": 1793200000000,
       "tag": "0004_profile_skills_reviews_ads",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1793300000000,
+      "tag": "0005_skill_levels_and_details",
+      "breakpoints": true
     }
   ]
 }

@@ -2,7 +2,7 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
-import { Lock, Trash2, X } from "lucide-react";
+import { Lock, Pencil, Plus, Trash2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -10,8 +10,9 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { KIND_LABEL, type PostKind } from "@/lib/data";
-import { MAX_SKILLS, SKILL_LEVELS, clampLevel, normalizeSkill, type ProfileSkill } from "@/lib/skills";
-import { LevelDots } from "@/components/profile-bits";
+import { MAX_SKILLS, SKILL_COLUMNS, sortSkills, type ProfileSkill } from "@/lib/skills";
+import { SelfDeclared, SkillCard } from "@/components/profile-bits";
+import { SkillDialog } from "@/components/SkillDialog";
 import { FREE_CHATS_PER_MONTH, FREE_JOBS_PER_MONTH, PREMIUM_PRICE, getPlanUsage, limitMessage } from "@/lib/plans";
 
 export const Route = createFileRoute("/_authenticated/painel")({
@@ -37,7 +38,7 @@ function Painel() {
       const [p, priv, skillRows, posts] = await Promise.all([
         supabase.from("profiles").select("*").eq("id", userId).maybeSingle(),
         supabase.from("profile_private").select("phone, birth_date").eq("user_id", userId).maybeSingle(),
-        supabase.from("profile_skills").select("skill, level").eq("user_id", userId),
+        supabase.from("profile_skills").select(SKILL_COLUMNS).eq("user_id", userId),
         supabase.from("posts").select("*").eq("user_id", userId).order("created_at", { ascending: false }),
       ]);
       const error = p.error ?? priv.error ?? skillRows.error ?? posts.error;
@@ -46,7 +47,7 @@ function Painel() {
         profile: p.data,
         phone: priv.data?.phone ?? "",
         birthDate: priv.data?.birth_date ?? "",
-        skills: (skillRows.data ?? []) as ProfileSkill[],
+        skills: sortSkills((skillRows.data ?? []) as ProfileSkill[]),
         posts: posts.data ?? [],
       };
     },
@@ -64,9 +65,7 @@ function Painel() {
     available: false,
   });
   const [priv, setPriv] = useState({ phone: "", birth_date: "" });
-  const [skills, setSkills] = useState<ProfileSkill[]>([]);
-  const [skillInput, setSkillInput] = useState("");
-  const [newLevel, setNewLevel] = useState(1);
+  const [skillDialog, setSkillDialog] = useState<{ open: boolean; initial: ProfileSkill | null }>({ open: false, initial: null });
   const [post, setPost] = useState({ kind: "job" as PostKind, title: "", description: "", city: "", price: "" });
 
   useEffect(() => {
@@ -83,7 +82,6 @@ function Painel() {
         available: p.available,
       });
       setPriv({ phone: data.phone, birth_date: data.birthDate });
-      setSkills(data.skills);
       setPost((x) => ({ ...x, city: x.city || p.city }));
     }
   }, [data]);
@@ -99,7 +97,6 @@ function Painel() {
       toast.error("Data de nascimento inválida");
       return;
     }
-    const removed = (data?.skills ?? []).map((s) => s.skill).filter((name) => !skills.some((s) => s.skill === name));
     const [pub, pv] = await Promise.all([
       supabase.from("profiles").upsert({
         id: userId,
@@ -117,20 +114,7 @@ function Painel() {
         updated_at: new Date().toISOString(),
       }),
     ]);
-    let skillError: unknown = null;
-    if (!pub.error && !pv.error) {
-      if (removed.length > 0) {
-        const del = await supabase.from("profile_skills").delete().eq("user_id", userId).in("skill", removed);
-        skillError = del.error;
-      }
-      if (!skillError && skills.length > 0) {
-        const up = await supabase
-          .from("profile_skills")
-          .upsert(skills.map((s) => ({ user_id: userId, skill: s.skill, level: s.level })), { onConflict: "user_id,skill" });
-        skillError = up.error;
-      }
-    }
-    if (pub.error || pv.error || skillError) {
+    if (pub.error || pv.error) {
       toast.error("Erro ao salvar");
       return;
     }
@@ -138,21 +122,31 @@ function Painel() {
     qc.invalidateQueries();
   }
 
-  function addSkill() {
-    const name = skillInput.trim().slice(0, 40);
-    if (!name) return;
-    if (skills.some((s) => normalizeSkill(s.skill) === normalizeSkill(name))) {
-      toast.error("Você já adicionou essa habilidade");
-    } else if (skills.length >= MAX_SKILLS) {
+  async function saveSkill(skill: ProfileSkill): Promise<boolean> {
+    const isNew = !(data?.skills ?? []).some((x) => x.skill === skill.skill);
+    if (isNew && (data?.skills.length ?? 0) >= MAX_SKILLS) {
       toast.error(`Máximo de ${MAX_SKILLS} habilidades`);
-    } else {
-      setSkills([...skills, { skill: name, level: newLevel }]);
+      return false;
     }
-    setSkillInput("");
+    const { error } = await supabase
+      .from("profile_skills")
+      .upsert({ user_id: userId, ...skill }, { onConflict: "user_id,skill" });
+    if (error) {
+      toast.error("Não foi possível salvar a habilidade");
+      return false;
+    }
+    toast.success(isNew ? "Habilidade adicionada" : "Habilidade atualizada");
+    qc.invalidateQueries();
+    return true;
   }
 
-  function setSkillLevel(name: string, level: number) {
-    setSkills(skills.map((s) => (s.skill === name ? { ...s, level: clampLevel(level) } : s)));
+  async function deleteSkill(name: string) {
+    const { error } = await supabase.from("profile_skills").delete().eq("user_id", userId).eq("skill", name);
+    if (error) {
+      toast.error("Não foi possível remover a habilidade");
+      return;
+    }
+    qc.invalidateQueries();
   }
 
   async function createPost(e: React.FormEvent) {
@@ -304,64 +298,6 @@ function Painel() {
           </div>
         </fieldset>
 
-        <fieldset className="space-y-3">
-          <legend className="mb-1 text-sm font-bold uppercase">Habilidades e nível</legend>
-          <div className="flex gap-2">
-            <Input
-              maxLength={40}
-              placeholder="Ex: Pedreiro, Pintura, Mudança"
-              value={skillInput}
-              onChange={(e) => setSkillInput(e.target.value)}
-              onKeyDown={(e) => {
-                if (e.key === "Enter") {
-                  e.preventDefault();
-                  addSkill();
-                }
-              }}
-            />
-            <select
-              aria-label="Nível da nova habilidade"
-              className="h-10 rounded-md border-2 border-foreground bg-background px-2 text-sm font-semibold"
-              value={newLevel}
-              onChange={(e) => setNewLevel(Number(e.target.value))}
-            >
-              {SKILL_LEVELS.map((l) => (
-                <option key={l.level} value={l.level}>
-                  {l.level} · {l.label}
-                </option>
-              ))}
-            </select>
-            <Button type="button" variant="dark" onClick={addSkill}>Adicionar</Button>
-          </div>
-          <p className="text-xs text-muted-foreground">
-            Nível 1 é "sei fazer"; nível 5 é "profissional certificado". Seja honesto: quem contrata vê o nível e pode avaliar o seu trabalho.
-          </p>
-          <ul className="space-y-2">
-            {skills.map((s) => (
-              <li key={s.skill} className="flex items-center gap-2 rounded-lg border-2 border-foreground p-2">
-                <span className="min-w-0 flex-1">
-                  <span className="block truncate font-semibold">{s.skill}</span>
-                  <LevelDots level={s.level} />
-                </span>
-                <select
-                  aria-label={`Nível de ${s.skill}`}
-                  className="h-10 rounded-md border-2 border-foreground bg-background px-2 text-sm font-semibold"
-                  value={s.level}
-                  onChange={(e) => setSkillLevel(s.skill, Number(e.target.value))}
-                >
-                  {SKILL_LEVELS.map((l) => (
-                    <option key={l.level} value={l.level}>
-                      {l.level} · {l.label}
-                    </option>
-                  ))}
-                </select>
-                <button type="button" aria-label={`Remover ${s.skill}`} onClick={() => setSkills(skills.filter((x) => x.skill !== s.skill))}>
-                  <X className="h-4 w-4" />
-                </button>
-              </li>
-            ))}
-          </ul>
-        </fieldset>
 
         <label className="flex items-center justify-between rounded-lg border-2 border-foreground p-3">
           <span className="font-semibold">Estou disponível para trabalhar</span>
@@ -369,6 +305,52 @@ function Painel() {
         </label>
         <Button type="submit" className="w-full" size="lg">Salvar perfil</Button>
       </form>
+
+      <section className="block-card space-y-3 p-5">
+        <div className="flex items-center justify-between gap-2">
+          <h2 className="text-xl">Habilidades</h2>
+          <Button type="button" size="sm" onClick={() => setSkillDialog({ open: true, initial: null })}>
+            <Plus /> Adicionar
+          </Button>
+        </div>
+        <SelfDeclared />
+        {data?.skills.length === 0 && (
+          <p className="text-sm text-muted-foreground">
+            Você ainda não adicionou habilidades. Elas aparecem no seu perfil e ajudam quem contrata a te encontrar.
+          </p>
+        )}
+        <div className="space-y-2">
+          {data?.skills.map((sk) => (
+            <SkillCard
+              key={sk.skill}
+              skill={sk}
+              actions={
+                <span className="flex shrink-0 gap-1">
+                  <button
+                    type="button"
+                    aria-label={`Editar ${sk.skill}`}
+                    className="p-1"
+                    onClick={() => setSkillDialog({ open: true, initial: sk })}
+                  >
+                    <Pencil className="h-4 w-4" />
+                  </button>
+                  <button type="button" aria-label={`Remover ${sk.skill}`} className="p-1" onClick={() => deleteSkill(sk.skill)}>
+                    <Trash2 className="h-4 w-4" />
+                  </button>
+                </span>
+              }
+            />
+          ))}
+        </div>
+      </section>
+
+      <SkillDialog
+        open={skillDialog.open}
+        onOpenChange={(open) => setSkillDialog((d) => ({ ...d, open }))}
+        initial={skillDialog.initial}
+        existing={(data?.skills ?? []).map((x) => x.skill)}
+        onSave={saveSkill}
+      />
 
       <form onSubmit={createPost} className="block-card space-y-3 p-5">
         <h2 className="text-xl">Nova publicação</h2>

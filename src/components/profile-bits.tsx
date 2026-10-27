@@ -1,11 +1,12 @@
-import { Star } from "lucide-react";
-import { levelLabel } from "@/lib/skills";
+import type { ReactNode } from "react";
+import { Award, BadgeCheck, GraduationCap, Hammer, Star } from "lucide-react";
+import { MAX_LEVEL, levelLabel, type ProfileSkill } from "@/lib/skills";
 
-/** Cinco pontinhos preenchidos até o nível: dá para comparar prestadores num relance. */
+/** Pontinhos preenchidos até o nível: dá para comparar prestadores num relance. */
 export function LevelDots({ level }: { level: number }) {
   return (
     <span className="inline-flex items-center gap-0.5" aria-hidden="true">
-      {[1, 2, 3, 4, 5].map((n) => (
+      {Array.from({ length: MAX_LEVEL }, (_, i) => i + 1).map((n) => (
         <span
           key={n}
           className={
@@ -28,6 +29,53 @@ export function SkillChip({ skill, level }: { skill: string; level: number }) {
       <LevelDots level={level} />
       <span className="sr-only">{levelLabel(level)}</span>
     </span>
+  );
+}
+
+/** Cartão de uma habilidade com tudo que foi respondido no formulário. `actions` é opcional (editar/remover). */
+export function SkillCard({ skill, actions }: { skill: ProfileSkill; actions?: ReactNode }) {
+  const marks = [
+    { on: skill.has_experience, label: "Experiência profissional", icon: Hammer },
+    { on: skill.had_training, label: "Fez treinamento ou aulas", icon: GraduationCap },
+    { on: skill.certified, label: "Licenciado/certificado", icon: BadgeCheck },
+  ].filter((m) => m.on);
+  return (
+    <article className="rounded-lg border-2 border-foreground p-3">
+      <div className="flex items-start gap-2">
+        <div className="min-w-0 flex-1">
+          <h3 className="truncate text-base leading-tight">{skill.skill}</h3>
+          <p className="mt-0.5 flex items-center gap-2 text-sm font-semibold">
+            <LevelDots level={skill.level} />
+            {levelLabel(skill.level)}
+          </p>
+        </div>
+        {actions}
+      </div>
+      {marks.length > 0 && (
+        <ul className="mt-2 flex flex-wrap gap-1.5">
+          {marks.map(({ label, icon: Icon }) => (
+            <li
+              key={label}
+              className="flex items-center gap-1 rounded-full bg-secondary px-2 py-0.5 text-xs font-bold text-secondary-foreground"
+            >
+              <Icon className="h-3.5 w-3.5" /> {label}
+            </li>
+          ))}
+        </ul>
+      )}
+      {skill.notes && (
+        <p className="mt-2 whitespace-pre-wrap text-sm text-muted-foreground">{skill.notes}</p>
+      )}
+    </article>
+  );
+}
+
+/** Aviso curto de que nível, certificado e experiência são informados pelo próprio profissional. */
+export function SelfDeclared() {
+  return (
+    <p className="flex items-center gap-1 text-xs text-muted-foreground">
+      <Award className="h-3.5 w-3.5" /> Informado pelo próprio profissional.
+    </p>
   );
 }
 

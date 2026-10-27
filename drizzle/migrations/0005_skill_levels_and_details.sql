@@ -1,0 +1,20 @@
+-- Habilidades passam a ter 3 níveis e mais detalhes (formulário "Adicionar habilidade").
+--   1 = Quase profissional (pouca supervisão)
+--   2 = Profissional (sem supervisão)
+--   3 = Especialista (pode treinar outros)
+-- "Profissional certificado" deixa de ser um nível e vira o campo certified.
+
+ALTER TABLE public.profile_skills DROP CONSTRAINT profile_skills_level_check;
+
+ALTER TABLE public.profile_skills
+  ADD COLUMN has_experience boolean NOT NULL DEFAULT false,
+  ADD COLUMN had_training boolean NOT NULL DEFAULT false,
+  ADD COLUMN certified boolean NOT NULL DEFAULT false,
+  ADD COLUMN notes text NOT NULL DEFAULT '' CHECK (char_length(notes) <= 500);
+
+-- Conversão dos níveis antigos (1..5) para os novos (1..3).
+UPDATE public.profile_skills
+SET certified = (level = 5),
+    level = CASE WHEN level <= 2 THEN 1 WHEN level = 3 THEN 2 ELSE 3 END;
+
+ALTER TABLE public.profile_skills ADD CONSTRAINT profile_skills_level_check CHECK (level BETWEEN 1 AND 3);

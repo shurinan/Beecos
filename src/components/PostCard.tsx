@@ -1,7 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { MapPin, Banknote } from "lucide-react";
 import { KIND_LABEL, timeAgo, initials, type PostKind } from "@/lib/data";
-import { levelLabel, topSkill, type ProfileSkill } from "@/lib/skills";
+import { levelLabel, topSkill, type SkillBase } from "@/lib/skills";
 
 export type PostWithAuthor = {
   id: string;
@@ -12,7 +12,7 @@ export type PostWithAuthor = {
   price: string;
   created_at: string;
   user_id: string;
-  profiles: { full_name: string; profile_skills: ProfileSkill[] } | null;
+  profiles: { full_name: string; profile_skills: SkillBase[] } | null;
 };
 
 export function PostCard({ post }: { post: PostWithAuthor }) {

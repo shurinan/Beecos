@@ -255,20 +255,32 @@ export type Database = {
       }
       profile_skills: {
         Row: {
+          certified: boolean
           created_at: string
+          had_training: boolean
+          has_experience: boolean
           level: number
+          notes: string
           skill: string
           user_id: string
         }
         Insert: {
+          certified?: boolean
           created_at?: string
+          had_training?: boolean
+          has_experience?: boolean
           level?: number
+          notes?: string
           skill: string
           user_id: string
         }
         Update: {
+          certified?: boolean
           created_at?: string
+          had_training?: boolean
+          has_experience?: boolean
           level?: number
+          notes?: string
           skill?: string
           user_id?: string
         }

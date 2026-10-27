@@ -42,6 +42,8 @@ VALUES ('feed', 'Loja Exemplo', 'Ferramentas com 10% off', 'Para quem trabalha p
 - `active`, `starts_at` e `ends_at` controlam quando o anúncio aparece.
 - `link_url` aceita só `http(s)`; `image_url` só `https`.
 
-## Níveis de habilidade
+## Habilidades
 
-Cada habilidade do perfil tem um nível de 1 a 5, declarado pelo próprio profissional: 1 "Sei fazer", 2 "Tenho prática", 3 "Experiente", 4 "Especialista", 5 "Profissional certificado". O texto de cursos e certificados também é informado por ele e aparece como tal no perfil; o app não verifica documentos. A confiança vem das avaliações, que só podem ser feitas por quem conversou com a pessoa (os dois enviaram mensagem).
+Em "Meu perfil", o botão **Adicionar** abre o formulário de habilidade: nome, nível de competência (Quase profissional: pouca supervisão; Profissional: sem supervisão; Especialista: pode treinar outros), três perguntas Sim/Não (experiência profissional, treinamento ou aulas, licenciado/certificado) e "Outras informações". No perfil público, cada habilidade aparece como um cartão com o nível, os selos respondidos "Sim" e as observações.
+
+Tudo é informado pelo próprio profissional e o perfil diz isso; o app não verifica documentos. A confiança vem das avaliações, que só podem ser feitas por quem conversou com a pessoa (os dois enviaram mensagem).
