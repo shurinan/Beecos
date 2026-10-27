@@ -7,6 +7,7 @@ import { useAlerts } from "@/lib/alerts";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { SuggestionButton } from "@/components/SuggestionButton";
 import { BackButton } from "@/components/BackButton";
+import { AssistedHelp } from "@/components/AssistedHelp";
 import { InstallPrompt } from "@/components/InstallPrompt";
 
 /** Liga, para quem está logado, o contador de não lidas, os avisos e o "visto por último". */
@@ -68,6 +69,7 @@ export function AppShell({ children }: { children: ReactNode }) {
         </div>
         <div className="hazard-stripe h-1.5" />
       </header>
+      <AssistedHelp />
       {userId && <ChatBackground userId={userId} />}
       <main className="flex-1 px-4 pb-28 pt-4">
         <InstallPrompt />
@@ -75,6 +77,10 @@ export function AppShell({ children }: { children: ReactNode }) {
         <p className="mt-8 text-center text-xs text-muted-foreground">
           <Link to="/plano" className="underline">
             Planos
+          </Link>{" "}
+          ·{" "}
+          <Link to="/ajuda" className="underline">
+            Ajuda
           </Link>{" "}
           ·{" "}
           <Link to="/termos" className="underline">
