@@ -5,6 +5,7 @@ import { Avatar } from "@/components/profile-bits";
 import { KIND_LABEL, timeAgo, type PostKind } from "@/lib/data";
 import { levelLabel, topSkill, type SkillBase } from "@/lib/skills";
 import { catalogLabel } from "@/lib/catalog";
+import { formatKm, type PostDistance } from "@/lib/geo";
 import { isFilled, vacanciesLabel } from "@/lib/services";
 import type { PostSlots } from "@/lib/services-hooks";
 
@@ -24,7 +25,16 @@ export type PostWithAuthor = {
   profiles: { full_name: string; avatar_path?: string | null; profile_skills: SkillBase[] } | null;
 };
 
-export function PostCard({ post, slots }: { post: PostWithAuthor; slots?: PostSlots | undefined }) {
+export function PostCard({
+  post,
+  slots,
+  distance,
+}: {
+  post: PostWithAuthor;
+  slots?: PostSlots | undefined;
+  /** Distância até quem está vendo; só existe para quem informou onde atua. */
+  distance?: PostDistance | undefined;
+}) {
   const kind = post.kind as PostKind;
   const { userId } = useAuth();
   const top = topSkill(post.profiles?.profile_skills);
@@ -81,6 +91,16 @@ export function PostCard({ post, slots }: { post: PostWithAuthor; slots?: PostSl
         {post.city && (
           <span className="flex items-center gap-1">
             <MapPin className="h-4 w-4" /> {post.city}
+          </span>
+        )}
+        {distance && (
+          <span className="flex items-center gap-1">
+            a {formatKm(distance.km)} de você
+            {distance.far && (
+              <span className="ml-1 rounded border border-foreground bg-secondary px-1.5 py-0.5 text-xs font-bold text-secondary-foreground">
+                Pode ser longe
+              </span>
+            )}
           </span>
         )}
         {post.price && (

@@ -22,6 +22,8 @@ import { Avatar, SelfDeclared, SkillCard } from "@/components/profile-bits";
 import { SkillDialog } from "@/components/SkillDialog";
 import { CatalogPicker, EMPTY_SELECTION, type CatalogSelection } from "@/components/CatalogPicker";
 import { useCatalog } from "@/lib/catalog";
+import { WorkAreaDialog, type WorkAreaInput } from "@/components/WorkAreaDialog";
+import { GeoError, formatCep, isValidCep, lookupCep, useWorkArea, type Place } from "@/lib/geo";
 import { EditProfileDialog, type ProfileFields } from "@/components/ProfileDialogs";
 import { BLOCKED_TEXT_MESSAGE, isBlockedTextError } from "@/lib/chat";
 import { addressLines, type ContactAddress } from "@/lib/contact";
@@ -102,6 +104,10 @@ function Painel() {
   });
   const slots = usePostStats(data?.posts.map((p) => p.id));
   const { data: catalog } = useCatalog();
+  const { data: workArea } = useWorkArea(userId);
+  const [areaOpen, setAreaOpen] = useState(false);
+  const [postCep, setPostCep] = useState("");
+  const [postPlace, setPostPlace] = useState<Place | null>(null);
   const [pick, setPick] = useState<CatalogSelection>(EMPTY_SELECTION);
   const [post, setPost] = useState({
     kind: "job" as PostKind,
@@ -115,6 +121,34 @@ function Painel() {
   useEffect(() => {
     if (data?.profile) setPost((x) => ({ ...x, city: x.city || data.profile!.city }));
   }, [data?.profile]);
+
+  // O CEP da vaga começa igual ao de onde a pessoa atua (ela pode trocar).
+  useEffect(() => {
+    if (workArea) setPostCep((c) => c || formatCep(workArea.postal_code));
+  }, [workArea]);
+
+  async function saveWorkArea(a: WorkAreaInput): Promise<boolean> {
+    const { error } = await supabase.from("work_areas").upsert({
+      user_id: userId,
+      postal_code: a.cep,
+      city: a.city,
+      state: a.state,
+      lat: a.lat,
+      lng: a.lng,
+      expanded_km: a.expanded_km,
+    });
+    if (error) {
+      toast.error(
+        error.message.includes("RAIO_PREMIUM")
+          ? "O raio expandido é um recurso Premium"
+          : "Não foi possível salvar onde você atua",
+      );
+      return false;
+    }
+    toast.success("Salvo");
+    qc.invalidateQueries();
+    return true;
+  }
 
   const profileFields: ProfileFields = {
     full_name: data?.profile?.full_name ?? "",
@@ -178,8 +212,24 @@ function Painel() {
       toast.error('Escolha a profissão, ou "Outro" se ela não estiver na lista');
       return;
     }
+    let place = postPlace;
+    if (!place && isValidCep(postCep)) {
+      try {
+        place = await lookupCep(postCep);
+      } catch (err) {
+        toast.error(err instanceof GeoError ? err.message : "Não foi possível buscar o CEP");
+        return;
+      }
+    }
+    if (!place && post.kind === "job") {
+      toast.error("Informe o CEP de onde o serviço será feito");
+      return;
+    }
     const { error } = await supabase.from("posts").insert({
       ...post,
+      postal_code: place?.cep ?? null,
+      lat: place?.lat ?? null,
+      lng: place?.lng ?? null,
       profession_id: pick.professionId,
       service_id: pick.serviceIds[0] ?? null,
       vacancies: post.kind === "job" ? post.vacancies : 1,
@@ -196,6 +246,7 @@ function Painel() {
     toast.success("Publicado!");
     setPost({ ...post, title: "", description: "", price: "", vacancies: 1 });
     setPick(EMPTY_SELECTION);
+    setPostPlace(null);
     qc.invalidateQueries();
   }
 
@@ -300,6 +351,31 @@ function Painel() {
         </dl>
       </section>
 
+      <section className="block-card space-y-2 p-5">
+        <h2 className="text-xl">Onde você atua</h2>
+        {workArea ? (
+          <p className="text-sm">
+            <span className="font-semibold">
+              {workArea.city} - {workArea.state}
+            </span>{" "}
+            (CEP {formatCep(workArea.postal_code)}). Aviso de vagas até{" "}
+            {20 + (usage?.premium ? workArea.expanded_km : 0)} km.
+          </p>
+        ) : (
+          <p className="text-sm text-muted-foreground">
+            Informe o seu CEP para ver a distância das vagas e, em breve, receber aviso das que
+            surgirem perto de você.
+          </p>
+        )}
+        <button
+          type="button"
+          className="text-sm font-bold underline"
+          onClick={() => setAreaOpen(true)}
+        >
+          {workArea ? "Alterar" : "Informar o CEP"}
+        </button>
+      </section>
+
       <section className="block-card space-y-3 p-5">
         <h2 className="text-xl">Habilidades e experiência</h2>
         <SelfDeclared />
@@ -354,6 +430,14 @@ function Painel() {
         onOpenChange={(open) => setDialog(open ? "profile" : null)}
         initial={profileFields}
         onSave={saveProfile}
+      />
+      <WorkAreaDialog
+        open={areaOpen}
+        onOpenChange={setAreaOpen}
+        initial={workArea ?? null}
+        premium={!!usage?.premium}
+        onSave={saveWorkArea}
+        onUpgrade={() => toast("Pagamento em breve!")}
       />
       <SkillDialog
         open={skillDialog.open}
@@ -443,6 +527,38 @@ function Painel() {
           value={post.description}
           onChange={(e) => setPost({ ...post, description: e.target.value })}
         />
+        <div className="space-y-1">
+          <Label htmlFor="post-cep">
+            {post.kind === "job" ? "CEP de onde o serviço será feito" : "Seu CEP (opcional)"}
+          </Label>
+          <Input
+            id="post-cep"
+            inputMode="numeric"
+            placeholder="00000-000"
+            value={postCep}
+            onChange={(e) => {
+              setPostCep(formatCep(e.target.value));
+              setPostPlace(null);
+            }}
+            onBlur={async () => {
+              if (!isValidCep(postCep) || postPlace) return;
+              try {
+                const found = await lookupCep(postCep);
+                setPostPlace(found);
+                setPost((x) => ({ ...x, city: `${found.city} - ${found.state}` }));
+              } catch (err) {
+                toast.error(
+                  err instanceof GeoError ? err.message : "Não foi possível buscar o CEP",
+                );
+              }
+            }}
+          />
+          {postPlace && (
+            <p className="text-xs font-semibold">
+              {postPlace.city} - {postPlace.state}
+            </p>
+          )}
+        </div>
         <div className="grid grid-cols-2 gap-2">
           <Input
             placeholder="Cidade"

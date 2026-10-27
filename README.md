@@ -99,3 +99,12 @@ Cada profissão e serviço tem `aliases` (apelidos de busca, como "bico de pedre
 - A fonte do catálogo é `drizzle/catalog/catalogo.json` (a mesma que vira a planilha de revisão). Para mudar:
   edite a planilha, converta com `drizzle/catalog/seedsql.py` e rode o SQL no banco. O SQL é idempotente (atualiza pelo `slug`).
 - A migration apagou as habilidades que existiam (eram só testes) e recomeçou pelo catálogo.
+
+## Endereço e raio de atuação (migration `0013`)
+
+- `work_areas` (privada, só o dono lê): CEP, cidade, ponto aproximado (2 casas decimais, cerca de 1 km, só dentro do Brasil) e `expanded_km`.
+- Vagas e anúncios ganham `postal_code`, `lat` e `lng` (também aproximados).
+- Raio de aviso: **20 km para todos os planos**; o Premium soma 0, 5, 10, 20 ou 30 km (`expanded_km`). Sem Premium ativo, o valor guardado não vale (`effective_radius_km`).
+- `my_post_distances(ids)` devolve a distância das vagas até quem está logado e se passou do raio ("pode ser longe"). O ponto de ninguém sai do banco.
+- O CEP vira ponto no navegador (`src/lib/geo.ts`): BrasilAPI, depois Nominatim (rua, depois cidade).
+- Os avisos por profissão e raio são o passo seguinte; aqui ficam os dados e a distância no feed.

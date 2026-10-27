@@ -199,6 +199,9 @@ export type Database = {
           description: string
           id: string
           kind: string
+          lat: number | null
+          lng: number | null
+          postal_code: string | null
           price: string
           price_value: number | null
           profession_id: string | null
@@ -213,6 +216,9 @@ export type Database = {
           description?: string
           id?: string
           kind: string
+          lat?: number | null
+          lng?: number | null
+          postal_code?: string | null
           price?: string
           profession_id?: string | null
           service_id?: string | null
@@ -226,6 +232,9 @@ export type Database = {
           description?: string
           id?: string
           kind?: string
+          lat?: number | null
+          lng?: number | null
+          postal_code?: string | null
           price?: string
           profession_id?: string | null
           service_id?: string | null
@@ -353,6 +362,50 @@ export type Database = {
             columns: ["profession_id"]
             isOneToOne: false
             referencedRelation: "professions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      work_areas: {
+        Row: {
+          city: string
+          created_at: string
+          expanded_km: number
+          lat: number
+          lng: number
+          postal_code: string
+          state: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          city?: string
+          created_at?: string
+          expanded_km?: number
+          lat: number
+          lng: number
+          postal_code: string
+          state?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          city?: string
+          created_at?: string
+          expanded_km?: number
+          lat?: number
+          lng?: number
+          postal_code?: string
+          state?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "work_areas_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: true
+            referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
         ]
@@ -733,6 +786,19 @@ export type Database = {
       choose_provider: {
         Args: { _conversation: string; _post?: string }
         Returns: string
+      }
+      my_post_distances: {
+        Args: { _post_ids: string[] }
+        Returns: {
+          far: boolean
+          km: number
+          notify_km: number
+          post_id: string
+        }[]
+      }
+      my_work_radius_km: {
+        Args: Record<PropertyKey, never>
+        Returns: number
       }
       open_conversation: {
         Args: { _other: string; _post?: string }
