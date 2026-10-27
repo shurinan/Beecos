@@ -17,18 +17,13 @@ import { Route as PlanoRouteImport } from './routes/plano'
 import { Route as PrivacidadeRouteImport } from './routes/privacidade'
 import { Route as TermosRouteImport } from './routes/termos'
 import { Route as AuthenticatedAvisosRouteImport } from './routes/_authenticated/avisos'
-import { Route as AuthenticatedContatoRouteImport } from './routes/_authenticated/contato'
 import { Route as AuthenticatedModeracaoRouteImport } from './routes/_authenticated/moderacao'
-import { Route as AuthenticatedPainelRouteImport } from './routes/_authenticated/painel'
 import { Route as PerfilSlugRouteImport } from './routes/perfil.$slug'
 import { Route as VagasIndexRouteImport } from './routes/vagas.index'
 import { Route as AuthenticatedConversasIndexRouteImport } from './routes/_authenticated/conversas.index'
 import { Route as AuthenticatedConversasSlugRouteImport } from './routes/_authenticated/conversas.$slug'
-import { Route as AuthenticatedMensagensIndexRouteImport } from './routes/_authenticated/mensagens.index'
-import { Route as AuthenticatedMensagensIdRouteImport } from './routes/_authenticated/mensagens.$id'
 import { Route as AuthenticatedPerfilIndexRouteImport } from './routes/_authenticated/perfil.index'
 import { Route as AuthenticatedPerfilContatoRouteImport } from './routes/_authenticated/perfil.contato'
-import { Route as AuthenticatedPublicacaoIdRouteImport } from './routes/_authenticated/publicacao.$id'
 import { Route as VagasProfissaoCodigoIndexRouteImport } from './routes/vagas.$profissao.$codigo.index'
 import { Route as AuthenticatedVagasProfissaoCodigoInteressadosRouteImport } from './routes/_authenticated/vagas.$profissao.$codigo.interessados'
 
@@ -71,19 +66,9 @@ const AuthenticatedAvisosRoute = AuthenticatedAvisosRouteImport.update({
   path: '/avisos',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
-const AuthenticatedContatoRoute = AuthenticatedContatoRouteImport.update({
-  id: '/contato',
-  path: '/contato',
-  getParentRoute: () => AuthenticatedRouteRoute,
-} as any)
 const AuthenticatedModeracaoRoute = AuthenticatedModeracaoRouteImport.update({
   id: '/moderacao',
   path: '/moderacao',
-  getParentRoute: () => AuthenticatedRouteRoute,
-} as any)
-const AuthenticatedPainelRoute = AuthenticatedPainelRouteImport.update({
-  id: '/painel',
-  path: '/painel',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const PerfilSlugRoute = PerfilSlugRouteImport.update({
@@ -108,18 +93,6 @@ const AuthenticatedConversasSlugRoute =
     path: '/conversas/$slug',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
-const AuthenticatedMensagensIndexRoute =
-  AuthenticatedMensagensIndexRouteImport.update({
-    id: '/mensagens/',
-    path: '/mensagens/',
-    getParentRoute: () => AuthenticatedRouteRoute,
-  } as any)
-const AuthenticatedMensagensIdRoute =
-  AuthenticatedMensagensIdRouteImport.update({
-    id: '/mensagens/$id',
-    path: '/mensagens/$id',
-    getParentRoute: () => AuthenticatedRouteRoute,
-  } as any)
 const AuthenticatedPerfilIndexRoute =
   AuthenticatedPerfilIndexRouteImport.update({
     id: '/perfil/',
@@ -130,12 +103,6 @@ const AuthenticatedPerfilContatoRoute =
   AuthenticatedPerfilContatoRouteImport.update({
     id: '/perfil/contato',
     path: '/perfil/contato',
-    getParentRoute: () => AuthenticatedRouteRoute,
-  } as any)
-const AuthenticatedPublicacaoIdRoute =
-  AuthenticatedPublicacaoIdRouteImport.update({
-    id: '/publicacao/$id',
-    path: '/publicacao/$id',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
 const VagasProfissaoCodigoIndexRoute =
@@ -159,17 +126,12 @@ export interface FileRoutesByFullPath {
   '/privacidade': typeof PrivacidadeRoute
   '/termos': typeof TermosRoute
   '/avisos': typeof AuthenticatedAvisosRoute
-  '/contato': typeof AuthenticatedContatoRoute
   '/moderacao': typeof AuthenticatedModeracaoRoute
-  '/painel': typeof AuthenticatedPainelRoute
   '/perfil/$slug': typeof PerfilSlugRoute
   '/vagas/': typeof VagasIndexRoute
   '/conversas/$slug': typeof AuthenticatedConversasSlugRoute
-  '/mensagens/$id': typeof AuthenticatedMensagensIdRoute
   '/perfil/contato': typeof AuthenticatedPerfilContatoRoute
-  '/publicacao/$id': typeof AuthenticatedPublicacaoIdRoute
   '/conversas/': typeof AuthenticatedConversasIndexRoute
-  '/mensagens/': typeof AuthenticatedMensagensIndexRoute
   '/perfil/': typeof AuthenticatedPerfilIndexRoute
   '/vagas/$profissao/$codigo/': typeof VagasProfissaoCodigoIndexRoute
   '/vagas/$profissao/$codigo/interessados': typeof AuthenticatedVagasProfissaoCodigoInteressadosRoute
@@ -182,17 +144,12 @@ export interface FileRoutesByTo {
   '/privacidade': typeof PrivacidadeRoute
   '/termos': typeof TermosRoute
   '/avisos': typeof AuthenticatedAvisosRoute
-  '/contato': typeof AuthenticatedContatoRoute
   '/moderacao': typeof AuthenticatedModeracaoRoute
-  '/painel': typeof AuthenticatedPainelRoute
   '/perfil/$slug': typeof PerfilSlugRoute
   '/vagas': typeof VagasIndexRoute
   '/conversas/$slug': typeof AuthenticatedConversasSlugRoute
-  '/mensagens/$id': typeof AuthenticatedMensagensIdRoute
   '/perfil/contato': typeof AuthenticatedPerfilContatoRoute
-  '/publicacao/$id': typeof AuthenticatedPublicacaoIdRoute
   '/conversas': typeof AuthenticatedConversasIndexRoute
-  '/mensagens': typeof AuthenticatedMensagensIndexRoute
   '/perfil': typeof AuthenticatedPerfilIndexRoute
   '/vagas/$profissao/$codigo': typeof VagasProfissaoCodigoIndexRoute
   '/vagas/$profissao/$codigo/interessados': typeof AuthenticatedVagasProfissaoCodigoInteressadosRoute
@@ -207,17 +164,12 @@ export interface FileRoutesById {
   '/privacidade': typeof PrivacidadeRoute
   '/termos': typeof TermosRoute
   '/_authenticated/avisos': typeof AuthenticatedAvisosRoute
-  '/_authenticated/contato': typeof AuthenticatedContatoRoute
   '/_authenticated/moderacao': typeof AuthenticatedModeracaoRoute
-  '/_authenticated/painel': typeof AuthenticatedPainelRoute
   '/perfil/$slug': typeof PerfilSlugRoute
   '/vagas/': typeof VagasIndexRoute
   '/_authenticated/conversas/$slug': typeof AuthenticatedConversasSlugRoute
-  '/_authenticated/mensagens/$id': typeof AuthenticatedMensagensIdRoute
   '/_authenticated/perfil/contato': typeof AuthenticatedPerfilContatoRoute
-  '/_authenticated/publicacao/$id': typeof AuthenticatedPublicacaoIdRoute
   '/_authenticated/conversas/': typeof AuthenticatedConversasIndexRoute
-  '/_authenticated/mensagens/': typeof AuthenticatedMensagensIndexRoute
   '/_authenticated/perfil/': typeof AuthenticatedPerfilIndexRoute
   '/vagas/$profissao/$codigo/': typeof VagasProfissaoCodigoIndexRoute
   '/_authenticated/vagas/$profissao/$codigo/interessados': typeof AuthenticatedVagasProfissaoCodigoInteressadosRoute
@@ -232,17 +184,12 @@ export interface FileRouteTypes {
     | '/privacidade'
     | '/termos'
     | '/avisos'
-    | '/contato'
     | '/moderacao'
-    | '/painel'
     | '/perfil/$slug'
     | '/vagas/'
     | '/conversas/$slug'
-    | '/mensagens/$id'
     | '/perfil/contato'
-    | '/publicacao/$id'
     | '/conversas/'
-    | '/mensagens/'
     | '/perfil/'
     | '/vagas/$profissao/$codigo/'
     | '/vagas/$profissao/$codigo/interessados'
@@ -255,17 +202,12 @@ export interface FileRouteTypes {
     | '/privacidade'
     | '/termos'
     | '/avisos'
-    | '/contato'
     | '/moderacao'
-    | '/painel'
     | '/perfil/$slug'
     | '/vagas'
     | '/conversas/$slug'
-    | '/mensagens/$id'
     | '/perfil/contato'
-    | '/publicacao/$id'
     | '/conversas'
-    | '/mensagens'
     | '/perfil'
     | '/vagas/$profissao/$codigo'
     | '/vagas/$profissao/$codigo/interessados'
@@ -279,17 +221,12 @@ export interface FileRouteTypes {
     | '/privacidade'
     | '/termos'
     | '/_authenticated/avisos'
-    | '/_authenticated/contato'
     | '/_authenticated/moderacao'
-    | '/_authenticated/painel'
     | '/perfil/$slug'
     | '/vagas/'
     | '/_authenticated/conversas/$slug'
-    | '/_authenticated/mensagens/$id'
     | '/_authenticated/perfil/contato'
-    | '/_authenticated/publicacao/$id'
     | '/_authenticated/conversas/'
-    | '/_authenticated/mensagens/'
     | '/_authenticated/perfil/'
     | '/vagas/$profissao/$codigo/'
     | '/_authenticated/vagas/$profissao/$codigo/interessados'
@@ -366,25 +303,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAvisosRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
-    '/_authenticated/contato': {
-      id: '/_authenticated/contato'
-      path: '/contato'
-      fullPath: '/contato'
-      preLoaderRoute: typeof AuthenticatedContatoRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
     '/_authenticated/moderacao': {
       id: '/_authenticated/moderacao'
       path: '/moderacao'
       fullPath: '/moderacao'
       preLoaderRoute: typeof AuthenticatedModeracaoRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
-    '/_authenticated/painel': {
-      id: '/_authenticated/painel'
-      path: '/painel'
-      fullPath: '/painel'
-      preLoaderRoute: typeof AuthenticatedPainelRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/perfil/$slug': {
@@ -415,20 +338,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedConversasSlugRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
-    '/_authenticated/mensagens/': {
-      id: '/_authenticated/mensagens/'
-      path: '/mensagens'
-      fullPath: '/mensagens/'
-      preLoaderRoute: typeof AuthenticatedMensagensIndexRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
-    '/_authenticated/mensagens/$id': {
-      id: '/_authenticated/mensagens/$id'
-      path: '/mensagens/$id'
-      fullPath: '/mensagens/$id'
-      preLoaderRoute: typeof AuthenticatedMensagensIdRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
     '/_authenticated/perfil/': {
       id: '/_authenticated/perfil/'
       path: '/perfil'
@@ -441,13 +350,6 @@ declare module '@tanstack/react-router' {
       path: '/perfil/contato'
       fullPath: '/perfil/contato'
       preLoaderRoute: typeof AuthenticatedPerfilContatoRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
-    '/_authenticated/publicacao/$id': {
-      id: '/_authenticated/publicacao/$id'
-      path: '/publicacao/$id'
-      fullPath: '/publicacao/$id'
-      preLoaderRoute: typeof AuthenticatedPublicacaoIdRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/vagas/$profissao/$codigo/': {
@@ -469,30 +371,20 @@ declare module '@tanstack/react-router' {
 
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedAvisosRoute: typeof AuthenticatedAvisosRoute
-  AuthenticatedContatoRoute: typeof AuthenticatedContatoRoute
   AuthenticatedModeracaoRoute: typeof AuthenticatedModeracaoRoute
-  AuthenticatedPainelRoute: typeof AuthenticatedPainelRoute
   AuthenticatedConversasSlugRoute: typeof AuthenticatedConversasSlugRoute
-  AuthenticatedMensagensIdRoute: typeof AuthenticatedMensagensIdRoute
   AuthenticatedPerfilContatoRoute: typeof AuthenticatedPerfilContatoRoute
-  AuthenticatedPublicacaoIdRoute: typeof AuthenticatedPublicacaoIdRoute
   AuthenticatedConversasIndexRoute: typeof AuthenticatedConversasIndexRoute
-  AuthenticatedMensagensIndexRoute: typeof AuthenticatedMensagensIndexRoute
   AuthenticatedPerfilIndexRoute: typeof AuthenticatedPerfilIndexRoute
   AuthenticatedVagasProfissaoCodigoInteressadosRoute: typeof AuthenticatedVagasProfissaoCodigoInteressadosRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAvisosRoute: AuthenticatedAvisosRoute,
-  AuthenticatedContatoRoute: AuthenticatedContatoRoute,
   AuthenticatedModeracaoRoute: AuthenticatedModeracaoRoute,
-  AuthenticatedPainelRoute: AuthenticatedPainelRoute,
   AuthenticatedConversasSlugRoute: AuthenticatedConversasSlugRoute,
-  AuthenticatedMensagensIdRoute: AuthenticatedMensagensIdRoute,
   AuthenticatedPerfilContatoRoute: AuthenticatedPerfilContatoRoute,
-  AuthenticatedPublicacaoIdRoute: AuthenticatedPublicacaoIdRoute,
   AuthenticatedConversasIndexRoute: AuthenticatedConversasIndexRoute,
-  AuthenticatedMensagensIndexRoute: AuthenticatedMensagensIndexRoute,
   AuthenticatedPerfilIndexRoute: AuthenticatedPerfilIndexRoute,
   AuthenticatedVagasProfissaoCodigoInteressadosRoute:
     AuthenticatedVagasProfissaoCodigoInteressadosRoute,

@@ -169,6 +169,13 @@
       "when": 1795000000000,
       "tag": "0023_lgpd",
       "breakpoints": true
+    },
+    {
+      "idx": 24,
+      "version": "7",
+      "when": 1795100000000,
+      "tag": "0024_security_hardening",
+      "breakpoints": true
     }
   ]
 }
