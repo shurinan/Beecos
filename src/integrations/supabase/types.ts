@@ -550,6 +550,24 @@ export type Database = {
         Update: never;
         Relationships: [];
       };
+      community_members: {
+        Row: {
+          created_at: string;
+          profession_id: string;
+          user_id: string;
+        };
+        Insert: {
+          created_at?: string;
+          profession_id: string;
+          user_id: string;
+        };
+        Update: {
+          created_at?: string;
+          profession_id?: string;
+          user_id?: string;
+        };
+        Relationships: [];
+      };
       contact_addresses: {
         Row: {
           care_of: string;
@@ -792,6 +810,31 @@ export type Database = {
         Update: never;
         Relationships: [];
       };
+      suggestions: {
+        Row: {
+          body: string;
+          created_at: string;
+          id: string;
+          status: string;
+          user_id: string;
+        };
+        Insert: {
+          body: string;
+          user_id: string;
+        };
+        Update: {
+          status?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "suggestions_user_id_fkey";
+            columns: ["user_id"];
+            isOneToOne: false;
+            referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
       reviews: {
         Row: {
           comment: string;
@@ -928,6 +971,14 @@ export type Database = {
       delete_my_account: {
         Args: Record<string, never>;
         Returns: undefined;
+      };
+      community_overview: {
+        Args: Record<string, never>;
+        Returns: { profession_id: string; members: number; open_jobs: number }[];
+      };
+      post_interest_counts: {
+        Args: { _post_ids: string[] };
+        Returns: { post_id: string; interested: number }[];
       };
       username_available: {
         Args: { _name: string };

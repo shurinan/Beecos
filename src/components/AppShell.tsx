@@ -5,6 +5,7 @@ import { useAuth } from "@/lib/auth";
 import { useChatBackground, usePresenceHeartbeat, useUnread } from "@/lib/chat-hooks";
 import { useAlerts } from "@/lib/alerts";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import { SuggestionButton } from "@/components/SuggestionButton";
 import { BackButton } from "@/components/BackButton";
 import { InstallPrompt } from "@/components/InstallPrompt";
 
@@ -37,6 +38,7 @@ export function AppShell({ children }: { children: ReactNode }) {
           </div>
           <div className="flex items-center gap-1">
             <ThemeToggle />
+            {userId && <SuggestionButton />}
             {userId && (
               <Link
                 to="/avisos"
@@ -99,6 +101,7 @@ export function AppShell({ children }: { children: ReactNode }) {
           </Link>
           <Link
             to="/comunidade"
+            search={{ grupo: undefined }}
             aria-label="Comunidade"
             className="relative -mt-7 flex flex-1 flex-col items-center gap-0.5 text-xs font-bold text-foreground"
           >
