@@ -32,7 +32,12 @@ export function notificationsSupported() {
   return typeof window !== "undefined" && "Notification" in window;
 }
 
-export async function showSystemNotification(title: string, body: string, url: string) {
+export async function showSystemNotification(
+  title: string,
+  body: string,
+  url: string,
+  tag: string = url,
+) {
   if (!notificationsSupported() || Notification.permission !== "granted") return;
   try {
     // No celular só funciona pelo service worker; no computador o caminho direto também serve.
@@ -43,11 +48,11 @@ export async function showSystemNotification(title: string, body: string, url: s
         body,
         icon: "/icon-192.png",
         badge: "/icon-192.png",
-        tag: url,
+        tag,
         data: { url },
       });
     } else {
-      const n = new Notification(title, { body, icon: "/icon-192.png", tag: url });
+      const n = new Notification(title, { body, icon: "/icon-192.png", tag });
       n.onclick = () => {
         window.focus();
         window.location.assign(url);
@@ -61,11 +66,11 @@ export async function showSystemNotification(title: string, body: string, url: s
 
 /** Tira da bandeja os avisos de uma conversa: a pessoa já viu as mensagens. */
 export async function clearConversationNotifications(conversationId: string) {
-  toast.dismiss(`/mensagens/${conversationId}`);
+  toast.dismiss(`/conversas/${conversationId}`);
   if (typeof navigator === "undefined" || !("serviceWorker" in navigator)) return;
   try {
     const reg = await navigator.serviceWorker.getRegistration();
-    const list = (await reg?.getNotifications({ tag: `/mensagens/${conversationId}` })) ?? [];
+    const list = (await reg?.getNotifications({ tag: `/conversas/${conversationId}` })) ?? [];
     for (const n of list) n.close();
   } catch {
     /* sem service worker: o aviso some sozinho ou ao ser tocado */
@@ -100,10 +105,7 @@ export function useChatBackground(userId: string | null) {
           };
           qc.invalidateQueries({ queryKey: ["conversations", userId] });
           if (m.sender_id === userId) return;
-          const url = `/mensagens/${m.conversation_id}`;
-          const looking = !document.hidden && pathRef.current === url;
-          if (looking) return; // a conversa aberta marca como lida sozinha
-          qc.invalidateQueries({ queryKey: unreadKey(userId) });
+          const tag = `/conversas/${m.conversation_id}`; // identifica a conversa (um aviso por conversa)
           const sender = await qc
             .fetchQuery({
               queryKey: ["profile-name", m.sender_id],
@@ -111,25 +113,38 @@ export function useChatBackground(userId: string | null) {
               queryFn: async () => {
                 const { data } = await supabase
                   .from("profiles")
-                  .select("full_name")
+                  .select("full_name, slug")
                   .eq("id", m.sender_id)
                   .maybeSingle();
-                return data?.full_name || "Alguém";
+                return { name: data?.full_name || "Alguém", slug: data?.slug ?? null };
               },
             })
-            .catch(() => "Alguém");
+            .catch(() => ({ name: "Alguém", slug: null as string | null }));
+          // o endereço da conversa é o nome de quem escreveu (com o id como reserva)
+          const url = `/conversas/${sender.slug ?? m.sender_id}`;
+          const looking = !document.hidden && (pathRef.current === url || pathRef.current === tag);
+          if (looking) return; // a conversa aberta marca como lida sozinha
+          qc.invalidateQueries({ queryKey: unreadKey(userId) });
           const preview =
             m.content || (m.attachment_name ? `📎 ${m.attachment_name}` : "Nova mensagem");
           if (document.hidden) {
-            void showSystemNotification(`Nova mensagem de ${sender}`, preview.slice(0, 120), url);
+            void showSystemNotification(
+              `Nova mensagem de ${sender.name}`,
+              preview.slice(0, 120),
+              url,
+              tag,
+            );
           } else {
-            toast(`Nova mensagem de ${sender}`, {
-              id: url,
+            toast(`Nova mensagem de ${sender.name}`, {
+              id: tag,
               description: preview.slice(0, 80),
               action: {
                 label: "Abrir",
                 onClick: () =>
-                  router.navigate({ to: "/mensagens/$id", params: { id: m.conversation_id } }),
+                  router.navigate({
+                    to: "/conversas/$slug",
+                    params: { slug: sender.slug ?? m.sender_id },
+                  }),
               },
             });
           }

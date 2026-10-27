@@ -5,6 +5,7 @@ import { AlertPrefsCard } from "@/components/AlertPrefsCard";
 import { Button } from "@/components/ui/button";
 import { useAlertPrefs, useAlerts, useMarkAlertsRead } from "@/lib/alerts";
 import { timeAgo } from "@/lib/data";
+import { postParams } from "@/lib/urls";
 
 export const Route = createFileRoute("/_authenticated/avisos")({
   head: () => ({
@@ -73,11 +74,10 @@ function Alerts() {
           );
           return (
             <li key={a.id}>
-              {a.actor_id ? (
+              {a.posts ? (
                 <Link
-                  to="/perfil/$id"
-                  params={{ id: a.actor_id }}
-                  search={{ post: a.post_id ?? undefined }}
+                  to="/vagas/$profissao/$codigo"
+                  params={postParams(a.posts)}
                   className={"block-card block space-y-1 p-4 " + (a.read_at ? "opacity-80" : "")}
                   onClick={() => {
                     if (!a.read_at) void quiet(markRead([a.id]));

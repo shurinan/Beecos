@@ -24,7 +24,7 @@ self.addEventListener("fetch", (event) => {
 
 self.addEventListener("notificationclick", (event) => {
   event.notification.close();
-  const target = new URL((event.notification.data && event.notification.data.url) || "/mensagens", self.location.origin).href;
+  const target = new URL((event.notification.data && event.notification.data.url) || "/conversas", self.location.origin).href;
   event.waitUntil(
     self.clients.matchAll({ type: "window", includeUncontrolled: true }).then((list) => {
       for (const client of list) {
@@ -51,7 +51,7 @@ self.addEventListener("push", (event) => {
       icon: "/icon-192.png",
       badge: "/icon-192.png",
       tag: data.url || "beecos",
-      data: { url: data.url || "/mensagens" },
+      data: { url: data.url || "/conversas" },
     }),
   );
 });

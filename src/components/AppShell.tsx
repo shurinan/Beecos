@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { Bell, Home, MessageCircle, UserRound, LogIn } from "lucide-react";
+import { Bell, Briefcase, Home, MessageCircle, UserRound, LogIn } from "lucide-react";
 import type { ReactNode } from "react";
 import { useAuth } from "@/lib/auth";
 import { useChatBackground, usePresenceHeartbeat, useUnread } from "@/lib/chat-hooks";
@@ -66,9 +66,17 @@ export function AppShell({ children }: { children: ReactNode }) {
           <Link to="/" className={item} activeProps={active} activeOptions={{ exact: true }}>
             <Home className="h-5 w-5" /> Início
           </Link>
+          <Link
+            to="/vagas"
+            search={{ q: undefined, tipo: undefined }}
+            className={item}
+            activeProps={active}
+          >
+            <Briefcase className="h-5 w-5" /> Vagas
+          </Link>
           {userId ? (
             <>
-              <Link to="/mensagens" className={item} activeProps={active}>
+              <Link to="/conversas" className={item} activeProps={active}>
                 <span className="relative">
                   <MessageCircle className="h-5 w-5" />
                   {unread > 0 && (
@@ -83,7 +91,7 @@ export function AppShell({ children }: { children: ReactNode }) {
                 </span>
                 Conversas
               </Link>
-              <Link to="/painel" className={item} activeProps={active}>
+              <Link to="/perfil" className={item} activeProps={active}>
                 <UserRound className="h-5 w-5" /> Meu perfil
               </Link>
             </>

@@ -11,6 +11,7 @@ export type Alert = {
   read_at: string | null;
   post_id: string | null;
   actor_id: string | null;
+  posts: { slug: string; professions: { slug: string } | null } | null;
 };
 
 export type AlertPrefs = {
@@ -63,11 +64,13 @@ export function useAlerts(userId: string | null) {
     queryFn: async (): Promise<Alert[]> => {
       const { data, error } = await supabase
         .from("notifications")
-        .select("id, title, body, created_at, read_at, post_id, actor_id")
+        .select(
+          "id, title, body, created_at, read_at, post_id, actor_id, posts(slug, professions(slug))",
+        )
         .order("created_at", { ascending: false })
         .limit(50);
       if (error) throw error;
-      return data ?? [];
+      return (data ?? []) as unknown as Alert[];
     },
   });
 

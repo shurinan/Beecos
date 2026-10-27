@@ -203,6 +203,7 @@ export type Database = {
           price_value: number | null;
           profession_id: string | null;
           service_id: string | null;
+          slug: string;
           title: string;
           user_id: string;
           vacancies: number;
@@ -216,6 +217,7 @@ export type Database = {
           price?: string;
           profession_id?: string | null;
           service_id?: string | null;
+          slug?: string;
           title: string;
           user_id: string;
           vacancies?: number;
@@ -229,6 +231,7 @@ export type Database = {
           price?: string;
           profession_id?: string | null;
           service_id?: string | null;
+          slug?: string;
           title?: string;
           user_id?: string;
           vacancies?: number;
@@ -667,6 +670,7 @@ export type Database = {
           created_at: string;
           full_name: string;
           id: string;
+          slug: string | null;
           headline: string;
           experience_years: number | null;
           service_area: string;
@@ -680,6 +684,7 @@ export type Database = {
           created_at?: string;
           full_name?: string;
           id: string;
+          slug?: string | null;
           headline?: string;
           experience_years?: number | null;
           service_area?: string;
@@ -693,6 +698,7 @@ export type Database = {
           created_at?: string;
           full_name?: string;
           id?: string;
+          slug?: string | null;
           headline?: string;
           experience_years?: number | null;
           service_area?: string;

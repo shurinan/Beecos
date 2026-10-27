@@ -30,7 +30,7 @@ function AuthPage() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (userId) navigate({ to: "/painel", replace: true });
+    if (userId) navigate({ to: "/perfil", replace: true });
   }, [userId, navigate]);
 
   async function submit(e: React.FormEvent) {
@@ -57,7 +57,9 @@ function AuthPage() {
   }
 
   async function google() {
-    const r = await lovable.auth.signInWithOAuth("google", { redirect_uri: window.location.origin });
+    const r = await lovable.auth.signInWithOAuth("google", {
+      redirect_uri: window.location.origin,
+    });
     if (r.error) toast.error("Não foi possível entrar com Google");
   }
 
@@ -80,11 +82,24 @@ function AuthPage() {
         )}
         <div>
           <Label htmlFor="email">Email</Label>
-          <Input id="email" type="email" required value={email} onChange={(e) => setEmail(e.target.value)} />
+          <Input
+            id="email"
+            type="email"
+            required
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+          />
         </div>
         <div>
           <Label htmlFor="pw">Senha</Label>
-          <Input id="pw" type="password" minLength={6} required value={password} onChange={(e) => setPassword(e.target.value)} />
+          <Input
+            id="pw"
+            type="password"
+            minLength={6}
+            required
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          />
         </div>
         <Button type="submit" size="lg" className="w-full" disabled={loading}>
           {loading ? "Aguarde…" : mode === "in" ? "Entrar" : "Criar conta"}
