@@ -27,6 +27,7 @@ function Groups() {
     setBusy(id);
     try {
       await (isIn ? leave(id) : join(id));
+      toast.success(isIn ? "Você saiu do grupo." : "Você entrou no grupo.");
     } catch (e) {
       toast.error(communityErrorMessage(e) ?? "Não consegui salvar. Tente de novo.");
     } finally {
@@ -46,6 +47,29 @@ function Groups() {
           .
         </p>
       </header>
+      {userId && ids.length > 0 && catalog && (
+        <section aria-labelledby="g-meus" className="space-y-2">
+          <h2 id="g-meus" className="text-lg">
+            Meus grupos ({ids.length})
+          </h2>
+          <ul className="flex flex-wrap gap-2">
+            {ids.map((id) => (
+              <li key={id}>
+                <button
+                  type="button"
+                  disabled={busy === id}
+                  onClick={() => void toggle(id, true)}
+                  className="flex items-center gap-1.5 rounded-full border-2 border-foreground bg-card px-3 py-1.5 text-sm font-semibold"
+                  aria-label={`Sair do grupo ${catalog.professions.get(id)?.name ?? ""}`}
+                  data-ajuda="Sair"
+                >
+                  {catalog.professions.get(id)?.name ?? "Grupo"} <span aria-hidden="true">✕</span>
+                </button>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
       {isLoading && <p className="text-muted-foreground">Carregando…</p>}
       {catalog?.sectors.map((sector) => (
         <section key={sector.id} aria-labelledby={`g-${sector.id}`} className="space-y-2">

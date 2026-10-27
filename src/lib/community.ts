@@ -31,6 +31,7 @@ export function useMyCommunities(userId: string | null) {
       .from("community_members")
       .insert({ user_id: userId!, profession_id: professionId });
     if (error && error.code !== "23505") throw error;
+    qc.setQueryData<string[]>(key, (old) => (old?.includes(professionId) ? old : [...(old ?? []), professionId]));
     await qc.invalidateQueries({ queryKey: key });
   }
   async function leave(professionId: string) {
@@ -40,7 +41,10 @@ export function useMyCommunities(userId: string | null) {
       .eq("user_id", userId!)
       .eq("profession_id", professionId);
     if (error) throw error;
+    // some da lista na hora, sem esperar a rede
+    qc.setQueryData<string[]>(key, (old) => (old ?? []).filter((id) => id !== professionId));
     await qc.invalidateQueries({ queryKey: key });
+    await qc.invalidateQueries({ queryKey: ["community-overview"] });
   }
   return { ...query, ids: query.data ?? [], join, leave };
 }

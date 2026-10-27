@@ -30,6 +30,8 @@ const HELP: Record<string, HelpEntry> = {
   "meu perfil": { title: "Meu perfil", text: "Seus dados, suas habilidades, suas vagas e seu plano." },
   "+ grupos": { title: "Mais grupos", text: "Escolha em quais grupos de profissão entrar para ver as vagas deles." },
   todos: { title: "Todos os grupos", text: "Mostra as vagas de todos os grupos em que você está." },
+  sair: { title: "Sair do grupo", text: "Você deixa de ver as vagas desse grupo no feed. Dá para entrar de novo quando quiser." },
+  "sair do grupo": { title: "Sair do grupo", text: "Você deixa de ver as vagas desse grupo no feed. Dá para entrar de novo quando quiser." },
   "inscrever-se": {
     title: "Inscrever-se",
     text: "Abre uma conversa com quem publicou a vaga, para combinar os detalhes. O endereço só aparece no chat.",
