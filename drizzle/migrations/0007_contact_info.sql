@@ -15,6 +15,7 @@ CREATE TABLE public.contact_phones (
 );
 GRANT SELECT, INSERT, UPDATE, DELETE ON public.contact_phones TO authenticated;
 GRANT ALL ON public.contact_phones TO service_role;
+REVOKE ALL ON public.contact_phones FROM anon;
 ALTER TABLE public.contact_phones ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "own phones read" ON public.contact_phones FOR SELECT TO authenticated USING (auth.uid() = user_id);
 CREATE POLICY "own phones insert" ON public.contact_phones FOR INSERT TO authenticated WITH CHECK (auth.uid() = user_id);
@@ -58,6 +59,7 @@ CREATE TABLE public.contact_addresses (
 );
 GRANT SELECT, INSERT, UPDATE, DELETE ON public.contact_addresses TO authenticated;
 GRANT ALL ON public.contact_addresses TO service_role;
+REVOKE ALL ON public.contact_addresses FROM anon;
 ALTER TABLE public.contact_addresses ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "own addresses read" ON public.contact_addresses FOR SELECT TO authenticated USING (auth.uid() = user_id);
 CREATE POLICY "own addresses insert" ON public.contact_addresses FOR INSERT TO authenticated WITH CHECK (auth.uid() = user_id);

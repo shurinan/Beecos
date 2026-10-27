@@ -1,7 +1,7 @@
 -- Associação de serviço: quem contrata ESCOLHE o prestador, o prestador ACEITA, e qualquer um
 -- dos dois marca como CONCLUÍDO. Só depois de concluído as duas pessoas podem se avaliar.
 -- Também: vagas por publicação, mensagens de sistema no chat e telefones visíveis a quem conversa.
--- Depende de 0000, 0004 (reviews/can_review), 0006 (contact_phones) e 0008 (moderação).
+-- Depende de 0000, 0004 (reviews/can_review), 0006 (touch_updated_at), 0007 (contact_phones) e 0009 (moderação).
 
 -- 1. Vagas por publicação (quantas pessoas a vaga precisa)
 ALTER TABLE public.posts
@@ -31,6 +31,8 @@ CREATE TABLE public.engagements (
   CHECK (client_id <> provider_id)
 );
 -- Só leitura direto; toda mudança passa pelas funções (que conferem quem pode fazer o quê)
+-- o Supabase concede tudo por padrão: deixa só leitura para quem está logado
+REVOKE ALL ON public.engagements FROM anon, authenticated;
 GRANT SELECT ON public.engagements TO authenticated;
 GRANT ALL ON public.engagements TO service_role;
 ALTER TABLE public.engagements ENABLE ROW LEVEL SECURITY;
@@ -48,6 +50,7 @@ SELECT p.id AS post_id, p.vacancies,
 FROM public.posts p
 LEFT JOIN public.engagements e ON e.post_id = p.id
 GROUP BY p.id;
+REVOKE ALL ON public.post_stats FROM anon, authenticated;
 GRANT SELECT ON public.post_stats TO anon, authenticated;
 GRANT ALL ON public.post_stats TO service_role;
 
@@ -57,7 +60,8 @@ LANGUAGE sql SECURITY DEFINER SET search_path = public AS $$
   INSERT INTO public.messages (conversation_id, sender_id, content, kind)
   VALUES (_conversation, auth.uid(), left(_text, 500), 'system')
 $$;
-REVOKE ALL ON FUNCTION public._engagement_note(uuid, text) FROM PUBLIC;
+-- interna: só as funções abaixo chamam (se o app pudesse chamar, forjaria avisos em qualquer conversa)
+REVOKE ALL ON FUNCTION public._engagement_note(uuid, text) FROM PUBLIC, anon, authenticated;
 
 -- Quem contrata escolhe quem presta o serviço.
 --  vaga ('job'): quem publicou contrata, o interessado presta.
@@ -168,7 +172,7 @@ BEGIN
 END $$;
 
 REVOKE ALL ON FUNCTION public.choose_provider(uuid), public.respond_engagement(uuid, boolean),
-  public.complete_engagement(uuid), public.cancel_engagement(uuid) FROM PUBLIC;
+  public.complete_engagement(uuid), public.cancel_engagement(uuid) FROM PUBLIC, anon;
 GRANT EXECUTE ON FUNCTION public.choose_provider(uuid), public.respond_engagement(uuid, boolean),
   public.complete_engagement(uuid), public.cancel_engagement(uuid) TO authenticated;
 
@@ -196,8 +200,12 @@ LANGUAGE sql STABLE SECURITY DEFINER SET search_path = public AS $$
       AND EXISTS (SELECT 1 FROM public.messages m WHERE m.conversation_id = c.id AND m.sender_id = _b AND m.kind = 'user')
   )
 $$;
-REVOKE ALL ON FUNCTION public.in_active_conversation(uuid, uuid) FROM PUBLIC;
+REVOKE ALL ON FUNCTION public.in_active_conversation(uuid, uuid) FROM PUBLIC, anon;
 GRANT EXECUTE ON FUNCTION public.in_active_conversation(uuid, uuid) TO authenticated;
+
+-- can_review: o REVOKE da 0004 não tirava o acesso de anon concedido por padrão
+REVOKE ALL ON FUNCTION public.can_review(uuid, uuid) FROM PUBLIC, anon;
+GRANT EXECUTE ON FUNCTION public.can_review(uuid, uuid) TO authenticated;
 
 CREATE POLICY "partners read shared phones" ON public.contact_phones FOR SELECT TO authenticated
   USING (shared AND user_id <> auth.uid() AND public.in_active_conversation(auth.uid(), user_id));

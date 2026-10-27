@@ -1,6 +1,6 @@
 -- Informações pessoais (privadas): nome completo em partes e autorização do uso dos dados.
 -- Foto de perfil (pública): arquivo no bucket "avatars", caminho guardado em profiles.avatar_path.
--- Depende da 0003 (profile_private) e da 0006 (contact_*).
+-- Depende da 0003 (profile_private) e da 0007 (contact_*).
 
 ALTER TABLE public.profile_private
   ADD COLUMN first_name text NOT NULL DEFAULT '' CHECK (char_length(first_name) <= 60),

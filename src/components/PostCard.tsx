@@ -1,4 +1,5 @@
 import { Link } from "@tanstack/react-router";
+import { useAuth } from "@/lib/auth";
 import { MapPin, Banknote } from "lucide-react";
 import { KIND_LABEL, timeAgo, initials, type PostKind } from "@/lib/data";
 import { levelLabel, topSkill, type SkillBase } from "@/lib/skills";
@@ -20,6 +21,7 @@ export type PostWithAuthor = {
 
 export function PostCard({ post, slots }: { post: PostWithAuthor; slots?: PostSlots | undefined }) {
   const kind = post.kind as PostKind;
+  const { userId } = useAuth();
   const top = topSkill(post.profiles?.profile_skills);
   const filled = kind === "job" && isFilled(slots);
   const vacancy =
@@ -70,25 +72,34 @@ export function PostCard({ post, slots }: { post: PostWithAuthor; slots?: PostSl
           </span>
         )}
       </div>
-      <Link
-        to="/perfil/$id"
-        params={{ id: post.user_id }}
-        search={{ post: post.id }}
-        className="mt-3 flex items-center gap-2 border-t border-dashed border-foreground/30 pt-3"
-      >
-        <span className="flex h-8 w-8 items-center justify-center rounded-full bg-foreground text-xs font-bold text-background">
-          {initials(post.profiles?.full_name ?? "")}
-        </span>
-        <span className="min-w-0 text-sm font-semibold">
-          {post.profiles?.full_name || "Usuário"}
-          {top && (
-            <span className="block truncate text-xs font-normal text-muted-foreground">
-              {top.skill} · {levelLabel(top.level)}
-            </span>
-          )}
-        </span>
-        <span className="ml-auto text-sm font-bold underline">Ver e conversar →</span>
-      </Link>
+      {userId ? (
+        <Link
+          to="/perfil/$id"
+          params={{ id: post.user_id }}
+          search={{ post: post.id }}
+          className="mt-3 flex items-center gap-2 border-t border-dashed border-foreground/30 pt-3"
+        >
+          <span className="flex h-8 w-8 items-center justify-center rounded-full bg-foreground text-xs font-bold text-background">
+            {initials(post.profiles?.full_name ?? "")}
+          </span>
+          <span className="min-w-0 text-sm font-semibold">
+            {post.profiles?.full_name || "Usuário"}
+            {top && (
+              <span className="block truncate text-xs font-normal text-muted-foreground">
+                {top.skill} · {levelLabel(top.level)}
+              </span>
+            )}
+          </span>
+          <span className="ml-auto text-sm font-bold underline">Ver e conversar →</span>
+        </Link>
+      ) : (
+        <Link
+          to="/auth"
+          className="mt-3 flex items-center justify-between gap-2 border-t border-dashed border-foreground/30 pt-3 text-sm font-bold underline"
+        >
+          Entre para ver quem publicou e conversar →
+        </Link>
+      )}
     </article>
   );
 }

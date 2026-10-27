@@ -60,11 +60,12 @@ type ReviewRow = {
 function ProfilePage() {
   const { id } = Route.useParams();
   const { post } = Route.useSearch();
-  const { userId } = useAuth();
+  const { userId, ready } = useAuth();
   const navigate = useNavigate();
 
   const { data: replyStats } = useQuery({
     queryKey: ["reply-stats", id],
+    enabled: !!userId,
     staleTime: 5 * 60_000,
     queryFn: async () => {
       const { data } = await supabase.rpc("reply_stats", { _user: id });
@@ -76,6 +77,8 @@ function ProfilePage() {
 
   const { data, isError, refetch } = useQuery({
     queryKey: ["profile", id],
+    // perfis só podem ser lidos por quem tem conta
+    enabled: !!userId,
     queryFn: async () => {
       const [p, skills, posts, stats, reviews] = await Promise.all([
         supabase.from("profiles").select("*").eq("id", id).maybeSingle(),
@@ -113,6 +116,18 @@ function ProfilePage() {
   });
 
   const slots = usePostStats(data?.posts.map((p) => p.id));
+
+  if (ready && !userId) {
+    return (
+      <div className="block-card space-y-3 p-5 text-center">
+        <p className="font-semibold">Entre para ver este perfil.</p>
+        <p className="text-sm text-muted-foreground">Os perfis são vistos só por quem tem conta no Beecos.</p>
+        <Button asChild>
+          <Link to="/auth">Entrar ou criar conta</Link>
+        </Button>
+      </div>
+    );
+  }
 
   if (isError) {
     return (

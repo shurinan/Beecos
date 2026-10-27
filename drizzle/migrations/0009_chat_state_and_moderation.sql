@@ -12,6 +12,7 @@ CREATE TABLE public.conversation_reads (
 );
 GRANT SELECT, INSERT, UPDATE ON public.conversation_reads TO authenticated;
 GRANT ALL ON public.conversation_reads TO service_role;
+REVOKE ALL ON public.conversation_reads FROM anon;
 ALTER TABLE public.conversation_reads ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "own reads select" ON public.conversation_reads FOR SELECT TO authenticated
   USING (user_id = auth.uid());
@@ -48,6 +49,7 @@ CREATE TABLE public.user_presence (
 );
 GRANT SELECT, INSERT, UPDATE ON public.user_presence TO authenticated;
 GRANT ALL ON public.user_presence TO service_role;
+REVOKE ALL ON public.user_presence FROM anon;
 ALTER TABLE public.user_presence ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "presence select" ON public.user_presence FOR SELECT TO authenticated USING (
   user_id = auth.uid() OR (show_last_seen AND EXISTS (
@@ -93,6 +95,8 @@ CREATE TABLE public.blocked_terms (
   -- true: também vale se estiver colado/espaçado no meio do texto (só para termos longos)
   anywhere boolean NOT NULL DEFAULT false
 );
+-- o Supabase concede acesso total por padrão a anon/authenticated em tabelas novas: tira
+REVOKE ALL ON public.blocked_terms FROM anon, authenticated;
 ALTER TABLE public.blocked_terms ENABLE ROW LEVEL SECURITY;
 GRANT ALL ON public.blocked_terms TO service_role;
 -- sem política e sem GRANT para anon/authenticated: ninguém lê a lista pelo app
@@ -115,7 +119,7 @@ LANGUAGE sql STABLE SECURITY DEFINER SET search_path = public AS $$
        OR (b.anywhere AND replace(n.s, ' ', '') LIKE '%' || replace(b.term, ' ', '') || '%')
   )
 $$;
-REVOKE EXECUTE ON FUNCTION public.contains_blocked_term(text) FROM PUBLIC;
+REVOKE EXECUTE ON FUNCTION public.contains_blocked_term(text) FROM PUBLIC, anon, authenticated;
 
 -- Lista inicial: xingamentos e ofensas discriminatórias, e anúncios de coisas ilegais.
 -- É um ponto de partida: ajuste pelo banco (INSERT/DELETE em blocked_terms) sem mexer no código.
@@ -208,7 +212,9 @@ CREATE TRIGGER profile_skills_moderation BEFORE INSERT OR UPDATE ON public.profi
 
 -- Funções: só quem está logado chama (reply_stats também é lida no perfil público)
 REVOKE EXECUTE ON FUNCTION public.mark_conversation_read(uuid), public.unread_counts(),
-  public.touch_presence(), public.set_show_last_seen(boolean) FROM PUBLIC;
+  public.touch_presence(), public.set_show_last_seen(boolean) FROM PUBLIC, anon;
 GRANT EXECUTE ON FUNCTION public.mark_conversation_read(uuid), public.unread_counts(),
   public.touch_presence(), public.set_show_last_seen(boolean) TO authenticated;
 GRANT EXECUTE ON FUNCTION public.reply_stats(uuid) TO anon, authenticated;
+-- funções de gatilho não são chamáveis pelo app
+REVOKE EXECUTE ON FUNCTION public.reject_blocked_text() FROM PUBLIC, anon, authenticated;

@@ -51,12 +51,12 @@ Tudo é informado pelo próprio profissional e o perfil diz isso; o app não ver
 ## Perfil em camadas
 
 - **Visão geral** (`/painel`): cabeçalho com foto, resumo do contato e as habilidades.
-- **Habilidades**: cada habilidade tem nível, anos de experiência, treinamento, certificado e observações (migration `0005`).
-- **Contato** (`/contato`): foto de perfil, informações pessoais, autorização de uso dos dados, e-mail, telefones por tipo e endereços físico/postal (migrations `0006` e `0007`).
+- **Habilidades**: cada habilidade tem nível, anos de experiência, treinamento, certificado e observações (migration `0006`).
+- **Contato** (`/contato`): foto de perfil, informações pessoais, autorização de uso dos dados, e-mail, telefones por tipo e endereços físico/postal (migrations `0007` e `0008`).
 
 Tudo do menu de contato é privado (RLS: só o dono lê e escreve). Só a foto (bucket público `avatars`) e o nome preferido aparecem no perfil público.
 
-Antes de publicar este código, aplique as migrations `0005`, `0006` e `0007` no banco: o Lovable não aplica as migrations do repositório sozinho.
+Antes de publicar este código, aplique as migrations `0006` a `0010` no banco: o Lovable não aplica as migrations do repositório sozinho.
 
 O texto da autorização de uso dos dados está em `src/lib/contact.ts` (`CONSENT_TEXT`) e deve ser revisado por quem cuida da parte jurídica. Quando o texto mudar, troque `CONSENT_VERSION`.
 
@@ -78,4 +78,4 @@ O texto da autorização de uso dos dados está em `src/lib/contact.ts` (`CONSEN
 - Só dá para escolher quem já respondeu na conversa. Escolher não fecha o trato: o prestador **aceita ou recusa**; recusar libera a vaga. Depois de aceito, **qualquer um dos dois marca como concluído**. Cada etapa vira um aviso no histórico da conversa.
 - **Avaliação só depois de concluído** (`can_review` consulta `engagements`), nos dois sentidos.
 - **Contatos**: cada telefone tem a opção "mostrar para quem conversa comigo" (marcada ao cadastrar, pode desmarcar). Só quem já trocou mensagens com a pessoa (os dois lados escreveram) vê, no perfil dela, com botões de WhatsApp, ligar e SMS. E-mail e endereço nunca são compartilhados.
-- Migration `0009`. As mudanças de estado passam só pelas funções `choose_provider`, `respond_engagement`, `complete_engagement` e `cancel_engagement`; a tabela `engagements` é só de leitura para o app.
+- Migration `0010`. As mudanças de estado passam só pelas funções `choose_provider`, `respond_engagement`, `complete_engagement` e `cancel_engagement`; a tabela `engagements` é só de leitura para o app.
