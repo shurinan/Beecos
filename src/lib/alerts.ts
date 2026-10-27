@@ -19,6 +19,8 @@ export type AlertPrefs = {
   email: boolean;
   push: boolean;
   paused_until: string | null;
+  /** Profissões silenciadas (só vale no Premium). */
+  muted_profession_ids: string[];
 };
 
 export const DEFAULT_PREFS: AlertPrefs = {
@@ -26,6 +28,7 @@ export const DEFAULT_PREFS: AlertPrefs = {
   email: false,
   push: false,
   paused_until: null,
+  muted_profession_ids: [],
 };
 
 export const PAUSE_OPTIONS = [
@@ -121,7 +124,7 @@ export function useAlertPrefs(userId: string | null) {
     queryFn: async (): Promise<AlertPrefs> => {
       const { data, error } = await supabase
         .from("notification_prefs")
-        .select("in_app, email, push, paused_until")
+        .select("in_app, email, push, paused_until, muted_profession_ids")
         .eq("user_id", userId!)
         .maybeSingle();
       if (error) throw error;
@@ -137,4 +140,26 @@ export function useAlertPrefs(userId: string | null) {
     await qc.invalidateQueries({ queryKey: prefsKey(userId) });
   }
   return { ...query, prefs, save };
+}
+
+/** Profissões em que a pessoa atua (pelas habilidades), para escolher de quais receber avisos. */
+export function useMyProfessions(userId: string | null) {
+  return useQuery({
+    queryKey: ["my-professions", userId],
+    enabled: !!userId,
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("profile_skills")
+        .select("profession_id, professions(name)")
+        .eq("user_id", userId!)
+        .not("profession_id", "is", null);
+      if (error) throw error;
+      const seen = new Map<string, string>();
+      for (const r of data ?? []) {
+        if (r.profession_id && !seen.has(r.profession_id))
+          seen.set(r.profession_id, r.professions?.name ?? "Profissão");
+      }
+      return [...seen].map(([id, name]) => ({ id, name }));
+    },
+  });
 }

@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { Bell, Briefcase, Home, MessageCircle, UserRound, LogIn } from "lucide-react";
+import { Bell, Briefcase, Home, MessageCircle, UserRound, LogIn, Users } from "lucide-react";
 import type { ReactNode } from "react";
 import { useAuth } from "@/lib/auth";
 import { useChatBackground, usePresenceHeartbeat, useUnread } from "@/lib/chat-hooks";
@@ -84,6 +84,16 @@ export function AppShell({ children }: { children: ReactNode }) {
           >
             <Briefcase className="h-5 w-5" /> Vagas
           </Link>
+          <Link
+            to="/comunidade"
+            aria-label="Comunidade"
+            className="relative -mt-7 flex flex-1 flex-col items-center gap-0.5 text-xs font-bold text-foreground"
+          >
+            <span className="flex h-16 w-16 items-center justify-center rounded-full border-2 border-foreground bg-primary text-primary-foreground shadow-md active:scale-95">
+              <Users className="h-8 w-8" />
+            </span>
+            Comunidade
+          </Link>
           {userId ? (
             <>
               <Link to="/conversas" className={item} activeProps={active}>
@@ -110,6 +120,7 @@ export function AppShell({ children }: { children: ReactNode }) {
               <LogIn className="h-5 w-5" /> Entrar
             </Link>
           )}
+          {!userId && <div className="flex-1" aria-hidden="true" />}
         </div>
       </nav>
     </div>

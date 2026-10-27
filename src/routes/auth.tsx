@@ -7,6 +7,12 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useAuth } from "@/lib/auth";
+import {
+  USERNAME_HELP,
+  USERNAME_MAX,
+  isValidUsernameFormat,
+  normalizeUsername,
+} from "@/lib/username";
 
 export const Route = createFileRoute("/auth")({
   head: () => ({
@@ -23,6 +29,10 @@ export const Route = createFileRoute("/auth")({
 function AuthPage() {
   const [mode, setMode] = useState<"in" | "up">("in");
   const [name, setName] = useState("");
+  const [username, setUsername] = useState("");
+  const [usernameState, setUsernameState] = useState<"idle" | "checking" | "free" | "taken">(
+    "idle",
+  );
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -33,15 +43,44 @@ function AuthPage() {
     if (userId) navigate({ to: "/perfil", replace: true });
   }, [userId, navigate]);
 
+  // Confere, ao digitar, se o nome de usuário está livre (a cada pausa de 400 ms).
+  useEffect(() => {
+    if (mode !== "up" || !isValidUsernameFormat(username)) {
+      setUsernameState("idle");
+      return;
+    }
+    setUsernameState("checking");
+    let alive = true;
+    const t = setTimeout(() => {
+      supabase.rpc("username_available", { _name: username }).then(({ data, error }) => {
+        if (alive) setUsernameState(error ? "idle" : data ? "free" : "taken");
+      });
+    }, 400);
+    return () => {
+      alive = false;
+      clearTimeout(t);
+    };
+  }, [mode, username]);
+
   async function submit(e: React.FormEvent) {
     e.preventDefault();
+    if (mode === "up") {
+      if (!isValidUsernameFormat(username)) {
+        toast.error(`Nome de usuário inválido. ${USERNAME_HELP}`);
+        return;
+      }
+      if (usernameState === "taken") {
+        toast.error("Esse nome de usuário já está em uso. Escolha outro.");
+        return;
+      }
+    }
     setLoading(true);
     try {
       if (mode === "up") {
         const { data, error } = await supabase.auth.signUp({
           email,
           password,
-          options: { emailRedirectTo: window.location.origin, data: { full_name: name } },
+          options: { emailRedirectTo: window.location.origin, data: { full_name: name, username } },
         });
         if (error) throw error;
         if (!data.session) toast.success("Conta criada! Confira seu email para confirmar.");
@@ -75,10 +114,43 @@ function AuthPage() {
       <div className="my-4 text-center text-xs uppercase text-muted-foreground">ou</div>
       <form onSubmit={submit} className="space-y-3">
         {mode === "up" && (
-          <div>
-            <Label htmlFor="name">Nome</Label>
-            <Input id="name" required value={name} onChange={(e) => setName(e.target.value)} />
-          </div>
+          <>
+            <div>
+              <Label htmlFor="name">Nome</Label>
+              <Input id="name" required value={name} onChange={(e) => setName(e.target.value)} />
+            </div>
+            <div>
+              <Label htmlFor="username">Nome de usuário</Label>
+              <div className="relative">
+                <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">
+                  @
+                </span>
+                <Input
+                  id="username"
+                  required
+                  autoCapitalize="none"
+                  autoCorrect="off"
+                  spellCheck={false}
+                  maxLength={USERNAME_MAX}
+                  className="pl-7"
+                  value={username}
+                  onChange={(e) => setUsername(normalizeUsername(e.target.value))}
+                  aria-describedby="username-help"
+                />
+              </div>
+              <p
+                id="username-help"
+                aria-live="polite"
+                className={`mt-1 text-xs ${usernameState === "taken" ? "text-destructive" : "text-muted-foreground"}`}
+              >
+                {usernameState === "checking" && "Conferindo…"}
+                {usernameState === "free" && "Disponível."}
+                {usernameState === "taken" && "Já está em uso."}
+                {usernameState === "idle" && USERNAME_HELP}
+                {" Ele vira o endereço do seu perfil."}
+              </p>
+            </div>
+          </>
         )}
         <div>
           <Label htmlFor="email">Email</Label>
