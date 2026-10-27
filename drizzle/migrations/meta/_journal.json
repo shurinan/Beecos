@@ -141,6 +141,20 @@
       "when": 1794600000000,
       "tag": "0019_username_format",
       "breakpoints": true
+    },
+    {
+      "idx": 20,
+      "version": "7",
+      "when": 1794700000000,
+      "tag": "0020_username_at_signup",
+      "breakpoints": true
+    },
+    {
+      "idx": 21,
+      "version": "7",
+      "when": 1794800000000,
+      "tag": "0021_search_aliases_premium_alerts",
+      "breakpoints": true
     }
   ]
 }

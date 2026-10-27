@@ -1,4 +1,5 @@
 import { usernameErrorMessage } from "@/lib/username";
+import { postGaps } from "@/lib/post-gaps";
 import { postParams, profileParam } from "@/lib/urls";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
@@ -92,6 +93,21 @@ function Painel() {
         skills: sortSkills((skillRows.data ?? []) as ProfileSkill[]),
         posts: posts.data ?? [],
       };
+    },
+  });
+  const { data: located } = useQuery({
+    queryKey: ["my-post-locations", userId, data?.posts.map((p) => p.id).join(",")],
+    enabled: !!data && data.posts.length > 0,
+    queryFn: async () => {
+      const { data: rows, error } = await supabase
+        .from("post_locations")
+        .select("post_id")
+        .in(
+          "post_id",
+          (data?.posts ?? []).map((p) => p.id),
+        );
+      if (error) throw error;
+      return new Set((rows ?? []).map((r) => r.post_id));
     },
   });
   const { data: usage } = useQuery({
@@ -395,6 +411,9 @@ function Painel() {
               <Button className="mt-2 w-full" onClick={() => toast("Pagamento em breve!")}>
                 Quero ser Premium
               </Button>
+              <Link to="/plano" className="mt-2 block text-center text-sm font-bold underline">
+                Comparar Grátis × Premium
+              </Link>
             </div>
           </>
         )}
@@ -606,6 +625,14 @@ function Painel() {
         )}
         {data?.posts.map((p) => {
           const st = slots[p.id];
+          const gaps = located
+            ? postGaps({
+                kind: p.kind,
+                profession_id: p.profession_id,
+                description: p.description,
+                hasLocation: located.has(p.id),
+              })
+            : [];
           return (
             <div
               key={p.id}
@@ -617,6 +644,14 @@ function Painel() {
                 <span className="text-xs text-muted-foreground">
                   {st.taken} de {st.vacancies} {st.vacancies === 1 ? "vaga" : "vagas"}
                 </span>
+              )}
+              {gaps.length > 0 && (
+                <p
+                  role="note"
+                  className="basis-full rounded border border-destructive/60 bg-destructive/10 px-2 py-1 text-xs"
+                >
+                  <b>Faltam informações:</b> {gaps.join("; ")}. Toque em Editar para completar.
+                </p>
               )}
               <Button asChild size="sm" variant="outline">
                 <Link

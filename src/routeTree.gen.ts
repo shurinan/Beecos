@@ -13,6 +13,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as ComunidadeRouteImport } from './routes/comunidade'
+import { Route as PlanoRouteImport } from './routes/plano'
 import { Route as AuthenticatedAvisosRouteImport } from './routes/_authenticated/avisos'
 import { Route as AuthenticatedContatoRouteImport } from './routes/_authenticated/contato'
 import { Route as AuthenticatedPainelRouteImport } from './routes/_authenticated/painel'
@@ -45,6 +46,11 @@ const AuthRoute = AuthRouteImport.update({
 const ComunidadeRoute = ComunidadeRouteImport.update({
   id: '/comunidade',
   path: '/comunidade',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PlanoRoute = PlanoRouteImport.update({
+  id: '/plano',
+  path: '/plano',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticatedAvisosRoute = AuthenticatedAvisosRouteImport.update({
@@ -131,6 +137,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/comunidade': typeof ComunidadeRoute
+  '/plano': typeof PlanoRoute
   '/avisos': typeof AuthenticatedAvisosRoute
   '/contato': typeof AuthenticatedContatoRoute
   '/painel': typeof AuthenticatedPainelRoute
@@ -150,6 +157,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/comunidade': typeof ComunidadeRoute
+  '/plano': typeof PlanoRoute
   '/avisos': typeof AuthenticatedAvisosRoute
   '/contato': typeof AuthenticatedContatoRoute
   '/painel': typeof AuthenticatedPainelRoute
@@ -171,6 +179,7 @@ export interface FileRoutesById {
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/auth': typeof AuthRoute
   '/comunidade': typeof ComunidadeRoute
+  '/plano': typeof PlanoRoute
   '/_authenticated/avisos': typeof AuthenticatedAvisosRoute
   '/_authenticated/contato': typeof AuthenticatedContatoRoute
   '/_authenticated/painel': typeof AuthenticatedPainelRoute
@@ -192,6 +201,7 @@ export interface FileRouteTypes {
     | '/'
     | '/auth'
     | '/comunidade'
+    | '/plano'
     | '/avisos'
     | '/contato'
     | '/painel'
@@ -211,6 +221,7 @@ export interface FileRouteTypes {
     | '/'
     | '/auth'
     | '/comunidade'
+    | '/plano'
     | '/avisos'
     | '/contato'
     | '/painel'
@@ -231,6 +242,7 @@ export interface FileRouteTypes {
     | '/_authenticated'
     | '/auth'
     | '/comunidade'
+    | '/plano'
     | '/_authenticated/avisos'
     | '/_authenticated/contato'
     | '/_authenticated/painel'
@@ -252,6 +264,7 @@ export interface RootRouteChildren {
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AuthRoute: typeof AuthRoute
   ComunidadeRoute: typeof ComunidadeRoute
+  PlanoRoute: typeof PlanoRoute
   PerfilSlugRoute: typeof PerfilSlugRoute
   VagasIndexRoute: typeof VagasIndexRoute
   VagasProfissaoCodigoIndexRoute: typeof VagasProfissaoCodigoIndexRoute
@@ -285,6 +298,13 @@ declare module '@tanstack/react-router' {
       path: '/comunidade'
       fullPath: '/comunidade'
       preLoaderRoute: typeof ComunidadeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/plano': {
+      id: '/plano'
+      path: '/plano'
+      fullPath: '/plano'
+      preLoaderRoute: typeof PlanoRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticated/avisos': {
@@ -425,6 +445,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AuthRoute: AuthRoute,
   ComunidadeRoute: ComunidadeRoute,
+  PlanoRoute: PlanoRoute,
   PerfilSlugRoute: PerfilSlugRoute,
   VagasIndexRoute: VagasIndexRoute,
   VagasProfissaoCodigoIndexRoute: VagasProfissaoCodigoIndexRoute,

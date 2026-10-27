@@ -3,7 +3,9 @@ import { BellOff } from "lucide-react";
 import { toast } from "sonner";
 import { AlertPrefsCard } from "@/components/AlertPrefsCard";
 import { Button } from "@/components/ui/button";
-import { useAlertPrefs, useAlerts, useMarkAlertsRead } from "@/lib/alerts";
+import { useQuery } from "@tanstack/react-query";
+import { useAlertPrefs, useAlerts, useMarkAlertsRead, useMyProfessions } from "@/lib/alerts";
+import { getPlanUsage } from "@/lib/plans";
 import { timeAgo } from "@/lib/data";
 import { postParams } from "@/lib/urls";
 
@@ -21,6 +23,11 @@ function Alerts() {
   const { userId } = Route.useRouteContext();
   const { alerts, unread, isLoading, isError, refetch } = useAlerts(userId);
   const { prefs, save } = useAlertPrefs(userId);
+  const { data: myProfessions } = useMyProfessions(userId);
+  const { data: usage } = useQuery({
+    queryKey: ["plan", userId],
+    queryFn: () => getPlanUsage(userId),
+  });
   const markRead = useMarkAlertsRead(userId);
   const quiet = (p: Promise<void>) => p.catch(() => toast.error("Não consegui marcar como lido."));
 
@@ -93,7 +100,12 @@ function Alerts() {
         })}
       </ul>
 
-      <AlertPrefsCard prefs={prefs} onSave={save} />
+      <AlertPrefsCard
+        prefs={prefs}
+        onSave={save}
+        premium={!!usage?.premium}
+        professions={myProfessions ?? []}
+      />
     </div>
   );
 }

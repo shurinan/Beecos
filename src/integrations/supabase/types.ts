@@ -396,6 +396,7 @@ export type Database = {
         Row: {
           email: boolean;
           in_app: boolean;
+          muted_profession_ids: string[];
           paused_until: string | null;
           push: boolean;
           updated_at: string;
@@ -404,6 +405,7 @@ export type Database = {
         Insert: {
           email?: boolean;
           in_app?: boolean;
+          muted_profession_ids?: string[];
           paused_until?: string | null;
           push?: boolean;
           updated_at?: string;
@@ -412,6 +414,7 @@ export type Database = {
         Update: {
           email?: boolean;
           in_app?: boolean;
+          muted_profession_ids?: string[];
           paused_until?: string | null;
           push?: boolean;
           updated_at?: string;
