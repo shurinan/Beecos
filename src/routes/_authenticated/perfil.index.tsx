@@ -1,3 +1,4 @@
+import { usernameErrorMessage } from "@/lib/username";
 import { postParams, profileParam } from "@/lib/urls";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
@@ -150,6 +151,7 @@ function Painel() {
   }
 
   const profileFields: ProfileFields = {
+    username: data?.profile?.slug ?? "",
     full_name: data?.profile?.full_name ?? "",
     headline: data?.profile?.headline ?? "",
     city: data?.profile?.city ?? "",
@@ -159,11 +161,21 @@ function Painel() {
     available: data?.profile?.available ?? false,
   };
 
+  async function checkUsername(name: string): Promise<boolean> {
+    const { data: free, error } = await supabase.rpc("username_available", { _name: name });
+    if (error) throw error;
+    return free === true;
+  }
+
   async function saveProfile(values: ProfileFields): Promise<boolean> {
-    const { error } = await supabase.from("profiles").upsert({ id: userId, ...values });
+    const { username, ...rest } = values;
+    // o nome de usuário só segue quando mudou (e nunca vazio: uma vez escolhido, não se apaga)
+    const slug = username && username !== (data?.profile?.slug ?? "") ? { slug: username } : {};
+    const { error } = await supabase.from("profiles").upsert({ id: userId, ...rest, ...slug });
     if (error) {
       toast.error(
-        isBlockedTextError(error) ? BLOCKED_TEXT_MESSAGE : "Não foi possível salvar o perfil",
+        usernameErrorMessage(error) ??
+          (isBlockedTextError(error) ? BLOCKED_TEXT_MESSAGE : "Não foi possível salvar o perfil"),
       );
       return false;
     }
@@ -398,8 +410,9 @@ function Painel() {
           </div>
           <div className="min-w-0 flex-1">
             <h2 className="truncate text-2xl leading-tight">
-              {profileFields.full_name || "Sem nome"}
+              {profileFields.username ? `@${profileFields.username}` : "Escolha seu @usuário"}
             </h2>
+            <p className="truncate font-semibold">{profileFields.full_name || "Sem nome"}</p>
             {profileFields.headline && <p className="font-semibold">{profileFields.headline}</p>}
             {profileFields.city && (
               <p className="text-sm text-muted-foreground">{profileFields.city}</p>
@@ -529,6 +542,7 @@ function Painel() {
         onOpenChange={(open) => setDialog(open ? "profile" : null)}
         initial={profileFields}
         onSave={saveProfile}
+        checkUsername={checkUsername}
       />
       <PostEditDialog
         open={editOpen}

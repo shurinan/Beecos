@@ -879,6 +879,14 @@ export type Database = {
         Args: { _conversation: string; _post?: string };
         Returns: string;
       };
+      username_available: {
+        Args: { _name: string };
+        Returns: boolean;
+      };
+      is_valid_username: {
+        Args: { _n: string };
+        Returns: boolean;
+      };
       my_post_distances: {
         Args: { _post_ids: string[] };
         Returns: {

@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { isValidUsernameFormat, normalizeUsername, USERNAME_HELP } from "@/lib/username";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -14,6 +15,8 @@ import {
 } from "@/components/ui/dialog";
 
 export type ProfileFields = {
+  /** Nome de usuário (vira o endereço do perfil). Vazio = ainda não escolheu. */
+  username: string;
   full_name: string;
   headline: string;
   city: string;
@@ -42,15 +45,45 @@ export function EditProfileDialog({
   onOpenChange,
   initial,
   onSave,
+  checkUsername,
 }: {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   initial: ProfileFields;
   onSave: (values: ProfileFields) => Promise<boolean>;
+  /** Pergunta ao banco se o nome de usuário está livre. */
+  checkUsername?: (name: string) => Promise<boolean>;
 }) {
   const [form, setForm] = useState(initial);
   const [error, setError] = useState("");
   const [saving, setSaving] = useState(false);
+  const [userStatus, setUserStatus] = useState<"idle" | "checking" | "free" | "taken" | "bad">(
+    "idle",
+  );
+
+  const changed = form.username !== initial.username;
+  useEffect(() => {
+    if (!open || !changed || form.username === "") {
+      setUserStatus("idle");
+      return;
+    }
+    if (!isValidUsernameFormat(form.username)) {
+      setUserStatus("bad");
+      return;
+    }
+    if (!checkUsername) return;
+    setUserStatus("checking");
+    let cancelled = false;
+    const t = setTimeout(() => {
+      checkUsername(form.username)
+        .then((free) => !cancelled && setUserStatus(free ? "free" : "taken"))
+        .catch(() => !cancelled && setUserStatus("idle"));
+    }, 400);
+    return () => {
+      cancelled = true;
+      clearTimeout(t);
+    };
+  }, [open, changed, form.username, checkUsername]);
 
   useEffect(() => {
     if (open) {
@@ -64,6 +97,14 @@ export function EditProfileDialog({
     e.preventDefault();
     if (!form.full_name.trim()) {
       setError("Escreva o seu nome");
+      return;
+    }
+    if (changed && form.username !== "" && (userStatus === "bad" || userStatus === "taken")) {
+      setError(
+        userStatus === "taken"
+          ? "Esse nome de usuário já está em uso. Escolha outro."
+          : USERNAME_HELP,
+      );
       return;
     }
     setSaving(true);
@@ -88,6 +129,50 @@ export function EditProfileDialog({
           <DialogDescription>Estas informações aparecem no seu perfil público.</DialogDescription>
         </DialogHeader>
         <form onSubmit={submit} className="space-y-3" noValidate>
+          <div>
+            <Label htmlFor="pf-user">Nome de usuário</Label>
+            <div className="relative">
+              <span
+                className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 font-bold text-muted-foreground"
+                aria-hidden="true"
+              >
+                @
+              </span>
+              <Input
+                id="pf-user"
+                className="pl-8"
+                maxLength={30}
+                autoCapitalize="none"
+                autoCorrect="off"
+                spellCheck={false}
+                placeholder="seunome"
+                value={form.username}
+                onChange={(e) => setForm({ ...form, username: normalizeUsername(e.target.value) })}
+              />
+            </div>
+            <p
+              className={
+                "mt-1 text-xs " +
+                (userStatus === "taken" || userStatus === "bad"
+                  ? "font-semibold text-destructive"
+                  : userStatus === "free"
+                    ? "font-semibold text-foreground"
+                    : "text-muted-foreground")
+              }
+              aria-live="polite"
+            >
+              {userStatus === "taken"
+                ? "Esse nome de usuário já está em uso."
+                : userStatus === "bad"
+                  ? USERNAME_HELP
+                  : userStatus === "free"
+                    ? "Disponível ✓"
+                    : userStatus === "checking"
+                      ? "Verificando…"
+                      : "Ele aparece no endereço do seu perfil: beecos.lovable.app/perfil/" +
+                        (form.username || "seunome")}
+            </p>
+          </div>
           <div>
             <Label htmlFor="pf-name">Nome</Label>
             <Input
