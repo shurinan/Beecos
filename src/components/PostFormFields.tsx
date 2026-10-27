@@ -5,7 +5,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { CatalogPicker } from "@/components/CatalogPicker";
 import type { Catalog } from "@/lib/catalog";
 import { GeoError, formatCep, isValidCep, lookupCep } from "@/lib/geo";
-import { clampVacancies, type PostDraft } from "@/lib/post-form";
+import { clampVacancies, MAX_DESCRIPTION, MAX_TITLE, type PostDraft } from "@/lib/post-form";
 
 /** Os campos de uma vaga ou anúncio, iguais ao publicar e ao editar. */
 export function PostFormFields({
@@ -55,6 +55,7 @@ export function PostFormFields({
             job ? "Ex: Preciso de ajudante para mudança" : "Ex: Pedreiro disponível esta semana"
           }
           value={draft.title}
+          maxLength={MAX_TITLE}
           onChange={(e) => onChange({ ...draft, title: e.target.value })}
         />
       </div>
@@ -62,8 +63,13 @@ export function PostFormFields({
         aria-label="Detalhes"
         placeholder="Detalhes: o que precisa, quando, onde…"
         value={draft.description}
+        maxLength={MAX_DESCRIPTION}
+        rows={5}
         onChange={(e) => onChange({ ...draft, description: e.target.value })}
       />
+      <p className="-mt-2 text-right text-xs text-muted-foreground" aria-live="polite">
+        {draft.description.length}/{MAX_DESCRIPTION}
+      </p>
       <div className="space-y-1">
         <Label htmlFor={`${idPrefix}-cep`}>
           {job ? "CEP de onde o serviço será feito" : "Seu CEP (opcional)"}

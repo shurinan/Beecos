@@ -37,7 +37,10 @@ export function PostCard({
   post,
   slots,
   distance,
+  full = false,
 }: {
+  /** Na página da vaga: mostra o texto inteiro, sem cortar com "…". */
+  full?: boolean;
   post: PostWithAuthor;
   slots?: PostSlots | undefined;
   /** Distância até quem está vendo; só existe para quem informou onde atua. */
@@ -105,7 +108,13 @@ export function PostCard({
         </p>
       )}
       {post.description && (
-        <p className="mt-1 line-clamp-3 text-sm text-muted-foreground">{post.description}</p>
+        <p
+          className={
+            "mt-1 text-sm text-muted-foreground " + (full ? "selectable whitespace-pre-wrap break-words" : "line-clamp-3")
+          }
+        >
+          {post.description}
+        </p>
       )}
       <div className="mt-3 flex flex-wrap gap-3 text-sm font-medium">
         {post.city && (

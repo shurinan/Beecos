@@ -110,7 +110,7 @@ function PostPage() {
   return (
     <div className="space-y-4">
       {back}
-      <PostCard post={post} slots={slots[post.id]} distance={distance} />
+      <PostCard post={post} slots={slots[post.id]} distance={distance} full />
       {mine ? (
         <Button asChild size="lg" variant="outline" className="w-full">
           <Link

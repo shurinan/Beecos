@@ -31,6 +31,8 @@ export const EMPTY_DRAFT: PostDraft = {
 };
 
 export const MAX_VACANCIES = 20;
+export const MAX_TITLE = 80;
+export const MAX_DESCRIPTION = 600;
 
 /** Primeiro problema que impede de publicar, em palavras simples; nulo se está tudo certo. */
 export function draftError(d: PostDraft, minVacancies = 1): string | null {
@@ -55,8 +57,8 @@ export function clampVacancies(n: number): number {
 /** Campos da tabela de vagas (o local oculto vai à parte, em post_locations). */
 export function draftColumns(d: PostDraft) {
   return {
-    title: d.title.trim(),
-    description: d.description.trim(),
+    title: d.title.trim().slice(0, MAX_TITLE),
+    description: d.description.trim().slice(0, MAX_DESCRIPTION),
     city: d.city.trim(),
     price: d.price.trim(),
     vacancies: d.kind === "job" ? d.vacancies : 1,
