@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { ArrowLeft, CheckCircle2, MessageCircle } from "lucide-react";
+import { ArrowLeft, CheckCircle2, MessageCircle, XCircle } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { ConfirmButton } from "@/components/ConfirmButton";
@@ -10,6 +10,7 @@ import { useUnread } from "@/lib/chat-hooks";
 import { KIND_LABEL, timeAgo, type PostKind } from "@/lib/data";
 import { formatRating, levelLabel, topSkill, type SkillBase } from "@/lib/skills";
 import {
+  MAX_NEGOTIATIONS,
   STATUS_LABEL,
   chooseLabel,
   isFilled,
@@ -69,16 +70,17 @@ function Interested() {
       const convs = await supabase
         .from("conversation_posts")
         .select(
-          `created_at, conversations!inner(id, last_message_at, user_a, user_b, a:profiles!conversations_user_a_fkey(${PERSON}), b:profiles!conversations_user_b_fkey(${PERSON}))`,
+          `created_at, closed_at, conversations!inner(id, last_message_at, user_a, user_b, a:profiles!conversations_user_a_fkey(${PERSON}), b:profiles!conversations_user_b_fkey(${PERSON}))`,
         )
         .eq("post_id", id);
       if (convs.error) throw convs.error;
       const rows = (
         (convs.data ?? []) as unknown as {
           created_at: string;
+          closed_at: string | null;
           conversations: Omit<ConvRow, "created_at">;
         }[]
-      ).map((r) => ({ ...r.conversations, created_at: r.created_at }));
+      ).map((r) => ({ ...r.conversations, created_at: r.created_at, closed_at: r.closed_at }));
       const convIds = rows.map((c) => c.id);
       const people = rows.map((c) => (c.user_a === userId ? c.b : c.a)).filter(Boolean) as Person[];
       const [eng, msgs, ratings] = await Promise.all([
@@ -124,6 +126,7 @@ function Interested() {
             created_at: c.created_at,
             last_message_at: c.last_message_at,
             rank: c.rank,
+            closed: !!c.closed_at,
             person,
             replied: !!person && replied.has(`${c.id}:${person.id}`),
             engagement: e ? { id: e.id, status: e.status as EngagementStatus } : null,
@@ -159,6 +162,10 @@ function Interested() {
   const isJob = post.kind === "job";
   const full = isJob && isFilled(slots);
   const who = isJob ? "Prestador" : "Interessado";
+  const holdsSlot = (c: (typeof data.people)[number]) =>
+    !!c.engagement && c.engagement.status !== "cancelled";
+  const openCount = data.people.filter((c) => !c.closed && !holdsSlot(c)).length;
+  const negotiationsFull = openCount >= MAX_NEGOTIATIONS;
 
   return (
     <div className="space-y-4">
@@ -179,6 +186,13 @@ function Interested() {
         </p>
       </div>
 
+      {isJob && data.people.length > 0 && (
+        <p className="text-sm font-semibold" aria-live="polite">
+          {openCount} de {MAX_NEGOTIATIONS} negociações abertas
+          {negotiationsFull && ". Encerre uma para que outra pessoa possa entrar em contato."}
+        </p>
+      )}
+
       {data.people.length === 0 && (
         <p className="rounded-lg border-2 border-dashed border-foreground/40 p-6 text-center text-muted-foreground">
           Ninguém entrou em contato ainda. Quando alguém tocar em "Conversar" na sua publicação,
@@ -196,6 +210,7 @@ function Interested() {
         const top = topSkill(p?.profile_skills);
         const e = c.engagement;
         const open = !e || e.status === "cancelled";
+        const closed = c.closed;
         const unread = byConversation[c.conversationId] ?? 0;
         const name = p?.full_name || "Usuário";
         return (
@@ -241,7 +256,12 @@ function Interested() {
                   Conversa ativa {timeAgo(c.last_message_at)}
                 </p>
               </div>
-              {e && (
+              {closed && (
+                <span className="shrink-0 rounded border border-foreground px-2 py-0.5 text-xs font-bold uppercase">
+                  Encerrada
+                </span>
+              )}
+              {e && !closed && (
                 <span className="shrink-0 rounded bg-secondary px-2 py-0.5 text-xs font-bold uppercase text-secondary-foreground">
                   {STATUS_LABEL[e.status]}
                 </span>
@@ -259,7 +279,7 @@ function Interested() {
                   )}
                 </Link>
               </Button>
-              {isJob && open && (
+              {isJob && open && !closed && (
                 <ConfirmButton
                   size="sm"
                   variant="default"
@@ -273,13 +293,42 @@ function Interested() {
                   <CheckCircle2 /> {chooseLabel(post.kind)}
                 </ConfirmButton>
               )}
+              {isJob && open && !closed && (
+                <ConfirmButton
+                  size="sm"
+                  variant="outline"
+                  loading={act.busy}
+                  title={`Encerrar a negociação com ${name}?`}
+                  description={`${name} é avisado(a) no chat e abre espaço para outra pessoa. A conversa continua, e você pode reabrir depois se houver espaço.`}
+                  confirmLabel="Encerrar"
+                  onConfirm={() => act.closeNegotiation(c.conversationId, id)}
+                >
+                  <XCircle /> Encerrar negociação
+                </ConfirmButton>
+              )}
+              {isJob && closed && (
+                <Button
+                  type="button"
+                  size="sm"
+                  variant="outline"
+                  disabled={act.busy || negotiationsFull}
+                  onClick={() => act.reopenNegotiation(c.conversationId, id)}
+                >
+                  Reabrir negociação
+                </Button>
+              )}
             </div>
-            {isJob && open && !c.replied && (
+            {isJob && closed && negotiationsFull && (
+              <p className="text-xs text-muted-foreground">
+                Para reabrir, encerre outra negociação primeiro.
+              </p>
+            )}
+            {isJob && open && !closed && !c.replied && (
               <p className="text-xs text-muted-foreground">
                 Você poderá escolher quando {name} responder na conversa.
               </p>
             )}
-            {isJob && open && c.replied && full && (
+            {isJob && open && !closed && c.replied && full && (
               <p className="text-xs text-muted-foreground">Todas as vagas estão preenchidas.</p>
             )}
           </article>
