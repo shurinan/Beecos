@@ -61,8 +61,15 @@ const submit = () =>
     screen.getByRole("button", { name: /^(Adicionar habilidade|Salvar alterações)$/ }),
   );
 
-const choose = (id: string) =>
-  fireEvent.change(screen.getByLabelText("Ou escolha na lista"), { target: { value: id } });
+/** Digita no campo e escolhe a opção da lista (não existe texto livre). */
+function choose(name: string, typed = name) {
+  const input = screen.getByRole("combobox");
+  fireEvent.focus(input);
+  fireEvent.change(input, { target: { value: typed } });
+  fireEvent.click(screen.getByRole("option", { name: new RegExp("^" + name) }));
+}
+
+const openServices = () => fireEvent.click(screen.getByRole("button", { name: /serviços/i }));
 
 /** Responde às três perguntas Sim/Não: experiência, treinamento e certificado. */
 function answer(exp: boolean, training: boolean, cert: boolean) {
@@ -77,8 +84,7 @@ function answer(exp: boolean, training: boolean, cert: boolean) {
 describe("SkillDialog", () => {
   it("shows the profession picker and the skill form fields", () => {
     setup();
-    expect(screen.getByLabelText("Profissão")).toBeTruthy();
-    expect(screen.getByLabelText("Ou escolha na lista")).toBeTruthy();
+    expect(screen.getByRole("combobox", { name: "Profissão" })).toBeTruthy();
     expect(screen.getByText("Nível de competência")).toBeTruthy();
     for (const label of ["Quase profissional", "Profissional", "Especialista"]) {
       expect(screen.getByLabelText(new RegExp(label))).toBeTruthy();
@@ -100,10 +106,13 @@ describe("SkillDialog", () => {
   it("lists the services of the chosen profession and saves them", async () => {
     const { onSave, onOpenChange } = setup();
     expect(screen.queryByLabelText("Instalação de chuveiro")).toBeNull();
-    choose("p-ele");
+    choose("Eletricista");
+    expect(screen.queryByLabelText("Instalação de chuveiro")).toBeNull(); // recolhido
+    openServices();
     fireEvent.click(screen.getByLabelText("Instalação de chuveiro"));
     fireEvent.click(screen.getByLabelText("Troca de tomadas"));
     fireEvent.click(screen.getByLabelText("Troca de tomadas")); // desmarca
+    expect(screen.getByRole("button", { name: /Instalação de chuveiro/ })).toBeTruthy();
     fireEvent.click(screen.getByLabelText(/Profissional/));
     answer(true, false, true);
     fireEvent.change(screen.getByLabelText("Outras informações"), {
@@ -127,11 +136,8 @@ describe("SkillDialog", () => {
 
   it("finds a profession or service by nickname and picks it", async () => {
     const { onSave } = setup();
-    fireEvent.change(screen.getByLabelText("Profissão"), { target: { value: "chuveiro" } });
-    fireEvent.click(screen.getByRole("button", { name: /Instalação de chuveiro/ }));
-    expect((screen.getByLabelText("Instalação de chuveiro") as HTMLInputElement).checked).toBe(
-      true,
-    );
+    choose("Instalação de chuveiro", "chuveiro");
+    expect(screen.getByRole("button", { name: /Instalação de chuveiro/ })).toBeTruthy();
     fireEvent.click(screen.getByLabelText(/Especialista/));
     answer(false, false, false);
     submit();
@@ -144,7 +150,7 @@ describe("SkillDialog", () => {
 
   it("accepts 'Outro' with a name of the person's own", async () => {
     const { onSave } = setup();
-    choose("__other__");
+    choose("Outro", "xyz");
     expect(screen.queryByText("Quais serviços você faz?")).toBeNull();
     submit();
     expect(await screen.findByText("Escreva o nome da habilidade")).toBeTruthy();
@@ -164,7 +170,7 @@ describe("SkillDialog", () => {
 
   it("blocks a profession already added, ignoring case and accents", async () => {
     const { onSave } = setup({ existing: ["ELETRICISTA"] });
-    choose("p-ele");
+    choose("Eletricista");
     submit();
     expect(await screen.findByText("Você já adicionou essa habilidade")).toBeTruthy();
     expect(onSave).not.toHaveBeenCalled();
@@ -183,7 +189,7 @@ describe("SkillDialog", () => {
         onSave={onSave}
       />,
     );
-    choose("p-ped");
+    choose("Pedreiro");
     fireEvent.click(screen.getByLabelText(/Especialista/));
     answer(true, true, false);
     submit();
@@ -194,7 +200,7 @@ describe("SkillDialog", () => {
   it("asks for the years only after answering yes, and sends them", async () => {
     const { onSave } = setup();
     expect(screen.queryByLabelText(/Há quantos anos/)).toBeNull();
-    choose("p-ele");
+    choose("Eletricista");
     fireEvent.click(screen.getByLabelText(/Profissional/));
     fireEvent.click(screen.getAllByLabelText("Sim")[0]!);
     fireEvent.change(screen.getByLabelText(/Há quantos anos/), { target: { value: "4" } });
@@ -212,7 +218,7 @@ describe("SkillDialog", () => {
 
   it("rejects invalid years and drops them when experience is no", async () => {
     const { onSave } = setup();
-    choose("p-ped");
+    choose("Pedreiro");
     fireEvent.click(screen.getByLabelText(/Especialista/));
     fireEvent.click(screen.getAllByLabelText("Sim")[0]!);
     fireEvent.change(screen.getByLabelText(/Há quantos anos/), { target: { value: "99" } });
@@ -246,12 +252,14 @@ describe("SkillDialog", () => {
       },
       existing: ["Eletricista"],
     });
-    expect(screen.queryByLabelText("Ou escolha na lista")).toBeNull();
+    expect(screen.queryByRole("combobox")).toBeNull();
     expect(screen.getByText("Eletricista")).toBeTruthy();
     expect((screen.getByLabelText(/Especialista/) as HTMLInputElement).checked).toBe(true);
-    expect((screen.getByLabelText("Instalação de chuveiro") as HTMLInputElement).checked).toBe(
-      true,
-    );
+    openServices();
+    expect(
+      (screen.getByRole("checkbox", { name: "Instalação de chuveiro" }) as HTMLInputElement)
+        .checked,
+    ).toBe(true);
     fireEvent.click(screen.getByLabelText("Troca de tomadas"));
     submit();
     await waitFor(() => expect(onSave).toHaveBeenCalledTimes(1));

@@ -108,3 +108,9 @@ Cada profissão e serviço tem `aliases` (apelidos de busca, como "bico de pedre
 - `my_post_distances(ids)` devolve a distância das vagas até quem está logado e se passou do raio ("pode ser longe"). O ponto de ninguém sai do banco.
 - O CEP vira ponto no navegador (`src/lib/geo.ts`): BrasilAPI, depois Nominatim (rua, depois cidade).
 - Os avisos por profissão e raio são o passo seguinte; aqui ficam os dados e a distância no feed.
+
+## Local da vaga privado e edição (migration 0014)
+
+- O CEP e as coordenadas da vaga ficam em `post_locations`, visível só para o dono da vaga. A tabela pública `posts` não guarda mais endereço; a distância sai da função `my_post_distances`.
+- A vaga publicada pode ser editada (botão "Editar" em Minhas publicações). O tipo não muda e as vagas não podem ficar abaixo das já ocupadas (trigger `posts_edit_guard`).
+- Profissão e serviço são escolhidos num campo que se digita e se escolhe na lista; os serviços ficam recolhidos até abrir.

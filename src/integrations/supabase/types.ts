@@ -199,9 +199,6 @@ export type Database = {
           description: string
           id: string
           kind: string
-          lat: number | null
-          lng: number | null
-          postal_code: string | null
           price: string
           price_value: number | null
           profession_id: string | null
@@ -216,9 +213,6 @@ export type Database = {
           description?: string
           id?: string
           kind: string
-          lat?: number | null
-          lng?: number | null
-          postal_code?: string | null
           price?: string
           profession_id?: string | null
           service_id?: string | null
@@ -232,9 +226,6 @@ export type Database = {
           description?: string
           id?: string
           kind?: string
-          lat?: number | null
-          lng?: number | null
-          postal_code?: string | null
           price?: string
           profession_id?: string | null
           service_id?: string | null
@@ -362,6 +353,38 @@ export type Database = {
             columns: ["profession_id"]
             isOneToOne: false
             referencedRelation: "professions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      post_locations: {
+        Row: {
+          lat: number
+          lng: number
+          post_id: string
+          postal_code: string
+          updated_at: string
+        }
+        Insert: {
+          lat: number
+          lng: number
+          post_id: string
+          postal_code: string
+          updated_at?: string
+        }
+        Update: {
+          lat?: number
+          lng?: number
+          post_id?: string
+          postal_code?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "post_locations_post_id_fkey"
+            columns: ["post_id"]
+            isOneToOne: true
+            referencedRelation: "posts"
             referencedColumns: ["id"]
           },
         ]
