@@ -22,6 +22,7 @@ import { Avatar, SelfDeclared, SkillCard, StarInput, Stars } from "@/components/
 import { useAuth } from "@/lib/auth";
 import { isUuid, openConversation, timeAgo } from "@/lib/data";
 import { profileParam } from "@/lib/urls";
+import { ReportButton } from "@/components/ReportButton";
 import { usePremiumIds } from "@/lib/discovery";
 import { useCatalog } from "@/lib/catalog";
 import { limitMessage } from "@/lib/plans";
@@ -272,6 +273,11 @@ function ProfilePage({ id }: { id: string }) {
           <Button size="lg" className="mt-4 w-full" onClick={chat}>
             <MessageCircle /> Conversar e negociar
           </Button>
+        )}
+        {userId && userId !== id && (
+          <p className="mt-3 text-center">
+            <ReportButton type="profile" targetId={id} what="este perfil" />
+          </p>
         )}
       </section>
 
