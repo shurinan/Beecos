@@ -4,6 +4,7 @@ import type { ReactNode } from "react";
 import { useAuth } from "@/lib/auth";
 import { useChatBackground, usePresenceHeartbeat, useUnread } from "@/lib/chat-hooks";
 import { useAlerts } from "@/lib/alerts";
+import { ThemeToggle } from "@/components/ThemeToggle";
 import { BackButton } from "@/components/BackButton";
 import { InstallPrompt } from "@/components/InstallPrompt";
 
@@ -27,36 +28,41 @@ export function AppShell({ children }: { children: ReactNode }) {
         <div className="flex h-14 items-center justify-between px-4">
           <div className="flex items-center">
             <BackButton />
-            <Link to="/" className="font-display text-2xl text-foreground">
+            <Link to="/" className="font-display text-2xl text-primary-foreground">
               Beecos
-              <span className="text-background [-webkit-text-stroke:1px_var(--foreground)]">.</span>
+              <span className="text-[oklch(0.99_0.004_95)] [-webkit-text-stroke:1px_var(--primary-foreground)]">
+                .
+              </span>
             </Link>
           </div>
-          {userId && (
-            <Link
-              to="/avisos"
-              aria-label={alertsUnread > 0 ? `Avisos, ${alertsUnread} não lidos` : "Avisos"}
-              className="relative rounded-md p-2 text-foreground"
-            >
-              <Bell className="h-6 w-6" />
-              {alertsUnread > 0 && (
-                <span
-                  key={alertsUnread}
-                  className="badge-pop absolute right-0 top-0 flex h-4 min-w-4 items-center justify-center rounded-full border border-foreground bg-destructive px-1 text-[10px] font-bold leading-none text-destructive-foreground"
-                >
-                  {alertsUnread > 99 ? "99+" : alertsUnread}
-                </span>
-              )}
-            </Link>
-          )}
-          {!userId && (
-            <Link
-              to="/auth"
-              className="rounded-md bg-foreground px-3 py-1.5 text-sm font-bold text-background"
-            >
-              Entrar
-            </Link>
-          )}
+          <div className="flex items-center gap-1">
+            <ThemeToggle />
+            {userId && (
+              <Link
+                to="/avisos"
+                aria-label={alertsUnread > 0 ? `Avisos, ${alertsUnread} não lidos` : "Avisos"}
+                className="relative rounded-md p-2 text-primary-foreground"
+              >
+                <Bell className="h-6 w-6" />
+                {alertsUnread > 0 && (
+                  <span
+                    key={alertsUnread}
+                    className="badge-pop absolute right-0 top-0 flex h-4 min-w-4 items-center justify-center rounded-full border border-foreground bg-destructive px-1 text-[10px] font-bold leading-none text-destructive-foreground"
+                  >
+                    {alertsUnread > 99 ? "99+" : alertsUnread}
+                  </span>
+                )}
+              </Link>
+            )}
+            {!userId && (
+              <Link
+                to="/auth"
+                className="rounded-md bg-primary-foreground px-3 py-1.5 text-sm font-bold text-primary"
+              >
+                Entrar
+              </Link>
+            )}
+          </div>
         </div>
         <div className="hazard-stripe h-1.5" />
       </header>

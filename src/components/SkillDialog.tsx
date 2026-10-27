@@ -26,7 +26,7 @@ type Errors = Partial<
 >;
 
 const cardBase =
-  "flex cursor-pointer gap-3 rounded-lg border-2 border-foreground bg-background p-3 has-[:checked]:bg-primary has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-ring";
+  "flex cursor-pointer gap-3 rounded-lg border-2 border-foreground bg-background p-3 has-[:checked]:bg-primary has-[:checked]:text-primary-foreground has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-ring";
 
 function Question({
   label,
