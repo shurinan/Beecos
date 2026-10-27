@@ -22,6 +22,13 @@
       "when": 1793018937665,
       "tag": "0002_conv_creator_is_user_a",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1793100000000,
+      "tag": "0003_privacy_and_conversation_hardening",
+      "breakpoints": true
     }
   ]
 }
