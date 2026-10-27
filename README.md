@@ -119,3 +119,8 @@ Cada profissão e serviço tem `aliases` (apelidos de busca, como "bico de pedre
 
 - Ao publicar uma vaga ('job') com profissão e local, o banco avisa quem tem a mesma profissão no perfil e atua até o raio efetivo (20 km, mais a expansão Premium). O autor não é avisado, nem quem pausou/desligou. Editar a vaga não avisa de novo.
 - Tela `/avisos` (sino no topo) com lista, marcar como lido e preferências. Ligar/desligar/pausar é grátis. Colunas `email` e `push` já guardam a escolha para as próximas etapas.
+
+## Limite de negociações (migration 0016)
+
+- Cada vaga aceita até 5 negociações abertas ao mesmo tempo. Quem já foi escolhido não ocupa espaço.
+- Quem publicou encerra uma negociação (a conversa continua, com aviso no chat) e pode reabrir se houver espaço. Quem foi encerrado não volta sozinho.

@@ -52,16 +52,22 @@ export type Database = {
       };
       conversation_posts: {
         Row: {
+          closed_at: string | null;
+          closed_by: string | null;
           conversation_id: string;
           created_at: string;
           post_id: string;
         };
         Insert: {
+          closed_at?: string | null;
+          closed_by?: string | null;
           conversation_id: string;
           created_at?: string;
           post_id: string;
         };
         Update: {
+          closed_at?: string | null;
+          closed_by?: string | null;
           conversation_id?: string;
           created_at?: string;
           post_id?: string;
@@ -854,6 +860,14 @@ export type Database = {
       can_review: {
         Args: { _reviewee: string; _reviewer: string };
         Returns: boolean;
+      };
+      close_negotiation: {
+        Args: { _conversation: string; _post: string };
+        Returns: undefined;
+      };
+      reopen_negotiation: {
+        Args: { _conversation: string; _post: string };
+        Returns: undefined;
       };
       choose_provider: {
         Args: { _conversation: string; _post?: string };
