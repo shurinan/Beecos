@@ -124,3 +124,9 @@ Cada profissão e serviço tem `aliases` (apelidos de busca, como "bico de pedre
 
 - Cada vaga aceita até 5 negociações abertas ao mesmo tempo. Quem já foi escolhido não ocupa espaço.
 - Quem publicou encerra uma negociação (a conversa continua, com aviso no chat) e pode reabrir se houver espaço. Quem foi encerrado não volta sozinho.
+
+## Endereços legíveis (migration 0017)
+
+- `/` apresenta o app; `/vagas` lista; `/vagas/<profissao>/<codigo>` é a vaga (código único por vaga); `/vagas/<profissao>/<codigo>/interessados` é do dono; `/perfil` é o seu perfil e `/perfil/<nome>` o de outra pessoa; `/conversas` e `/conversas/<nome>`; `/comunidade` está reservada.
+- Perfil e vaga ganham um slug fixo gerado pelo banco (não muda se o nome ou o título mudarem). Nomes repetidos viram `nome-2`.
+- Endereços antigos (`/painel`, `/mensagens/...`, `/publicacao/...`, `/contato`, `/perfil/<id>`) redirecionam para os novos.

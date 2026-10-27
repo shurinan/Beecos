@@ -1,6 +1,6 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Award,
   Crown,
@@ -20,7 +20,8 @@ import { PostCard, type PostWithAuthor } from "@/components/PostCard";
 import { AdSlot } from "@/components/AdSlot";
 import { Avatar, SelfDeclared, SkillCard, StarInput, Stars } from "@/components/profile-bits";
 import { useAuth } from "@/lib/auth";
-import { openConversation, timeAgo } from "@/lib/data";
+import { isUuid, openConversation, timeAgo } from "@/lib/data";
+import { profileParam } from "@/lib/urls";
 import { usePremiumIds } from "@/lib/discovery";
 import { useCatalog } from "@/lib/catalog";
 import { limitMessage } from "@/lib/plans";
@@ -30,7 +31,7 @@ import { usePostStats } from "@/lib/services-hooks";
 import { BLOCKED_TEXT_MESSAGE, isBlockedTextError, replySpeedLabel } from "@/lib/chat";
 import { SKILL_COLUMNS, formatRating, sortSkills, type ProfileSkill } from "@/lib/skills";
 
-export const Route = createFileRoute("/perfil/$id")({
+export const Route = createFileRoute("/perfil/$slug")({
   validateSearch: (s: Record<string, unknown>) => ({
     post: typeof s["post"] === "string" ? (s["post"] as string) : undefined,
   }),
@@ -48,7 +49,7 @@ export const Route = createFileRoute("/perfil/$id")({
       },
     ],
   }),
-  component: ProfilePage,
+  component: ProfileRoute,
 });
 
 type ReviewRow = {
@@ -60,8 +61,45 @@ type ReviewRow = {
   reviewer: { full_name: string } | null;
 };
 
-function ProfilePage() {
-  const { id } = Route.useParams();
+/**
+ * O endereço traz o nome legível (/perfil/bruno-espindola). Aqui ele vira o id da pessoa; um link
+ * antigo com o id continua abrindo e é trocado pelo endereço bonito.
+ */
+function ProfileRoute() {
+  const { slug } = Route.useParams();
+  const search = Route.useSearch();
+  const navigate = useNavigate();
+  const byId = isUuid(slug);
+  const { data, isLoading, isError } = useQuery({
+    queryKey: ["profile-ref", slug],
+    queryFn: async () => {
+      const q = supabase.from("profiles").select("id, slug");
+      const { data, error } = await (byId ? q.eq("id", slug) : q.eq("slug", slug)).maybeSingle();
+      if (error) throw error;
+      return data;
+    },
+  });
+  const pretty = data?.slug && byId ? data.slug : null;
+  useEffect(() => {
+    if (pretty) navigate({ to: "/perfil/$slug", params: { slug: pretty }, search, replace: true });
+  }, [pretty, navigate, search]);
+  if (byId) return <ProfilePage id={slug} />; // não espera a consulta: o perfil já carrega pelo id
+  if (isLoading) return <p className="text-center text-muted-foreground">Carregando…</p>;
+  if (isError) {
+    return (
+      <p className="text-center">
+        Entre na sua conta para ver este perfil.{" "}
+        <Link to="/auth" className="font-bold underline">
+          Entrar
+        </Link>
+      </p>
+    );
+  }
+  if (!data) return <p className="text-center">Perfil não encontrado.</p>;
+  return <ProfilePage id={data.id} />;
+}
+
+function ProfilePage({ id }: { id: string }) {
   const { post } = Route.useSearch();
   const { userId, ready } = useAuth();
   const navigate = useNavigate();
@@ -91,7 +129,7 @@ function ProfilePage() {
         supabase
           .from("posts")
           .select(
-            "*, professions(name), services(name), profiles(full_name, profile_skills(skill, level))",
+            "*, professions(name, slug), services(name), profiles(full_name, slug, profile_skills(skill, level))",
           )
           .eq("user_id", id)
           .order("created_at", { ascending: false }),
@@ -153,8 +191,8 @@ function ProfilePage() {
   async function chat() {
     if (!userId) return navigate({ to: "/auth" });
     try {
-      const conv = await openConversation(userId, id, post ?? null);
-      navigate({ to: "/mensagens/$id", params: { id: conv } });
+      await openConversation(userId, id, post ?? null);
+      navigate({ to: "/conversas/$slug", params: { slug: profileParam(pr) } });
     } catch (e) {
       toast.error(limitMessage(e) ?? "Não foi possível abrir a conversa");
     }
@@ -225,7 +263,7 @@ function ProfilePage() {
 
         {userId === id ? (
           <Button asChild variant="outline" className="mt-4 w-full">
-            <Link to="/painel">Editar meu perfil</Link>
+            <Link to="/perfil">Editar meu perfil</Link>
           </Button>
         ) : (
           <Button size="lg" className="mt-4 w-full" onClick={chat}>

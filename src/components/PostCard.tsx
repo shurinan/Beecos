@@ -8,9 +8,12 @@ import { catalogLabel } from "@/lib/catalog";
 import { formatKm, type PostDistance } from "@/lib/geo";
 import { isFilled, vacanciesLabel } from "@/lib/services";
 import type { PostSlots } from "@/lib/services-hooks";
+import { postParams, profileParam } from "@/lib/urls";
 
 export type PostWithAuthor = {
   id: string;
+  /** Endereço da vaga (/vagas/profissao/codigo). */
+  slug?: string;
   kind: string;
   title: string;
   description: string;
@@ -20,9 +23,14 @@ export type PostWithAuthor = {
   user_id: string;
   vacancies?: number;
   premium?: boolean;
-  professions?: { name: string } | null;
+  professions?: { name: string; slug?: string | null } | null;
   services?: { name: string } | null;
-  profiles: { full_name: string; avatar_path?: string | null; profile_skills: SkillBase[] } | null;
+  profiles: {
+    full_name: string;
+    slug?: string | null;
+    avatar_path?: string | null;
+    profile_skills: SkillBase[];
+  } | null;
 };
 
 export function PostCard({
@@ -78,7 +86,19 @@ export function PostCard({
           {timeAgo(post.created_at)}
         </span>
       </div>
-      <h3 className="text-lg leading-tight">{post.title}</h3>
+      <h3 className="text-lg leading-tight">
+        {post.slug ? (
+          <Link
+            to="/vagas/$profissao/$codigo"
+            params={postParams({ slug: post.slug, professions: post.professions ?? null })}
+            className="hover:underline"
+          >
+            {post.title}
+          </Link>
+        ) : (
+          post.title
+        )}
+      </h3>
       {post.professions && (
         <p className="mt-0.5 text-sm font-semibold text-muted-foreground">
           {catalogLabel(post.professions, post.services)}
@@ -111,8 +131,8 @@ export function PostCard({
       </div>
       {userId ? (
         <Link
-          to="/perfil/$id"
-          params={{ id: post.user_id }}
+          to="/perfil/$slug"
+          params={{ slug: profileParam({ id: post.user_id, slug: post.profiles?.slug }) }}
           search={{ post: post.id }}
           className="mt-3 flex items-center gap-2 border-t border-dashed border-foreground/30 pt-3"
         >

@@ -1,3 +1,4 @@
+import { profileParam } from "@/lib/urls";
 import { Link } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
@@ -103,6 +104,7 @@ export function EngagementCard({
   conversationId,
   userId,
   otherId,
+  otherSlug,
   otherName,
   post,
   participants,
@@ -111,6 +113,7 @@ export function EngagementCard({
   conversationId: string;
   userId: string;
   otherId: string;
+  otherSlug?: string | null | undefined;
   otherName: string;
   post: EngagementPost;
   participants: [string, string];
@@ -252,8 +255,8 @@ export function EngagementCard({
             {a.review && (
               <Button asChild size="sm">
                 <Link
-                  to="/perfil/$id"
-                  params={{ id: otherId }}
+                  to="/perfil/$slug"
+                  params={{ slug: profileParam({ id: otherId, slug: otherSlug }) }}
                   search={{ post: undefined }}
                   hash="avaliar"
                 >
