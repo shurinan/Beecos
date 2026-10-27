@@ -4,6 +4,8 @@ import { useState } from "react";
 import { Search, Plus } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { PostCard, type PostWithAuthor } from "@/components/PostCard";
+import { AdSlot } from "@/components/AdSlot";
+import { FEED_AD_AFTER, shouldShowFeedAd } from "@/lib/ads";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/lib/auth";
@@ -31,7 +33,7 @@ function Index() {
     queryFn: async () => {
       let q = supabase
         .from("posts")
-        .select("*, profiles(full_name, skills)")
+        .select("*, profiles(full_name, profile_skills(skill, level))")
         .eq("kind", kind)
         .order("created_at", { ascending: false })
         .limit(50);
@@ -92,7 +94,12 @@ function Index() {
             Nada por aqui ainda{city ? ` em "${city}"` : ""}. Seja o primeiro a publicar!
           </div>
         )}
-        {posts?.map((p) => <PostCard key={p.id} post={p} />)}
+        {posts?.map((p, i) => (
+          <div key={p.id} className="space-y-4">
+            <PostCard post={p} />
+            {i === FEED_AD_AFTER - 1 && shouldShowFeedAd(posts.length) && <AdSlot placement="feed" />}
+          </div>
+        ))}
       </div>
     </div>
   );

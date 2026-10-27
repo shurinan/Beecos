@@ -1,6 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { MapPin, Banknote } from "lucide-react";
 import { KIND_LABEL, timeAgo, initials, type PostKind } from "@/lib/data";
+import { levelLabel, topSkill, type ProfileSkill } from "@/lib/skills";
 
 export type PostWithAuthor = {
   id: string;
@@ -11,11 +12,12 @@ export type PostWithAuthor = {
   price: string;
   created_at: string;
   user_id: string;
-  profiles: { full_name: string; skills: string[] } | null;
+  profiles: { full_name: string; profile_skills: ProfileSkill[] } | null;
 };
 
 export function PostCard({ post }: { post: PostWithAuthor }) {
   const kind = post.kind as PostKind;
+  const top = topSkill(post.profiles?.profile_skills);
   return (
     <article className="block-card p-4">
       <div className="mb-2 flex items-center justify-between">
@@ -55,7 +57,14 @@ export function PostCard({ post }: { post: PostWithAuthor }) {
         <span className="flex h-8 w-8 items-center justify-center rounded-full bg-foreground text-xs font-bold text-background">
           {initials(post.profiles?.full_name ?? "")}
         </span>
-        <span className="text-sm font-semibold">{post.profiles?.full_name || "Usuário"}</span>
+        <span className="min-w-0 text-sm font-semibold">
+          {post.profiles?.full_name || "Usuário"}
+          {top && (
+            <span className="block truncate text-xs font-normal text-muted-foreground">
+              {top.skill} · {levelLabel(top.level)}
+            </span>
+          )}
+        </span>
         <span className="ml-auto text-sm font-bold underline">Ver e conversar →</span>
       </Link>
     </article>

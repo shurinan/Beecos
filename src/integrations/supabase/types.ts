@@ -14,6 +14,48 @@ export type Database = {
   }
   public: {
     Tables: {
+      ads: {
+        Row: {
+          active: boolean
+          body: string
+          created_at: string
+          ends_at: string | null
+          id: string
+          image_url: string | null
+          link_url: string
+          placement: string
+          sponsor: string
+          starts_at: string | null
+          title: string
+        }
+        Insert: {
+          active?: boolean
+          body?: string
+          created_at?: string
+          ends_at?: string | null
+          id?: string
+          image_url?: string | null
+          link_url: string
+          placement: string
+          sponsor: string
+          starts_at?: string | null
+          title: string
+        }
+        Update: {
+          active?: boolean
+          body?: string
+          created_at?: string
+          ends_at?: string | null
+          id?: string
+          image_url?: string | null
+          link_url?: string
+          placement?: string
+          sponsor?: string
+          starts_at?: string | null
+          title?: string
+        }
+        Relationships: []
+      }
       conversations: {
         Row: {
           created_at: string
@@ -145,16 +187,19 @@ export type Database = {
       }
       profile_private: {
         Row: {
+          birth_date: string | null
           phone: string
           updated_at: string
           user_id: string
         }
         Insert: {
+          birth_date?: string | null
           phone?: string
           updated_at?: string
           user_id: string
         }
         Update: {
+          birth_date?: string | null
           phone?: string
           updated_at?: string
           user_id?: string
@@ -177,7 +222,10 @@ export type Database = {
           created_at: string
           full_name: string
           id: string
-          skills: string[]
+          headline: string
+          experience_years: number | null
+          service_area: string
+          certificate_note: string
         }
         Insert: {
           available?: boolean
@@ -186,7 +234,10 @@ export type Database = {
           created_at?: string
           full_name?: string
           id: string
-          skills?: string[]
+          headline?: string
+          experience_years?: number | null
+          service_area?: string
+          certificate_note?: string
         }
         Update: {
           available?: boolean
@@ -195,9 +246,83 @@ export type Database = {
           created_at?: string
           full_name?: string
           id?: string
-          skills?: string[]
+          headline?: string
+          experience_years?: number | null
+          service_area?: string
+          certificate_note?: string
         }
         Relationships: []
+      }
+      profile_skills: {
+        Row: {
+          created_at: string
+          level: number
+          skill: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          level?: number
+          skill: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          level?: number
+          skill?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "profile_skills_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      reviews: {
+        Row: {
+          comment: string
+          created_at: string
+          id: string
+          rating: number
+          reviewee_id: string
+          reviewer_id: string
+        }
+        Insert: {
+          comment?: string
+          created_at?: string
+          id?: string
+          rating: number
+          reviewee_id: string
+          reviewer_id: string
+        }
+        Update: {
+          comment?: string
+          created_at?: string
+          id?: string
+          rating?: number
+          reviewee_id?: string
+          reviewer_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "reviews_reviewee_id_fkey"
+            columns: ["reviewee_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "reviews_reviewer_id_fkey"
+            columns: ["reviewer_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       subscriptions: {
         Row: {
@@ -230,9 +355,20 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      profile_rating_stats: {
+        Row: {
+          avg_rating: number | null
+          review_count: number | null
+          user_id: string | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
+      can_review: {
+        Args: { _reviewee: string; _reviewer: string }
+        Returns: boolean
+      }
       is_premium: { Args: { _user_id: string }; Returns: boolean }
     }
     Enums: {
