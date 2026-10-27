@@ -1,7 +1,8 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { initials, timeAgo } from "@/lib/data";
+import { timeAgo } from "@/lib/data";
+import { Avatar } from "@/components/profile-bits";
 import { useUnread } from "@/lib/chat-hooks";
 import { NotificationCard } from "@/components/InstallPrompt";
 
@@ -26,7 +27,7 @@ function Inbox() {
       const { data, error } = await supabase
         .from("conversations")
         .select(
-          "id, last_message_at, user_a, user_b, posts(title), a:profiles!conversations_user_a_fkey(full_name), b:profiles!conversations_user_b_fkey(full_name)",
+          "id, last_message_at, user_a, user_b, posts(title), a:profiles!conversations_user_a_fkey(full_name, avatar_path), b:profiles!conversations_user_b_fkey(full_name, avatar_path)",
         )
         .order("last_message_at", { ascending: false });
       if (error) throw error;
@@ -56,9 +57,7 @@ function Inbox() {
               "block-card flex items-center gap-3 p-3 " + (unread > 0 ? "bg-primary/20" : "")
             }
           >
-            <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full border-2 border-foreground bg-primary font-bold">
-              {initials(other?.full_name ?? "")}
-            </span>
+            <Avatar name={other?.full_name ?? ""} path={other?.avatar_path} size={44} />
             <div className="min-w-0 flex-1">
               <p className={unread > 0 ? "font-extrabold" : "font-bold"}>
                 {other?.full_name || "Usuário"}

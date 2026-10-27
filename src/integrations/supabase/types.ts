@@ -56,6 +56,39 @@ export type Database = {
         }
         Relationships: []
       }
+      conversation_posts: {
+        Row: {
+          conversation_id: string
+          created_at: string
+          post_id: string
+        }
+        Insert: {
+          conversation_id: string
+          created_at?: string
+          post_id: string
+        }
+        Update: {
+          conversation_id?: string
+          created_at?: string
+          post_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "conversation_posts_conversation_id_fkey"
+            columns: ["conversation_id"]
+            isOneToOne: false
+            referencedRelation: "conversations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "conversation_posts_post_id_fkey"
+            columns: ["post_id"]
+            isOneToOne: false
+            referencedRelation: "posts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       conversations: {
         Row: {
           created_at: string
@@ -167,6 +200,7 @@ export type Database = {
           id: string
           kind: string
           price: string
+          price_value: number | null
           title: string
           user_id: string
           vacancies: number
@@ -535,6 +569,12 @@ export type Database = {
       }
     }
     Views: {
+      premium_users: {
+        Row: {
+          user_id: string | null
+        }
+        Relationships: []
+      }
       post_stats: {
         Row: {
           post_id: string | null
@@ -558,8 +598,29 @@ export type Database = {
         Returns: boolean
       }
       choose_provider: {
-        Args: { _conversation: string }
+        Args: { _conversation: string; _post?: string }
         Returns: string
+      }
+      open_conversation: {
+        Args: { _other: string; _post?: string }
+        Returns: string
+      }
+      parse_price: {
+        Args: { _t: string }
+        Returns: number
+      }
+      search_post_ids: {
+        Args: {
+          _kind: string
+          _city?: string
+          _q?: string
+          _min_price?: number
+          _max_price?: number
+          _min_rating?: number
+          _only_premium?: boolean
+          _limit?: number
+        }
+        Returns: { id: string; premium: boolean }[]
       }
       respond_engagement: {
         Args: { _accept: boolean; _id: string }

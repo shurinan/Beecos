@@ -3,6 +3,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import {
   Award,
+  Crown,
   MapPin,
   MessageCircle,
   MessageSquare,
@@ -20,6 +21,7 @@ import { AdSlot } from "@/components/AdSlot";
 import { Avatar, SelfDeclared, SkillCard, StarInput, Stars } from "@/components/profile-bits";
 import { useAuth } from "@/lib/auth";
 import { openConversation, timeAgo } from "@/lib/data";
+import { usePremiumIds } from "@/lib/discovery";
 import { limitMessage } from "@/lib/plans";
 import { PHONE_KIND_LABEL, formatMethods, type ContactPhone } from "@/lib/contact";
 import { telUrl, whatsappUrl } from "@/lib/services";
@@ -62,6 +64,7 @@ function ProfilePage() {
   const { post } = Route.useSearch();
   const { userId, ready } = useAuth();
   const navigate = useNavigate();
+  const premium = usePremiumIds([id]).has(id);
 
   const { data: replyStats } = useQuery({
     queryKey: ["reply-stats", id],
@@ -121,7 +124,9 @@ function ProfilePage() {
     return (
       <div className="block-card space-y-3 p-5 text-center">
         <p className="font-semibold">Entre para ver este perfil.</p>
-        <p className="text-sm text-muted-foreground">Os perfis são vistos só por quem tem conta no Beecos.</p>
+        <p className="text-sm text-muted-foreground">
+          Os perfis são vistos só por quem tem conta no Beecos.
+        </p>
         <Button asChild>
           <Link to="/auth">Entrar ou criar conta</Link>
         </Button>
@@ -158,6 +163,11 @@ function ProfilePage() {
           <Avatar name={pr.full_name} path={pr.avatar_path} size={64} />
           <div className="min-w-0">
             <h1 className="text-2xl leading-tight">{pr.full_name || "Usuário"}</h1>
+            {premium && (
+              <p className="mt-1 inline-flex items-center gap-1 rounded bg-foreground px-2 py-0.5 text-xs font-bold uppercase text-background">
+                <Crown className="h-3 w-3" aria-hidden="true" /> Premium
+              </p>
+            )}
             {speed && (
               <p className="mt-1 inline-flex items-center gap-1 rounded bg-secondary px-2 py-0.5 text-xs font-bold text-secondary-foreground">
                 <Zap className="h-3 w-3" /> {speed}

@@ -1,7 +1,8 @@
 import { Link } from "@tanstack/react-router";
 import { useAuth } from "@/lib/auth";
-import { MapPin, Banknote } from "lucide-react";
-import { KIND_LABEL, timeAgo, initials, type PostKind } from "@/lib/data";
+import { MapPin, Banknote, Crown } from "lucide-react";
+import { Avatar } from "@/components/profile-bits";
+import { KIND_LABEL, timeAgo, type PostKind } from "@/lib/data";
 import { levelLabel, topSkill, type SkillBase } from "@/lib/skills";
 import { isFilled, vacanciesLabel } from "@/lib/services";
 import type { PostSlots } from "@/lib/services-hooks";
@@ -16,7 +17,8 @@ export type PostWithAuthor = {
   created_at: string;
   user_id: string;
   vacancies?: number;
-  profiles: { full_name: string; profile_skills: SkillBase[] } | null;
+  premium?: boolean;
+  profiles: { full_name: string; avatar_path?: string | null; profile_skills: SkillBase[] } | null;
 };
 
 export function PostCard({ post, slots }: { post: PostWithAuthor; slots?: PostSlots | undefined }) {
@@ -29,16 +31,23 @@ export function PostCard({ post, slots }: { post: PostWithAuthor; slots?: PostSl
       ? vacanciesLabel(slots ?? (post.vacancies ? { vacancies: post.vacancies, taken: 0 } : null))
       : null;
   return (
-    <article className="block-card p-4">
+    <article className={"block-card p-4 " + (post.premium ? "bg-accent" : "")}>
       <div className="mb-2 flex items-center justify-between">
-        <span
-          className={
-            kind === "job"
-              ? "rounded bg-primary px-2 py-0.5 text-xs font-bold uppercase text-primary-foreground border border-foreground"
-              : "rounded bg-secondary px-2 py-0.5 text-xs font-bold uppercase text-secondary-foreground"
-          }
-        >
-          {KIND_LABEL[kind]}
+        <span className="flex items-center gap-2">
+          <span
+            className={
+              kind === "job"
+                ? "rounded bg-primary px-2 py-0.5 text-xs font-bold uppercase text-primary-foreground border border-foreground"
+                : "rounded bg-secondary px-2 py-0.5 text-xs font-bold uppercase text-secondary-foreground"
+            }
+          >
+            {KIND_LABEL[kind]}
+          </span>
+          {post.premium && (
+            <span className="flex items-center gap-1 rounded border border-foreground bg-foreground px-2 py-0.5 text-xs font-bold uppercase text-background">
+              <Crown className="h-3 w-3" aria-hidden="true" /> Premium
+            </span>
+          )}
         </span>
         <span className="flex items-center gap-2 text-xs text-muted-foreground">
           {vacancy && (
@@ -79,9 +88,11 @@ export function PostCard({ post, slots }: { post: PostWithAuthor; slots?: PostSl
           search={{ post: post.id }}
           className="mt-3 flex items-center gap-2 border-t border-dashed border-foreground/30 pt-3"
         >
-          <span className="flex h-8 w-8 items-center justify-center rounded-full bg-foreground text-xs font-bold text-background">
-            {initials(post.profiles?.full_name ?? "")}
-          </span>
+          <Avatar
+            name={post.profiles?.full_name ?? ""}
+            path={post.profiles?.avatar_path}
+            size={36}
+          />
           <span className="min-w-0 text-sm font-semibold">
             {post.profiles?.full_name || "Usuário"}
             {top && (
