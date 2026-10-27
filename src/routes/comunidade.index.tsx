@@ -40,7 +40,7 @@ function Community() {
   const { grupo } = Route.useSearch();
   const navigate = useNavigate();
   const { data: catalog } = useCatalog();
-  const { ids, isLoading: loadingMine } = useMyCommunities(userId);
+  const { ids, isLoading: loadingMine, leave } = useMyCommunities(userId);
   const { data: overview } = useCommunityOverview();
   const [applying, setApplying] = useState<string | null>(null);
 
@@ -127,9 +127,28 @@ function Community() {
               </li>
             </ul>
           </nav>
-          <p className="text-sm text-muted-foreground">
-            {groupsSummary(selected ? 1 : mine.length, openJobs)}
-          </p>
+          <div className="flex items-center justify-between gap-2">
+            <p className="text-sm text-muted-foreground">
+              {groupsSummary(selected ? 1 : mine.length, openJobs)}
+            </p>
+            {selected && (
+              <Button
+                type="button"
+                size="sm"
+                variant="outline"
+                onClick={() => {
+                  leave(selected.id)
+                    .then(() => {
+                      toast.success(`Você saiu do grupo ${selected.name}.`);
+                      navigate({ to: "/comunidade", search: { grupo: undefined } });
+                    })
+                    .catch(() => toast.error("Não consegui sair. Tente de novo."));
+                }}
+              >
+                Sair do grupo
+              </Button>
+            )}
+          </div>
         </>
       )}
 
