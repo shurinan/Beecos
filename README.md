@@ -130,3 +130,8 @@ Cada profissão e serviço tem `aliases` (apelidos de busca, como "bico de pedre
 - `/` apresenta o app; `/vagas` lista; `/vagas/<profissao>/<codigo>` é a vaga (código único por vaga); `/vagas/<profissao>/<codigo>/interessados` é do dono; `/perfil` é o seu perfil e `/perfil/<nome>` o de outra pessoa; `/conversas` e `/conversas/<nome>`; `/comunidade` está reservada.
 - Perfil e vaga ganham um slug fixo gerado pelo banco (não muda se o nome ou o título mudarem). Nomes repetidos viram `nome-2`.
 - Endereços antigos (`/painel`, `/mensagens/...`, `/publicacao/...`, `/contato`, `/perfil/<id>`) redirecionam para os novos.
+
+## Nome de usuário único (migration 0018)
+
+- O endereço do perfil (`/perfil/<usuario>`) é um nome de usuário único, como numa rede social: 3 a 30 caracteres, letras minúsculas sem acento, números e hífen, sem repetir e fora da lista de palavras reservadas.
+- Não existe mais numeração automática (`-2`). Se o nome sugerido já está em uso, o perfil fica sem usuário (o link usa o id) até a pessoa escolher. A tela de escolha ainda não foi construída; o banco já valida (`USUARIO_EM_USO`, `USUARIO_INVALIDO`) e `username_available(nome)` diz se está livre.
