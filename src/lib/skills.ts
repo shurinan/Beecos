@@ -28,6 +28,10 @@ export type SkillBase = { skill: string; level: number };
 
 /** Habilidade completa, como no formulário "Adicionar habilidade". */
 export type SkillInput = SkillBase & {
+  /** Profissão do catálogo; nulo quando a pessoa escolheu "Outro" (o nome fica em `skill`). */
+  profession_id: string | null;
+  /** Serviços da profissão que a pessoa faz (opcional). */
+  service_ids: string[];
   has_experience: boolean;
   years_experience: number | null;
   had_training: boolean;
@@ -40,7 +44,7 @@ export type ProfileSkill = SkillInput & { updated_at: string };
 
 /** Colunas lidas do banco para montar um ProfileSkill. */
 export const SKILL_COLUMNS =
-  "skill, level, has_experience, years_experience, had_training, certified, notes, updated_at";
+  "skill, level, profession_id, service_ids, has_experience, years_experience, had_training, certified, notes, updated_at";
 
 /** Mais alto primeiro; empate por nome. */
 export function sortSkills<T extends SkillBase>(skills: T[]): T[] {

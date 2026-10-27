@@ -109,7 +109,11 @@ function Index() {
       const { data, error } = await supabase
         .from("posts")
         // quem não está logado não lê perfis (só quem tem conta), então não pede o autor
-        .select(userId ? "*, profiles(full_name, avatar_path, profile_skills(skill, level))" : "*")
+        .select(
+          userId
+            ? "*, professions(name), services(name), profiles(full_name, avatar_path, profile_skills(skill, level))"
+            : "*, professions(name), services(name)",
+        )
         .in(
           "id",
           order.map((o) => o.id),

@@ -22,6 +22,7 @@ import { Avatar, SelfDeclared, SkillCard, StarInput, Stars } from "@/components/
 import { useAuth } from "@/lib/auth";
 import { openConversation, timeAgo } from "@/lib/data";
 import { usePremiumIds } from "@/lib/discovery";
+import { useCatalog } from "@/lib/catalog";
 import { limitMessage } from "@/lib/plans";
 import { PHONE_KIND_LABEL, formatMethods, type ContactPhone } from "@/lib/contact";
 import { telUrl, whatsappUrl } from "@/lib/services";
@@ -65,6 +66,7 @@ function ProfilePage() {
   const { userId, ready } = useAuth();
   const navigate = useNavigate();
   const premium = usePremiumIds([id]).has(id);
+  const { data: catalog } = useCatalog();
 
   const { data: replyStats } = useQuery({
     queryKey: ["reply-stats", id],
@@ -88,7 +90,9 @@ function ProfilePage() {
         supabase.from("profile_skills").select(SKILL_COLUMNS).eq("user_id", id),
         supabase
           .from("posts")
-          .select("*, profiles(full_name, profile_skills(skill, level))")
+          .select(
+            "*, professions(name), services(name), profiles(full_name, profile_skills(skill, level))",
+          )
           .eq("user_id", id)
           .order("created_at", { ascending: false }),
         supabase
@@ -237,7 +241,13 @@ function ProfilePage() {
           <h2 className="text-xl">Habilidades e experiência</h2>
           <SelfDeclared />
           {data.skills.map((sk) => (
-            <SkillCard key={sk.skill} skill={sk} />
+            <SkillCard
+              key={sk.skill}
+              skill={sk}
+              services={(sk.service_ids ?? []).flatMap(
+                (sid) => catalog?.services.get(sid)?.name ?? [],
+              )}
+            />
           ))}
         </section>
       )}

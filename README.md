@@ -87,3 +87,15 @@ O texto da autorização de uso dos dados está em `src/lib/contact.ts` (`CONSEN
 - **Premium em destaque**: `premium_users` expõe só os ids de quem tem plano ativo. No feed, anúncios Premium vêm primeiro, com selo e fundo de destaque; o selo também aparece no perfil.
 - **Foto de perfil** aparece nas conversas, nos anúncios e no perfil; a troca fica em Informações de contato, com atalho na Visão geral.
 - **Início**: para visitantes, apresentação do que há na plataforma e como funciona; para todos, atalhos por assunto e a vitrine de "Comunidades por profissão", marcada como "Em breve" (as comunidades ainda não existem).
+
+## Catálogo de profissões (migration `0012`)
+
+Setor > profissão > serviço, nas tabelas `sectors`, `professions` e `services` (leitura pública, escrita só pelo banco).
+Cada profissão e serviço tem `aliases` (apelidos de busca, como "bico de pedreiro") e `active` (desativar não apaga nada).
+
+- **Habilidades** do perfil apontam para uma profissão (`profile_skills.profession_id`) e marcam os serviços que a pessoa faz (`service_ids`).
+  `profession_id` nulo é "Outro": o nome escrito pela pessoa fica em `skill`.
+- **Publicações** guardam `profession_id` e `service_id` (opcionais). Será a base do aviso por profissão e raio.
+- A fonte do catálogo é `drizzle/catalog/catalogo.json` (a mesma que vira a planilha de revisão). Para mudar:
+  edite a planilha, converta com `drizzle/catalog/seedsql.py` e rode o SQL no banco. O SQL é idempotente (atualiza pelo `slug`).
+- A migration apagou as habilidades que existiam (eram só testes) e recomeçou pelo catálogo.

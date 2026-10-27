@@ -201,6 +201,8 @@ export type Database = {
           kind: string
           price: string
           price_value: number | null
+          profession_id: string | null
+          service_id: string | null
           title: string
           user_id: string
           vacancies: number
@@ -212,6 +214,8 @@ export type Database = {
           id?: string
           kind: string
           price?: string
+          profession_id?: string | null
+          service_id?: string | null
           title: string
           user_id: string
           vacancies?: number
@@ -223,16 +227,132 @@ export type Database = {
           id?: string
           kind?: string
           price?: string
+          profession_id?: string | null
+          service_id?: string | null
           title?: string
           user_id?: string
           vacancies?: number
         }
         Relationships: [
           {
+            foreignKeyName: "posts_profession_id_fkey"
+            columns: ["profession_id"]
+            isOneToOne: false
+            referencedRelation: "professions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "posts_service_id_fkey"
+            columns: ["service_id"]
+            isOneToOne: false
+            referencedRelation: "services"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "posts_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: false
             referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      sectors: {
+        Row: {
+          active: boolean
+          id: string
+          name: string
+          slug: string
+          sort: number
+        }
+        Insert: {
+          active?: boolean
+          id?: string
+          name: string
+          slug: string
+          sort?: number
+        }
+        Update: {
+          active?: boolean
+          id?: string
+          name?: string
+          slug?: string
+          sort?: number
+        }
+        Relationships: []
+      }
+      professions: {
+        Row: {
+          active: boolean
+          aliases: string[]
+          id: string
+          name: string
+          sector_id: string
+          slug: string
+          sort: number
+        }
+        Insert: {
+          active?: boolean
+          aliases?: string[]
+          id?: string
+          name: string
+          sector_id: string
+          slug: string
+          sort?: number
+        }
+        Update: {
+          active?: boolean
+          aliases?: string[]
+          id?: string
+          name?: string
+          sector_id?: string
+          slug?: string
+          sort?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "professions_sector_id_fkey"
+            columns: ["sector_id"]
+            isOneToOne: false
+            referencedRelation: "sectors"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      services: {
+        Row: {
+          active: boolean
+          aliases: string[]
+          id: string
+          name: string
+          profession_id: string
+          slug: string
+          sort: number
+        }
+        Insert: {
+          active?: boolean
+          aliases?: string[]
+          id?: string
+          name: string
+          profession_id: string
+          slug: string
+          sort?: number
+        }
+        Update: {
+          active?: boolean
+          aliases?: string[]
+          id?: string
+          name?: string
+          profession_id?: string
+          slug?: string
+          sort?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "services_profession_id_fkey"
+            columns: ["profession_id"]
+            isOneToOne: false
+            referencedRelation: "professions"
             referencedColumns: ["id"]
           },
         ]
@@ -457,6 +577,8 @@ export type Database = {
           has_experience: boolean
           level: number
           notes: string
+          profession_id: string | null
+          service_ids: string[]
           skill: string
           updated_at: string
           user_id: string
@@ -469,6 +591,8 @@ export type Database = {
           has_experience?: boolean
           level?: number
           notes?: string
+          profession_id?: string | null
+          service_ids?: string[]
           skill: string
           updated_at?: string
           user_id: string
@@ -481,12 +605,21 @@ export type Database = {
           has_experience?: boolean
           level?: number
           notes?: string
+          profession_id?: string | null
+          service_ids?: string[]
           skill?: string
           updated_at?: string
           user_id?: string
           years_experience?: number | null
         }
         Relationships: [
+          {
+            foreignKeyName: "profile_skills_profession_id_fkey"
+            columns: ["profession_id"]
+            isOneToOne: false
+            referencedRelation: "professions"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "profile_skills_user_id_fkey"
             columns: ["user_id"]
