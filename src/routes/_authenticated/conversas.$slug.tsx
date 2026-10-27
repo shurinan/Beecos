@@ -554,7 +554,7 @@ function Chat({ id }: { id: string }) {
               <div className={"flex " + (mine ? "justify-end" : "justify-start")}>
                 <div
                   className={
-                    "max-w-[80%] whitespace-pre-wrap break-words rounded-2xl border-2 border-foreground px-3 py-2 text-sm " +
+                    "selectable max-w-[80%] whitespace-pre-wrap break-words rounded-2xl border-2 border-foreground px-3 py-2 text-sm " +
                     (mine ? "rounded-br-sm bg-primary " : "rounded-bl-sm bg-card ") +
                     (isNew ? "msg-in " + (mine ? "msg-in-mine" : "msg-in-theirs") : "")
                   }
