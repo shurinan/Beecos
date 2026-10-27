@@ -214,45 +214,6 @@ export type Database = {
           },
         ]
       }
-      profiles: {
-        Row: {
-          available: boolean
-          bio: string
-          city: string
-          created_at: string
-          full_name: string
-          id: string
-          headline: string
-          experience_years: number | null
-          service_area: string
-          certificate_note: string
-        }
-        Insert: {
-          available?: boolean
-          bio?: string
-          city?: string
-          created_at?: string
-          full_name?: string
-          id: string
-          headline?: string
-          experience_years?: number | null
-          service_area?: string
-          certificate_note?: string
-        }
-        Update: {
-          available?: boolean
-          bio?: string
-          city?: string
-          created_at?: string
-          full_name?: string
-          id?: string
-          headline?: string
-          experience_years?: number | null
-          service_area?: string
-          certificate_note?: string
-        }
-        Relationships: []
-      }
       profile_skills: {
         Row: {
           created_at: string
@@ -281,6 +242,45 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      profiles: {
+        Row: {
+          available: boolean
+          bio: string
+          certificate_note: string
+          city: string
+          created_at: string
+          experience_years: number | null
+          full_name: string
+          headline: string
+          id: string
+          service_area: string
+        }
+        Insert: {
+          available?: boolean
+          bio?: string
+          certificate_note?: string
+          city?: string
+          created_at?: string
+          experience_years?: number | null
+          full_name?: string
+          headline?: string
+          id: string
+          service_area?: string
+        }
+        Update: {
+          available?: boolean
+          bio?: string
+          certificate_note?: string
+          city?: string
+          created_at?: string
+          experience_years?: number | null
+          full_name?: string
+          headline?: string
+          id?: string
+          service_area?: string
+        }
+        Relationships: []
       }
       reviews: {
         Row: {
@@ -361,7 +361,15 @@ export type Database = {
           review_count: number | null
           user_id: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "reviews_reviewee_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
     }
     Functions: {
