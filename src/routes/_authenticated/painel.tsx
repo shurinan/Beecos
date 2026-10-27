@@ -350,6 +350,43 @@ function Painel() {
         </Link>
       </div>
 
+      <section className="block-card space-y-3 p-5">
+        <div className="flex items-center justify-between">
+          <h2 className="text-xl">Seu plano</h2>
+          <span
+            className={
+              "rounded px-2 py-1 text-xs font-bold uppercase " +
+              (usage?.premium ? "bg-primary text-primary-foreground" : "bg-muted")
+            }
+          >
+            {usage?.premium ? "Premium" : "Grátis"}
+          </span>
+        </div>
+        {usage?.premium ? (
+          <p>Vagas e conversas ilimitadas.</p>
+        ) : (
+          <>
+            <p className="text-sm">
+              Vagas este mês:{" "}
+              <b>
+                {usage?.jobs ?? 0}/{FREE_JOBS_PER_MONTH}
+              </b>{" "}
+              · Novas conversas:{" "}
+              <b>
+                {usage?.chats ?? 0}/{FREE_CHATS_PER_MONTH}
+              </b>
+            </p>
+            <div className="rounded-lg border-2 border-foreground bg-accent p-3">
+              <p className="font-display">Premium — {PREMIUM_PRICE}</p>
+              <p className="text-sm">Publique vagas sem limite e converse com quem quiser.</p>
+              <Button className="mt-2 w-full" onClick={() => toast("Pagamento em breve!")}>
+                Quero ser Premium
+              </Button>
+            </div>
+          </>
+        )}
+      </section>
+
       <section className="block-card p-5">
         <div className="flex items-start gap-4">
           <div className="flex shrink-0 flex-col items-center gap-1">
@@ -517,43 +554,6 @@ function Painel() {
         existing={(data?.skills ?? []).map((x) => x.skill)}
         onSave={saveSkill}
       />
-
-      <section className="block-card space-y-3 p-5">
-        <div className="flex items-center justify-between">
-          <h2 className="text-xl">Seu plano</h2>
-          <span
-            className={
-              "rounded px-2 py-1 text-xs font-bold uppercase " +
-              (usage?.premium ? "bg-primary text-primary-foreground" : "bg-muted")
-            }
-          >
-            {usage?.premium ? "Premium" : "Grátis"}
-          </span>
-        </div>
-        {usage?.premium ? (
-          <p>Vagas e conversas ilimitadas.</p>
-        ) : (
-          <>
-            <p className="text-sm">
-              Vagas este mês:{" "}
-              <b>
-                {usage?.jobs ?? 0}/{FREE_JOBS_PER_MONTH}
-              </b>{" "}
-              · Novas conversas:{" "}
-              <b>
-                {usage?.chats ?? 0}/{FREE_CHATS_PER_MONTH}
-              </b>
-            </p>
-            <div className="rounded-lg border-2 border-foreground bg-accent p-3">
-              <p className="font-display">Premium — {PREMIUM_PRICE}</p>
-              <p className="text-sm">Publique vagas sem limite e converse com quem quiser.</p>
-              <Button className="mt-2 w-full" onClick={() => toast("Pagamento em breve!")}>
-                Quero ser Premium
-              </Button>
-            </div>
-          </>
-        )}
-      </section>
 
       <form onSubmit={createPost} className="block-card space-y-3 p-5">
         <h2 className="text-xl">Nova publicação</h2>
