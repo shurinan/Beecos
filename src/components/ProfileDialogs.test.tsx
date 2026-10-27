@@ -51,6 +51,8 @@ describe("EditProfileDialog", () => {
 describe("SkillCard", () => {
   const base = {
     skill: "Elétrica/Eletricista residencial",
+    profession_id: null,
+    service_ids: [],
     level: 2,
     has_experience: true,
     years_experience: 1,
@@ -71,6 +73,11 @@ describe("SkillCard", () => {
     );
     expect(screen.getByText("Fez treinamento ou aulas")).toBeTruthy();
     expect(screen.getByText("Aprendi no SENAI")).toBeTruthy();
+  });
+
+  it("lists the services the person does", () => {
+    render(<SkillCard skill={base} services={["Instalação de chuveiro", "Troca de tomadas"]} />);
+    expect(screen.getByText(/Instalação de chuveiro, Troca de tomadas/)).toBeTruthy();
   });
 
   it("shows a dash for years without professional experience and 'Não' when not certified", () => {

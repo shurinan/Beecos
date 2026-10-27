@@ -20,6 +20,8 @@ import {
 import { useAuth } from "@/lib/auth";
 import { Avatar, SelfDeclared, SkillCard } from "@/components/profile-bits";
 import { SkillDialog } from "@/components/SkillDialog";
+import { CatalogPicker, EMPTY_SELECTION, type CatalogSelection } from "@/components/CatalogPicker";
+import { useCatalog } from "@/lib/catalog";
 import { EditProfileDialog, type ProfileFields } from "@/components/ProfileDialogs";
 import { BLOCKED_TEXT_MESSAGE, isBlockedTextError } from "@/lib/chat";
 import { addressLines, type ContactAddress } from "@/lib/contact";
@@ -99,6 +101,8 @@ function Painel() {
     initial: null,
   });
   const slots = usePostStats(data?.posts.map((p) => p.id));
+  const { data: catalog } = useCatalog();
+  const [pick, setPick] = useState<CatalogSelection>(EMPTY_SELECTION);
   const [post, setPost] = useState({
     kind: "job" as PostKind,
     title: "",
@@ -170,9 +174,17 @@ function Painel() {
 
   async function createPost(e: React.FormEvent) {
     e.preventDefault();
-    const { error } = await supabase
-      .from("posts")
-      .insert({ ...post, vacancies: post.kind === "job" ? post.vacancies : 1, user_id: userId });
+    if (!pick.professionId && !pick.other) {
+      toast.error('Escolha a profissão, ou "Outro" se ela não estiver na lista');
+      return;
+    }
+    const { error } = await supabase.from("posts").insert({
+      ...post,
+      profession_id: pick.professionId,
+      service_id: pick.serviceIds[0] ?? null,
+      vacancies: post.kind === "job" ? post.vacancies : 1,
+      user_id: userId,
+    });
     if (error) {
       toast.error(
         isBlockedTextError(error)
@@ -183,6 +195,7 @@ function Painel() {
     }
     toast.success("Publicado!");
     setPost({ ...post, title: "", description: "", price: "", vacancies: 1 });
+    setPick(EMPTY_SELECTION);
     qc.invalidateQueries();
   }
 
@@ -301,6 +314,9 @@ function Painel() {
             <SkillCard
               key={sk.skill}
               skill={sk}
+              services={(sk.service_ids ?? []).flatMap(
+                (id) => catalog?.services.get(id)?.name ?? [],
+              )}
               actions={
                 <span className="flex shrink-0 gap-1">
                   <button
@@ -343,6 +359,7 @@ function Painel() {
         open={skillDialog.open}
         onOpenChange={(open) => setSkillDialog((d) => ({ ...d, open }))}
         initial={skillDialog.initial}
+        catalog={catalog}
         existing={(data?.skills ?? []).map((x) => x.skill)}
         onSave={saveSkill}
       />
@@ -401,6 +418,16 @@ function Painel() {
             </button>
           ))}
         </div>
+        <CatalogPicker
+          catalog={catalog}
+          value={pick}
+          onChange={setPick}
+          multipleServices={false}
+          professionLabel={
+            post.kind === "job" ? "Que profissional você procura?" : "Qual é a sua profissão?"
+          }
+          servicesLabel={post.kind === "job" ? "Qual serviço?" : "Qual serviço você oferece?"}
+        />
         <Input
           required
           placeholder={

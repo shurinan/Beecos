@@ -10,6 +10,8 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { CatalogPicker, EMPTY_SELECTION, type CatalogSelection } from "@/components/CatalogPicker";
+import type { Catalog } from "@/lib/catalog";
 import {
   MAX_SKILL_NOTES,
   MAX_YEARS,
@@ -87,15 +89,19 @@ export function SkillDialog({
   onOpenChange,
   initial,
   existing,
+  catalog,
   onSave,
 }: {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   initial: ProfileSkill | null;
   existing: string[];
+  /** Lista de profissões e serviços; nula enquanto carrega. */
+  catalog: Catalog | undefined;
   onSave: (skill: SkillInput) => Promise<boolean>;
 }) {
   const editing = initial !== null;
+  const [pick, setPick] = useState<CatalogSelection>(EMPTY_SELECTION);
   const [name, setName] = useState("");
   const [level, setLevel] = useState(0);
   const [experience, setExperience] = useState<boolean | null>(null);
@@ -108,6 +114,15 @@ export function SkillDialog({
 
   useEffect(() => {
     if (!open) return;
+    setPick(
+      initial
+        ? {
+            professionId: initial.profession_id,
+            other: initial.profession_id === null,
+            serviceIds: initial.service_ids ?? [],
+          }
+        : EMPTY_SELECTION,
+    );
     setName(initial?.skill ?? "");
     setLevel(initial?.level ?? 0);
     setExperience(initial ? initial.has_experience : null);
@@ -121,9 +136,11 @@ export function SkillDialog({
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
-    const trimmed = name.trim();
+    const chosen = pick.professionId ? catalog?.professions.get(pick.professionId) : undefined;
+    const trimmed = pick.other ? name.trim() : (chosen?.name ?? "");
     const next: Errors = {};
-    if (!trimmed) next.skill = "Escreva o nome da habilidade";
+    if (!pick.other && !chosen) next.skill = "Escolha a profissão";
+    else if (!trimmed) next.skill = "Escreva o nome da habilidade";
     else if (!editing && existing.some((n) => normalizeSkill(n) === normalizeSkill(trimmed)))
       next.skill = "Você já adicionou essa habilidade";
     if (level < 1) next.level = "Escolha o seu nível";
@@ -143,6 +160,8 @@ export function SkillDialog({
     setSaving(true);
     const saved = await onSave({
       skill: trimmed,
+      profession_id: pick.other ? null : pick.professionId,
+      service_ids: pick.other ? [] : pick.serviceIds,
       level,
       has_experience: experience === true,
       years_experience: experience === true ? yearsNumber : null,
@@ -166,24 +185,36 @@ export function SkillDialog({
         </DialogHeader>
 
         <form onSubmit={submit} className="space-y-5" noValidate>
-          <div className="space-y-1">
-            <label htmlFor="skill-name" className="text-sm font-bold">
-              Habilidade
-            </label>
-            <Input
-              id="skill-name"
-              maxLength={40}
-              placeholder="Ex: Pedreiro, Pintura, Elétrica"
-              value={name}
-              readOnly={editing}
-              onChange={(e) => setName(e.target.value)}
-            />
-            {errors.skill && (
-              <p role="alert" className="text-xs font-semibold text-destructive">
-                {errors.skill}
-              </p>
-            )}
-          </div>
+          <CatalogPicker
+            catalog={catalog}
+            value={pick}
+            onChange={setPick}
+            multipleServices
+            professionLabel="Profissão"
+            servicesLabel="Quais serviços você faz?"
+            lockProfession={editing}
+          />
+
+          {pick.other && (
+            <div className="space-y-1">
+              <label htmlFor="skill-name" className="text-sm font-bold">
+                Qual é a habilidade?
+              </label>
+              <Input
+                id="skill-name"
+                maxLength={40}
+                placeholder="Ex: Instalador de toldos"
+                value={name}
+                readOnly={editing}
+                onChange={(e) => setName(e.target.value)}
+              />
+            </div>
+          )}
+          {errors.skill && (
+            <p role="alert" className="text-xs font-semibold text-destructive">
+              {errors.skill}
+            </p>
+          )}
 
           <Question label="Nível de competência" error={errors.level}>
             <div className="space-y-2">

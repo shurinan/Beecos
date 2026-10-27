@@ -4,6 +4,7 @@ import { MapPin, Banknote, Crown } from "lucide-react";
 import { Avatar } from "@/components/profile-bits";
 import { KIND_LABEL, timeAgo, type PostKind } from "@/lib/data";
 import { levelLabel, topSkill, type SkillBase } from "@/lib/skills";
+import { catalogLabel } from "@/lib/catalog";
 import { isFilled, vacanciesLabel } from "@/lib/services";
 import type { PostSlots } from "@/lib/services-hooks";
 
@@ -18,6 +19,8 @@ export type PostWithAuthor = {
   user_id: string;
   vacancies?: number;
   premium?: boolean;
+  professions?: { name: string } | null;
+  services?: { name: string } | null;
   profiles: { full_name: string; avatar_path?: string | null; profile_skills: SkillBase[] } | null;
 };
 
@@ -66,6 +69,11 @@ export function PostCard({ post, slots }: { post: PostWithAuthor; slots?: PostSl
         </span>
       </div>
       <h3 className="text-lg leading-tight">{post.title}</h3>
+      {post.professions && (
+        <p className="mt-0.5 text-sm font-semibold text-muted-foreground">
+          {catalogLabel(post.professions, post.services)}
+        </p>
+      )}
       {post.description && (
         <p className="mt-1 line-clamp-3 text-sm text-muted-foreground">{post.description}</p>
       )}

@@ -44,7 +44,16 @@ export function SkillChip({ skill, level }: { skill: string; level: number }) {
  * Cartão de uma habilidade no formato da Visão geral: nome, e abaixo anos de experiência, nível de
  * competência, licenciado/certificado e data de atualização. `actions` é opcional (editar/remover).
  */
-export function SkillCard({ skill, actions }: { skill: ProfileSkill; actions?: ReactNode }) {
+export function SkillCard({
+  skill,
+  actions,
+  services,
+}: {
+  skill: ProfileSkill;
+  actions?: ReactNode;
+  /** Nomes dos serviços da profissão que a pessoa faz. */
+  services?: string[];
+}) {
   const fields = [
     {
       label: "Anos de experiência",
@@ -71,6 +80,12 @@ export function SkillCard({ skill, actions }: { skill: ProfileSkill; actions?: R
           </div>
         ))}
       </dl>
+      {services && services.length > 0 && (
+        <p className="mt-2 text-sm">
+          <span className="font-semibold">Faz: </span>
+          {services.join(", ")}
+        </p>
+      )}
       {skill.had_training && (
         <p className="mt-2 flex items-center gap-1 text-xs font-semibold">
           <GraduationCap className="h-3.5 w-3.5" /> Fez treinamento ou aulas

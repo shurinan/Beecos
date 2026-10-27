@@ -1,0 +1,4260 @@
+[
+ {
+  "sector": "Construção civil",
+  "sector_slug": "construcao-civil",
+  "sector_sort": 0,
+  "profession": "Eletricista",
+  "profession_slug": "eletricista",
+  "profession_sort": 0,
+  "profession_aliases": [
+   "eletrica",
+   "eletricista residencial",
+   "fiação",
+   "bico de eletricista"
+  ],
+  "service": "Instalação de chuveiro",
+  "service_slug": "instalacao-de-chuveiro",
+  "service_sort": 0,
+  "service_aliases": [
+   "trocar chuveiro",
+   "chuveiro elétrico",
+   "resistência de chuveiro"
+  ],
+  "active": true
+ },
+ {
+  "sector": "Construção civil",
+  "sector_slug": "construcao-civil",
+  "sector_sort": 0,
+  "profession": "Eletricista",
+  "profession_slug": "eletricista",
+  "profession_sort": 0,
+  "profession_aliases": [
+   "eletrica",
+   "eletricista residencial",
+   "fiação",
+   "bico de eletricista"
+  ],
+  "service": "Instalação de ventilador de teto",
+  "service_slug": "instalacao-de-ventilador-de-teto",
+  "service_sort": 1,
+  "service_aliases": [
+   "ventilador"
+  ],
+  "active": true
+ },
+ {
+  "sector": "Construção civil",
+  "sector_slug": "construcao-civil",
+  "sector_sort": 0,
+  "profession": "Eletricista",
+  "profession_slug": "eletricista",
+  "profession_sort": 0,
+  "profession_aliases": [
+   "eletrica",
+   "eletricista residencial",
+   "fiação",
+   "bico de eletricista"
+  ],
+  "service": "Troca de tomadas e interruptores",
+  "service_slug": "troca-de-tomadas-e-interruptores",
+  "service_sort": 2,
+  "service_aliases": [
+   "tomada",
+   "interruptor"
+  ],
+  "active": true
+ },
+ {
+  "sector": "Construção civil",
+  "sector_slug": "construcao-civil",
+  "sector_sort": 0,
+  "profession": "Eletricista",
+  "profession_slug": "eletricista",
+  "profession_sort": 0,
+  "profession_aliases": [
+   "eletrica",
+   "eletricista residencial",
+   "fiação",
+   "bico de eletricista"
+  ],
+  "service": "Instalação de luminárias e iluminação",
+  "service_slug": "instalacao-de-luminarias-e-iluminacao",
+  "service_sort": 3,
+  "service_aliases": [
+   "lustre",
+   "spot",
+   "fita de led",
+   "iluminação"
+  ],
+  "active": true
+ },
+ {
+  "sector": "Construção civil",
+  "sector_slug": "construcao-civil",
+  "sector_sort": 0,
+  "profession": "Eletricista",
+  "profession_slug": "eletricista",
+  "profession_sort": 0,
+  "profession_aliases": [
+   "eletrica",
+   "eletricista residencial",
+   "fiação",
+   "bico de eletricista"
+  ],
+  "service": "Instalação ou troca de quadro de luz",
+  "service_slug": "instalacao-ou-troca-de-quadro-de-luz",
+  "service_sort": 4,
+  "service_aliases": [
+   "quadro de distribuição",
+   "disjuntor",
+   "dr"
+  ],
+  "active": true
+ },
+ {
+  "sector": "Construção civil",
+  "sector_slug": "construcao-civil",
+  "sector_sort": 0,
+  "profession": "Eletricista",
+  "profession_slug": "eletricista",
+  "profession_sort": 0,
+  "profession_aliases": [
+   "eletrica",
+   "eletricista residencial",
+   "fiação",
+   "bico de eletricista"
+  ],
+  "service": "Fiação nova e passagem de cabos",
+  "service_slug": "fiacao-nova-e-passagem-de-cabos",
+  "service_sort": 5,
+  "service_aliases": [
+   "rede elétrica",
+   "passar fio"
+  ],
+  "active": true
+ },
+ {
+  "sector": "Construção civil",
+  "sector_slug": "construcao-civil",
+  "sector_sort": 0,
+  "profession": "Eletricista",
+  "profession_slug": "eletricista",
+  "profession_sort": 0,
+  "profession_aliases": [
+   "eletrica",
+   "eletricista residencial",
+   "fiação",
+   "bico de eletricista"
+  ],
+  "service": "Curto-circuito ou falta de energia",
+  "service_slug": "curto-circuito-ou-falta-de-energia",
+  "service_sort": 6,
+  "service_aliases": [
+   "sem luz",
+   "disjuntor caindo",
+   "choque"
+  ],
+  "active": true
+ },
+ {
+  "sector": "Construção civil",
+  "sector_slug": "construcao-civil",
+  "sector_sort": 0,
+  "profession": "Eletricista",
+  "profession_slug": "eletricista",
+  "profession_sort": 0,
+  "profession_aliases": [
+   "eletrica",
+   "eletricista residencial",
+   "fiação",
+   "bico de eletricista"
+  ],
+  "service": "Aterramento",
+  "service_slug": "aterramento",
+  "service_sort": 7,
+  "service_aliases": [
+   "fio terra"
+  ],
+  "active": true
+ },
+ {
+  "sector": "Construção civil",
+  "sector_slug": "construcao-civil",
+  "sector_sort": 0,
+  "profession": "Eletricista",
+  "profession_slug": "eletricista",
+  "profession_sort": 0,
+  "profession_aliases": [
+   "eletrica",
+   "eletricista residencial",
+   "fiação",
+   "bico de eletricista"
+  ],
+  "service": "Instalação de tomada para ar-condicionado ou forno",
+  "service_slug": "instalacao-de-tomada-para-ar-condicionado-ou-forno",
+  "service_sort": 8,
+  "service_aliases": [
+   "tomada 220"
+  ],
+  "active": true
+ },
+ {
+  "sector": "Construção civil",
+  "sector_slug": "construcao-civil",
+  "sector_sort": 0,
+  "profession": "Eletricista",
+  "profession_slug": "eletricista",
+  "profession_sort": 0,
+  "profession_aliases": [
+   "eletrica",
+   "eletricista residencial",
+   "fiação",
+   "bico de eletricista"
+  ],
+  "service": "Instalação de portão eletrônico ou interfone",
+  "service_slug": "instalacao-de-portao-eletronico-ou-interfone",
+  "service_sort": 9,
+  "service_aliases": [
+   "interfone",
+   "motor de portão"
+  ],
+  "active": true
+ },
+ {
+  "sector": "Construção civil",
+  "sector_slug": "construcao-civil",
+  "sector_sort": 0,
+  "profession": "Eletricista",
+  "profession_slug": "eletricista",
+  "profession_sort": 0,
+  "profession_aliases": [
+   "eletrica",
+   "eletricista residencial",
+   "fiação",
+   "bico de eletricista"
+  ],
+  "service": "Instalação elétrica de obra nova",
+  "service_slug": "instalacao-eletrica-de-obra-nova",
+  "service_sort": 10,
+  "service_aliases": [
+   "projeto elétrico",
+   "ligação provisória"
+  ],
+  "active": true
+ },
+ {
+  "sector": "Construção civil",
+  "sector_slug": "construcao-civil",
+  "sector_sort": 0,
+  "profession": "Encanador",
+  "profession_slug": "encanador",
+  "profession_sort": 1,
+  "profession_aliases": [
+   "hidráulica",
+   "bombeiro hidráulico",
+   "encanamento"
+  ],
+  "service": "Vazamento",
+  "service_slug": "vazamento",
+  "service_sort": 0,
+  "service_aliases": [
+   "cano furado",
+   "infiltração hidráulica"
+  ],
+  "active": true
+ },
+ {
+  "sector": "Construção civil",
+  "sector_slug": "construcao-civil",
+  "sector_sort": 0,
+  "profession": "Encanador",
+  "profession_slug": "encanador",
+  "profession_sort": 1,
+  "profession_aliases": [
+   "hidráulica",
+   "bombeiro hidráulico",
+   "encanamento"
+  ],
+  "service": "Desentupimento de pia, ralo ou vaso",
+  "service_slug": "desentupimento-de-pia-ralo-ou-vaso",
+  "service_sort": 1,
+  "service_aliases": [
+   "desentupidor",
+   "entupimento"
+  ],
+  "active": true
+ },
+ {
+  "sector": "Construção civil",
+  "sector_slug": "construcao-civil",
+  "sector_sort": 0,
+  "profession": "Encanador",
+  "profession_slug": "encanador",
+  "profession_sort": 1,
+  "profession_aliases": [
+   "hidráulica",
+   "bombeiro hidráulico",
+   "encanamento"
+  ],
+  "service": "Instalação de torneira ou misturador",
+  "service_slug": "instalacao-de-torneira-ou-misturador",
+  "service_sort": 2,
+  "service_aliases": [
+   "torneira"
+  ],
+  "active": true
+ },
+ {
+  "sector": "Construção civil",
+  "sector_slug": "construcao-civil",
+  "sector_sort": 0,
+  "profession": "Encanador",
+  "profession_slug": "encanador",
+  "profession_sort": 1,
+  "profession_aliases": [
+   "hidráulica",
+   "bombeiro hidráulico",
+   "encanamento"
+  ],
+  "service": "Troca de registro",
+  "service_slug": "troca-de-registro",
+  "service_sort": 3,
+  "service_aliases": [
+   "registro"
+  ],
+  "active": true
+ },
+ {
+  "sector": "Construção civil",
+  "sector_slug": "construcao-civil",
+  "sector_sort": 0,
+  "profession": "Encanador",
+  "profession_slug": "encanador",
+  "profession_sort": 1,
+  "profession_aliases": [
+   "hidráulica",
+   "bombeiro hidráulico",
+   "encanamento"
+  ],
+  "service": "Instalação de vaso sanitário",
+  "service_slug": "instalacao-de-vaso-sanitario",
+  "service_sort": 4,
+  "service_aliases": [
+   "privada",
+   "bacia sanitária",
+   "vaso"
+  ],
+  "active": true
+ },
+ {
+  "sector": "Construção civil",
+  "sector_slug": "construcao-civil",
+  "sector_sort": 0,
+  "profession": "Encanador",
+  "profession_slug": "encanador",
+  "profession_sort": 1,
+  "profession_aliases": [
+   "hidráulica",
+   "bombeiro hidráulico",
+   "encanamento"
+  ],
+  "service": "Instalação de pia, tanque ou cuba",
+  "service_slug": "instalacao-de-pia-tanque-ou-cuba",
+  "service_sort": 5,
+  "service_aliases": [
+   "pia",
+   "tanque"
+  ],
+  "active": true
+ },
+ {
+  "sector": "Construção civil",
+  "sector_slug": "construcao-civil",
+  "sector_sort": 0,
+  "profession": "Encanador",
+  "profession_slug": "encanador",
+  "profession_sort": 1,
+  "profession_aliases": [
+   "hidráulica",
+   "bombeiro hidráulico",
+   "encanamento"
+  ],
+  "service": "Instalação e limpeza de caixa d'água",
+  "service_slug": "instalacao-e-limpeza-de-caixa-d-agua",
+  "service_sort": 6,
+  "service_aliases": [
+   "caixa d'agua",
+   "limpeza de caixa"
+  ],
+  "active": true
+ },
+ {
+  "sector": "Construção civil",
+  "sector_slug": "construcao-civil",
+  "sector_sort": 0,
+  "profession": "Encanador",
+  "profession_slug": "encanador",
+  "profession_sort": 1,
+  "profession_aliases": [
+   "hidráulica",
+   "bombeiro hidráulico",
+   "encanamento"
+  ],
+  "service": "Instalação de aquecedor",
+  "service_slug": "instalacao-de-aquecedor",
+  "service_sort": 7,
+  "service_aliases": [
+   "aquecedor a gás",
+   "boiler"
+  ],
+  "active": true
+ },
+ {
+  "sector": "Construção civil",
+  "sector_slug": "construcao-civil",
+  "sector_sort": 0,
+  "profession": "Encanador",
+  "profession_slug": "encanador",
+  "profession_sort": 1,
+  "profession_aliases": [
+   "hidráulica",
+   "bombeiro hidráulico",
+   "encanamento"
+  ],
+  "service": "Instalação de máquina de lavar",
+  "service_slug": "instalacao-de-maquina-de-lavar",
+  "service_sort": 8,
+  "service_aliases": [
+   "ponto de água"
+  ],
+  "active": true
+ },
+ {
+  "sector": "Construção civil",
+  "sector_slug": "construcao-civil",
+  "sector_sort": 0,
+  "profession": "Encanador",
+  "profession_slug": "encanador",
+  "profession_sort": 1,
+  "profession_aliases": [
+   "hidráulica",
+   "bombeiro hidráulico",
+   "encanamento"
+  ],
+  "service": "Rede de água e esgoto de obra",
+  "service_slug": "rede-de-agua-e-esgoto-de-obra",
+  "service_sort": 9,
+  "service_aliases": [
+   "tubulação",
+   "esgoto"
+  ],
+  "active": true
+ },
+ {
+  "sector": "Construção civil",
+  "sector_slug": "construcao-civil",
+  "sector_sort": 0,
+  "profession": "Pedreiro",
+  "profession_slug": "pedreiro",
+  "profession_sort": 2,
+  "profession_aliases": [
+   "alvenaria",
+   "bico de pedreiro",
+   "pedreiro de obra"
+  ],
+  "service": "Reforma de banheiro",
+  "service_slug": "reforma-de-banheiro",
+  "service_sort": 0,
+  "service_aliases": [
+   "banheiro"
+  ],
+  "active": true
+ },
+ {
+  "sector": "Construção civil",
+  "sector_slug": "construcao-civil",
+  "sector_sort": 0,
+  "profession": "Pedreiro",
+  "profession_slug": "pedreiro",
+  "profession_sort": 2,
+  "profession_aliases": [
+   "alvenaria",
+   "bico de pedreiro",
+   "pedreiro de obra"
+  ],
+  "service": "Reforma de cozinha",
+  "service_slug": "reforma-de-cozinha",
+  "service_sort": 1,
+  "service_aliases": [
+   "cozinha"
+  ],
+  "active": true
+ },
+ {
+  "sector": "Construção civil",
+  "sector_slug": "construcao-civil",
+  "sector_sort": 0,
+  "profession": "Pedreiro",
+  "profession_slug": "pedreiro",
+  "profession_sort": 2,
+  "profession_aliases": [
+   "alvenaria",
+   "bico de pedreiro",
+   "pedreiro de obra"
+  ],
+  "service": "Construção de muro",
+  "service_slug": "construcao-de-muro",
+  "service_sort": 2,
+  "service_aliases": [
+   "muro"
+  ],
+  "active": true
+ },
+ {
+  "sector": "Construção civil",
+  "sector_slug": "construcao-civil",
+  "sector_sort": 0,
+  "profession": "Pedreiro",
+  "profession_slug": "pedreiro",
+  "profession_sort": 2,
+  "profession_aliases": [
+   "alvenaria",
+   "bico de pedreiro",
+   "pedreiro de obra"
+  ],
+  "service": "Levantar paredes de alvenaria",
+  "service_slug": "levantar-paredes-de-alvenaria",
+  "service_sort": 3,
+  "service_aliases": [
+   "parede",
+   "tijolo",
+   "bloco"
+  ],
+  "active": true
+ },
+ {
+  "sector": "Construção civil",
+  "sector_slug": "construcao-civil",
+  "sector_sort": 0,
+  "profession": "Pedreiro",
+  "profession_slug": "pedreiro",
+  "profession_sort": 2,
+  "profession_aliases": [
+   "alvenaria",
+   "bico de pedreiro",
+   "pedreiro de obra"
+  ],
+  "service": "Reboco e emboço",
+  "service_slug": "reboco-e-emboco",
+  "service_sort": 4,
+  "service_aliases": [
+   "reboco",
+   "chapisco"
+  ],
+  "active": true
+ },
+ {
+  "sector": "Construção civil",
+  "sector_slug": "construcao-civil",
+  "sector_sort": 0,
+  "profession": "Pedreiro",
+  "profession_slug": "pedreiro",
+  "profession_sort": 2,
+  "profession_aliases": [
+   "alvenaria",
+   "bico de pedreiro",
+   "pedreiro de obra"
+  ],
+  "service": "Contrapiso e regularização",
+  "service_slug": "contrapiso-e-regularizacao",
+  "service_sort": 5,
+  "service_aliases": [
+   "contrapiso",
+   "nivelamento"
+  ],
+  "active": true
+ },
+ {
+  "sector": "Construção civil",
+  "sector_slug": "construcao-civil",
+  "sector_sort": 0,
+  "profession": "Pedreiro",
+  "profession_slug": "pedreiro",
+  "profession_sort": 2,
+  "profession_aliases": [
+   "alvenaria",
+   "bico de pedreiro",
+   "pedreiro de obra"
+  ],
+  "service": "Laje",
+  "service_slug": "laje",
+  "service_sort": 6,
+  "service_aliases": [
+   "concretagem de laje"
+  ],
+  "active": true
+ },
+ {
+  "sector": "Construção civil",
+  "sector_slug": "construcao-civil",
+  "sector_sort": 0,
+  "profession": "Pedreiro",
+  "profession_slug": "pedreiro",
+  "profession_sort": 2,
+  "profession_aliases": [
+   "alvenaria",
+   "bico de pedreiro",
+   "pedreiro de obra"
+  ],
+  "service": "Fundação e baldrame",
+  "service_slug": "fundacao-e-baldrame",
+  "service_sort": 7,
+  "service_aliases": [
+   "alicerce",
+   "sapata"
+  ],
+  "active": true
+ },
+ {
+  "sector": "Construção civil",
+  "sector_slug": "construcao-civil",
+  "sector_sort": 0,
+  "profession": "Pedreiro",
+  "profession_slug": "pedreiro",
+  "profession_sort": 2,
+  "profession_aliases": [
+   "alvenaria",
+   "bico de pedreiro",
+   "pedreiro de obra"
+  ],
+  "service": "Calçada e piso externo",
+  "service_slug": "calcada-e-piso-externo",
+  "service_sort": 8,
+  "service_aliases": [
+   "calçada",
+   "quintal"
+  ],
+  "active": true
+ },
+ {
+  "sector": "Construção civil",
+  "sector_slug": "construcao-civil",
+  "sector_sort": 0,
+  "profession": "Pedreiro",
+  "profession_slug": "pedreiro",
+  "profession_sort": 2,
+  "profession_aliases": [
+   "alvenaria",
+   "bico de pedreiro",
+   "pedreiro de obra"
+  ],
+  "service": "Demolição",
+  "service_slug": "demolicao",
+  "service_sort": 9,
+  "service_aliases": [
+   "quebrar parede"
+  ],
+  "active": true
+ },
+ {
+  "sector": "Construção civil",
+  "sector_slug": "construcao-civil",
+  "sector_sort": 0,
+  "profession": "Pedreiro",
+  "profession_slug": "pedreiro",
+  "profession_sort": 2,
+  "profession_aliases": [
+   "alvenaria",
+   "bico de pedreiro",
+   "pedreiro de obra"
+  ],
+  "service": "Ampliação e puxadinho",
+  "service_slug": "ampliacao-e-puxadinho",
+  "service_sort": 10,
+  "service_aliases": [
+   "puxadinho",
+   "edícula"
+  ],
+  "active": true
+ },
+ {
+  "sector": "Construção civil",
+  "sector_slug": "construcao-civil",
+  "sector_sort": 0,
+  "profession": "Pintor",
+  "profession_slug": "pintor",
+  "profession_sort": 3,
+  "profession_aliases": [
+   "pintura",
+   "pintor de parede",
+   "bico de pintor"
+  ],
+  "service": "Pintura de parede interna",
+  "service_slug": "pintura-de-parede-interna",
+  "service_sort": 0,
+  "service_aliases": [
+   "pintar quarto",
+   "pintar sala"
+  ],
+  "active": true
+ },
+ {
+  "sector": "Construção civil",
+  "sector_slug": "construcao-civil",
+  "sector_sort": 0,
+  "profession": "Pintor",
+  "profession_slug": "pintor",
+  "profession_sort": 3,
+  "profession_aliases": [
+   "pintura",
+   "pintor de parede",
+   "bico de pintor"
+  ],
+  "service": "Pintura de fachada e muro",
+  "service_slug": "pintura-de-fachada-e-muro",
+  "service_sort": 1,
+  "service_aliases": [
+   "fachada",
+   "pintar muro"
+  ],
+  "active": true
+ },
+ {
+  "sector": "Construção civil",
+  "sector_slug": "construcao-civil",
+  "sector_sort": 0,
+  "profession": "Pintor",
+  "profession_slug": "pintor",
+  "profession_sort": 3,
+  "profession_aliases": [
+   "pintura",
+   "pintor de parede",
+   "bico de pintor"
+  ],
+  "service": "Massa corrida e lixamento",
+  "service_slug": "massa-corrida-e-lixamento",
+  "service_sort": 2,
+  "service_aliases": [
+   "massa corrida",
+   "lixar parede"
+  ],
+  "active": true
+ },
+ {
+  "sector": "Construção civil",
+  "sector_slug": "construcao-civil",
+  "sector_sort": 0,
+  "profession": "Pintor",
+  "profession_slug": "pintor",
+  "profession_sort": 3,
+  "profession_aliases": [
+   "pintura",
+   "pintor de parede",
+   "bico de pintor"
+  ],
+  "service": "Textura e grafiato",
+  "service_slug": "textura-e-grafiato",
+  "service_sort": 3,
+  "service_aliases": [
+   "textura",
+   "grafiato"
+  ],
+  "active": true
+ },
+ {
+  "sector": "Construção civil",
+  "sector_slug": "construcao-civil",
+  "sector_sort": 0,
+  "profession": "Pintor",
+  "profession_slug": "pintor",
+  "profession_sort": 3,
+  "profession_aliases": [
+   "pintura",
+   "pintor de parede",
+   "bico de pintor"
+  ],
+  "service": "Pintura de portas, janelas e grades",
+  "service_slug": "pintura-de-portas-janelas-e-grades",
+  "service_sort": 4,
+  "service_aliases": [
+   "pintar portão",
+   "esmalte"
+  ],
+  "active": true
+ },
+ {
+  "sector": "Construção civil",
+  "sector_slug": "construcao-civil",
+  "sector_sort": 0,
+  "profession": "Pintor",
+  "profession_slug": "pintor",
+  "profession_sort": 3,
+  "profession_aliases": [
+   "pintura",
+   "pintor de parede",
+   "bico de pintor"
+  ],
+  "service": "Pintura de teto e forro",
+  "service_slug": "pintura-de-teto-e-forro",
+  "service_sort": 5,
+  "service_aliases": [
+   "teto"
+  ],
+  "active": true
+ },
+ {
+  "sector": "Construção civil",
+  "sector_slug": "construcao-civil",
+  "sector_sort": 0,
+  "profession": "Pintor",
+  "profession_slug": "pintor",
+  "profession_sort": 3,
+  "profession_aliases": [
+   "pintura",
+   "pintor de parede",
+   "bico de pintor"
+  ],
+  "service": "Aplicação de papel de parede",
+  "service_slug": "aplicacao-de-papel-de-parede",
+  "service_sort": 6,
+  "service_aliases": [
+   "papel de parede"
+  ],
+  "active": true
+ },
+ {
+  "sector": "Construção civil",
+  "sector_slug": "construcao-civil",
+  "sector_sort": 0,
+  "profession": "Pintor",
+  "profession_slug": "pintor",
+  "profession_sort": 3,
+  "profession_aliases": [
+   "pintura",
+   "pintor de parede",
+   "bico de pintor"
+  ],
+  "service": "Verniz e restauração de madeira",
+  "service_slug": "verniz-e-restauracao-de-madeira",
+  "service_sort": 7,
+  "service_aliases": [
+   "verniz",
+   "stain"
+  ],
+  "active": true
+ },
+ {
+  "sector": "Construção civil",
+  "sector_slug": "construcao-civil",
+  "sector_sort": 0,
+  "profession": "Gesseiro e drywall",
+  "profession_slug": "gesseiro-e-drywall",
+  "profession_sort": 4,
+  "profession_aliases": [
+   "gesso",
+   "drywall",
+   "forro de gesso"
+  ],
+  "service": "Forro de gesso",
+  "service_slug": "forro-de-gesso",
+  "service_sort": 0,
+  "service_aliases": [
+   "rebaixamento"
+  ],
+  "active": true
+ },
+ {
+  "sector": "Construção civil",
+  "sector_slug": "construcao-civil",
+  "sector_sort": 0,
+  "profession": "Gesseiro e drywall",
+  "profession_slug": "gesseiro-e-drywall",
+  "profession_sort": 4,
+  "profession_aliases": [
+   "gesso",
+   "drywall",
+   "forro de gesso"
+  ],
+  "service": "Sanca e moldura de gesso",
+  "service_slug": "sanca-e-moldura-de-gesso",
+  "service_sort": 1,
+  "service_aliases": [
+   "sanca",
+   "moldura"
+  ],
+  "active": true
+ },
+ {
+  "sector": "Construção civil",
+  "sector_slug": "construcao-civil",
+  "sector_sort": 0,
+  "profession": "Gesseiro e drywall",
+  "profession_slug": "gesseiro-e-drywall",
+  "profession_sort": 4,
+  "profession_aliases": [
+   "gesso",
+   "drywall",
+   "forro de gesso"
+  ],
+  "service": "Parede de drywall",
+  "service_slug": "parede-de-drywall",
+  "service_sort": 2,
+  "service_aliases": [
+   "divisória",
+   "parede de gesso"
+  ],
+  "active": true
+ },
+ {
+  "sector": "Construção civil",
+  "sector_slug": "construcao-civil",
+  "sector_sort": 0,
+  "profession": "Gesseiro e drywall",
+  "profession_slug": "gesseiro-e-drywall",
+  "profession_sort": 4,
+  "profession_aliases": [
+   "gesso",
+   "drywall",
+   "forro de gesso"
+  ],
+  "service": "Revestimento de gesso",
+  "service_slug": "revestimento-de-gesso",
+  "service_sort": 3,
+  "service_aliases": [
+   "gesso liso"
+  ],
+  "active": true
+ },
+ {
+  "sector": "Construção civil",
+  "sector_slug": "construcao-civil",
+  "sector_sort": 0,
+  "profession": "Gesseiro e drywall",
+  "profession_slug": "gesseiro-e-drywall",
+  "profession_sort": 4,
+  "profession_aliases": [
+   "gesso",
+   "drywall",
+   "forro de gesso"
+  ],
+  "service": "Reparo de gesso",
+  "service_slug": "reparo-de-gesso",
+  "service_sort": 4,
+  "service_aliases": [
+   "conserto de forro"
+  ],
+  "active": true
+ },
+ {
+  "sector": "Construção civil",
+  "sector_slug": "construcao-civil",
+  "sector_sort": 0,
+  "profession": "Azulejista e ladrilheiro",
+  "profession_slug": "azulejista-e-ladrilheiro",
+  "profession_sort": 5,
+  "profession_aliases": [
+   "assentador de piso",
+   "piso e azulejo",
+   "revestimento"
+  ],
+  "service": "Assentamento de piso cerâmico ou porcelanato",
+  "service_slug": "assentamento-de-piso-ceramico-ou-porcelanato",
+  "service_sort": 0,
+  "service_aliases": [
+   "porcelanato",
+   "piso"
+  ],
+  "active": true
+ },
+ {
+  "sector": "Construção civil",
+  "sector_slug": "construcao-civil",
+  "sector_sort": 0,
+  "profession": "Azulejista e ladrilheiro",
+  "profession_slug": "azulejista-e-ladrilheiro",
+  "profession_sort": 5,
+  "profession_aliases": [
+   "assentador de piso",
+   "piso e azulejo",
+   "revestimento"
+  ],
+  "service": "Assentamento de azulejo",
+  "service_slug": "assentamento-de-azulejo",
+  "service_sort": 1,
+  "service_aliases": [
+   "azulejo",
+   "revestimento de parede"
+  ],
+  "active": true
+ },
+ {
+  "sector": "Construção civil",
+  "sector_slug": "construcao-civil",
+  "sector_sort": 0,
+  "profession": "Azulejista e ladrilheiro",
+  "profession_slug": "azulejista-e-ladrilheiro",
+  "profession_sort": 5,
+  "profession_aliases": [
+   "assentador de piso",
+   "piso e azulejo",
+   "revestimento"
+  ],
+  "service": "Rejunte",
+  "service_slug": "rejunte",
+  "service_sort": 2,
+  "service_aliases": [
+   "rejuntar"
+  ],
+  "active": true
+ },
+ {
+  "sector": "Construção civil",
+  "sector_slug": "construcao-civil",
+  "sector_sort": 0,
+  "profession": "Azulejista e ladrilheiro",
+  "profession_slug": "azulejista-e-ladrilheiro",
+  "profession_sort": 5,
+  "profession_aliases": [
+   "assentador de piso",
+   "piso e azulejo",
+   "revestimento"
+  ],
+  "service": "Troca de piso quebrado",
+  "service_slug": "troca-de-piso-quebrado",
+  "service_sort": 3,
+  "service_aliases": [
+   "trocar cerâmica"
+  ],
+  "active": true
+ },
+ {
+  "sector": "Construção civil",
+  "sector_slug": "construcao-civil",
+  "sector_sort": 0,
+  "profession": "Azulejista e ladrilheiro",
+  "profession_slug": "azulejista-e-ladrilheiro",
+  "profession_sort": 5,
+  "profession_aliases": [
+   "assentador de piso",
+   "piso e azulejo",
+   "revestimento"
+  ],
+  "service": "Assentamento de pedra e granito",
+  "service_slug": "assentamento-de-pedra-e-granito",
+  "service_sort": 4,
+  "service_aliases": [
+   "granito",
+   "mármore"
+  ],
+  "active": true
+ },
+ {
+  "sector": "Construção civil",
+  "sector_slug": "construcao-civil",
+  "sector_sort": 0,
+  "profession": "Azulejista e ladrilheiro",
+  "profession_slug": "azulejista-e-ladrilheiro",
+  "profession_sort": 5,
+  "profession_aliases": [
+   "assentador de piso",
+   "piso e azulejo",
+   "revestimento"
+  ],
+  "service": "Instalação de piso laminado ou vinílico",
+  "service_slug": "instalacao-de-piso-laminado-ou-vinilico",
+  "service_sort": 5,
+  "service_aliases": [
+   "piso laminado",
+   "piso vinílico",
+   "rodapé"
+  ],
+  "active": true
+ },
+ {
+  "sector": "Construção civil",
+  "sector_slug": "construcao-civil",
+  "sector_sort": 0,
+  "profession": "Serralheiro",
+  "profession_slug": "serralheiro",
+  "profession_sort": 6,
+  "profession_aliases": [
+   "serralheria",
+   "solda",
+   "soldador",
+   "ferreiro"
+  ],
+  "service": "Portão de ferro ou alumínio",
+  "service_slug": "portao-de-ferro-ou-aluminio",
+  "service_sort": 0,
+  "service_aliases": [
+   "portão"
+  ],
+  "active": true
+ },
+ {
+  "sector": "Construção civil",
+  "sector_slug": "construcao-civil",
+  "sector_sort": 0,
+  "profession": "Serralheiro",
+  "profession_slug": "serralheiro",
+  "profession_sort": 6,
+  "profession_aliases": [
+   "serralheria",
+   "solda",
+   "soldador",
+   "ferreiro"
+  ],
+  "service": "Grade e proteção de janela",
+  "service_slug": "grade-e-protecao-de-janela",
+  "service_sort": 1,
+  "service_aliases": [
+   "grade"
+  ],
+  "active": true
+ },
+ {
+  "sector": "Construção civil",
+  "sector_slug": "construcao-civil",
+  "sector_sort": 0,
+  "profession": "Serralheiro",
+  "profession_slug": "serralheiro",
+  "profession_sort": 6,
+  "profession_aliases": [
+   "serralheria",
+   "solda",
+   "soldador",
+   "ferreiro"
+  ],
+  "service": "Corrimão e guarda-corpo",
+  "service_slug": "corrimao-e-guarda-corpo",
+  "service_sort": 2,
+  "service_aliases": [
+   "corrimão"
+  ],
+  "active": true
+ },
+ {
+  "sector": "Construção civil",
+  "sector_slug": "construcao-civil",
+  "sector_sort": 0,
+  "profession": "Serralheiro",
+  "profession_slug": "serralheiro",
+  "profession_sort": 6,
+  "profession_aliases": [
+   "serralheria",
+   "solda",
+   "soldador",
+   "ferreiro"
+  ],
+  "service": "Estrutura metálica e cobertura",
+  "service_slug": "estrutura-metalica-e-cobertura",
+  "service_sort": 3,
+  "service_aliases": [
+   "estrutura metálica",
+   "pergolado"
+  ],
+  "active": true
+ },
+ {
+  "sector": "Construção civil",
+  "sector_slug": "construcao-civil",
+  "sector_sort": 0,
+  "profession": "Serralheiro",
+  "profession_slug": "serralheiro",
+  "profession_sort": 6,
+  "profession_aliases": [
+   "serralheria",
+   "solda",
+   "soldador",
+   "ferreiro"
+  ],
+  "service": "Conserto de fechadura e dobradiça",
+  "service_slug": "conserto-de-fechadura-e-dobradica",
+  "service_sort": 4,
+  "service_aliases": [
+   "fechadura",
+   "chaveiro"
+  ],
+  "active": true
+ },
+ {
+  "sector": "Construção civil",
+  "sector_slug": "construcao-civil",
+  "sector_sort": 0,
+  "profession": "Serralheiro",
+  "profession_slug": "serralheiro",
+  "profession_sort": 6,
+  "profession_aliases": [
+   "serralheria",
+   "solda",
+   "soldador",
+   "ferreiro"
+  ],
+  "service": "Solda em geral",
+  "service_slug": "solda-em-geral",
+  "service_sort": 5,
+  "service_aliases": [
+   "solda"
+  ],
+  "active": true
+ },
+ {
+  "sector": "Construção civil",
+  "sector_slug": "construcao-civil",
+  "sector_sort": 0,
+  "profession": "Marceneiro",
+  "profession_slug": "marceneiro",
+  "profession_sort": 7,
+  "profession_aliases": [
+   "carpinteiro",
+   "móveis planejados",
+   "madeira"
+  ],
+  "service": "Móveis sob medida",
+  "service_slug": "moveis-sob-medida",
+  "service_sort": 0,
+  "service_aliases": [
+   "guarda-roupa",
+   "armário planejado"
+  ],
+  "active": true
+ },
+ {
+  "sector": "Construção civil",
+  "sector_slug": "construcao-civil",
+  "sector_sort": 0,
+  "profession": "Marceneiro",
+  "profession_slug": "marceneiro",
+  "profession_sort": 7,
+  "profession_aliases": [
+   "carpinteiro",
+   "móveis planejados",
+   "madeira"
+  ],
+  "service": "Armário de cozinha",
+  "service_slug": "armario-de-cozinha",
+  "service_sort": 1,
+  "service_aliases": [
+   "armário de cozinha"
+  ],
+  "active": true
+ },
+ {
+  "sector": "Construção civil",
+  "sector_slug": "construcao-civil",
+  "sector_sort": 0,
+  "profession": "Marceneiro",
+  "profession_slug": "marceneiro",
+  "profession_sort": 7,
+  "profession_aliases": [
+   "carpinteiro",
+   "móveis planejados",
+   "madeira"
+  ],
+  "service": "Porta e janela de madeira",
+  "service_slug": "porta-e-janela-de-madeira",
+  "service_sort": 2,
+  "service_aliases": [
+   "porta",
+   "janela"
+  ],
+  "active": true
+ },
+ {
+  "sector": "Construção civil",
+  "sector_slug": "construcao-civil",
+  "sector_sort": 0,
+  "profession": "Marceneiro",
+  "profession_slug": "marceneiro",
+  "profession_sort": 7,
+  "profession_aliases": [
+   "carpinteiro",
+   "móveis planejados",
+   "madeira"
+  ],
+  "service": "Reparo e restauração de móveis",
+  "service_slug": "reparo-e-restauracao-de-moveis",
+  "service_sort": 3,
+  "service_aliases": [
+   "consertar móvel",
+   "restaurar"
+  ],
+  "active": true
+ },
+ {
+  "sector": "Construção civil",
+  "sector_slug": "construcao-civil",
+  "sector_sort": 0,
+  "profession": "Marceneiro",
+  "profession_slug": "marceneiro",
+  "profession_sort": 7,
+  "profession_aliases": [
+   "carpinteiro",
+   "móveis planejados",
+   "madeira"
+  ],
+  "service": "Deck e pergolado de madeira",
+  "service_slug": "deck-e-pergolado-de-madeira",
+  "service_sort": 4,
+  "service_aliases": [
+   "deck"
+  ],
+  "active": true
+ },
+ {
+  "sector": "Construção civil",
+  "sector_slug": "construcao-civil",
+  "sector_sort": 0,
+  "profession": "Marceneiro",
+  "profession_slug": "marceneiro",
+  "profession_sort": 7,
+  "profession_aliases": [
+   "carpinteiro",
+   "móveis planejados",
+   "madeira"
+  ],
+  "service": "Telhado de madeira",
+  "service_slug": "telhado-de-madeira",
+  "service_sort": 5,
+  "service_aliases": [
+   "madeiramento",
+   "estrutura de telhado"
+  ],
+  "active": true
+ },
+ {
+  "sector": "Construção civil",
+  "sector_slug": "construcao-civil",
+  "sector_sort": 0,
+  "profession": "Vidraceiro",
+  "profession_slug": "vidraceiro",
+  "profession_sort": 8,
+  "profession_aliases": [
+   "vidros",
+   "box de banheiro",
+   "espelho"
+  ],
+  "service": "Box de banheiro",
+  "service_slug": "box-de-banheiro",
+  "service_sort": 0,
+  "service_aliases": [
+   "box"
+  ],
+  "active": true
+ },
+ {
+  "sector": "Construção civil",
+  "sector_slug": "construcao-civil",
+  "sector_sort": 0,
+  "profession": "Vidraceiro",
+  "profession_slug": "vidraceiro",
+  "profession_sort": 8,
+  "profession_aliases": [
+   "vidros",
+   "box de banheiro",
+   "espelho"
+  ],
+  "service": "Troca de vidro quebrado",
+  "service_slug": "troca-de-vidro-quebrado",
+  "service_sort": 1,
+  "service_aliases": [
+   "vidro quebrado"
+  ],
+  "active": true
+ },
+ {
+  "sector": "Construção civil",
+  "sector_slug": "construcao-civil",
+  "sector_sort": 0,
+  "profession": "Vidraceiro",
+  "profession_slug": "vidraceiro",
+  "profession_sort": 8,
+  "profession_aliases": [
+   "vidros",
+   "box de banheiro",
+   "espelho"
+  ],
+  "service": "Espelho",
+  "service_slug": "espelho",
+  "service_sort": 2,
+  "service_aliases": [
+   "espelho"
+  ],
+  "active": true
+ },
+ {
+  "sector": "Construção civil",
+  "sector_slug": "construcao-civil",
+  "sector_sort": 0,
+  "profession": "Vidraceiro",
+  "profession_slug": "vidraceiro",
+  "profession_sort": 8,
+  "profession_aliases": [
+   "vidros",
+   "box de banheiro",
+   "espelho"
+  ],
+  "service": "Janela e porta de vidro ou alumínio",
+  "service_slug": "janela-e-porta-de-vidro-ou-aluminio",
+  "service_sort": 3,
+  "service_aliases": [
+   "esquadria"
+  ],
+  "active": true
+ },
+ {
+  "sector": "Construção civil",
+  "sector_slug": "construcao-civil",
+  "sector_sort": 0,
+  "profession": "Vidraceiro",
+  "profession_slug": "vidraceiro",
+  "profession_sort": 8,
+  "profession_aliases": [
+   "vidros",
+   "box de banheiro",
+   "espelho"
+  ],
+  "service": "Guarda-corpo de vidro",
+  "service_slug": "guarda-corpo-de-vidro",
+  "service_sort": 4,
+  "service_aliases": [
+   "guarda-corpo"
+  ],
+  "active": true
+ },
+ {
+  "sector": "Construção civil",
+  "sector_slug": "construcao-civil",
+  "sector_sort": 0,
+  "profession": "Vidraceiro",
+  "profession_slug": "vidraceiro",
+  "profession_sort": 8,
+  "profession_aliases": [
+   "vidros",
+   "box de banheiro",
+   "espelho"
+  ],
+  "service": "Divisória e fechamento de varanda",
+  "service_slug": "divisoria-e-fechamento-de-varanda",
+  "service_sort": 5,
+  "service_aliases": [
+   "varanda"
+  ],
+  "active": true
+ },
+ {
+  "sector": "Construção civil",
+  "sector_slug": "construcao-civil",
+  "sector_sort": 0,
+  "profession": "Telhadista",
+  "profession_slug": "telhadista",
+  "profession_sort": 9,
+  "profession_aliases": [
+   "telhado",
+   "telhas",
+   "calheiro"
+  ],
+  "service": "Reparo de goteira e infiltração no telhado",
+  "service_slug": "reparo-de-goteira-e-infiltracao-no-telhado",
+  "service_sort": 0,
+  "service_aliases": [
+   "goteira"
+  ],
+  "active": true
+ },
+ {
+  "sector": "Construção civil",
+  "sector_slug": "construcao-civil",
+  "sector_sort": 0,
+  "profession": "Telhadista",
+  "profession_slug": "telhadista",
+  "profession_sort": 9,
+  "profession_aliases": [
+   "telhado",
+   "telhas",
+   "calheiro"
+  ],
+  "service": "Troca de telhas",
+  "service_slug": "troca-de-telhas",
+  "service_sort": 1,
+  "service_aliases": [
+   "telha quebrada"
+  ],
+  "active": true
+ },
+ {
+  "sector": "Construção civil",
+  "sector_slug": "construcao-civil",
+  "sector_sort": 0,
+  "profession": "Telhadista",
+  "profession_slug": "telhadista",
+  "profession_sort": 9,
+  "profession_aliases": [
+   "telhado",
+   "telhas",
+   "calheiro"
+  ],
+  "service": "Telhado novo",
+  "service_slug": "telhado-novo",
+  "service_sort": 2,
+  "service_aliases": [
+   "cobertura",
+   "telhado completo"
+  ],
+  "active": true
+ },
+ {
+  "sector": "Construção civil",
+  "sector_slug": "construcao-civil",
+  "sector_sort": 0,
+  "profession": "Telhadista",
+  "profession_slug": "telhadista",
+  "profession_sort": 9,
+  "profession_aliases": [
+   "telhado",
+   "telhas",
+   "calheiro"
+  ],
+  "service": "Calhas e rufos",
+  "service_slug": "calhas-e-rufos",
+  "service_sort": 3,
+  "service_aliases": [
+   "calha",
+   "rufo"
+  ],
+  "active": true
+ },
+ {
+  "sector": "Construção civil",
+  "sector_slug": "construcao-civil",
+  "sector_sort": 0,
+  "profession": "Telhadista",
+  "profession_slug": "telhadista",
+  "profession_sort": 9,
+  "profession_aliases": [
+   "telhado",
+   "telhas",
+   "calheiro"
+  ],
+  "service": "Instalação de telha térmica ou metálica",
+  "service_slug": "instalacao-de-telha-termica-ou-metalica",
+  "service_sort": 4,
+  "service_aliases": [
+   "telha térmica",
+   "telha metálica"
+  ],
+  "active": true
+ },
+ {
+  "sector": "Construção civil",
+  "sector_slug": "construcao-civil",
+  "sector_sort": 0,
+  "profession": "Impermeabilizador",
+  "profession_slug": "impermeabilizador",
+  "profession_sort": 10,
+  "profession_aliases": [
+   "impermeabilização",
+   "infiltração"
+  ],
+  "service": "Impermeabilização de laje",
+  "service_slug": "impermeabilizacao-de-laje",
+  "service_sort": 0,
+  "service_aliases": [
+   "laje"
+  ],
+  "active": true
+ },
+ {
+  "sector": "Construção civil",
+  "sector_slug": "construcao-civil",
+  "sector_sort": 0,
+  "profession": "Impermeabilizador",
+  "profession_slug": "impermeabilizador",
+  "profession_sort": 10,
+  "profession_aliases": [
+   "impermeabilização",
+   "infiltração"
+  ],
+  "service": "Impermeabilização de banheiro e área molhada",
+  "service_slug": "impermeabilizacao-de-banheiro-e-area-molhada",
+  "service_sort": 1,
+  "service_aliases": [
+   "banheiro"
+  ],
+  "active": true
+ },
+ {
+  "sector": "Construção civil",
+  "sector_slug": "construcao-civil",
+  "sector_sort": 0,
+  "profession": "Impermeabilizador",
+  "profession_slug": "impermeabilizador",
+  "profession_sort": 10,
+  "profession_aliases": [
+   "impermeabilização",
+   "infiltração"
+  ],
+  "service": "Tratamento de infiltração e mofo",
+  "service_slug": "tratamento-de-infiltracao-e-mofo",
+  "service_sort": 2,
+  "service_aliases": [
+   "mofo",
+   "umidade"
+  ],
+  "active": true
+ },
+ {
+  "sector": "Construção civil",
+  "sector_slug": "construcao-civil",
+  "sector_sort": 0,
+  "profession": "Impermeabilizador",
+  "profession_slug": "impermeabilizador",
+  "profession_sort": 10,
+  "profession_aliases": [
+   "impermeabilização",
+   "infiltração"
+  ],
+  "service": "Impermeabilização de caixa d'água e piscina",
+  "service_slug": "impermeabilizacao-de-caixa-d-agua-e-piscina",
+  "service_sort": 3,
+  "service_aliases": [
+   "piscina",
+   "reservatório"
+  ],
+  "active": true
+ },
+ {
+  "sector": "Construção civil",
+  "sector_slug": "construcao-civil",
+  "sector_sort": 0,
+  "profession": "Impermeabilizador",
+  "profession_slug": "impermeabilizador",
+  "profession_sort": 10,
+  "profession_aliases": [
+   "impermeabilização",
+   "infiltração"
+  ],
+  "service": "Manta asfáltica",
+  "service_slug": "manta-asfaltica",
+  "service_sort": 4,
+  "service_aliases": [
+   "manta"
+  ],
+  "active": true
+ },
+ {
+  "sector": "Construção civil",
+  "sector_slug": "construcao-civil",
+  "sector_sort": 0,
+  "profession": "Instalador de ar-condicionado",
+  "profession_slug": "instalador-de-ar-condicionado",
+  "profession_sort": 11,
+  "profession_aliases": [
+   "ar condicionado",
+   "split",
+   "climatização",
+   "refrigeração"
+  ],
+  "service": "Instalação de ar-condicionado split",
+  "service_slug": "instalacao-de-ar-condicionado-split",
+  "service_sort": 0,
+  "service_aliases": [
+   "instalar split"
+  ],
+  "active": true
+ },
+ {
+  "sector": "Construção civil",
+  "sector_slug": "construcao-civil",
+  "sector_sort": 0,
+  "profession": "Instalador de ar-condicionado",
+  "profession_slug": "instalador-de-ar-condicionado",
+  "profession_sort": 11,
+  "profession_aliases": [
+   "ar condicionado",
+   "split",
+   "climatização",
+   "refrigeração"
+  ],
+  "service": "Limpeza e manutenção de ar-condicionado",
+  "service_slug": "limpeza-e-manutencao-de-ar-condicionado",
+  "service_sort": 1,
+  "service_aliases": [
+   "higienização",
+   "limpeza de ar"
+  ],
+  "active": true
+ },
+ {
+  "sector": "Construção civil",
+  "sector_slug": "construcao-civil",
+  "sector_sort": 0,
+  "profession": "Instalador de ar-condicionado",
+  "profession_slug": "instalador-de-ar-condicionado",
+  "profession_sort": 11,
+  "profession_aliases": [
+   "ar condicionado",
+   "split",
+   "climatização",
+   "refrigeração"
+  ],
+  "service": "Carga de gás e conserto",
+  "service_slug": "carga-de-gas-e-conserto",
+  "service_sort": 2,
+  "service_aliases": [
+   "gás",
+   "reparo"
+  ],
+  "active": true
+ },
+ {
+  "sector": "Construção civil",
+  "sector_slug": "construcao-civil",
+  "sector_sort": 0,
+  "profession": "Instalador de ar-condicionado",
+  "profession_slug": "instalador-de-ar-condicionado",
+  "profession_sort": 11,
+  "profession_aliases": [
+   "ar condicionado",
+   "split",
+   "climatização",
+   "refrigeração"
+  ],
+  "service": "Remoção e troca de aparelho",
+  "service_slug": "remocao-e-troca-de-aparelho",
+  "service_sort": 3,
+  "service_aliases": [
+   "desinstalar"
+  ],
+  "active": true
+ },
+ {
+  "sector": "Construção civil",
+  "sector_slug": "construcao-civil",
+  "sector_sort": 0,
+  "profession": "Servente e ajudante de obra",
+  "profession_slug": "servente-e-ajudante-de-obra",
+  "profession_sort": 12,
+  "profession_aliases": [
+   "ajudante",
+   "servente",
+   "bico",
+   "ajudante geral"
+  ],
+  "service": "Ajudante de pedreiro",
+  "service_slug": "ajudante-de-pedreiro",
+  "service_sort": 0,
+  "service_aliases": [
+   "ajudante de pedreiro"
+  ],
+  "active": true
+ },
+ {
+  "sector": "Construção civil",
+  "sector_slug": "construcao-civil",
+  "sector_sort": 0,
+  "profession": "Servente e ajudante de obra",
+  "profession_slug": "servente-e-ajudante-de-obra",
+  "profession_sort": 12,
+  "profession_aliases": [
+   "ajudante",
+   "servente",
+   "bico",
+   "ajudante geral"
+  ],
+  "service": "Carregamento de material",
+  "service_slug": "carregamento-de-material",
+  "service_sort": 1,
+  "service_aliases": [
+   "carregar areia",
+   "carregar cimento"
+  ],
+  "active": true
+ },
+ {
+  "sector": "Construção civil",
+  "sector_slug": "construcao-civil",
+  "sector_sort": 0,
+  "profession": "Servente e ajudante de obra",
+  "profession_slug": "servente-e-ajudante-de-obra",
+  "profession_sort": 12,
+  "profession_aliases": [
+   "ajudante",
+   "servente",
+   "bico",
+   "ajudante geral"
+  ],
+  "service": "Limpeza de obra",
+  "service_slug": "limpeza-de-obra",
+  "service_sort": 2,
+  "service_aliases": [
+   "limpeza pós-obra"
+  ],
+  "active": true
+ },
+ {
+  "sector": "Construção civil",
+  "sector_slug": "construcao-civil",
+  "sector_sort": 0,
+  "profession": "Servente e ajudante de obra",
+  "profession_slug": "servente-e-ajudante-de-obra",
+  "profession_sort": 12,
+  "profession_aliases": [
+   "ajudante",
+   "servente",
+   "bico",
+   "ajudante geral"
+  ],
+  "service": "Remoção de entulho",
+  "service_slug": "remocao-de-entulho",
+  "service_sort": 3,
+  "service_aliases": [
+   "caçamba",
+   "entulho"
+  ],
+  "active": true
+ },
+ {
+  "sector": "Construção civil",
+  "sector_slug": "construcao-civil",
+  "sector_sort": 0,
+  "profession": "Servente e ajudante de obra",
+  "profession_slug": "servente-e-ajudante-de-obra",
+  "profession_sort": 12,
+  "profession_aliases": [
+   "ajudante",
+   "servente",
+   "bico",
+   "ajudante geral"
+  ],
+  "service": "Preparo de massa e concreto",
+  "service_slug": "preparo-de-massa-e-concreto",
+  "service_sort": 4,
+  "service_aliases": [
+   "betoneira",
+   "massa"
+  ],
+  "active": true
+ },
+ {
+  "sector": "Construção civil",
+  "sector_slug": "construcao-civil",
+  "sector_sort": 0,
+  "profession": "Mestre de obras e empreiteiro",
+  "profession_slug": "mestre-de-obras-e-empreiteiro",
+  "profession_sort": 13,
+  "profession_aliases": [
+   "empreiteiro",
+   "mestre de obra",
+   "reforma completa"
+  ],
+  "service": "Reforma completa de casa ou apartamento",
+  "service_slug": "reforma-completa-de-casa-ou-apartamento",
+  "service_sort": 0,
+  "service_aliases": [
+   "reforma geral"
+  ],
+  "active": true
+ },
+ {
+  "sector": "Construção civil",
+  "sector_slug": "construcao-civil",
+  "sector_sort": 0,
+  "profession": "Mestre de obras e empreiteiro",
+  "profession_slug": "mestre-de-obras-e-empreiteiro",
+  "profession_sort": 13,
+  "profession_aliases": [
+   "empreiteiro",
+   "mestre de obra",
+   "reforma completa"
+  ],
+  "service": "Construção de casa",
+  "service_slug": "construcao-de-casa",
+  "service_sort": 1,
+  "service_aliases": [
+   "casa nova",
+   "obra nova"
+  ],
+  "active": true
+ },
+ {
+  "sector": "Construção civil",
+  "sector_slug": "construcao-civil",
+  "sector_sort": 0,
+  "profession": "Mestre de obras e empreiteiro",
+  "profession_slug": "mestre-de-obras-e-empreiteiro",
+  "profession_sort": 13,
+  "profession_aliases": [
+   "empreiteiro",
+   "mestre de obra",
+   "reforma completa"
+  ],
+  "service": "Gerenciamento e acompanhamento de obra",
+  "service_slug": "gerenciamento-e-acompanhamento-de-obra",
+  "service_sort": 2,
+  "service_aliases": [
+   "fiscalização"
+  ],
+  "active": true
+ },
+ {
+  "sector": "Construção civil",
+  "sector_slug": "construcao-civil",
+  "sector_sort": 0,
+  "profession": "Mestre de obras e empreiteiro",
+  "profession_slug": "mestre-de-obras-e-empreiteiro",
+  "profession_sort": 13,
+  "profession_aliases": [
+   "empreiteiro",
+   "mestre de obra",
+   "reforma completa"
+  ],
+  "service": "Orçamento e medição de obra",
+  "service_slug": "orcamento-e-medicao-de-obra",
+  "service_sort": 3,
+  "service_aliases": [
+   "orçamento"
+  ],
+  "active": true
+ },
+ {
+  "sector": "Construção civil",
+  "sector_slug": "construcao-civil",
+  "sector_sort": 0,
+  "profession": "Instalador de piso e revestimento de madeira",
+  "profession_slug": "instalador-de-piso-e-revestimento-de-madeira",
+  "profession_sort": 14,
+  "profession_aliases": [
+   "assoalho",
+   "taco",
+   "raspagem"
+  ],
+  "service": "Raspagem e resina de taco",
+  "service_slug": "raspagem-e-resina-de-taco",
+  "service_sort": 0,
+  "service_aliases": [
+   "sinteco",
+   "resina"
+  ],
+  "active": true
+ },
+ {
+  "sector": "Construção civil",
+  "sector_slug": "construcao-civil",
+  "sector_sort": 0,
+  "profession": "Instalador de piso e revestimento de madeira",
+  "profession_slug": "instalador-de-piso-e-revestimento-de-madeira",
+  "profession_sort": 14,
+  "profession_aliases": [
+   "assoalho",
+   "taco",
+   "raspagem"
+  ],
+  "service": "Instalação de assoalho de madeira",
+  "service_slug": "instalacao-de-assoalho-de-madeira",
+  "service_sort": 1,
+  "service_aliases": [
+   "assoalho"
+  ],
+  "active": true
+ },
+ {
+  "sector": "Construção civil",
+  "sector_slug": "construcao-civil",
+  "sector_sort": 0,
+  "profession": "Instalador de piso e revestimento de madeira",
+  "profession_slug": "instalador-de-piso-e-revestimento-de-madeira",
+  "profession_sort": 14,
+  "profession_aliases": [
+   "assoalho",
+   "taco",
+   "raspagem"
+  ],
+  "service": "Instalação de rodapé e soleira",
+  "service_slug": "instalacao-de-rodape-e-soleira",
+  "service_sort": 2,
+  "service_aliases": [
+   "soleira"
+  ],
+  "active": true
+ },
+ {
+  "sector": "Limpeza e conservação",
+  "sector_slug": "limpeza-e-conservacao",
+  "sector_sort": 1,
+  "profession": "Diarista",
+  "profession_slug": "diarista",
+  "profession_sort": 0,
+  "profession_aliases": [
+   "faxineira",
+   "faxina",
+   "empregada doméstica",
+   "limpeza de casa"
+  ],
+  "service": "Faxina completa",
+  "service_slug": "faxina-completa",
+  "service_sort": 0,
+  "service_aliases": [],
+  "active": true
+ },
+ {
+  "sector": "Limpeza e conservação",
+  "sector_slug": "limpeza-e-conservacao",
+  "sector_sort": 1,
+  "profession": "Diarista",
+  "profession_slug": "diarista",
+  "profession_sort": 0,
+  "profession_aliases": [
+   "faxineira",
+   "faxina",
+   "empregada doméstica",
+   "limpeza de casa"
+  ],
+  "service": "Faxina de manutenção",
+  "service_slug": "faxina-de-manutencao",
+  "service_sort": 1,
+  "service_aliases": [],
+  "active": true
+ },
+ {
+  "sector": "Limpeza e conservação",
+  "sector_slug": "limpeza-e-conservacao",
+  "sector_sort": 1,
+  "profession": "Diarista",
+  "profession_slug": "diarista",
+  "profession_sort": 0,
+  "profession_aliases": [
+   "faxineira",
+   "faxina",
+   "empregada doméstica",
+   "limpeza de casa"
+  ],
+  "service": "Limpeza de cozinha e banheiro",
+  "service_slug": "limpeza-de-cozinha-e-banheiro",
+  "service_sort": 2,
+  "service_aliases": [],
+  "active": true
+ },
+ {
+  "sector": "Limpeza e conservação",
+  "sector_slug": "limpeza-e-conservacao",
+  "sector_sort": 1,
+  "profession": "Diarista",
+  "profession_slug": "diarista",
+  "profession_sort": 0,
+  "profession_aliases": [
+   "faxineira",
+   "faxina",
+   "empregada doméstica",
+   "limpeza de casa"
+  ],
+  "service": "Passar roupa",
+  "service_slug": "passar-roupa",
+  "service_sort": 3,
+  "service_aliases": [],
+  "active": true
+ },
+ {
+  "sector": "Limpeza e conservação",
+  "sector_slug": "limpeza-e-conservacao",
+  "sector_sort": 1,
+  "profession": "Diarista",
+  "profession_slug": "diarista",
+  "profession_sort": 0,
+  "profession_aliases": [
+   "faxineira",
+   "faxina",
+   "empregada doméstica",
+   "limpeza de casa"
+  ],
+  "service": "Organização de armários e despensa",
+  "service_slug": "organizacao-de-armarios-e-despensa",
+  "service_sort": 4,
+  "service_aliases": [],
+  "active": true
+ },
+ {
+  "sector": "Limpeza e conservação",
+  "sector_slug": "limpeza-e-conservacao",
+  "sector_sort": 1,
+  "profession": "Limpeza pós-obra",
+  "profession_slug": "limpeza-pos-obra",
+  "profession_sort": 1,
+  "profession_aliases": [
+   "pós obra",
+   "limpeza de obra"
+  ],
+  "service": "Limpeza fina pós-obra",
+  "service_slug": "limpeza-fina-pos-obra",
+  "service_sort": 0,
+  "service_aliases": [],
+  "active": true
+ },
+ {
+  "sector": "Limpeza e conservação",
+  "sector_slug": "limpeza-e-conservacao",
+  "sector_sort": 1,
+  "profession": "Limpeza pós-obra",
+  "profession_slug": "limpeza-pos-obra",
+  "profession_sort": 1,
+  "profession_aliases": [
+   "pós obra",
+   "limpeza de obra"
+  ],
+  "service": "Remoção de resíduos e respingos de tinta",
+  "service_slug": "remocao-de-residuos-e-respingos-de-tinta",
+  "service_sort": 1,
+  "service_aliases": [],
+  "active": true
+ },
+ {
+  "sector": "Limpeza e conservação",
+  "sector_slug": "limpeza-e-conservacao",
+  "sector_sort": 1,
+  "profession": "Limpeza pós-obra",
+  "profession_slug": "limpeza-pos-obra",
+  "profession_sort": 1,
+  "profession_aliases": [
+   "pós obra",
+   "limpeza de obra"
+  ],
+  "service": "Limpeza de vidros e esquadrias",
+  "service_slug": "limpeza-de-vidros-e-esquadrias",
+  "service_sort": 2,
+  "service_aliases": [],
+  "active": true
+ },
+ {
+  "sector": "Limpeza e conservação",
+  "sector_slug": "limpeza-e-conservacao",
+  "sector_sort": 1,
+  "profession": "Limpador de estofados e tapetes",
+  "profession_slug": "limpador-de-estofados-e-tapetes",
+  "profession_sort": 2,
+  "profession_aliases": [
+   "lavagem de sofá",
+   "higienização de colchão"
+  ],
+  "service": "Lavagem de sofá",
+  "service_slug": "lavagem-de-sofa",
+  "service_sort": 0,
+  "service_aliases": [],
+  "active": true
+ },
+ {
+  "sector": "Limpeza e conservação",
+  "sector_slug": "limpeza-e-conservacao",
+  "sector_sort": 1,
+  "profession": "Limpador de estofados e tapetes",
+  "profession_slug": "limpador-de-estofados-e-tapetes",
+  "profession_sort": 2,
+  "profession_aliases": [
+   "lavagem de sofá",
+   "higienização de colchão"
+  ],
+  "service": "Lavagem de colchão",
+  "service_slug": "lavagem-de-colchao",
+  "service_sort": 1,
+  "service_aliases": [],
+  "active": true
+ },
+ {
+  "sector": "Limpeza e conservação",
+  "sector_slug": "limpeza-e-conservacao",
+  "sector_sort": 1,
+  "profession": "Limpador de estofados e tapetes",
+  "profession_slug": "limpador-de-estofados-e-tapetes",
+  "profession_sort": 2,
+  "profession_aliases": [
+   "lavagem de sofá",
+   "higienização de colchão"
+  ],
+  "service": "Lavagem de tapete",
+  "service_slug": "lavagem-de-tapete",
+  "service_sort": 2,
+  "service_aliases": [],
+  "active": true
+ },
+ {
+  "sector": "Limpeza e conservação",
+  "sector_slug": "limpeza-e-conservacao",
+  "sector_sort": 1,
+  "profession": "Limpador de estofados e tapetes",
+  "profession_slug": "limpador-de-estofados-e-tapetes",
+  "profession_sort": 2,
+  "profession_aliases": [
+   "lavagem de sofá",
+   "higienização de colchão"
+  ],
+  "service": "Lavagem de carpete",
+  "service_slug": "lavagem-de-carpete",
+  "service_sort": 3,
+  "service_aliases": [],
+  "active": true
+ },
+ {
+  "sector": "Limpeza e conservação",
+  "sector_slug": "limpeza-e-conservacao",
+  "sector_sort": 1,
+  "profession": "Zelador e porteiro",
+  "profession_slug": "zelador-e-porteiro",
+  "profession_sort": 3,
+  "profession_aliases": [
+   "zeladoria",
+   "portaria"
+  ],
+  "service": "Zeladoria de condomínio",
+  "service_slug": "zeladoria-de-condominio",
+  "service_sort": 0,
+  "service_aliases": [],
+  "active": true
+ },
+ {
+  "sector": "Limpeza e conservação",
+  "sector_slug": "limpeza-e-conservacao",
+  "sector_sort": 1,
+  "profession": "Zelador e porteiro",
+  "profession_slug": "zelador-e-porteiro",
+  "profession_sort": 3,
+  "profession_aliases": [
+   "zeladoria",
+   "portaria"
+  ],
+  "service": "Portaria",
+  "service_slug": "portaria",
+  "service_sort": 1,
+  "service_aliases": [],
+  "active": true
+ },
+ {
+  "sector": "Limpeza e conservação",
+  "sector_slug": "limpeza-e-conservacao",
+  "sector_sort": 1,
+  "profession": "Zelador e porteiro",
+  "profession_slug": "zelador-e-porteiro",
+  "profession_sort": 3,
+  "profession_aliases": [
+   "zeladoria",
+   "portaria"
+  ],
+  "service": "Cobertura de folga",
+  "service_slug": "cobertura-de-folga",
+  "service_sort": 2,
+  "service_aliases": [],
+  "active": true
+ },
+ {
+  "sector": "Jardinagem e piscinas",
+  "sector_slug": "jardinagem-e-piscinas",
+  "sector_sort": 2,
+  "profession": "Jardineiro",
+  "profession_slug": "jardineiro",
+  "profession_sort": 0,
+  "profession_aliases": [
+   "jardinagem",
+   "paisagismo",
+   "podador"
+  ],
+  "service": "Corte de grama",
+  "service_slug": "corte-de-grama",
+  "service_sort": 0,
+  "service_aliases": [],
+  "active": true
+ },
+ {
+  "sector": "Jardinagem e piscinas",
+  "sector_slug": "jardinagem-e-piscinas",
+  "sector_sort": 2,
+  "profession": "Jardineiro",
+  "profession_slug": "jardineiro",
+  "profession_sort": 0,
+  "profession_aliases": [
+   "jardinagem",
+   "paisagismo",
+   "podador"
+  ],
+  "service": "Poda de árvores e arbustos",
+  "service_slug": "poda-de-arvores-e-arbustos",
+  "service_sort": 1,
+  "service_aliases": [],
+  "active": true
+ },
+ {
+  "sector": "Jardinagem e piscinas",
+  "sector_slug": "jardinagem-e-piscinas",
+  "sector_sort": 2,
+  "profession": "Jardineiro",
+  "profession_slug": "jardineiro",
+  "profession_sort": 0,
+  "profession_aliases": [
+   "jardinagem",
+   "paisagismo",
+   "podador"
+  ],
+  "service": "Plantio e manutenção de jardim",
+  "service_slug": "plantio-e-manutencao-de-jardim",
+  "service_sort": 2,
+  "service_aliases": [],
+  "active": true
+ },
+ {
+  "sector": "Jardinagem e piscinas",
+  "sector_slug": "jardinagem-e-piscinas",
+  "sector_sort": 2,
+  "profession": "Jardineiro",
+  "profession_slug": "jardineiro",
+  "profession_sort": 0,
+  "profession_aliases": [
+   "jardinagem",
+   "paisagismo",
+   "podador"
+  ],
+  "service": "Limpeza de terreno",
+  "service_slug": "limpeza-de-terreno",
+  "service_sort": 3,
+  "service_aliases": [],
+  "active": true
+ },
+ {
+  "sector": "Jardinagem e piscinas",
+  "sector_slug": "jardinagem-e-piscinas",
+  "sector_sort": 2,
+  "profession": "Jardineiro",
+  "profession_slug": "jardineiro",
+  "profession_sort": 0,
+  "profession_aliases": [
+   "jardinagem",
+   "paisagismo",
+   "podador"
+  ],
+  "service": "Instalação de grama",
+  "service_slug": "instalacao-de-grama",
+  "service_sort": 4,
+  "service_aliases": [],
+  "active": true
+ },
+ {
+  "sector": "Jardinagem e piscinas",
+  "sector_slug": "jardinagem-e-piscinas",
+  "sector_sort": 2,
+  "profession": "Piscineiro",
+  "profession_slug": "piscineiro",
+  "profession_sort": 1,
+  "profession_aliases": [
+   "limpeza de piscina",
+   "tratamento de piscina"
+  ],
+  "service": "Limpeza de piscina",
+  "service_slug": "limpeza-de-piscina",
+  "service_sort": 0,
+  "service_aliases": [],
+  "active": true
+ },
+ {
+  "sector": "Jardinagem e piscinas",
+  "sector_slug": "jardinagem-e-piscinas",
+  "sector_sort": 2,
+  "profession": "Piscineiro",
+  "profession_slug": "piscineiro",
+  "profession_sort": 1,
+  "profession_aliases": [
+   "limpeza de piscina",
+   "tratamento de piscina"
+  ],
+  "service": "Tratamento da água",
+  "service_slug": "tratamento-da-agua",
+  "service_sort": 1,
+  "service_aliases": [],
+  "active": true
+ },
+ {
+  "sector": "Jardinagem e piscinas",
+  "sector_slug": "jardinagem-e-piscinas",
+  "sector_sort": 2,
+  "profession": "Piscineiro",
+  "profession_slug": "piscineiro",
+  "profession_sort": 1,
+  "profession_aliases": [
+   "limpeza de piscina",
+   "tratamento de piscina"
+  ],
+  "service": "Conserto de bomba e filtro",
+  "service_slug": "conserto-de-bomba-e-filtro",
+  "service_sort": 2,
+  "service_aliases": [],
+  "active": true
+ },
+ {
+  "sector": "Jardinagem e piscinas",
+  "sector_slug": "jardinagem-e-piscinas",
+  "sector_sort": 2,
+  "profession": "Piscineiro",
+  "profession_slug": "piscineiro",
+  "profession_sort": 1,
+  "profession_aliases": [
+   "limpeza de piscina",
+   "tratamento de piscina"
+  ],
+  "service": "Troca de areia do filtro",
+  "service_slug": "troca-de-areia-do-filtro",
+  "service_sort": 3,
+  "service_aliases": [],
+  "active": true
+ },
+ {
+  "sector": "Beleza e estética",
+  "sector_slug": "beleza-e-estetica",
+  "sector_sort": 3,
+  "profession": "Cabeleireiro(a)",
+  "profession_slug": "cabeleireiro-a",
+  "profession_sort": 0,
+  "profession_aliases": [
+   "cabelereiro",
+   "salão"
+  ],
+  "service": "Corte feminino",
+  "service_slug": "corte-feminino",
+  "service_sort": 0,
+  "service_aliases": [],
+  "active": true
+ },
+ {
+  "sector": "Beleza e estética",
+  "sector_slug": "beleza-e-estetica",
+  "sector_sort": 3,
+  "profession": "Cabeleireiro(a)",
+  "profession_slug": "cabeleireiro-a",
+  "profession_sort": 0,
+  "profession_aliases": [
+   "cabelereiro",
+   "salão"
+  ],
+  "service": "Corte masculino",
+  "service_slug": "corte-masculino",
+  "service_sort": 1,
+  "service_aliases": [],
+  "active": true
+ },
+ {
+  "sector": "Beleza e estética",
+  "sector_slug": "beleza-e-estetica",
+  "sector_sort": 3,
+  "profession": "Cabeleireiro(a)",
+  "profession_slug": "cabeleireiro-a",
+  "profession_sort": 0,
+  "profession_aliases": [
+   "cabelereiro",
+   "salão"
+  ],
+  "service": "Coloração",
+  "service_slug": "coloracao",
+  "service_sort": 2,
+  "service_aliases": [],
+  "active": true
+ },
+ {
+  "sector": "Beleza e estética",
+  "sector_slug": "beleza-e-estetica",
+  "sector_sort": 3,
+  "profession": "Cabeleireiro(a)",
+  "profession_slug": "cabeleireiro-a",
+  "profession_sort": 0,
+  "profession_aliases": [
+   "cabelereiro",
+   "salão"
+  ],
+  "service": "Escova e penteado",
+  "service_slug": "escova-e-penteado",
+  "service_sort": 3,
+  "service_aliases": [],
+  "active": true
+ },
+ {
+  "sector": "Beleza e estética",
+  "sector_slug": "beleza-e-estetica",
+  "sector_sort": 3,
+  "profession": "Cabeleireiro(a)",
+  "profession_slug": "cabeleireiro-a",
+  "profession_sort": 0,
+  "profession_aliases": [
+   "cabelereiro",
+   "salão"
+  ],
+  "service": "Alisamento e progressiva",
+  "service_slug": "alisamento-e-progressiva",
+  "service_sort": 4,
+  "service_aliases": [],
+  "active": true
+ },
+ {
+  "sector": "Beleza e estética",
+  "sector_slug": "beleza-e-estetica",
+  "sector_sort": 3,
+  "profession": "Cabeleireiro(a)",
+  "profession_slug": "cabeleireiro-a",
+  "profession_sort": 0,
+  "profession_aliases": [
+   "cabelereiro",
+   "salão"
+  ],
+  "service": "Hidratação e tratamento",
+  "service_slug": "hidratacao-e-tratamento",
+  "service_sort": 5,
+  "service_aliases": [],
+  "active": true
+ },
+ {
+  "sector": "Beleza e estética",
+  "sector_slug": "beleza-e-estetica",
+  "sector_sort": 3,
+  "profession": "Barbeiro",
+  "profession_slug": "barbeiro",
+  "profession_sort": 1,
+  "profession_aliases": [
+   "barba"
+  ],
+  "service": "Corte masculino",
+  "service_slug": "corte-masculino",
+  "service_sort": 0,
+  "service_aliases": [],
+  "active": true
+ },
+ {
+  "sector": "Beleza e estética",
+  "sector_slug": "beleza-e-estetica",
+  "sector_sort": 3,
+  "profession": "Barbeiro",
+  "profession_slug": "barbeiro",
+  "profession_sort": 1,
+  "profession_aliases": [
+   "barba"
+  ],
+  "service": "Barba",
+  "service_slug": "barba",
+  "service_sort": 1,
+  "service_aliases": [],
+  "active": true
+ },
+ {
+  "sector": "Beleza e estética",
+  "sector_slug": "beleza-e-estetica",
+  "sector_sort": 3,
+  "profession": "Barbeiro",
+  "profession_slug": "barbeiro",
+  "profession_sort": 1,
+  "profession_aliases": [
+   "barba"
+  ],
+  "service": "Corte e barba",
+  "service_slug": "corte-e-barba",
+  "service_sort": 2,
+  "service_aliases": [],
+  "active": true
+ },
+ {
+  "sector": "Beleza e estética",
+  "sector_slug": "beleza-e-estetica",
+  "sector_sort": 3,
+  "profession": "Barbeiro",
+  "profession_slug": "barbeiro",
+  "profession_sort": 1,
+  "profession_aliases": [
+   "barba"
+  ],
+  "service": "Pigmentação",
+  "service_slug": "pigmentacao",
+  "service_sort": 3,
+  "service_aliases": [],
+  "active": true
+ },
+ {
+  "sector": "Beleza e estética",
+  "sector_slug": "beleza-e-estetica",
+  "sector_sort": 3,
+  "profession": "Manicure e pedicure",
+  "profession_slug": "manicure-e-pedicure",
+  "profession_sort": 2,
+  "profession_aliases": [
+   "unha",
+   "esmaltação"
+  ],
+  "service": "Manicure",
+  "service_slug": "manicure",
+  "service_sort": 0,
+  "service_aliases": [],
+  "active": true
+ },
+ {
+  "sector": "Beleza e estética",
+  "sector_slug": "beleza-e-estetica",
+  "sector_sort": 3,
+  "profession": "Manicure e pedicure",
+  "profession_slug": "manicure-e-pedicure",
+  "profession_sort": 2,
+  "profession_aliases": [
+   "unha",
+   "esmaltação"
+  ],
+  "service": "Pedicure",
+  "service_slug": "pedicure",
+  "service_sort": 1,
+  "service_aliases": [],
+  "active": true
+ },
+ {
+  "sector": "Beleza e estética",
+  "sector_slug": "beleza-e-estetica",
+  "sector_sort": 3,
+  "profession": "Manicure e pedicure",
+  "profession_slug": "manicure-e-pedicure",
+  "profession_sort": 2,
+  "profession_aliases": [
+   "unha",
+   "esmaltação"
+  ],
+  "service": "Alongamento de unhas",
+  "service_slug": "alongamento-de-unhas",
+  "service_sort": 2,
+  "service_aliases": [],
+  "active": true
+ },
+ {
+  "sector": "Beleza e estética",
+  "sector_slug": "beleza-e-estetica",
+  "sector_sort": 3,
+  "profession": "Manicure e pedicure",
+  "profession_slug": "manicure-e-pedicure",
+  "profession_sort": 2,
+  "profession_aliases": [
+   "unha",
+   "esmaltação"
+  ],
+  "service": "Esmaltação em gel",
+  "service_slug": "esmaltacao-em-gel",
+  "service_sort": 3,
+  "service_aliases": [],
+  "active": true
+ },
+ {
+  "sector": "Beleza e estética",
+  "sector_slug": "beleza-e-estetica",
+  "sector_sort": 3,
+  "profession": "Maquiador(a)",
+  "profession_slug": "maquiador-a",
+  "profession_sort": 3,
+  "profession_aliases": [
+   "maquiagem"
+  ],
+  "service": "Maquiagem social",
+  "service_slug": "maquiagem-social",
+  "service_sort": 0,
+  "service_aliases": [],
+  "active": true
+ },
+ {
+  "sector": "Beleza e estética",
+  "sector_slug": "beleza-e-estetica",
+  "sector_sort": 3,
+  "profession": "Maquiador(a)",
+  "profession_slug": "maquiador-a",
+  "profession_sort": 3,
+  "profession_aliases": [
+   "maquiagem"
+  ],
+  "service": "Maquiagem de noiva",
+  "service_slug": "maquiagem-de-noiva",
+  "service_sort": 1,
+  "service_aliases": [],
+  "active": true
+ },
+ {
+  "sector": "Beleza e estética",
+  "sector_slug": "beleza-e-estetica",
+  "sector_sort": 3,
+  "profession": "Maquiador(a)",
+  "profession_slug": "maquiador-a",
+  "profession_sort": 3,
+  "profession_aliases": [
+   "maquiagem"
+  ],
+  "service": "Automaquiagem (aula)",
+  "service_slug": "automaquiagem-aula",
+  "service_sort": 2,
+  "service_aliases": [],
+  "active": true
+ },
+ {
+  "sector": "Beleza e estética",
+  "sector_slug": "beleza-e-estetica",
+  "sector_sort": 3,
+  "profession": "Designer de sobrancelhas",
+  "profession_slug": "designer-de-sobrancelhas",
+  "profession_sort": 4,
+  "profession_aliases": [
+   "sobrancelha",
+   "cílios"
+  ],
+  "service": "Design de sobrancelhas",
+  "service_slug": "design-de-sobrancelhas",
+  "service_sort": 0,
+  "service_aliases": [],
+  "active": true
+ },
+ {
+  "sector": "Beleza e estética",
+  "sector_slug": "beleza-e-estetica",
+  "sector_sort": 3,
+  "profession": "Designer de sobrancelhas",
+  "profession_slug": "designer-de-sobrancelhas",
+  "profession_sort": 4,
+  "profession_aliases": [
+   "sobrancelha",
+   "cílios"
+  ],
+  "service": "Henna",
+  "service_slug": "henna",
+  "service_sort": 1,
+  "service_aliases": [],
+  "active": true
+ },
+ {
+  "sector": "Beleza e estética",
+  "sector_slug": "beleza-e-estetica",
+  "sector_sort": 3,
+  "profession": "Designer de sobrancelhas",
+  "profession_slug": "designer-de-sobrancelhas",
+  "profession_sort": 4,
+  "profession_aliases": [
+   "sobrancelha",
+   "cílios"
+  ],
+  "service": "Extensão de cílios",
+  "service_slug": "extensao-de-cilios",
+  "service_sort": 2,
+  "service_aliases": [],
+  "active": true
+ },
+ {
+  "sector": "Beleza e estética",
+  "sector_slug": "beleza-e-estetica",
+  "sector_sort": 3,
+  "profession": "Depilador(a)",
+  "profession_slug": "depilador-a",
+  "profession_sort": 5,
+  "profession_aliases": [
+   "depilação"
+  ],
+  "service": "Depilação com cera",
+  "service_slug": "depilacao-com-cera",
+  "service_sort": 0,
+  "service_aliases": [],
+  "active": true
+ },
+ {
+  "sector": "Beleza e estética",
+  "sector_slug": "beleza-e-estetica",
+  "sector_sort": 3,
+  "profession": "Depilador(a)",
+  "profession_slug": "depilador-a",
+  "profession_sort": 5,
+  "profession_aliases": [
+   "depilação"
+  ],
+  "service": "Depilação a laser",
+  "service_slug": "depilacao-a-laser",
+  "service_sort": 1,
+  "service_aliases": [],
+  "active": true
+ },
+ {
+  "sector": "Saúde e bem-estar",
+  "sector_slug": "saude-e-bem-estar",
+  "sector_sort": 4,
+  "profession": "Optometrista",
+  "profession_slug": "optometrista",
+  "profession_sort": 0,
+  "profession_aliases": [
+   "óptica",
+   "exame de vista"
+  ],
+  "service": "Exame de vista",
+  "service_slug": "exame-de-vista",
+  "service_sort": 0,
+  "service_aliases": [],
+  "active": true
+ },
+ {
+  "sector": "Saúde e bem-estar",
+  "sector_slug": "saude-e-bem-estar",
+  "sector_sort": 4,
+  "profession": "Optometrista",
+  "profession_slug": "optometrista",
+  "profession_sort": 0,
+  "profession_aliases": [
+   "óptica",
+   "exame de vista"
+  ],
+  "service": "Adaptação de lentes de contato",
+  "service_slug": "adaptacao-de-lentes-de-contato",
+  "service_sort": 1,
+  "service_aliases": [],
+  "active": true
+ },
+ {
+  "sector": "Saúde e bem-estar",
+  "sector_slug": "saude-e-bem-estar",
+  "sector_sort": 4,
+  "profession": "Optometrista",
+  "profession_slug": "optometrista",
+  "profession_sort": 0,
+  "profession_aliases": [
+   "óptica",
+   "exame de vista"
+  ],
+  "service": "Atendimento em óptica",
+  "service_slug": "atendimento-em-optica",
+  "service_sort": 2,
+  "service_aliases": [],
+  "active": true
+ },
+ {
+  "sector": "Saúde e bem-estar",
+  "sector_slug": "saude-e-bem-estar",
+  "sector_sort": 4,
+  "profession": "Técnico de enfermagem",
+  "profession_slug": "tecnico-de-enfermagem",
+  "profession_sort": 1,
+  "profession_aliases": [
+   "enfermagem",
+   "enfermeiro"
+  ],
+  "service": "Curativos",
+  "service_slug": "curativos",
+  "service_sort": 0,
+  "service_aliases": [],
+  "active": true
+ },
+ {
+  "sector": "Saúde e bem-estar",
+  "sector_slug": "saude-e-bem-estar",
+  "sector_sort": 4,
+  "profession": "Técnico de enfermagem",
+  "profession_slug": "tecnico-de-enfermagem",
+  "profession_sort": 1,
+  "profession_aliases": [
+   "enfermagem",
+   "enfermeiro"
+  ],
+  "service": "Aplicação de medicação",
+  "service_slug": "aplicacao-de-medicacao",
+  "service_sort": 1,
+  "service_aliases": [],
+  "active": true
+ },
+ {
+  "sector": "Saúde e bem-estar",
+  "sector_slug": "saude-e-bem-estar",
+  "sector_sort": 4,
+  "profession": "Técnico de enfermagem",
+  "profession_slug": "tecnico-de-enfermagem",
+  "profession_sort": 1,
+  "profession_aliases": [
+   "enfermagem",
+   "enfermeiro"
+  ],
+  "service": "Acompanhamento hospitalar",
+  "service_slug": "acompanhamento-hospitalar",
+  "service_sort": 2,
+  "service_aliases": [],
+  "active": true
+ },
+ {
+  "sector": "Saúde e bem-estar",
+  "sector_slug": "saude-e-bem-estar",
+  "sector_sort": 4,
+  "profession": "Técnico de enfermagem",
+  "profession_slug": "tecnico-de-enfermagem",
+  "profession_sort": 1,
+  "profession_aliases": [
+   "enfermagem",
+   "enfermeiro"
+  ],
+  "service": "Plantão domiciliar",
+  "service_slug": "plantao-domiciliar",
+  "service_sort": 3,
+  "service_aliases": [],
+  "active": true
+ },
+ {
+  "sector": "Saúde e bem-estar",
+  "sector_slug": "saude-e-bem-estar",
+  "sector_sort": 4,
+  "profession": "Massoterapeuta",
+  "profession_slug": "massoterapeuta",
+  "profession_sort": 2,
+  "profession_aliases": [
+   "massagem",
+   "massagista"
+  ],
+  "service": "Massagem relaxante",
+  "service_slug": "massagem-relaxante",
+  "service_sort": 0,
+  "service_aliases": [],
+  "active": true
+ },
+ {
+  "sector": "Saúde e bem-estar",
+  "sector_slug": "saude-e-bem-estar",
+  "sector_sort": 4,
+  "profession": "Massoterapeuta",
+  "profession_slug": "massoterapeuta",
+  "profession_sort": 2,
+  "profession_aliases": [
+   "massagem",
+   "massagista"
+  ],
+  "service": "Massagem terapêutica",
+  "service_slug": "massagem-terapeutica",
+  "service_sort": 1,
+  "service_aliases": [],
+  "active": true
+ },
+ {
+  "sector": "Saúde e bem-estar",
+  "sector_slug": "saude-e-bem-estar",
+  "sector_sort": 4,
+  "profession": "Massoterapeuta",
+  "profession_slug": "massoterapeuta",
+  "profession_sort": 2,
+  "profession_aliases": [
+   "massagem",
+   "massagista"
+  ],
+  "service": "Quick massage em empresa",
+  "service_slug": "quick-massage-em-empresa",
+  "service_sort": 2,
+  "service_aliases": [],
+  "active": true
+ },
+ {
+  "sector": "Saúde e bem-estar",
+  "sector_slug": "saude-e-bem-estar",
+  "sector_sort": 4,
+  "profession": "Fisioterapeuta",
+  "profession_slug": "fisioterapeuta",
+  "profession_sort": 3,
+  "profession_aliases": [
+   "fisio"
+  ],
+  "service": "Fisioterapia domiciliar",
+  "service_slug": "fisioterapia-domiciliar",
+  "service_sort": 0,
+  "service_aliases": [],
+  "active": true
+ },
+ {
+  "sector": "Saúde e bem-estar",
+  "sector_slug": "saude-e-bem-estar",
+  "sector_sort": 4,
+  "profession": "Fisioterapeuta",
+  "profession_slug": "fisioterapeuta",
+  "profession_sort": 3,
+  "profession_aliases": [
+   "fisio"
+  ],
+  "service": "Reabilitação",
+  "service_slug": "reabilitacao",
+  "service_sort": 1,
+  "service_aliases": [],
+  "active": true
+ },
+ {
+  "sector": "Saúde e bem-estar",
+  "sector_slug": "saude-e-bem-estar",
+  "sector_sort": 4,
+  "profession": "Fisioterapeuta",
+  "profession_slug": "fisioterapeuta",
+  "profession_sort": 3,
+  "profession_aliases": [
+   "fisio"
+  ],
+  "service": "Pilates clínico",
+  "service_slug": "pilates-clinico",
+  "service_sort": 2,
+  "service_aliases": [],
+  "active": true
+ },
+ {
+  "sector": "Saúde e bem-estar",
+  "sector_slug": "saude-e-bem-estar",
+  "sector_sort": 4,
+  "profession": "Personal trainer",
+  "profession_slug": "personal-trainer",
+  "profession_sort": 4,
+  "profession_aliases": [
+   "personal",
+   "educador físico"
+  ],
+  "service": "Treino em casa",
+  "service_slug": "treino-em-casa",
+  "service_sort": 0,
+  "service_aliases": [],
+  "active": true
+ },
+ {
+  "sector": "Saúde e bem-estar",
+  "sector_slug": "saude-e-bem-estar",
+  "sector_sort": 4,
+  "profession": "Personal trainer",
+  "profession_slug": "personal-trainer",
+  "profession_sort": 4,
+  "profession_aliases": [
+   "personal",
+   "educador físico"
+  ],
+  "service": "Treino em academia",
+  "service_slug": "treino-em-academia",
+  "service_sort": 1,
+  "service_aliases": [],
+  "active": true
+ },
+ {
+  "sector": "Saúde e bem-estar",
+  "sector_slug": "saude-e-bem-estar",
+  "sector_sort": 4,
+  "profession": "Personal trainer",
+  "profession_slug": "personal-trainer",
+  "profession_sort": 4,
+  "profession_aliases": [
+   "personal",
+   "educador físico"
+  ],
+  "service": "Treino ao ar livre",
+  "service_slug": "treino-ao-ar-livre",
+  "service_sort": 2,
+  "service_aliases": [],
+  "active": true
+ },
+ {
+  "sector": "Cuidados com pessoas e pets",
+  "sector_slug": "cuidados-com-pessoas-e-pets",
+  "sector_sort": 5,
+  "profession": "Cuidador(a) de idosos",
+  "profession_slug": "cuidador-a-de-idosos",
+  "profession_sort": 0,
+  "profession_aliases": [
+   "cuidador",
+   "acompanhante de idosos"
+  ],
+  "service": "Cuidador diurno",
+  "service_slug": "cuidador-diurno",
+  "service_sort": 0,
+  "service_aliases": [],
+  "active": true
+ },
+ {
+  "sector": "Cuidados com pessoas e pets",
+  "sector_slug": "cuidados-com-pessoas-e-pets",
+  "sector_sort": 5,
+  "profession": "Cuidador(a) de idosos",
+  "profession_slug": "cuidador-a-de-idosos",
+  "profession_sort": 0,
+  "profession_aliases": [
+   "cuidador",
+   "acompanhante de idosos"
+  ],
+  "service": "Cuidador noturno",
+  "service_slug": "cuidador-noturno",
+  "service_sort": 1,
+  "service_aliases": [],
+  "active": true
+ },
+ {
+  "sector": "Cuidados com pessoas e pets",
+  "sector_slug": "cuidados-com-pessoas-e-pets",
+  "sector_sort": 5,
+  "profession": "Cuidador(a) de idosos",
+  "profession_slug": "cuidador-a-de-idosos",
+  "profession_sort": 0,
+  "profession_aliases": [
+   "cuidador",
+   "acompanhante de idosos"
+  ],
+  "service": "Acompanhamento em consultas",
+  "service_slug": "acompanhamento-em-consultas",
+  "service_sort": 2,
+  "service_aliases": [],
+  "active": true
+ },
+ {
+  "sector": "Cuidados com pessoas e pets",
+  "sector_slug": "cuidados-com-pessoas-e-pets",
+  "sector_sort": 5,
+  "profession": "Babá",
+  "profession_slug": "baba",
+  "profession_sort": 1,
+  "profession_aliases": [
+   "baba",
+   "cuidadora de crianças"
+  ],
+  "service": "Babá diurna",
+  "service_slug": "baba-diurna",
+  "service_sort": 0,
+  "service_aliases": [],
+  "active": true
+ },
+ {
+  "sector": "Cuidados com pessoas e pets",
+  "sector_slug": "cuidados-com-pessoas-e-pets",
+  "sector_sort": 5,
+  "profession": "Babá",
+  "profession_slug": "baba",
+  "profession_sort": 1,
+  "profession_aliases": [
+   "baba",
+   "cuidadora de crianças"
+  ],
+  "service": "Babá noturna",
+  "service_slug": "baba-noturna",
+  "service_sort": 1,
+  "service_aliases": [],
+  "active": true
+ },
+ {
+  "sector": "Cuidados com pessoas e pets",
+  "sector_slug": "cuidados-com-pessoas-e-pets",
+  "sector_sort": 5,
+  "profession": "Babá",
+  "profession_slug": "baba",
+  "profession_sort": 1,
+  "profession_aliases": [
+   "baba",
+   "cuidadora de crianças"
+  ],
+  "service": "Buscar na escola",
+  "service_slug": "buscar-na-escola",
+  "service_sort": 2,
+  "service_aliases": [],
+  "active": true
+ },
+ {
+  "sector": "Cuidados com pessoas e pets",
+  "sector_slug": "cuidados-com-pessoas-e-pets",
+  "sector_sort": 5,
+  "profession": "Passeador e cuidador de pets",
+  "profession_slug": "passeador-e-cuidador-de-pets",
+  "profession_sort": 2,
+  "profession_aliases": [
+   "dog walker",
+   "pet sitter",
+   "banho e tosa"
+  ],
+  "service": "Passeio com cachorro",
+  "service_slug": "passeio-com-cachorro",
+  "service_sort": 0,
+  "service_aliases": [],
+  "active": true
+ },
+ {
+  "sector": "Cuidados com pessoas e pets",
+  "sector_slug": "cuidados-com-pessoas-e-pets",
+  "sector_sort": 5,
+  "profession": "Passeador e cuidador de pets",
+  "profession_slug": "passeador-e-cuidador-de-pets",
+  "profession_sort": 2,
+  "profession_aliases": [
+   "dog walker",
+   "pet sitter",
+   "banho e tosa"
+  ],
+  "service": "Hospedagem de pet",
+  "service_slug": "hospedagem-de-pet",
+  "service_sort": 1,
+  "service_aliases": [],
+  "active": true
+ },
+ {
+  "sector": "Cuidados com pessoas e pets",
+  "sector_slug": "cuidados-com-pessoas-e-pets",
+  "sector_sort": 5,
+  "profession": "Passeador e cuidador de pets",
+  "profession_slug": "passeador-e-cuidador-de-pets",
+  "profession_sort": 2,
+  "profession_aliases": [
+   "dog walker",
+   "pet sitter",
+   "banho e tosa"
+  ],
+  "service": "Banho e tosa",
+  "service_slug": "banho-e-tosa",
+  "service_sort": 2,
+  "service_aliases": [],
+  "active": true
+ },
+ {
+  "sector": "Transporte, mudanças e entregas",
+  "sector_slug": "transporte-mudancas-e-entregas",
+  "sector_sort": 6,
+  "profession": "Freteiro e motorista de mudança",
+  "profession_slug": "freteiro-e-motorista-de-mudanca",
+  "profession_sort": 0,
+  "profession_aliases": [
+   "frete",
+   "carreto",
+   "mudança"
+  ],
+  "service": "Mudança residencial",
+  "service_slug": "mudanca-residencial",
+  "service_sort": 0,
+  "service_aliases": [],
+  "active": true
+ },
+ {
+  "sector": "Transporte, mudanças e entregas",
+  "sector_slug": "transporte-mudancas-e-entregas",
+  "sector_sort": 6,
+  "profession": "Freteiro e motorista de mudança",
+  "profession_slug": "freteiro-e-motorista-de-mudanca",
+  "profession_sort": 0,
+  "profession_aliases": [
+   "frete",
+   "carreto",
+   "mudança"
+  ],
+  "service": "Frete pequeno",
+  "service_slug": "frete-pequeno",
+  "service_sort": 1,
+  "service_aliases": [],
+  "active": true
+ },
+ {
+  "sector": "Transporte, mudanças e entregas",
+  "sector_slug": "transporte-mudancas-e-entregas",
+  "sector_sort": 6,
+  "profession": "Freteiro e motorista de mudança",
+  "profession_slug": "freteiro-e-motorista-de-mudanca",
+  "profession_sort": 0,
+  "profession_aliases": [
+   "frete",
+   "carreto",
+   "mudança"
+  ],
+  "service": "Transporte de móveis",
+  "service_slug": "transporte-de-moveis",
+  "service_sort": 2,
+  "service_aliases": [],
+  "active": true
+ },
+ {
+  "sector": "Transporte, mudanças e entregas",
+  "sector_slug": "transporte-mudancas-e-entregas",
+  "sector_sort": 6,
+  "profession": "Freteiro e motorista de mudança",
+  "profession_slug": "freteiro-e-motorista-de-mudanca",
+  "profession_sort": 0,
+  "profession_aliases": [
+   "frete",
+   "carreto",
+   "mudança"
+  ],
+  "service": "Transporte de material de obra",
+  "service_slug": "transporte-de-material-de-obra",
+  "service_sort": 3,
+  "service_aliases": [],
+  "active": true
+ },
+ {
+  "sector": "Transporte, mudanças e entregas",
+  "sector_slug": "transporte-mudancas-e-entregas",
+  "sector_sort": 6,
+  "profession": "Ajudante de mudança",
+  "profession_slug": "ajudante-de-mudanca",
+  "profession_sort": 1,
+  "profession_aliases": [
+   "carregador"
+  ],
+  "service": "Carregar e descarregar",
+  "service_slug": "carregar-e-descarregar",
+  "service_sort": 0,
+  "service_aliases": [],
+  "active": true
+ },
+ {
+  "sector": "Transporte, mudanças e entregas",
+  "sector_slug": "transporte-mudancas-e-entregas",
+  "sector_sort": 6,
+  "profession": "Ajudante de mudança",
+  "profession_slug": "ajudante-de-mudanca",
+  "profession_sort": 1,
+  "profession_aliases": [
+   "carregador"
+  ],
+  "service": "Embalar e desmontar móveis",
+  "service_slug": "embalar-e-desmontar-moveis",
+  "service_sort": 1,
+  "service_aliases": [],
+  "active": true
+ },
+ {
+  "sector": "Transporte, mudanças e entregas",
+  "sector_slug": "transporte-mudancas-e-entregas",
+  "sector_sort": 6,
+  "profession": "Montador de móveis",
+  "profession_slug": "montador-de-moveis",
+  "profession_sort": 2,
+  "profession_aliases": [
+   "montagem de móveis"
+  ],
+  "service": "Montagem de guarda-roupa",
+  "service_slug": "montagem-de-guarda-roupa",
+  "service_sort": 0,
+  "service_aliases": [],
+  "active": true
+ },
+ {
+  "sector": "Transporte, mudanças e entregas",
+  "sector_slug": "transporte-mudancas-e-entregas",
+  "sector_sort": 6,
+  "profession": "Montador de móveis",
+  "profession_slug": "montador-de-moveis",
+  "profession_sort": 2,
+  "profession_aliases": [
+   "montagem de móveis"
+  ],
+  "service": "Montagem de cozinha",
+  "service_slug": "montagem-de-cozinha",
+  "service_sort": 1,
+  "service_aliases": [],
+  "active": true
+ },
+ {
+  "sector": "Transporte, mudanças e entregas",
+  "sector_slug": "transporte-mudancas-e-entregas",
+  "sector_sort": 6,
+  "profession": "Montador de móveis",
+  "profession_slug": "montador-de-moveis",
+  "profession_sort": 2,
+  "profession_aliases": [
+   "montagem de móveis"
+  ],
+  "service": "Montagem de cama e estante",
+  "service_slug": "montagem-de-cama-e-estante",
+  "service_sort": 2,
+  "service_aliases": [],
+  "active": true
+ },
+ {
+  "sector": "Transporte, mudanças e entregas",
+  "sector_slug": "transporte-mudancas-e-entregas",
+  "sector_sort": 6,
+  "profession": "Montador de móveis",
+  "profession_slug": "montador-de-moveis",
+  "profession_sort": 2,
+  "profession_aliases": [
+   "montagem de móveis"
+  ],
+  "service": "Desmontagem de móveis",
+  "service_slug": "desmontagem-de-moveis",
+  "service_sort": 3,
+  "service_aliases": [],
+  "active": true
+ },
+ {
+  "sector": "Transporte, mudanças e entregas",
+  "sector_slug": "transporte-mudancas-e-entregas",
+  "sector_sort": 6,
+  "profession": "Motoboy e entregador",
+  "profession_slug": "motoboy-e-entregador",
+  "profession_sort": 3,
+  "profession_aliases": [
+   "motoboy",
+   "entrega",
+   "bike"
+  ],
+  "service": "Entrega expressa",
+  "service_slug": "entrega-expressa",
+  "service_sort": 0,
+  "service_aliases": [],
+  "active": true
+ },
+ {
+  "sector": "Transporte, mudanças e entregas",
+  "sector_slug": "transporte-mudancas-e-entregas",
+  "sector_sort": 6,
+  "profession": "Motoboy e entregador",
+  "profession_slug": "motoboy-e-entregador",
+  "profession_sort": 3,
+  "profession_aliases": [
+   "motoboy",
+   "entrega",
+   "bike"
+  ],
+  "service": "Entrega de documentos",
+  "service_slug": "entrega-de-documentos",
+  "service_sort": 1,
+  "service_aliases": [],
+  "active": true
+ },
+ {
+  "sector": "Transporte, mudanças e entregas",
+  "sector_slug": "transporte-mudancas-e-entregas",
+  "sector_sort": 6,
+  "profession": "Motoboy e entregador",
+  "profession_slug": "motoboy-e-entregador",
+  "profession_sort": 3,
+  "profession_aliases": [
+   "motoboy",
+   "entrega",
+   "bike"
+  ],
+  "service": "Entrega de refeições",
+  "service_slug": "entrega-de-refeicoes",
+  "service_sort": 2,
+  "service_aliases": [],
+  "active": true
+ },
+ {
+  "sector": "Transporte, mudanças e entregas",
+  "sector_slug": "transporte-mudancas-e-entregas",
+  "sector_sort": 6,
+  "profession": "Motoboy e entregador",
+  "profession_slug": "motoboy-e-entregador",
+  "profession_sort": 3,
+  "profession_aliases": [
+   "motoboy",
+   "entrega",
+   "bike"
+  ],
+  "service": "Retirada de encomendas",
+  "service_slug": "retirada-de-encomendas",
+  "service_sort": 3,
+  "service_aliases": [],
+  "active": true
+ },
+ {
+  "sector": "Tecnologia e assistência técnica",
+  "sector_slug": "tecnologia-e-assistencia-tecnica",
+  "sector_sort": 7,
+  "profession": "Técnico de informática",
+  "profession_slug": "tecnico-de-informatica",
+  "profession_sort": 0,
+  "profession_aliases": [
+   "computador",
+   "notebook",
+   "ti"
+  ],
+  "service": "Formatação e instalação",
+  "service_slug": "formatacao-e-instalacao",
+  "service_sort": 0,
+  "service_aliases": [],
+  "active": true
+ },
+ {
+  "sector": "Tecnologia e assistência técnica",
+  "sector_slug": "tecnologia-e-assistencia-tecnica",
+  "sector_sort": 7,
+  "profession": "Técnico de informática",
+  "profession_slug": "tecnico-de-informatica",
+  "profession_sort": 0,
+  "profession_aliases": [
+   "computador",
+   "notebook",
+   "ti"
+  ],
+  "service": "Remoção de vírus",
+  "service_slug": "remocao-de-virus",
+  "service_sort": 1,
+  "service_aliases": [],
+  "active": true
+ },
+ {
+  "sector": "Tecnologia e assistência técnica",
+  "sector_slug": "tecnologia-e-assistencia-tecnica",
+  "sector_sort": 7,
+  "profession": "Técnico de informática",
+  "profession_slug": "tecnico-de-informatica",
+  "profession_sort": 0,
+  "profession_aliases": [
+   "computador",
+   "notebook",
+   "ti"
+  ],
+  "service": "Troca de peças",
+  "service_slug": "troca-de-pecas",
+  "service_sort": 2,
+  "service_aliases": [],
+  "active": true
+ },
+ {
+  "sector": "Tecnologia e assistência técnica",
+  "sector_slug": "tecnologia-e-assistencia-tecnica",
+  "sector_sort": 7,
+  "profession": "Técnico de informática",
+  "profession_slug": "tecnico-de-informatica",
+  "profession_sort": 0,
+  "profession_aliases": [
+   "computador",
+   "notebook",
+   "ti"
+  ],
+  "service": "Configuração de rede e Wi-Fi",
+  "service_slug": "configuracao-de-rede-e-wi-fi",
+  "service_sort": 3,
+  "service_aliases": [],
+  "active": true
+ },
+ {
+  "sector": "Tecnologia e assistência técnica",
+  "sector_slug": "tecnologia-e-assistencia-tecnica",
+  "sector_sort": 7,
+  "profession": "Técnico de celular",
+  "profession_slug": "tecnico-de-celular",
+  "profession_sort": 1,
+  "profession_aliases": [
+   "celular",
+   "smartphone"
+  ],
+  "service": "Troca de tela",
+  "service_slug": "troca-de-tela",
+  "service_sort": 0,
+  "service_aliases": [],
+  "active": true
+ },
+ {
+  "sector": "Tecnologia e assistência técnica",
+  "sector_slug": "tecnologia-e-assistencia-tecnica",
+  "sector_sort": 7,
+  "profession": "Técnico de celular",
+  "profession_slug": "tecnico-de-celular",
+  "profession_sort": 1,
+  "profession_aliases": [
+   "celular",
+   "smartphone"
+  ],
+  "service": "Troca de bateria",
+  "service_slug": "troca-de-bateria",
+  "service_sort": 1,
+  "service_aliases": [],
+  "active": true
+ },
+ {
+  "sector": "Tecnologia e assistência técnica",
+  "sector_slug": "tecnologia-e-assistencia-tecnica",
+  "sector_sort": 7,
+  "profession": "Técnico de celular",
+  "profession_slug": "tecnico-de-celular",
+  "profession_sort": 1,
+  "profession_aliases": [
+   "celular",
+   "smartphone"
+  ],
+  "service": "Desbloqueio e configuração",
+  "service_slug": "desbloqueio-e-configuracao",
+  "service_sort": 2,
+  "service_aliases": [],
+  "active": true
+ },
+ {
+  "sector": "Tecnologia e assistência técnica",
+  "sector_slug": "tecnologia-e-assistencia-tecnica",
+  "sector_sort": 7,
+  "profession": "Técnico de eletrodomésticos",
+  "profession_slug": "tecnico-de-eletrodomesticos",
+  "profession_sort": 2,
+  "profession_aliases": [
+   "geladeira",
+   "máquina de lavar",
+   "fogão"
+  ],
+  "service": "Conserto de geladeira",
+  "service_slug": "conserto-de-geladeira",
+  "service_sort": 0,
+  "service_aliases": [],
+  "active": true
+ },
+ {
+  "sector": "Tecnologia e assistência técnica",
+  "sector_slug": "tecnologia-e-assistencia-tecnica",
+  "sector_sort": 7,
+  "profession": "Técnico de eletrodomésticos",
+  "profession_slug": "tecnico-de-eletrodomesticos",
+  "profession_sort": 2,
+  "profession_aliases": [
+   "geladeira",
+   "máquina de lavar",
+   "fogão"
+  ],
+  "service": "Conserto de máquina de lavar",
+  "service_slug": "conserto-de-maquina-de-lavar",
+  "service_sort": 1,
+  "service_aliases": [],
+  "active": true
+ },
+ {
+  "sector": "Tecnologia e assistência técnica",
+  "sector_slug": "tecnologia-e-assistencia-tecnica",
+  "sector_sort": 7,
+  "profession": "Técnico de eletrodomésticos",
+  "profession_slug": "tecnico-de-eletrodomesticos",
+  "profession_sort": 2,
+  "profession_aliases": [
+   "geladeira",
+   "máquina de lavar",
+   "fogão"
+  ],
+  "service": "Conserto de fogão e forno",
+  "service_slug": "conserto-de-fogao-e-forno",
+  "service_sort": 2,
+  "service_aliases": [],
+  "active": true
+ },
+ {
+  "sector": "Tecnologia e assistência técnica",
+  "sector_slug": "tecnologia-e-assistencia-tecnica",
+  "sector_sort": 7,
+  "profession": "Técnico de eletrodomésticos",
+  "profession_slug": "tecnico-de-eletrodomesticos",
+  "profession_sort": 2,
+  "profession_aliases": [
+   "geladeira",
+   "máquina de lavar",
+   "fogão"
+  ],
+  "service": "Conserto de micro-ondas",
+  "service_slug": "conserto-de-micro-ondas",
+  "service_sort": 3,
+  "service_aliases": [],
+  "active": true
+ },
+ {
+  "sector": "Tecnologia e assistência técnica",
+  "sector_slug": "tecnologia-e-assistencia-tecnica",
+  "sector_sort": 7,
+  "profession": "Instalador de câmeras e alarmes",
+  "profession_slug": "instalador-de-cameras-e-alarmes",
+  "profession_sort": 3,
+  "profession_aliases": [
+   "cftv",
+   "segurança eletrônica",
+   "antena"
+  ],
+  "service": "Instalação de câmeras",
+  "service_slug": "instalacao-de-cameras",
+  "service_sort": 0,
+  "service_aliases": [],
+  "active": true
+ },
+ {
+  "sector": "Tecnologia e assistência técnica",
+  "sector_slug": "tecnologia-e-assistencia-tecnica",
+  "sector_sort": 7,
+  "profession": "Instalador de câmeras e alarmes",
+  "profession_slug": "instalador-de-cameras-e-alarmes",
+  "profession_sort": 3,
+  "profession_aliases": [
+   "cftv",
+   "segurança eletrônica",
+   "antena"
+  ],
+  "service": "Instalação de alarme",
+  "service_slug": "instalacao-de-alarme",
+  "service_sort": 1,
+  "service_aliases": [],
+  "active": true
+ },
+ {
+  "sector": "Tecnologia e assistência técnica",
+  "sector_slug": "tecnologia-e-assistencia-tecnica",
+  "sector_sort": 7,
+  "profession": "Instalador de câmeras e alarmes",
+  "profession_slug": "instalador-de-cameras-e-alarmes",
+  "profession_sort": 3,
+  "profession_aliases": [
+   "cftv",
+   "segurança eletrônica",
+   "antena"
+  ],
+  "service": "Instalação de cerca elétrica",
+  "service_slug": "instalacao-de-cerca-eletrica",
+  "service_sort": 2,
+  "service_aliases": [],
+  "active": true
+ },
+ {
+  "sector": "Tecnologia e assistência técnica",
+  "sector_slug": "tecnologia-e-assistencia-tecnica",
+  "sector_sort": 7,
+  "profession": "Instalador de câmeras e alarmes",
+  "profession_slug": "instalador-de-cameras-e-alarmes",
+  "profession_sort": 3,
+  "profession_aliases": [
+   "cftv",
+   "segurança eletrônica",
+   "antena"
+  ],
+  "service": "Instalação de antena e TV",
+  "service_slug": "instalacao-de-antena-e-tv",
+  "service_sort": 3,
+  "service_aliases": [],
+  "active": true
+ },
+ {
+  "sector": "Eventos e alimentação",
+  "sector_slug": "eventos-e-alimentacao",
+  "sector_sort": 8,
+  "profession": "Garçom e copeiro",
+  "profession_slug": "garcom-e-copeiro",
+  "profession_sort": 0,
+  "profession_aliases": [
+   "garçon",
+   "copeira"
+  ],
+  "service": "Garçom para evento",
+  "service_slug": "garcom-para-evento",
+  "service_sort": 0,
+  "service_aliases": [],
+  "active": true
+ },
+ {
+  "sector": "Eventos e alimentação",
+  "sector_slug": "eventos-e-alimentacao",
+  "sector_sort": 8,
+  "profession": "Garçom e copeiro",
+  "profession_slug": "garcom-e-copeiro",
+  "profession_sort": 0,
+  "profession_aliases": [
+   "garçon",
+   "copeira"
+  ],
+  "service": "Copeira",
+  "service_slug": "copeira",
+  "service_sort": 1,
+  "service_aliases": [],
+  "active": true
+ },
+ {
+  "sector": "Eventos e alimentação",
+  "sector_slug": "eventos-e-alimentacao",
+  "sector_sort": 8,
+  "profession": "Garçom e copeiro",
+  "profession_slug": "garcom-e-copeiro",
+  "profession_sort": 0,
+  "profession_aliases": [
+   "garçon",
+   "copeira"
+  ],
+  "service": "Barman",
+  "service_slug": "barman",
+  "service_sort": 2,
+  "service_aliases": [],
+  "active": true
+ },
+ {
+  "sector": "Eventos e alimentação",
+  "sector_slug": "eventos-e-alimentacao",
+  "sector_sort": 8,
+  "profession": "Cozinheiro(a)",
+  "profession_slug": "cozinheiro-a",
+  "profession_sort": 1,
+  "profession_aliases": [
+   "cozinha",
+   "chef"
+  ],
+  "service": "Cozinheiro para evento",
+  "service_slug": "cozinheiro-para-evento",
+  "service_sort": 0,
+  "service_aliases": [],
+  "active": true
+ },
+ {
+  "sector": "Eventos e alimentação",
+  "sector_slug": "eventos-e-alimentacao",
+  "sector_sort": 8,
+  "profession": "Cozinheiro(a)",
+  "profession_slug": "cozinheiro-a",
+  "profession_sort": 1,
+  "profession_aliases": [
+   "cozinha",
+   "chef"
+  ],
+  "service": "Marmitas",
+  "service_slug": "marmitas",
+  "service_sort": 1,
+  "service_aliases": [],
+  "active": true
+ },
+ {
+  "sector": "Eventos e alimentação",
+  "sector_slug": "eventos-e-alimentacao",
+  "sector_sort": 8,
+  "profession": "Cozinheiro(a)",
+  "profession_slug": "cozinheiro-a",
+  "profession_sort": 1,
+  "profession_aliases": [
+   "cozinha",
+   "chef"
+  ],
+  "service": "Comida caseira por encomenda",
+  "service_slug": "comida-caseira-por-encomenda",
+  "service_sort": 2,
+  "service_aliases": [],
+  "active": true
+ },
+ {
+  "sector": "Eventos e alimentação",
+  "sector_slug": "eventos-e-alimentacao",
+  "sector_sort": 8,
+  "profession": "Churrasqueiro",
+  "profession_slug": "churrasqueiro",
+  "profession_sort": 2,
+  "profession_aliases": [
+   "churrasco"
+  ],
+  "service": "Churrasco para evento",
+  "service_slug": "churrasco-para-evento",
+  "service_sort": 0,
+  "service_aliases": [],
+  "active": true
+ },
+ {
+  "sector": "Eventos e alimentação",
+  "sector_slug": "eventos-e-alimentacao",
+  "sector_sort": 8,
+  "profession": "Churrasqueiro",
+  "profession_slug": "churrasqueiro",
+  "profession_sort": 2,
+  "profession_aliases": [
+   "churrasco"
+  ],
+  "service": "Churrasco em casa",
+  "service_slug": "churrasco-em-casa",
+  "service_sort": 1,
+  "service_aliases": [],
+  "active": true
+ },
+ {
+  "sector": "Eventos e alimentação",
+  "sector_slug": "eventos-e-alimentacao",
+  "sector_sort": 8,
+  "profession": "Confeiteiro(a)",
+  "profession_slug": "confeiteiro-a",
+  "profession_sort": 3,
+  "profession_aliases": [
+   "bolo",
+   "doces"
+  ],
+  "service": "Bolo de festa",
+  "service_slug": "bolo-de-festa",
+  "service_sort": 0,
+  "service_aliases": [],
+  "active": true
+ },
+ {
+  "sector": "Eventos e alimentação",
+  "sector_slug": "eventos-e-alimentacao",
+  "sector_sort": 8,
+  "profession": "Confeiteiro(a)",
+  "profession_slug": "confeiteiro-a",
+  "profession_sort": 3,
+  "profession_aliases": [
+   "bolo",
+   "doces"
+  ],
+  "service": "Doces para festa",
+  "service_slug": "doces-para-festa",
+  "service_sort": 1,
+  "service_aliases": [],
+  "active": true
+ },
+ {
+  "sector": "Eventos e alimentação",
+  "sector_slug": "eventos-e-alimentacao",
+  "sector_sort": 8,
+  "profession": "Confeiteiro(a)",
+  "profession_slug": "confeiteiro-a",
+  "profession_sort": 3,
+  "profession_aliases": [
+   "bolo",
+   "doces"
+  ],
+  "service": "Salgados para festa",
+  "service_slug": "salgados-para-festa",
+  "service_sort": 2,
+  "service_aliases": [],
+  "active": true
+ },
+ {
+  "sector": "Eventos e alimentação",
+  "sector_slug": "eventos-e-alimentacao",
+  "sector_sort": 8,
+  "profession": "DJ e som",
+  "profession_slug": "dj-e-som",
+  "profession_sort": 4,
+  "profession_aliases": [
+   "dj",
+   "som"
+  ],
+  "service": "DJ para festa",
+  "service_slug": "dj-para-festa",
+  "service_sort": 0,
+  "service_aliases": [],
+  "active": true
+ },
+ {
+  "sector": "Eventos e alimentação",
+  "sector_slug": "eventos-e-alimentacao",
+  "sector_sort": 8,
+  "profession": "DJ e som",
+  "profession_slug": "dj-e-som",
+  "profession_sort": 4,
+  "profession_aliases": [
+   "dj",
+   "som"
+  ],
+  "service": "Aluguel de som",
+  "service_slug": "aluguel-de-som",
+  "service_sort": 1,
+  "service_aliases": [],
+  "active": true
+ },
+ {
+  "sector": "Eventos e alimentação",
+  "sector_slug": "eventos-e-alimentacao",
+  "sector_sort": 8,
+  "profession": "Fotógrafo(a)",
+  "profession_slug": "fotografo-a",
+  "profession_sort": 5,
+  "profession_aliases": [
+   "fotografia",
+   "filmagem"
+  ],
+  "service": "Fotografia de evento",
+  "service_slug": "fotografia-de-evento",
+  "service_sort": 0,
+  "service_aliases": [],
+  "active": true
+ },
+ {
+  "sector": "Eventos e alimentação",
+  "sector_slug": "eventos-e-alimentacao",
+  "sector_sort": 8,
+  "profession": "Fotógrafo(a)",
+  "profession_slug": "fotografo-a",
+  "profession_sort": 5,
+  "profession_aliases": [
+   "fotografia",
+   "filmagem"
+  ],
+  "service": "Ensaio fotográfico",
+  "service_slug": "ensaio-fotografico",
+  "service_sort": 1,
+  "service_aliases": [],
+  "active": true
+ },
+ {
+  "sector": "Eventos e alimentação",
+  "sector_slug": "eventos-e-alimentacao",
+  "sector_sort": 8,
+  "profession": "Fotógrafo(a)",
+  "profession_slug": "fotografo-a",
+  "profession_sort": 5,
+  "profession_aliases": [
+   "fotografia",
+   "filmagem"
+  ],
+  "service": "Filmagem",
+  "service_slug": "filmagem",
+  "service_sort": 2,
+  "service_aliases": [],
+  "active": true
+ },
+ {
+  "sector": "Automotivo",
+  "sector_slug": "automotivo",
+  "sector_sort": 9,
+  "profession": "Mecânico",
+  "profession_slug": "mecanico",
+  "profession_sort": 0,
+  "profession_aliases": [
+   "mecânica",
+   "carro",
+   "moto"
+  ],
+  "service": "Revisão e troca de óleo",
+  "service_slug": "revisao-e-troca-de-oleo",
+  "service_sort": 0,
+  "service_aliases": [],
+  "active": true
+ },
+ {
+  "sector": "Automotivo",
+  "sector_slug": "automotivo",
+  "sector_sort": 9,
+  "profession": "Mecânico",
+  "profession_slug": "mecanico",
+  "profession_sort": 0,
+  "profession_aliases": [
+   "mecânica",
+   "carro",
+   "moto"
+  ],
+  "service": "Freios",
+  "service_slug": "freios",
+  "service_sort": 1,
+  "service_aliases": [],
+  "active": true
+ },
+ {
+  "sector": "Automotivo",
+  "sector_slug": "automotivo",
+  "sector_sort": 9,
+  "profession": "Mecânico",
+  "profession_slug": "mecanico",
+  "profession_sort": 0,
+  "profession_aliases": [
+   "mecânica",
+   "carro",
+   "moto"
+  ],
+  "service": "Suspensão",
+  "service_slug": "suspensao",
+  "service_sort": 2,
+  "service_aliases": [],
+  "active": true
+ },
+ {
+  "sector": "Automotivo",
+  "sector_slug": "automotivo",
+  "sector_sort": 9,
+  "profession": "Mecânico",
+  "profession_slug": "mecanico",
+  "profession_sort": 0,
+  "profession_aliases": [
+   "mecânica",
+   "carro",
+   "moto"
+  ],
+  "service": "Motor",
+  "service_slug": "motor",
+  "service_sort": 3,
+  "service_aliases": [],
+  "active": true
+ },
+ {
+  "sector": "Automotivo",
+  "sector_slug": "automotivo",
+  "sector_sort": 9,
+  "profession": "Mecânico",
+  "profession_slug": "mecanico",
+  "profession_sort": 0,
+  "profession_aliases": [
+   "mecânica",
+   "carro",
+   "moto"
+  ],
+  "service": "Mecânico a domicílio",
+  "service_slug": "mecanico-a-domicilio",
+  "service_sort": 4,
+  "service_aliases": [],
+  "active": true
+ },
+ {
+  "sector": "Automotivo",
+  "sector_slug": "automotivo",
+  "sector_sort": 9,
+  "profession": "Eletricista automotivo",
+  "profession_slug": "eletricista-automotivo",
+  "profession_sort": 1,
+  "profession_aliases": [
+   "auto elétrica"
+  ],
+  "service": "Bateria e alternador",
+  "service_slug": "bateria-e-alternador",
+  "service_sort": 0,
+  "service_aliases": [],
+  "active": true
+ },
+ {
+  "sector": "Automotivo",
+  "sector_slug": "automotivo",
+  "sector_sort": 9,
+  "profession": "Eletricista automotivo",
+  "profession_slug": "eletricista-automotivo",
+  "profession_sort": 1,
+  "profession_aliases": [
+   "auto elétrica"
+  ],
+  "service": "Som e acessórios",
+  "service_slug": "som-e-acessorios",
+  "service_sort": 1,
+  "service_aliases": [],
+  "active": true
+ },
+ {
+  "sector": "Automotivo",
+  "sector_slug": "automotivo",
+  "sector_sort": 9,
+  "profession": "Eletricista automotivo",
+  "profession_slug": "eletricista-automotivo",
+  "profession_sort": 1,
+  "profession_aliases": [
+   "auto elétrica"
+  ],
+  "service": "Faróis e lanternas",
+  "service_slug": "farois-e-lanternas",
+  "service_sort": 2,
+  "service_aliases": [],
+  "active": true
+ },
+ {
+  "sector": "Automotivo",
+  "sector_slug": "automotivo",
+  "sector_sort": 9,
+  "profession": "Funileiro e pintor automotivo",
+  "profession_slug": "funileiro-e-pintor-automotivo",
+  "profession_sort": 2,
+  "profession_aliases": [
+   "lanternagem",
+   "funilaria"
+  ],
+  "service": "Reparo de amassados",
+  "service_slug": "reparo-de-amassados",
+  "service_sort": 0,
+  "service_aliases": [],
+  "active": true
+ },
+ {
+  "sector": "Automotivo",
+  "sector_slug": "automotivo",
+  "sector_sort": 9,
+  "profession": "Funileiro e pintor automotivo",
+  "profession_slug": "funileiro-e-pintor-automotivo",
+  "profession_sort": 2,
+  "profession_aliases": [
+   "lanternagem",
+   "funilaria"
+  ],
+  "service": "Pintura de peça",
+  "service_slug": "pintura-de-peca",
+  "service_sort": 1,
+  "service_aliases": [],
+  "active": true
+ },
+ {
+  "sector": "Automotivo",
+  "sector_slug": "automotivo",
+  "sector_sort": 9,
+  "profession": "Funileiro e pintor automotivo",
+  "profession_slug": "funileiro-e-pintor-automotivo",
+  "profession_sort": 2,
+  "profession_aliases": [
+   "lanternagem",
+   "funilaria"
+  ],
+  "service": "Polimento e cristalização",
+  "service_slug": "polimento-e-cristalizacao",
+  "service_sort": 2,
+  "service_aliases": [],
+  "active": true
+ },
+ {
+  "sector": "Automotivo",
+  "sector_slug": "automotivo",
+  "sector_sort": 9,
+  "profession": "Borracheiro",
+  "profession_slug": "borracheiro",
+  "profession_sort": 3,
+  "profession_aliases": [
+   "pneu"
+  ],
+  "service": "Troca de pneu",
+  "service_slug": "troca-de-pneu",
+  "service_sort": 0,
+  "service_aliases": [],
+  "active": true
+ },
+ {
+  "sector": "Automotivo",
+  "sector_slug": "automotivo",
+  "sector_sort": 9,
+  "profession": "Borracheiro",
+  "profession_slug": "borracheiro",
+  "profession_sort": 3,
+  "profession_aliases": [
+   "pneu"
+  ],
+  "service": "Conserto de pneu furado",
+  "service_slug": "conserto-de-pneu-furado",
+  "service_sort": 1,
+  "service_aliases": [],
+  "active": true
+ },
+ {
+  "sector": "Automotivo",
+  "sector_slug": "automotivo",
+  "sector_sort": 9,
+  "profession": "Borracheiro",
+  "profession_slug": "borracheiro",
+  "profession_sort": 3,
+  "profession_aliases": [
+   "pneu"
+  ],
+  "service": "Socorro de pneu",
+  "service_slug": "socorro-de-pneu",
+  "service_sort": 2,
+  "service_aliases": [],
+  "active": true
+ },
+ {
+  "sector": "Automotivo",
+  "sector_slug": "automotivo",
+  "sector_sort": 9,
+  "profession": "Lavador de carros",
+  "profession_slug": "lavador-de-carros",
+  "profession_sort": 4,
+  "profession_aliases": [
+   "lava jato",
+   "estética automotiva"
+  ],
+  "service": "Lavagem simples",
+  "service_slug": "lavagem-simples",
+  "service_sort": 0,
+  "service_aliases": [],
+  "active": true
+ },
+ {
+  "sector": "Automotivo",
+  "sector_slug": "automotivo",
+  "sector_sort": 9,
+  "profession": "Lavador de carros",
+  "profession_slug": "lavador-de-carros",
+  "profession_sort": 4,
+  "profession_aliases": [
+   "lava jato",
+   "estética automotiva"
+  ],
+  "service": "Lavagem completa e higienização",
+  "service_slug": "lavagem-completa-e-higienizacao",
+  "service_sort": 1,
+  "service_aliases": [],
+  "active": true
+ },
+ {
+  "sector": "Automotivo",
+  "sector_slug": "automotivo",
+  "sector_sort": 9,
+  "profession": "Lavador de carros",
+  "profession_slug": "lavador-de-carros",
+  "profession_sort": 4,
+  "profession_aliases": [
+   "lava jato",
+   "estética automotiva"
+  ],
+  "service": "Polimento",
+  "service_slug": "polimento",
+  "service_sort": 2,
+  "service_aliases": [],
+  "active": true
+ }
+]

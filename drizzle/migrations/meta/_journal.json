@@ -85,6 +85,13 @@
       "when": 1793800000000,
       "tag": "0011_discovery_and_single_conversation",
       "breakpoints": true
+    },
+    {
+      "idx": 12,
+      "version": "7",
+      "when": 1793900000000,
+      "tag": "0012_catalog",
+      "breakpoints": true
     }
   ]
 }
