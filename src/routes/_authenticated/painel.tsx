@@ -20,7 +20,9 @@ import {
 import { useAuth } from "@/lib/auth";
 import { Avatar, SelfDeclared, SkillCard } from "@/components/profile-bits";
 import { SkillDialog } from "@/components/SkillDialog";
-import { CatalogPicker, EMPTY_SELECTION, type CatalogSelection } from "@/components/CatalogPicker";
+import { PostFormFields } from "@/components/PostFormFields";
+import { PostEditDialog } from "@/components/PostEditDialog";
+import { EMPTY_DRAFT, draftColumns, draftError, type PostDraft } from "@/lib/post-form";
 import { useCatalog } from "@/lib/catalog";
 import { WorkAreaDialog, type WorkAreaInput } from "@/components/WorkAreaDialog";
 import { GeoError, formatCep, isValidCep, lookupCep, useWorkArea, type Place } from "@/lib/geo";
@@ -106,25 +108,21 @@ function Painel() {
   const { data: catalog } = useCatalog();
   const { data: workArea } = useWorkArea(userId);
   const [areaOpen, setAreaOpen] = useState(false);
-  const [postCep, setPostCep] = useState("");
-  const [postPlace, setPostPlace] = useState<Place | null>(null);
-  const [pick, setPick] = useState<CatalogSelection>(EMPTY_SELECTION);
-  const [post, setPost] = useState({
-    kind: "job" as PostKind,
-    title: "",
-    description: "",
-    city: "",
-    price: "",
-    vacancies: 1,
-  });
+  const [draft, setDraft] = useState<PostDraft>(EMPTY_DRAFT);
+  const [editing, setEditing] = useState<{
+    id: string;
+    draft: PostDraft;
+    minVacancies: number;
+  } | null>(null);
+  const [editOpen, setEditOpen] = useState(false);
 
   useEffect(() => {
-    if (data?.profile) setPost((x) => ({ ...x, city: x.city || data.profile!.city }));
+    if (data?.profile) setDraft((x) => ({ ...x, city: x.city || data.profile!.city }));
   }, [data?.profile]);
 
   // O CEP da vaga começa igual ao de onde a pessoa atua (ela pode trocar).
   useEffect(() => {
-    if (workArea) setPostCep((c) => c || formatCep(workArea.postal_code));
+    if (workArea) setDraft((x) => ({ ...x, cep: x.cep || formatCep(workArea.postal_code) }));
   }, [workArea]);
 
   async function saveWorkArea(a: WorkAreaInput): Promise<boolean> {
@@ -208,46 +206,109 @@ function Painel() {
 
   async function createPost(e: React.FormEvent) {
     e.preventDefault();
-    if (!pick.professionId && !pick.other) {
-      toast.error('Escolha a profissão, ou "Outro" se ela não estiver na lista');
+    const problem = draftError(draft);
+    if (problem) {
+      toast.error(problem);
       return;
     }
-    let place = postPlace;
-    if (!place && isValidCep(postCep)) {
+    let place = draft.place;
+    if (!place && isValidCep(draft.cep)) {
       try {
-        place = await lookupCep(postCep);
+        place = await lookupCep(draft.cep);
       } catch (err) {
         toast.error(err instanceof GeoError ? err.message : "Não foi possível buscar o CEP");
         return;
       }
     }
-    if (!place && post.kind === "job") {
-      toast.error("Informe o CEP de onde o serviço será feito");
+    const { data: created, error } = await supabase
+      .from("posts")
+      .insert({ ...draftColumns(draft), kind: draft.kind, user_id: userId })
+      .select("id")
+      .single();
+    if (error || !created) {
+      toast.error(
+        error && isBlockedTextError(error)
+          ? BLOCKED_TEXT_MESSAGE
+          : ((error && limitMessage(error)) ?? "Erro ao publicar"),
+      );
       return;
     }
-    const { error } = await supabase.from("posts").insert({
-      ...post,
-      postal_code: place?.cep ?? null,
-      lat: place?.lat ?? null,
-      lng: place?.lng ?? null,
-      profession_id: pick.professionId,
-      service_id: pick.serviceIds[0] ?? null,
-      vacancies: post.kind === "job" ? post.vacancies : 1,
-      user_id: userId,
+    if (place) {
+      const loc = await supabase.from("post_locations").insert({
+        post_id: created.id,
+        postal_code: place.cep,
+        lat: place.lat,
+        lng: place.lng,
+      });
+      if (loc.error) {
+        toast.error(
+          "Publicado, mas não foi possível guardar o CEP. Edite a vaga para tentar de novo.",
+        );
+      }
+    }
+    toast.success("Publicado!");
+    setDraft({ ...EMPTY_DRAFT, kind: draft.kind, city: draft.city, cep: draft.cep });
+    qc.invalidateQueries();
+  }
+
+  async function startEdit(p: NonNullable<typeof data>["posts"][number]) {
+    const { data: loc } = await supabase
+      .from("post_locations")
+      .select("postal_code")
+      .eq("post_id", p.id)
+      .maybeSingle();
+    setEditing({
+      id: p.id,
+      minVacancies: slots[p.id]?.taken ?? 0,
+      draft: {
+        kind: p.kind as PostKind,
+        title: p.title,
+        description: p.description,
+        city: p.city,
+        price: p.price,
+        vacancies: p.vacancies,
+        cep: loc ? formatCep(loc.postal_code) : "",
+        place: null,
+        pick: {
+          professionId: p.profession_id,
+          other: p.profession_id === null,
+          serviceIds: p.service_id ? [p.service_id] : [],
+        },
+      },
     });
+    setEditOpen(true);
+  }
+
+  async function saveEdit(next: PostDraft): Promise<boolean> {
+    if (!editing) return false;
+    const { error } = await supabase.from("posts").update(draftColumns(next)).eq("id", editing.id);
     if (error) {
       toast.error(
         isBlockedTextError(error)
           ? BLOCKED_TEXT_MESSAGE
-          : (limitMessage(error) ?? "Erro ao publicar"),
+          : error.message.includes("VAGAS_OCUPADAS")
+            ? "Já há mais vagas ocupadas do que esse número"
+            : "Não foi possível salvar as mudanças",
       );
-      return;
+      return false;
     }
-    toast.success("Publicado!");
-    setPost({ ...post, title: "", description: "", price: "", vacancies: 1 });
-    setPick(EMPTY_SELECTION);
-    setPostPlace(null);
+    if (next.place) {
+      const loc = await supabase.from("post_locations").upsert({
+        post_id: editing.id,
+        postal_code: next.place.cep,
+        lat: next.place.lat,
+        lng: next.place.lng,
+      });
+      if (loc.error) {
+        toast.error("Salvo, mas não foi possível guardar o CEP");
+        return true;
+      }
+    } else if (next.cep.trim() === "") {
+      await supabase.from("post_locations").delete().eq("post_id", editing.id);
+    }
+    toast.success("Publicação atualizada");
     qc.invalidateQueries();
+    return true;
   }
 
   async function deletePost(id: string) {
@@ -431,11 +492,20 @@ function Painel() {
         initial={profileFields}
         onSave={saveProfile}
       />
+      <PostEditDialog
+        open={editOpen}
+        onOpenChange={setEditOpen}
+        initial={editing?.draft ?? null}
+        catalog={catalog}
+        minVacancies={editing?.minVacancies ?? 0}
+        onSave={saveEdit}
+      />
       <WorkAreaDialog
         open={areaOpen}
         onOpenChange={setAreaOpen}
         initial={workArea ?? null}
         premium={!!usage?.premium}
+        suggestedCep={data?.address?.postal_code}
         onSave={saveWorkArea}
         onUpgrade={() => toast("Pagamento em breve!")}
       />
@@ -492,107 +562,23 @@ function Painel() {
             <button
               type="button"
               key={k}
-              onClick={() => setPost({ ...post, kind: k })}
+              onClick={() => setDraft({ ...draft, kind: k })}
               className={
                 "py-2 text-sm font-bold " +
-                (post.kind === k ? "bg-foreground text-background" : "bg-background")
+                (draft.kind === k ? "bg-foreground text-background" : "bg-background")
               }
             >
               {k === "job" ? "Oferecer vaga" : "Estou disponível"}
             </button>
           ))}
         </div>
-        <CatalogPicker
+        <PostFormFields
+          draft={draft}
+          onChange={setDraft}
           catalog={catalog}
-          value={pick}
-          onChange={setPick}
-          multipleServices={false}
-          professionLabel={
-            post.kind === "job" ? "Que profissional você procura?" : "Qual é a sua profissão?"
-          }
-          servicesLabel={post.kind === "job" ? "Qual serviço?" : "Qual serviço você oferece?"}
+          idPrefix="new-post"
+          minVacancies={0}
         />
-        <Input
-          required
-          placeholder={
-            post.kind === "job"
-              ? "Ex: Preciso de ajudante para mudança"
-              : "Ex: Pedreiro disponível esta semana"
-          }
-          value={post.title}
-          onChange={(e) => setPost({ ...post, title: e.target.value })}
-        />
-        <Textarea
-          placeholder="Detalhes: o que precisa, quando, onde…"
-          value={post.description}
-          onChange={(e) => setPost({ ...post, description: e.target.value })}
-        />
-        <div className="space-y-1">
-          <Label htmlFor="post-cep">
-            {post.kind === "job" ? "CEP de onde o serviço será feito" : "Seu CEP (opcional)"}
-          </Label>
-          <Input
-            id="post-cep"
-            inputMode="numeric"
-            placeholder="00000-000"
-            value={postCep}
-            onChange={(e) => {
-              setPostCep(formatCep(e.target.value));
-              setPostPlace(null);
-            }}
-            onBlur={async () => {
-              if (!isValidCep(postCep) || postPlace) return;
-              try {
-                const found = await lookupCep(postCep);
-                setPostPlace(found);
-                setPost((x) => ({ ...x, city: `${found.city} - ${found.state}` }));
-              } catch (err) {
-                toast.error(
-                  err instanceof GeoError ? err.message : "Não foi possível buscar o CEP",
-                );
-              }
-            }}
-          />
-          {postPlace && (
-            <p className="text-xs font-semibold">
-              {postPlace.city} - {postPlace.state}
-            </p>
-          )}
-        </div>
-        <div className="grid grid-cols-2 gap-2">
-          <Input
-            placeholder="Cidade"
-            value={post.city}
-            onChange={(e) => setPost({ ...post, city: e.target.value })}
-          />
-          <Input
-            placeholder="Valor (ex: R$150/dia)"
-            value={post.price}
-            onChange={(e) => setPost({ ...post, price: e.target.value })}
-          />
-        </div>
-        {post.kind === "job" && (
-          <div>
-            <Label htmlFor="post-vacancies">Quantas pessoas você precisa?</Label>
-            <Input
-              id="post-vacancies"
-              type="number"
-              inputMode="numeric"
-              min={1}
-              max={20}
-              value={post.vacancies}
-              onChange={(e) =>
-                setPost({
-                  ...post,
-                  vacancies: Math.min(20, Math.max(1, Math.floor(Number(e.target.value)) || 1)),
-                })
-              }
-            />
-            <p className="mt-1 text-xs text-muted-foreground">
-              Você escolhe quem fica com cada vaga entre os interessados.
-            </p>
-          </div>
-        )}
         <Button type="submit" className="w-full" size="lg">
           Publicar
         </Button>
@@ -621,6 +607,15 @@ function Painel() {
                 <Link to="/publicacao/$id" params={{ id: p.id }}>
                   <Users /> Interessados
                 </Link>
+              </Button>
+              <Button
+                type="button"
+                size="sm"
+                variant="outline"
+                aria-label={`Editar ${p.title}`}
+                onClick={() => startEdit(p)}
+              >
+                <Pencil /> Editar
               </Button>
               <button
                 aria-label={`Excluir ${p.title}`}

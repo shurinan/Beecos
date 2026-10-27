@@ -20,6 +20,8 @@ import {
   type WorkArea,
 } from "@/lib/geo";
 
+const cepDigitsOf = (v: string) => v.replace(/\D/g, "");
+
 export type WorkAreaInput = Place & { expanded_km: number };
 
 /**
@@ -31,6 +33,7 @@ export function WorkAreaDialog({
   onOpenChange,
   initial,
   premium,
+  suggestedCep,
   onSave,
   onUpgrade,
   lookup = lookupCep,
@@ -39,6 +42,8 @@ export function WorkAreaDialog({
   onOpenChange: (open: boolean) => void;
   initial: WorkArea | null;
   premium: boolean;
+  /** CEP do endereço físico que a pessoa já cadastrou, oferecido como atalho. */
+  suggestedCep?: string | null | undefined;
   onSave: (area: WorkAreaInput) => Promise<boolean>;
   onUpgrade: () => void;
   /** Troca a consulta de CEP (nos testes). */
@@ -133,6 +138,21 @@ export function WorkAreaDialog({
                 Buscar
               </Button>
             </div>
+            {suggestedCep &&
+              isValidCep(suggestedCep) &&
+              cepDigitsOf(cep) !== cepDigitsOf(suggestedCep) && (
+                <button
+                  type="button"
+                  className="text-sm font-bold underline"
+                  onClick={() => {
+                    const v = formatCep(suggestedCep);
+                    setCep(v);
+                    void search(v);
+                  }}
+                >
+                  Usar o CEP do meu endereço físico ({formatCep(suggestedCep)})
+                </button>
+              )}
             {place && (
               <p className="text-sm font-semibold">
                 {place.city} - {place.state}
