@@ -139,3 +139,25 @@ Cada profissão e serviço tem `aliases` (apelidos de busca, como "bico de pedre
 ## Formato do usuário (migration 0019)
 
 - O nome de usuário aceita letras minúsculas sem acento, números, ponto, sublinhado e hífen (como no Instagram), de 3 a 30 caracteres. No perfil, o `@usuario` aparece em destaque e o nome fica logo abaixo. A pessoa escolhe em "Editar perfil", com verificação se está livre.
+
+## Comunidade, planos e busca (migrations 0020 e 0021)
+- O botão redondo central do menu leva a `/comunidade` (por ora, a lista de áreas; mural e grupos vêm depois).
+- O nome de usuário é escolhido no cadastro (`0020`): o app manda `username` nos metadados e o gatilho valida.
+- `/plano` mostra o comparativo Grátis × Premium. Premium também escolhe de quais profissões recebe avisos (`muted_profession_ids`; só vale enquanto o plano está ativo).
+- A busca (`search_post_ids`) entende apelidos de profissão e serviço e ignora acentos (`fold_text`). Todas as palavras digitadas precisam aparecer na vaga.
+- Quem publica vê "Faltam informações" nas vagas sem local, profissão ou descrição.
+
+## Denúncias e moderação (migration 0022)
+- "Denunciar" na vaga e no perfil grava em `reports` por `report_content` (máx. 10 por dia, uma aberta por alvo).
+- **Nada é bloqueado automaticamente.** Só um moderador decide em `/moderacao`: descartar, ocultar/reexibir a vaga (`posts.hidden_at`) ou marcar como tratada.
+- Para criar um moderador, direto no banco: `INSERT INTO public.moderators (user_id) VALUES ('<id do perfil>');`
+
+## LGPD (migration 0023)
+- `/termos` e `/privacidade`. Preencha `PRIVACY_CONTACT_EMAIL` em `src/lib/legal.ts` quando houver e-mail do canal de privacidade, e peça revisão jurídica dos textos.
+- Aceite versionado: `TERMS_VERSION` (app) deve ser igual a `current_terms_version()` (banco). Ao mudar os termos, troque nos dois: todo mundo vê o aceite de novo.
+- Perfil › Privacidade e dados: **baixar meus dados** (`export_my_data`) e **excluir minha conta** (`delete_my_account`, bloqueada com serviço em andamento).
+
+## Segurança (migration 0024 e app)
+- Visitante (`anon`) só lê o que a tela pública mostra e nunca escreve; funções de gatilho não são chamáveis; novas tabelas não herdam escrita para `anon`.
+- Respostas do servidor levam `X-Content-Type-Options`, `Referrer-Policy` e `Permissions-Policy` (sem CSP/X-Frame-Options de propósito: o editor do Lovable usa iframe).
+- Senha com no mínimo 8 caracteres no cadastro. No painel de autenticação, ative também a proteção contra senhas vazadas.

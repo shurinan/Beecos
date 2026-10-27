@@ -175,7 +175,7 @@ function AuthPage() {
           <Input
             id="pw"
             type="password"
-            minLength={6}
+            minLength={mode === "up" ? 8 : undefined}
             required
             value={password}
             onChange={(e) => setPassword(e.target.value)}
