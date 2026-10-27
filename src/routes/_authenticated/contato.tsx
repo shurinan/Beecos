@@ -110,7 +110,7 @@ function Contato() {
         supabase.from("profile_private").select("*").eq("user_id", userId).maybeSingle(),
         supabase
           .from("contact_phones")
-          .select("id, kind, number, methods")
+          .select("id, kind, number, methods, shared")
           .eq("user_id", userId)
           .order("created_at"),
         supabase
@@ -325,8 +325,9 @@ function Contato() {
         </Link>
         <h1 className="text-3xl">Informações de contato</h1>
         <p className="mt-1 flex items-center gap-1.5 text-sm text-muted-foreground">
-          <ShieldCheck className="h-4 w-4" /> Privadas: só você vê. Só a foto e o nome preferido
-          aparecem no perfil.
+          <ShieldCheck className="h-4 w-4 shrink-0" /> Privadas: só você vê. No perfil público
+          aparecem só a foto e o nome preferido. Os telefones que você marcar aparecem para quem já
+          conversou com você.
         </p>
       </div>
 
@@ -484,7 +485,8 @@ function Contato() {
                   <Phone className="h-4 w-4" /> {ph.number}
                 </p>
                 <p className="text-sm text-muted-foreground">
-                  {PHONE_KIND_LABEL[ph.kind]} · {formatMethods(ph.methods)}
+                  {PHONE_KIND_LABEL[ph.kind]} · {formatMethods(ph.methods)} ·{" "}
+                  {ph.shared ? "visível para quem conversa com você" : "só você vê"}
                 </p>
               </div>
               <span className="flex shrink-0 gap-1">

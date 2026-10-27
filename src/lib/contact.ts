@@ -24,6 +24,8 @@ export type ContactPhone = {
   kind: PhoneKind;
   number: string;
   methods: PhoneMethod[];
+  /** Visível para quem já conversou de verdade com a pessoa (os dois lados escreveram). */
+  shared: boolean;
 };
 export type PhoneInput = Omit<ContactPhone, "id">;
 

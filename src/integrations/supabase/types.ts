@@ -115,6 +115,7 @@ export type Database = {
           conversation_id: string
           created_at: string
           id: string
+          kind: string
           sender_id: string
         }
         Insert: {
@@ -126,6 +127,7 @@ export type Database = {
           conversation_id: string
           created_at?: string
           id?: string
+          kind?: string
           sender_id: string
         }
         Update: {
@@ -135,6 +137,7 @@ export type Database = {
           attachment_type?: string | null
           content?: string
           conversation_id?: string
+          kind?: string
           created_at?: string
           id?: string
           sender_id?: string
@@ -166,6 +169,7 @@ export type Database = {
           price: string
           title: string
           user_id: string
+          vacancies: number
         }
         Insert: {
           city?: string
@@ -176,6 +180,7 @@ export type Database = {
           price?: string
           title: string
           user_id: string
+          vacancies?: number
         }
         Update: {
           city?: string
@@ -186,6 +191,7 @@ export type Database = {
           price?: string
           title?: string
           user_id?: string
+          vacancies?: number
         }
         Relationships: [
           {
@@ -231,6 +237,24 @@ export type Database = {
           show_last_seen?: boolean
           user_id?: string
         }
+        Relationships: []
+      }
+      engagements: {
+        Row: {
+          accepted_at: string | null
+          cancelled_by: string | null
+          client_id: string
+          completed_at: string | null
+          conversation_id: string
+          created_at: string
+          id: string
+          post_id: string | null
+          provider_id: string
+          status: string
+          updated_at: string
+        }
+        Insert: never
+        Update: never
         Relationships: []
       }
       contact_addresses: {
@@ -282,6 +306,7 @@ export type Database = {
           kind: string
           methods: string[]
           number: string
+          shared: boolean
           user_id: string
         }
         Insert: {
@@ -290,6 +315,7 @@ export type Database = {
           kind: string
           methods?: string[]
           number: string
+          shared?: boolean
           user_id: string
         }
         Update: {
@@ -298,6 +324,7 @@ export type Database = {
           kind?: string
           methods?: string[]
           number?: string
+          shared?: boolean
           user_id?: string
         }
         Relationships: []
@@ -508,6 +535,14 @@ export type Database = {
       }
     }
     Views: {
+      post_stats: {
+        Row: {
+          post_id: string | null
+          taken: number | null
+          vacancies: number | null
+        }
+        Relationships: []
+      }
       profile_rating_stats: {
         Row: {
           avg_rating: number | null
@@ -521,6 +556,22 @@ export type Database = {
       can_review: {
         Args: { _reviewee: string; _reviewer: string }
         Returns: boolean
+      }
+      choose_provider: {
+        Args: { _conversation: string }
+        Returns: string
+      }
+      respond_engagement: {
+        Args: { _accept: boolean; _id: string }
+        Returns: undefined
+      }
+      complete_engagement: {
+        Args: { _id: string }
+        Returns: undefined
+      }
+      cancel_engagement: {
+        Args: { _id: string }
+        Returns: undefined
       }
       is_premium: {
         Args: { _user_id: string }

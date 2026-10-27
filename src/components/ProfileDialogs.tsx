@@ -29,7 +29,7 @@ function Actions({ saving, onCancel }: { saving: boolean; onCancel: () => void }
       <Button type="button" variant="outline" onClick={onCancel}>
         Cancelar
       </Button>
-      <Button type="submit" disabled={saving}>
+      <Button type="submit" loading={saving}>
         {saving ? "Salvando…" : "Salvar"}
       </Button>
     </DialogFooter>

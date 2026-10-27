@@ -21,7 +21,7 @@ export function AppShell({ children }: { children: ReactNode }) {
   return (
     <div className="mx-auto flex min-h-screen max-w-2xl flex-col">
       <header className="sticky top-0 z-20 border-b-2 border-foreground bg-primary">
-        <div className="flex items-center justify-between px-4 py-3">
+        <div className="flex h-14 items-center justify-between px-4">
           <Link to="/" className="font-display text-2xl text-foreground">
             Beecos
             <span className="text-background [-webkit-text-stroke:1px_var(--foreground)]">.</span>

@@ -270,7 +270,7 @@ export function SkillDialog({
             <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
               Cancelar
             </Button>
-            <Button type="submit" disabled={saving}>
+            <Button type="submit" loading={saving}>
               {saving ? "Salvando…" : editing ? "Salvar alterações" : "Adicionar habilidade"}
             </Button>
           </DialogFooter>

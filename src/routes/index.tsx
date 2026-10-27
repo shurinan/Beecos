@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Search, Plus } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { PostCard, type PostWithAuthor } from "@/components/PostCard";
+import { usePostStats } from "@/lib/services-hooks";
 import { AdSlot } from "@/components/AdSlot";
 import { FEED_AD_AFTER, shouldShowFeedAd } from "@/lib/ads";
 import { Input } from "@/components/ui/input";
@@ -15,9 +16,16 @@ export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
       { title: "Beecos — Vagas e trabalhadores na sua cidade" },
-      { name: "description", content: "Veja vagas de trabalho braçal e profissionais disponíveis na sua cidade. Negocie direto pelo chat." },
+      {
+        name: "description",
+        content:
+          "Veja vagas de trabalho braçal e profissionais disponíveis na sua cidade. Negocie direto pelo chat.",
+      },
       { property: "og:title", content: "Beecos — Vagas e trabalhadores na sua cidade" },
-      { property: "og:description", content: "Veja vagas de trabalho braçal e profissionais disponíveis na sua cidade." },
+      {
+        property: "og:description",
+        content: "Veja vagas de trabalho braçal e profissionais disponíveis na sua cidade.",
+      },
     ],
   }),
   component: Index,
@@ -43,6 +51,8 @@ function Index() {
       return data as PostWithAuthor[];
     },
   });
+
+  const slots = usePostStats(posts?.map((p) => p.id));
 
   return (
     <div className="space-y-5">
@@ -96,8 +106,10 @@ function Index() {
         )}
         {posts?.map((p, i) => (
           <div key={p.id} className="space-y-4">
-            <PostCard post={p} />
-            {i === FEED_AD_AFTER - 1 && shouldShowFeedAd(posts.length) && <AdSlot placement="feed" />}
+            <PostCard post={p} slots={slots[p.id]} />
+            {i === FEED_AD_AFTER - 1 && shouldShowFeedAd(posts.length) && (
+              <AdSlot placement="feed" />
+            )}
           </div>
         ))}
       </div>

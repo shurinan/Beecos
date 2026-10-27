@@ -31,8 +31,18 @@ describe("PhoneDialog", () => {
       kind: "work",
       number: "(11) 98818-2720",
       methods: ["call", "whatsapp"],
+      shared: true,
     });
     await waitFor(() => expect(onOpenChange).toHaveBeenCalledWith(false));
+  });
+  it("lets the person keep the number private", async () => {
+    const { onSave } = setup();
+    fireEvent.change(screen.getByLabelText("Número"), { target: { value: "11988182720" } });
+    fireEvent.click(screen.getByLabelText(/Mostrar para quem conversa comigo/));
+    fireEvent.click(screen.getByRole("button", { name: "Salvar" }));
+    await waitFor(() =>
+      expect(onSave).toHaveBeenCalledWith(expect.objectContaining({ shared: false })),
+    );
   });
 });
 

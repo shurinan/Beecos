@@ -2,10 +2,12 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
-import { Mail, MapPin, Pencil, Smartphone, Trash2 } from "lucide-react";
+import { Mail, MapPin, Pencil, Smartphone, Trash2, Users } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { usePostStats } from "@/lib/services-hooks";
 import { Textarea } from "@/components/ui/textarea";
 import { KIND_LABEL, type PostKind } from "@/lib/data";
 import {
@@ -96,12 +98,14 @@ function Painel() {
     open: false,
     initial: null,
   });
+  const slots = usePostStats(data?.posts.map((p) => p.id));
   const [post, setPost] = useState({
     kind: "job" as PostKind,
     title: "",
     description: "",
     city: "",
     price: "",
+    vacancies: 1,
   });
 
   useEffect(() => {
@@ -166,7 +170,9 @@ function Painel() {
 
   async function createPost(e: React.FormEvent) {
     e.preventDefault();
-    const { error } = await supabase.from("posts").insert({ ...post, user_id: userId });
+    const { error } = await supabase
+      .from("posts")
+      .insert({ ...post, vacancies: post.kind === "job" ? post.vacancies : 1, user_id: userId });
     if (error) {
       toast.error(
         isBlockedTextError(error)
@@ -176,7 +182,7 @@ function Painel() {
       return;
     }
     toast.success("Publicado!");
-    setPost({ ...post, title: "", description: "", price: "" });
+    setPost({ ...post, title: "", description: "", price: "", vacancies: 1 });
     qc.invalidateQueries();
   }
 
@@ -417,6 +423,28 @@ function Painel() {
             onChange={(e) => setPost({ ...post, price: e.target.value })}
           />
         </div>
+        {post.kind === "job" && (
+          <div>
+            <Label htmlFor="post-vacancies">Quantas pessoas você precisa?</Label>
+            <Input
+              id="post-vacancies"
+              type="number"
+              inputMode="numeric"
+              min={1}
+              max={20}
+              value={post.vacancies}
+              onChange={(e) =>
+                setPost({
+                  ...post,
+                  vacancies: Math.min(20, Math.max(1, Math.floor(Number(e.target.value)) || 1)),
+                })
+              }
+            />
+            <p className="mt-1 text-xs text-muted-foreground">
+              Você escolhe quem fica com cada vaga entre os interessados.
+            </p>
+          </div>
+        )}
         <Button type="submit" className="w-full" size="lg">
           Publicar
         </Button>
@@ -427,18 +455,35 @@ function Painel() {
         {data?.posts.length === 0 && (
           <p className="text-muted-foreground">Você ainda não publicou nada.</p>
         )}
-        {data?.posts.map((p) => (
-          <div
-            key={p.id}
-            className="flex items-center gap-3 rounded-lg border-2 border-foreground p-3"
-          >
-            <span className="text-xs font-bold uppercase">{KIND_LABEL[p.kind as PostKind]}</span>
-            <span className="flex-1 truncate font-semibold">{p.title}</span>
-            <button aria-label="Excluir" onClick={() => deletePost(p.id)}>
-              <Trash2 className="h-4 w-4" />
-            </button>
-          </div>
-        ))}
+        {data?.posts.map((p) => {
+          const st = slots[p.id];
+          return (
+            <div
+              key={p.id}
+              className="flex flex-wrap items-center gap-x-3 gap-y-2 rounded-lg border-2 border-foreground p-3"
+            >
+              <span className="text-xs font-bold uppercase">{KIND_LABEL[p.kind as PostKind]}</span>
+              <span className="min-w-0 flex-1 basis-40 truncate font-semibold">{p.title}</span>
+              {p.kind === "job" && st && (
+                <span className="text-xs text-muted-foreground">
+                  {st.taken} de {st.vacancies} {st.vacancies === 1 ? "vaga" : "vagas"}
+                </span>
+              )}
+              <Button asChild size="sm" variant="outline">
+                <Link to="/publicacao/$id" params={{ id: p.id }}>
+                  <Users /> Interessados
+                </Link>
+              </Button>
+              <button
+                aria-label={`Excluir ${p.title}`}
+                className="-m-2 p-2"
+                onClick={() => deletePost(p.id)}
+              >
+                <Trash2 className="h-4 w-4" />
+              </button>
+            </div>
+          );
+        })}
       </section>
 
       <Button variant="outline" className="w-full" onClick={signOut}>

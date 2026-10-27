@@ -71,3 +71,11 @@ O texto da autorização de uso dos dados está em `src/lib/contact.ts` (`CONSEN
 ## App instalável (PWA)
 
 `public/manifest.webmanifest`, ícones e `public/sw.js`. O service worker só é registrado no site publicado, não guarda páginas em cache (ninguém fica preso numa versão antiga) e mostra uma tela de "sem internet". No Android e no computador aparece o botão "Instalar"; no iPhone, a instrução de "Adicionar à Tela de Início".
+
+## Serviços (escolher, aceitar, concluir)
+
+- **Vaga** (`job`): quem publica define quantas pessoas precisa (`posts.vacancies`) e **escolhe** entre os interessados, na página `/publicacao/<id>` ("Interessados", numerados pela ordem de chegada) ou no cartão do serviço dentro da conversa. **Oferta** (`available`): quem se interessa **contrata**.
+- Só dá para escolher quem já respondeu na conversa. Escolher não fecha o trato: o prestador **aceita ou recusa**; recusar libera a vaga. Depois de aceito, **qualquer um dos dois marca como concluído**. Cada etapa vira um aviso no histórico da conversa.
+- **Avaliação só depois de concluído** (`can_review` consulta `engagements`), nos dois sentidos.
+- **Contatos**: cada telefone tem a opção "mostrar para quem conversa comigo" (marcada ao cadastrar, pode desmarcar). Só quem já trocou mensagens com a pessoa (os dois lados escreveram) vê, no perfil dela, com botões de WhatsApp, ligar e SMS. E-mail e endereço nunca são compartilhados.
+- Migration `0009`. As mudanças de estado passam só pelas funções `choose_provider`, `respond_engagement`, `complete_engagement` e `cancel_engagement`; a tabela `engagements` é só de leitura para o app.

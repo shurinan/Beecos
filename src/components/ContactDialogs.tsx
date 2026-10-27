@@ -53,7 +53,7 @@ function Footer({
       <Button type="button" variant="outline" onClick={onCancel}>
         Cancelar
       </Button>
-      <Button type="submit" disabled={saving}>
+      <Button type="submit" loading={saving}>
         {saving ? "Salvando…" : label}
       </Button>
     </DialogFooter>
@@ -85,9 +85,14 @@ export function PhoneDialog({
   initial,
   onSave,
 }: DialogProps & { initial: ContactPhone | null; onSave: (v: PhoneInput) => Promise<boolean> }) {
-  const empty: PhoneInput = { kind: "mobile", number: "", methods: ["call"] };
+  const empty: PhoneInput = { kind: "mobile", number: "", methods: ["call"], shared: true };
   const start: PhoneInput = initial
-    ? { kind: initial.kind, number: initial.number, methods: initial.methods }
+    ? {
+        kind: initial.kind,
+        number: initial.number,
+        methods: initial.methods,
+        shared: initial.shared,
+      }
     : empty;
   const { form, setForm, errors, setErrors, saving, setSaving } = useDialogForm<
     PhoneInput,
@@ -107,7 +112,12 @@ export function PhoneDialog({
     setErrors(errs);
     if (Object.keys(errs).length) return;
     setSaving(true);
-    const ok = await onSave({ kind: form.kind, number: form.number.trim(), methods: form.methods });
+    const ok = await onSave({
+      kind: form.kind,
+      number: form.number.trim(),
+      methods: form.methods,
+      shared: form.shared,
+    });
     setSaving(false);
     if (ok) onOpenChange(false);
   }
@@ -167,6 +177,20 @@ export function PhoneDialog({
             </div>
             <Err>{errors.methods}</Err>
           </fieldset>
+          <label className="flex items-start gap-2 rounded-lg border-2 border-foreground p-3 text-sm">
+            <input
+              type="checkbox"
+              className="mt-1"
+              checked={form.shared}
+              onChange={(e) => setForm({ ...form, shared: e.target.checked })}
+            />
+            <span>
+              <span className="block font-semibold">Mostrar para quem conversa comigo</span>
+              <span className="text-muted-foreground">
+                Só aparece para quem já trocou mensagens com você. Dá para desmarcar quando quiser.
+              </span>
+            </span>
+          </label>
           <Footer saving={saving} onCancel={() => onOpenChange(false)} />
         </form>
       </DialogContent>

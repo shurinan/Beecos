@@ -2,6 +2,8 @@ import { Link } from "@tanstack/react-router";
 import { MapPin, Banknote } from "lucide-react";
 import { KIND_LABEL, timeAgo, initials, type PostKind } from "@/lib/data";
 import { levelLabel, topSkill, type SkillBase } from "@/lib/skills";
+import { isFilled, vacanciesLabel } from "@/lib/services";
+import type { PostSlots } from "@/lib/services-hooks";
 
 export type PostWithAuthor = {
   id: string;
@@ -12,12 +14,18 @@ export type PostWithAuthor = {
   price: string;
   created_at: string;
   user_id: string;
+  vacancies?: number;
   profiles: { full_name: string; profile_skills: SkillBase[] } | null;
 };
 
-export function PostCard({ post }: { post: PostWithAuthor }) {
+export function PostCard({ post, slots }: { post: PostWithAuthor; slots?: PostSlots | undefined }) {
   const kind = post.kind as PostKind;
   const top = topSkill(post.profiles?.profile_skills);
+  const filled = kind === "job" && isFilled(slots);
+  const vacancy =
+    kind === "job"
+      ? vacanciesLabel(slots ?? (post.vacancies ? { vacancies: post.vacancies, taken: 0 } : null))
+      : null;
   return (
     <article className="block-card p-4">
       <div className="mb-2 flex items-center justify-between">
@@ -30,7 +38,21 @@ export function PostCard({ post }: { post: PostWithAuthor }) {
         >
           {KIND_LABEL[kind]}
         </span>
-        <span className="text-xs text-muted-foreground">{timeAgo(post.created_at)}</span>
+        <span className="flex items-center gap-2 text-xs text-muted-foreground">
+          {vacancy && (
+            <span
+              className={
+                "rounded px-1.5 py-0.5 font-bold " +
+                (filled
+                  ? "bg-muted text-foreground line-through decoration-2"
+                  : "bg-secondary text-secondary-foreground")
+              }
+            >
+              {vacancy}
+            </span>
+          )}
+          {timeAgo(post.created_at)}
+        </span>
       </div>
       <h3 className="text-lg leading-tight">{post.title}</h3>
       {post.description && (

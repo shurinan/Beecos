@@ -5,6 +5,8 @@ import { ArrowDown, ArrowLeft, FileText, Paperclip, Send, X, Zap } from "lucide-
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
+import { Avatar } from "@/components/profile-bits";
+import { EngagementCard, clientOf } from "@/components/EngagementCard";
 import { Input } from "@/components/ui/input";
 import { useChatChannel } from "@/lib/chat-hooks";
 import {
@@ -36,6 +38,7 @@ type Msg = {
   id: string;
   sender_id: string;
   content: string;
+  kind: string;
   created_at: string;
   attachment_path: string | null;
   attachment_name: string | null;
@@ -43,7 +46,7 @@ type Msg = {
   attachment_size: number | null;
 };
 const MSG_COLUMNS =
-  "id, sender_id, content, created_at, attachment_path, attachment_name, attachment_type, attachment_size";
+  "id, sender_id, content, kind, created_at, attachment_path, attachment_name, attachment_type, attachment_size";
 
 function Attachment({ msg }: { msg: Msg }) {
   const path = msg.attachment_path;
@@ -123,7 +126,7 @@ function Chat() {
       const { data, error } = await supabase
         .from("conversations")
         .select(
-          "user_a, user_b, posts(title, price), a:profiles!conversations_user_a_fkey(full_name), b:profiles!conversations_user_b_fkey(full_name)",
+          "user_a, user_b, posts(id, kind, title, price, user_id), a:profiles!conversations_user_a_fkey(full_name, avatar_path), b:profiles!conversations_user_b_fkey(full_name, avatar_path)",
         )
         .eq("id", id)
         .maybeSingle();
@@ -195,6 +198,14 @@ function Chat() {
     mine?.share ?? false,
   );
   const speed = replySpeedLabel(stats);
+  const providerId =
+    conv?.posts && otherId
+      ? clientOf(conv.posts, [conv.user_a, conv.user_b]) === userId
+        ? otherId
+        : userId
+      : null;
+  const providerReplied =
+    !!providerId && msgs.some((m) => m.sender_id === providerId && m.kind === "user");
 
   // Marca como lida ao abrir e sempre que chega mensagem com a conversa à vista.
   // Antes de marcar, guarda onde estava a leitura para mostrar "Novas mensagens".
@@ -369,47 +380,66 @@ function Chat() {
 
   return (
     <div className="flex flex-col">
-      <div className="block-card mb-3 flex items-center gap-3 p-3">
-        <Link to="/mensagens" aria-label="Voltar">
-          <ArrowLeft className="h-5 w-5" />
-        </Link>
-        <div className="min-w-0 flex-1">
+      {/* nome fixo no topo: abaixo do cabeçalho do app (64px) */}
+      <div className="sticky top-16 z-10 -mx-4 mb-3 bg-background px-4 pb-2 pt-1">
+        <div className="block-card flex items-center gap-3 p-3">
+          <Link to="/mensagens" aria-label="Voltar">
+            <ArrowLeft className="h-5 w-5" />
+          </Link>
           {otherId ? (
             <Link
               to="/perfil/$id"
               params={{ id: otherId }}
               search={{ post: undefined }}
-              className="font-bold underline"
+              className="flex min-w-0 flex-1 items-center gap-3"
+              aria-label={`Ver perfil de ${other?.full_name || "Usuário"}`}
             >
-              {other?.full_name || "Usuário"}
+              <Avatar name={other?.full_name ?? ""} path={other?.avatar_path} size={44} />
+              <span className="min-w-0 flex-1">
+                <span className="block truncate font-bold underline">
+                  {other?.full_name || "Usuário"}
+                </span>
+                <span
+                  className="flex flex-wrap items-center gap-x-2 text-xs text-muted-foreground"
+                  aria-live="polite"
+                >
+                  {status && (
+                    <span className={otherTyping || otherOnline ? "font-bold text-foreground" : ""}>
+                      {otherOnline && !otherTyping && <span aria-hidden="true">● </span>}
+                      {status}
+                    </span>
+                  )}
+                  {speed && (
+                    <span className="inline-flex items-center gap-0.5 rounded bg-secondary px-1.5 py-0.5 font-bold text-secondary-foreground">
+                      <Zap className="h-3 w-3" /> {speed}
+                    </span>
+                  )}
+                </span>
+              </span>
             </Link>
           ) : (
             <span className="font-bold">…</span>
           )}
-          <p
-            className="flex flex-wrap items-center gap-x-2 text-xs text-muted-foreground"
-            aria-live="polite"
-          >
-            {status && (
-              <span className={otherTyping || otherOnline ? "font-bold text-foreground" : ""}>
-                {otherOnline && !otherTyping && <span aria-hidden="true">● </span>}
-                {status}
-              </span>
-            )}
-            {speed && (
-              <span className="inline-flex items-center gap-0.5 rounded bg-secondary px-1.5 py-0.5 font-bold text-secondary-foreground">
-                <Zap className="h-3 w-3" /> {speed}
-              </span>
-            )}
-          </p>
-          {conv?.posts && (
-            <p className="truncate text-xs text-muted-foreground">
-              Sobre: {conv.posts.title}
-              {conv.posts.price ? ` · ${conv.posts.price}` : ""}
-            </p>
-          )}
         </div>
+        {conv?.posts && (
+          <p className="mt-1 truncate px-1 text-xs text-muted-foreground">
+            Sobre: {conv.posts.title}
+            {conv.posts.price ? ` · ${conv.posts.price}` : ""}
+          </p>
+        )}
       </div>
+
+      {conv?.posts && otherId && (
+        <EngagementCard
+          conversationId={id}
+          userId={userId}
+          otherId={otherId}
+          otherName={other?.full_name ?? ""}
+          post={conv.posts}
+          participants={[conv.user_a, conv.user_b]}
+          providerReplied={providerReplied}
+        />
+      )}
 
       <div className="space-y-2 pb-28">
         {msgsError && (
@@ -426,6 +456,20 @@ function Chat() {
           </p>
         )}
         {msgs.map((m) => {
+          if (m.kind === "system") {
+            return (
+              <div key={m.id} className="flex justify-center py-1">
+                <p
+                  className={
+                    "max-w-[90%] rounded-full border-2 border-dashed border-foreground/50 bg-muted px-3 py-1 text-center text-xs font-semibold " +
+                    (seen.current !== null && !seen.current.has(m.id) ? "msg-in" : "")
+                  }
+                >
+                  {m.content}
+                </p>
+              </div>
+            );
+          }
           const mine = m.sender_id === userId;
           const isNew = seen.current !== null && !seen.current.has(m.id);
           return (

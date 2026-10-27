@@ -1,7 +1,16 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
-import { Award, MapPin, MessageCircle, Route as RouteIcon, Zap } from "lucide-react";
+import {
+  Award,
+  MapPin,
+  MessageCircle,
+  MessageSquare,
+  Phone,
+  Route as RouteIcon,
+  Smartphone,
+  Zap,
+} from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -12,6 +21,9 @@ import { Avatar, SelfDeclared, SkillCard, StarInput, Stars } from "@/components/
 import { useAuth } from "@/lib/auth";
 import { openConversation, timeAgo } from "@/lib/data";
 import { limitMessage } from "@/lib/plans";
+import { PHONE_KIND_LABEL, formatMethods, type ContactPhone } from "@/lib/contact";
+import { telUrl, whatsappUrl } from "@/lib/services";
+import { usePostStats } from "@/lib/services-hooks";
 import { BLOCKED_TEXT_MESSAGE, isBlockedTextError, replySpeedLabel } from "@/lib/chat";
 import { SKILL_COLUMNS, formatRating, sortSkills, type ProfileSkill } from "@/lib/skills";
 
@@ -99,6 +111,8 @@ function ProfilePage() {
       };
     },
   });
+
+  const slots = usePostStats(data?.posts.map((p) => p.id));
 
   if (isError) {
     return (
@@ -191,6 +205,8 @@ function ProfilePage() {
         )}
       </section>
 
+      <SharedContacts ownerId={id} viewerId={userId} />
+
       {data.skills.length > 0 && (
         <section className="space-y-2">
           <h2 className="text-xl">Habilidades e experiência</h2>
@@ -206,11 +222,73 @@ function ProfilePage() {
       <h2 className="text-xl">Publicações</h2>
       {data.posts.length === 0 && <p className="text-muted-foreground">Nenhuma publicação.</p>}
       {data.posts.map((p) => (
-        <PostCard key={p.id} post={p} />
+        <PostCard key={p.id} post={p} slots={slots[p.id]} />
       ))}
 
       <AdSlot placement="profile" />
     </div>
+  );
+}
+
+/** Telefones que a pessoa escolheu mostrar para quem já conversou com ela (o banco decide quem vê). */
+function SharedContacts({ ownerId, viewerId }: { ownerId: string; viewerId: string | null }) {
+  const enabled = !!viewerId && viewerId !== ownerId;
+  const { data: phones } = useQuery({
+    queryKey: ["shared-phones", viewerId, ownerId],
+    enabled,
+    staleTime: 60_000,
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("contact_phones")
+        .select("id, kind, number, methods, shared")
+        .eq("user_id", ownerId)
+        .order("created_at");
+      if (error) throw error;
+      return (data ?? []) as ContactPhone[];
+    },
+  });
+  if (!enabled || !phones || phones.length === 0) return null;
+  return (
+    <section className="block-card space-y-3 p-5">
+      <h2 className="text-xl">Contatos</h2>
+      <p className="text-xs text-muted-foreground">Compartilhados porque vocês já conversaram.</p>
+      <ul className="space-y-2">
+        {phones.map((ph) => {
+          const wa = ph.methods.includes("whatsapp") ? whatsappUrl(ph.number) : null;
+          return (
+            <li key={ph.id} className="space-y-2 rounded-lg border-2 border-foreground p-3">
+              <p className="flex items-center gap-1.5 font-semibold">
+                <Phone className="h-4 w-4" /> {ph.number}
+              </p>
+              <p className="text-sm text-muted-foreground">
+                {PHONE_KIND_LABEL[ph.kind]} · aceita {formatMethods(ph.methods)}
+              </p>
+              <div className="flex flex-wrap gap-2">
+                {wa && (
+                  <Button asChild size="sm">
+                    <a href={wa} target="_blank" rel="noopener noreferrer">
+                      <MessageSquare /> WhatsApp
+                    </a>
+                  </Button>
+                )}
+                {ph.methods.includes("call") && (
+                  <Button asChild size="sm" variant="outline">
+                    <a href={telUrl(ph.number)}>
+                      <Smartphone /> Ligar
+                    </a>
+                  </Button>
+                )}
+                {ph.methods.includes("sms") && (
+                  <Button asChild size="sm" variant="outline">
+                    <a href={`sms:${telUrl(ph.number).slice(4)}`}>SMS</a>
+                  </Button>
+                )}
+              </div>
+            </li>
+          );
+        })}
+      </ul>
+    </section>
   );
 }
 
@@ -287,13 +365,12 @@ function Reviews({
   if (data.reviews.length === 0 && !isOther) return null;
 
   return (
-    <section className="space-y-3">
+    <section id="avaliar" className="scroll-mt-20 space-y-3">
       <h2 className="text-xl">Avaliações</h2>
 
       {isOther && !mine && canReview === false && (
         <p className="text-sm text-muted-foreground">
-          Você poderá avaliar depois de conversar com esta pessoa (os dois precisam ter enviado
-          mensagem).
+          Você poderá avaliar esta pessoa depois de concluir um serviço com ela.
         </p>
       )}
 
