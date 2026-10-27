@@ -4,6 +4,7 @@ import type { ReactNode } from "react";
 import { useAuth } from "@/lib/auth";
 import { useChatBackground, usePresenceHeartbeat, useUnread } from "@/lib/chat-hooks";
 import { useAlerts } from "@/lib/alerts";
+import { BackButton } from "@/components/BackButton";
 import { InstallPrompt } from "@/components/InstallPrompt";
 
 /** Liga, para quem está logado, o contador de não lidas, os avisos e o "visto por último". */
@@ -24,10 +25,13 @@ export function AppShell({ children }: { children: ReactNode }) {
     <div className="mx-auto flex min-h-screen max-w-2xl flex-col">
       <header className="sticky top-0 z-20 border-b-2 border-foreground bg-primary">
         <div className="flex h-14 items-center justify-between px-4">
-          <Link to="/" className="font-display text-2xl text-foreground">
-            Beecos
-            <span className="text-background [-webkit-text-stroke:1px_var(--foreground)]">.</span>
-          </Link>
+          <div className="flex items-center">
+            <BackButton />
+            <Link to="/" className="font-display text-2xl text-foreground">
+              Beecos
+              <span className="text-background [-webkit-text-stroke:1px_var(--foreground)]">.</span>
+            </Link>
+          </div>
           {userId && (
             <Link
               to="/avisos"
