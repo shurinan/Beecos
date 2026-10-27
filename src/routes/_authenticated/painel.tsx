@@ -29,14 +29,17 @@ function Painel() {
   const qc = useQueryClient();
   const navigate = useNavigate();
 
-  const { data } = useQuery({
+  const { data, isError, refetch } = useQuery({
     queryKey: ["me", userId],
     queryFn: async () => {
-      const [p, posts] = await Promise.all([
+      const [p, priv, posts] = await Promise.all([
         supabase.from("profiles").select("*").eq("id", userId).maybeSingle(),
+        supabase.from("profile_private").select("phone").eq("user_id", userId).maybeSingle(),
         supabase.from("posts").select("*").eq("user_id", userId).order("created_at", { ascending: false }),
       ]);
-      return { profile: p.data, posts: posts.data ?? [] };
+      const error = p.error ?? priv.error ?? posts.error;
+      if (error) throw error;
+      return { profile: p.data, phone: priv.data?.phone ?? "", posts: posts.data ?? [] };
     },
   });
   const { data: usage } = useQuery({ queryKey: ["plan", userId], queryFn: () => getPlanUsage(userId) });
@@ -49,16 +52,20 @@ function Painel() {
   useEffect(() => {
     if (data?.profile) {
       const p = data.profile;
-      setForm({ full_name: p.full_name, city: p.city, bio: p.bio, phone: p.phone, available: p.available });
+      setForm({ full_name: p.full_name, city: p.city, bio: p.bio, phone: data.phone, available: p.available });
       setSkills(p.skills);
       setPost((x) => ({ ...x, city: x.city || p.city }));
     }
-  }, [data?.profile]);
+  }, [data?.profile, data?.phone]);
 
   async function saveProfile(e: React.FormEvent) {
     e.preventDefault();
-    const { error } = await supabase.from("profiles").upsert({ id: userId, ...form, skills });
-    if (error) {
+    const { phone, ...publicFields } = form;
+    const [pub, priv] = await Promise.all([
+      supabase.from("profiles").upsert({ id: userId, ...publicFields, skills }),
+      supabase.from("profile_private").upsert({ user_id: userId, phone: phone.trim(), updated_at: new Date().toISOString() }),
+    ]);
+    if (pub.error || priv.error) {
       toast.error("Erro ao salvar");
       return;
     }
@@ -85,7 +92,11 @@ function Painel() {
   }
 
   async function deletePost(id: string) {
-    await supabase.from("posts").delete().eq("id", id);
+    const { error } = await supabase.from("posts").delete().eq("id", id);
+    if (error) {
+      toast.error("Não foi possível excluir a publicação");
+      return;
+    }
     qc.invalidateQueries();
   }
 
@@ -94,6 +105,15 @@ function Painel() {
     qc.clear();
     await supabase.auth.signOut();
     navigate({ to: "/auth", replace: true });
+  }
+
+  if (isError) {
+    return (
+      <div className="block-card space-y-3 p-5 text-center">
+        <p className="font-semibold">Não foi possível carregar seu perfil.</p>
+        <Button onClick={() => refetch()}>Tentar de novo</Button>
+      </div>
+    );
   }
 
   return (
@@ -134,6 +154,17 @@ function Painel() {
         <div>
           <Label>Cidade</Label>
           <Input placeholder="Ex: Campinas - SP" value={form.city} onChange={(e) => setForm({ ...form, city: e.target.value })} />
+        </div>
+        <div>
+          <Label>Telefone</Label>
+          <Input
+            type="tel"
+            inputMode="tel"
+            placeholder="(11) 90000-0000"
+            value={form.phone}
+            onChange={(e) => setForm({ ...form, phone: e.target.value })}
+          />
+          <p className="mt-1 text-xs text-muted-foreground">Privado, só você vê.</p>
         </div>
         <div>
           <Label>Sobre você</Label>

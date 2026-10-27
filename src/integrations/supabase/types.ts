@@ -143,6 +143,32 @@ export type Database = {
           },
         ]
       }
+      profile_private: {
+        Row: {
+          phone: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          phone?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          phone?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "profile_private_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: true
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           available: boolean
@@ -151,7 +177,6 @@ export type Database = {
           created_at: string
           full_name: string
           id: string
-          phone: string
           skills: string[]
         }
         Insert: {
@@ -161,7 +186,6 @@ export type Database = {
           created_at?: string
           full_name?: string
           id: string
-          phone?: string
           skills?: string[]
         }
         Update: {
@@ -171,7 +195,6 @@ export type Database = {
           created_at?: string
           full_name?: string
           id?: string
-          phone?: string
           skills?: string[]
         }
         Relationships: []

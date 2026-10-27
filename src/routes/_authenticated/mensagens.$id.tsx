@@ -28,28 +28,39 @@ function Chat() {
   const [text, setText] = useState("");
   const bottom = useRef<HTMLDivElement>(null);
 
-  const { data: conv } = useQuery({
+  const {
+    data: conv,
+    isLoading: convLoading,
+    isError: convError,
+    refetch: refetchConv,
+  } = useQuery({
     queryKey: ["conv", id],
     queryFn: async () => {
-      const { data } = await supabase
+      const { data, error } = await supabase
         .from("conversations")
         .select(
           "user_a, user_b, posts(title, price), a:profiles!conversations_user_a_fkey(full_name), b:profiles!conversations_user_b_fkey(full_name)",
         )
         .eq("id", id)
         .maybeSingle();
+      if (error) throw error;
       return data;
     },
   });
 
-  const { data: msgs = [] } = useQuery({
+  const {
+    data: msgs = [],
+    isError: msgsError,
+    refetch: refetchMsgs,
+  } = useQuery({
     queryKey: ["msgs", id],
     queryFn: async () => {
-      const { data } = await supabase
+      const { data, error } = await supabase
         .from("messages")
         .select("id, sender_id, content, created_at")
         .eq("conversation_id", id)
         .order("created_at");
+      if (error) throw error;
       return (data ?? []) as Msg[];
     },
   });
@@ -100,6 +111,26 @@ function Chat() {
   const other = conv ? (conv.user_a === userId ? conv.b : conv.a) : null;
   const otherId = conv ? (conv.user_a === userId ? conv.user_b : conv.user_a) : null;
 
+  if (convError) {
+    return (
+      <div className="block-card space-y-3 p-5 text-center">
+        <p className="font-semibold">Não foi possível carregar a conversa.</p>
+        <Button onClick={() => refetchConv()}>Tentar de novo</Button>
+      </div>
+    );
+  }
+
+  if (!convLoading && !conv) {
+    return (
+      <div className="block-card space-y-3 p-5 text-center">
+        <p className="font-semibold">Conversa não encontrada.</p>
+        <Link to="/mensagens" className="text-sm font-semibold underline">
+          Voltar para mensagens
+        </Link>
+      </div>
+    );
+  }
+
   return (
     <div className="flex flex-col">
       <div className="block-card mb-3 flex items-center gap-3 p-3">
@@ -124,7 +155,13 @@ function Chat() {
       </div>
 
       <div className="space-y-2 pb-20">
-        {msgs.length === 0 && (
+        {msgsError && (
+          <div className="space-y-2 py-8 text-center text-sm">
+            <p>Não foi possível carregar as mensagens.</p>
+            <Button variant="outline" onClick={() => refetchMsgs()}>Tentar de novo</Button>
+          </div>
+        )}
+        {!msgsError && msgs.length === 0 && (
           <p className="py-8 text-center text-sm text-muted-foreground">
             Diga olá e combine o serviço e o valor.
           </p>
