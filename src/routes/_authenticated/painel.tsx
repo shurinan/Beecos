@@ -19,6 +19,7 @@ import { useAuth } from "@/lib/auth";
 import { Avatar, SelfDeclared, SkillCard } from "@/components/profile-bits";
 import { SkillDialog } from "@/components/SkillDialog";
 import { EditProfileDialog, type ProfileFields } from "@/components/ProfileDialogs";
+import { BLOCKED_TEXT_MESSAGE, isBlockedTextError } from "@/lib/chat";
 import { addressLines, type ContactAddress } from "@/lib/contact";
 import {
   FREE_CHATS_PER_MONTH,
@@ -120,7 +121,9 @@ function Painel() {
   async function saveProfile(values: ProfileFields): Promise<boolean> {
     const { error } = await supabase.from("profiles").upsert({ id: userId, ...values });
     if (error) {
-      toast.error("Não foi possível salvar o perfil");
+      toast.error(
+        isBlockedTextError(error) ? BLOCKED_TEXT_MESSAGE : "Não foi possível salvar o perfil",
+      );
       return false;
     }
     toast.success("Perfil salvo");
@@ -138,7 +141,9 @@ function Painel() {
       .from("profile_skills")
       .upsert({ user_id: userId, ...skill }, { onConflict: "user_id,skill" });
     if (error) {
-      toast.error("Não foi possível salvar a habilidade");
+      toast.error(
+        isBlockedTextError(error) ? BLOCKED_TEXT_MESSAGE : "Não foi possível salvar a habilidade",
+      );
       return false;
     }
     toast.success(isNew ? "Habilidade adicionada" : "Habilidade atualizada");
@@ -163,7 +168,11 @@ function Painel() {
     e.preventDefault();
     const { error } = await supabase.from("posts").insert({ ...post, user_id: userId });
     if (error) {
-      toast.error(limitMessage(error) ?? "Erro ao publicar");
+      toast.error(
+        isBlockedTextError(error)
+          ? BLOCKED_TEXT_MESSAGE
+          : (limitMessage(error) ?? "Erro ao publicar"),
+      );
       return;
     }
     toast.success("Publicado!");

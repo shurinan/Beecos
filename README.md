@@ -59,3 +59,15 @@ Tudo do menu de contato é privado (RLS: só o dono lê e escreve). Só a foto (
 Antes de publicar este código, aplique as migrations `0005`, `0006` e `0007` no banco: o Lovable não aplica as migrations do repositório sozinho.
 
 O texto da autorização de uso dos dados está em `src/lib/contact.ts` (`CONSENT_TEXT`) e deve ser revisado por quem cuida da parte jurídica. Quando o texto mudar, troque `CONSENT_VERSION`.
+
+## Chat
+
+- **Não lidas**: contador no menu "Conversas", selo em cada conversa, "(3) Beecos" na aba do navegador e faixa "Novas mensagens" ao abrir. A leitura fica em `conversation_reads`.
+- **Avisos**: com o app aberto, um aviso na tela; com o app em segundo plano, notificação do sistema (a pessoa ativa em Conversas > "Ativar avisos"). Aviso com o app totalmente fechado exige envio por servidor (Web Push, com chaves VAPID guardadas como segredo): o `public/sw.js` já tem o tratamento do evento `push`, falta só o envio.
+- **Presença**: "online", "digitando…" e "visto há X" (só entre quem já conversou, e a pessoa pode desligar em Informações de contato > Privacidade no chat). "Responde rápido" vem da mediana de resposta (`reply_stats`) e só aparece com 3 respostas ou mais.
+- **Anexos**: imagem (JPG, PNG, WebP) ou PDF de até 2 MB, em bucket privado `chat-files`, acessível só aos dois da conversa por link temporário. O bucket e a tabela recusam outros tipos e tamanhos.
+- **Moderação**: a tabela `blocked_terms` é aplicada por gatilhos do banco em mensagens, nome do anexo, publicações, avaliações, perfil e habilidades. Ignora acentos, maiúsculas, números no lugar de letras e letras repetidas. A lista inicial é um ponto de partida: para ajustar, use `INSERT`/`DELETE` em `blocked_terms`, sem mexer no código.
+
+## App instalável (PWA)
+
+`public/manifest.webmanifest`, ícones e `public/sw.js`. O service worker só é registrado no site publicado, não guarda páginas em cache (ninguém fica preso numa versão antiga) e mostra uma tela de "sem internet". No Android e no computador aparece o botão "Instalar"; no iPhone, a instrução de "Adicionar à Tela de Início".

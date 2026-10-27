@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
+import { Switch } from "@/components/ui/switch";
 import { useAuth } from "@/lib/auth";
 import { Avatar } from "@/components/profile-bits";
 import {
@@ -128,6 +129,24 @@ function Contato() {
       };
     },
   });
+
+  const { data: presence } = useQuery({
+    queryKey: ["presence-self", userId],
+    queryFn: async () => {
+      const { data } = await supabase
+        .from("user_presence")
+        .select("show_last_seen")
+        .eq("user_id", userId)
+        .maybeSingle();
+      return { share: data?.show_last_seen ?? true };
+    },
+  });
+  const showSeen = presence?.share ?? true;
+  async function toggleShowSeen(next: boolean) {
+    const { error } = await supabase.rpc("set_show_last_seen", { _show: next });
+    if (error) return void toast.error("Não foi possível salvar a opção");
+    qc.invalidateQueries({ queryKey: ["presence-self", userId] });
+  }
 
   const [personalOpen, setPersonalOpen] = useState(false);
   const [emailOpen, setEmailOpen] = useState(false);
@@ -310,6 +329,25 @@ function Contato() {
           aparecem no perfil.
         </p>
       </div>
+
+      <Section title="Privacidade no chat">
+        <label className="flex items-center justify-between gap-3">
+          <span className="text-sm">
+            <span className="block font-semibold">
+              Mostrar quando estive online e quando estou digitando
+            </span>
+            <span className="text-muted-foreground">
+              Só quem já conversou com você vê. Se desligar, você também deixa de ver isso dos
+              outros.
+            </span>
+          </span>
+          <Switch
+            checked={showSeen}
+            onCheckedChange={toggleShowSeen}
+            aria-label="Mostrar quando estive online"
+          />
+        </label>
+      </Section>
 
       <Section title="Foto de perfil">
         <div className="flex items-center gap-4">

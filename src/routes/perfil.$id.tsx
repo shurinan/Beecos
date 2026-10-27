@@ -1,7 +1,7 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
-import { Award, MapPin, MessageCircle, Route as RouteIcon } from "lucide-react";
+import { Award, MapPin, MessageCircle, Route as RouteIcon, Zap } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -12,6 +12,7 @@ import { Avatar, SelfDeclared, SkillCard, StarInput, Stars } from "@/components/
 import { useAuth } from "@/lib/auth";
 import { openConversation, timeAgo } from "@/lib/data";
 import { limitMessage } from "@/lib/plans";
+import { BLOCKED_TEXT_MESSAGE, isBlockedTextError, replySpeedLabel } from "@/lib/chat";
 import { SKILL_COLUMNS, formatRating, sortSkills, type ProfileSkill } from "@/lib/skills";
 
 export const Route = createFileRoute("/perfil/$id")({
@@ -49,6 +50,17 @@ function ProfilePage() {
   const { post } = Route.useSearch();
   const { userId } = useAuth();
   const navigate = useNavigate();
+
+  const { data: replyStats } = useQuery({
+    queryKey: ["reply-stats", id],
+    staleTime: 5 * 60_000,
+    queryFn: async () => {
+      const { data } = await supabase.rpc("reply_stats", { _user: id });
+      const r = data?.[0];
+      return r ? { replies: Number(r.replies), median_seconds: Number(r.median_seconds) } : null;
+    },
+  });
+  const speed = replySpeedLabel(replyStats);
 
   const { data, isError, refetch } = useQuery({
     queryKey: ["profile", id],
@@ -117,6 +129,11 @@ function ProfilePage() {
           <Avatar name={pr.full_name} path={pr.avatar_path} size={64} />
           <div className="min-w-0">
             <h1 className="text-2xl leading-tight">{pr.full_name || "Usuário"}</h1>
+            {speed && (
+              <p className="mt-1 inline-flex items-center gap-1 rounded bg-secondary px-2 py-0.5 text-xs font-bold text-secondary-foreground">
+                <Zap className="h-3 w-3" /> {speed}
+              </p>
+            )}
             {pr.headline && <p className="font-semibold">{pr.headline}</p>}
             {pr.city && (
               <p className="flex items-center gap-1 text-sm text-muted-foreground">
@@ -246,7 +263,9 @@ function Reviews({
           .from("reviews")
           .insert({ reviewer_id: viewerId!, reviewee_id: profileId, rating, comment: text });
     if (error) {
-      toast.error("Não foi possível salvar a avaliação");
+      toast.error(
+        isBlockedTextError(error) ? BLOCKED_TEXT_MESSAGE : "Não foi possível salvar a avaliação",
+      );
       return;
     }
     toast.success("Avaliação salva");

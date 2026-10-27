@@ -107,6 +107,10 @@ export type Database = {
       }
       messages: {
         Row: {
+          attachment_name: string | null
+          attachment_path: string | null
+          attachment_size: number | null
+          attachment_type: string | null
           content: string
           conversation_id: string
           created_at: string
@@ -114,6 +118,10 @@ export type Database = {
           sender_id: string
         }
         Insert: {
+          attachment_name?: string | null
+          attachment_path?: string | null
+          attachment_size?: number | null
+          attachment_type?: string | null
           content: string
           conversation_id: string
           created_at?: string
@@ -121,6 +129,10 @@ export type Database = {
           sender_id: string
         }
         Update: {
+          attachment_name?: string | null
+          attachment_path?: string | null
+          attachment_size?: number | null
+          attachment_type?: string | null
           content?: string
           conversation_id?: string
           created_at?: string
@@ -184,6 +196,42 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      conversation_reads: {
+        Row: {
+          conversation_id: string
+          last_read_at: string
+          user_id: string
+        }
+        Insert: {
+          conversation_id: string
+          last_read_at?: string
+          user_id: string
+        }
+        Update: {
+          conversation_id?: string
+          last_read_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      user_presence: {
+        Row: {
+          last_seen_at: string
+          show_last_seen: boolean
+          user_id: string
+        }
+        Insert: {
+          last_seen_at?: string
+          show_last_seen?: boolean
+          user_id: string
+        }
+        Update: {
+          last_seen_at?: string
+          show_last_seen?: boolean
+          user_id?: string
+        }
+        Relationships: []
       }
       contact_addresses: {
         Row: {
@@ -477,6 +525,32 @@ export type Database = {
       is_premium: {
         Args: { _user_id: string }
         Returns: boolean
+      }
+      mark_conversation_read: {
+        Args: { _conversation: string }
+        Returns: undefined
+      }
+      reply_stats: {
+        Args: { _user: string }
+        Returns: {
+          replies: number
+          median_seconds: number
+        }[]
+      }
+      set_show_last_seen: {
+        Args: { _show: boolean }
+        Returns: undefined
+      }
+      touch_presence: {
+        Args: Record<PropertyKey, never>
+        Returns: undefined
+      }
+      unread_counts: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          conversation_id: string
+          unread: number
+        }[]
       }
     }
     Enums: {
