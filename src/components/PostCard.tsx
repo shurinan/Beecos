@@ -97,7 +97,7 @@ export function PostCard({
           <span className="flex items-center gap-1">
             a {formatKm(distance.km)} de você
             {distance.far && (
-              <span className="ml-1 rounded border border-foreground bg-secondary px-1.5 py-0.5 text-xs font-bold text-secondary-foreground">
+              <span className="ml-1 rounded border border-foreground bg-destructive px-1.5 py-0.5 text-xs font-bold text-destructive-foreground">
                 Pode ser longe
               </span>
             )}
