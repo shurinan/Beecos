@@ -2,33 +2,40 @@ import { describe, expect, it } from "vitest";
 import {
   SKILL_LEVELS,
   clampLevel,
+  formatLongDate,
   formatRating,
+  formatYears,
   levelLabel,
   normalizeSkill,
+  skillBadges,
   sortSkills,
   topSkill,
 } from "./skills";
 import { pickAd, safeHttpUrl, shouldShowFeedAd, type Ad } from "./ads";
 
 describe("skill levels", () => {
-  it("goes from 'Sei fazer' (1) to 'Profissional certificado' (5)", () => {
-    expect(SKILL_LEVELS).toHaveLength(5);
-    expect(levelLabel(1)).toBe("Sei fazer");
-    expect(levelLabel(5)).toBe("Profissional certificado");
+  it("has the three levels from the skill form", () => {
+    expect(SKILL_LEVELS.map((l) => l.label)).toEqual([
+      "Quase profissional",
+      "Profissional",
+      "Especialista",
+    ]);
+    expect(levelLabel(1)).toBe("Quase profissional");
+    expect(levelLabel(3)).toBe("Especialista");
   });
 
-  it("falls back to level 1 for unknown values and clamps input", () => {
-    expect(levelLabel(99)).toBe("Sei fazer");
+  it("falls back to level 1 for unknown values and clamps input to 1..3", () => {
+    expect(levelLabel(99)).toBe("Quase profissional");
     expect(clampLevel(0)).toBe(1);
-    expect(clampLevel(7)).toBe(5);
-    expect(clampLevel(2.6)).toBe(3);
+    expect(clampLevel(7)).toBe(3);
+    expect(clampLevel(1.6)).toBe(2);
     expect(clampLevel(Number.NaN)).toBe(1);
   });
 
   it("sorts highest level first, then by name, without mutating the input", () => {
     const input = [
       { skill: "Pintura", level: 2 },
-      { skill: "Elétrica", level: 5 },
+      { skill: "Elétrica", level: 3 },
       { skill: "Alvenaria", level: 2 },
     ];
     expect(sortSkills(input).map((s) => s.skill)).toEqual(["Elétrica", "Alvenaria", "Pintura"]);
@@ -36,6 +43,28 @@ describe("skill levels", () => {
     expect(topSkill(input)?.skill).toBe("Elétrica");
     expect(topSkill([])).toBeNull();
     expect(topSkill(null)).toBeNull();
+  });
+
+  it("lists badges in form order and none when every answer is no", () => {
+    expect(skillBadges({ has_experience: false, had_training: false, certified: false })).toEqual(
+      [],
+    );
+    expect(skillBadges({ has_experience: true, had_training: false, certified: true })).toEqual([
+      "Experiência profissional",
+      "Licenciado/certificado",
+    ]);
+    expect(skillBadges({ has_experience: true, had_training: true, certified: true })).toHaveLength(
+      3,
+    );
+  });
+
+  it("formats years and the update date in Portuguese", () => {
+    expect(formatYears(4)).toBe("4 anos");
+    expect(formatYears(1)).toBe("1 ano");
+    expect(formatYears(null)).toBe("—");
+    expect(formatLongDate("2026-10-21T15:00:00Z")).toBe("21 de outubro de 2026");
+    expect(formatLongDate("lixo")).toBe("—");
+    expect(formatLongDate(null)).toBe("—");
   });
 
   it("normalizes names so 'Pintura' and ' pintura ' are the same skill", () => {

@@ -107,22 +107,37 @@ export type Database = {
       }
       messages: {
         Row: {
+          attachment_name: string | null
+          attachment_path: string | null
+          attachment_size: number | null
+          attachment_type: string | null
           content: string
           conversation_id: string
           created_at: string
           id: string
+          kind: string
           sender_id: string
         }
         Insert: {
+          attachment_name?: string | null
+          attachment_path?: string | null
+          attachment_size?: number | null
+          attachment_type?: string | null
           content: string
           conversation_id: string
           created_at?: string
           id?: string
+          kind?: string
           sender_id: string
         }
         Update: {
+          attachment_name?: string | null
+          attachment_path?: string | null
+          attachment_size?: number | null
+          attachment_type?: string | null
           content?: string
           conversation_id?: string
+          kind?: string
           created_at?: string
           id?: string
           sender_id?: string
@@ -154,6 +169,7 @@ export type Database = {
           price: string
           title: string
           user_id: string
+          vacancies: number
         }
         Insert: {
           city?: string
@@ -164,6 +180,7 @@ export type Database = {
           price?: string
           title: string
           user_id: string
+          vacancies?: number
         }
         Update: {
           city?: string
@@ -174,6 +191,7 @@ export type Database = {
           price?: string
           title?: string
           user_id?: string
+          vacancies?: number
         }
         Relationships: [
           {
@@ -185,22 +203,163 @@ export type Database = {
           },
         ]
       }
+      conversation_reads: {
+        Row: {
+          conversation_id: string
+          last_read_at: string
+          user_id: string
+        }
+        Insert: {
+          conversation_id: string
+          last_read_at?: string
+          user_id: string
+        }
+        Update: {
+          conversation_id?: string
+          last_read_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      user_presence: {
+        Row: {
+          last_seen_at: string
+          show_last_seen: boolean
+          user_id: string
+        }
+        Insert: {
+          last_seen_at?: string
+          show_last_seen?: boolean
+          user_id: string
+        }
+        Update: {
+          last_seen_at?: string
+          show_last_seen?: boolean
+          user_id?: string
+        }
+        Relationships: []
+      }
+      engagements: {
+        Row: {
+          accepted_at: string | null
+          cancelled_by: string | null
+          client_id: string
+          completed_at: string | null
+          conversation_id: string
+          created_at: string
+          id: string
+          post_id: string | null
+          provider_id: string
+          status: string
+          updated_at: string
+        }
+        Insert: never
+        Update: never
+        Relationships: []
+      }
+      contact_addresses: {
+        Row: {
+          care_of: string
+          city: string
+          id: string
+          kind: string
+          neighborhood: string
+          postal_code: string
+          recipient: string
+          state: string
+          street: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          care_of?: string
+          city: string
+          id?: string
+          kind: string
+          neighborhood?: string
+          postal_code: string
+          recipient: string
+          state: string
+          street: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          care_of?: string
+          city?: string
+          id?: string
+          kind?: string
+          neighborhood?: string
+          postal_code?: string
+          recipient?: string
+          state?: string
+          street?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      contact_phones: {
+        Row: {
+          created_at: string
+          id: string
+          kind: string
+          methods: string[]
+          number: string
+          shared: boolean
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          kind: string
+          methods?: string[]
+          number: string
+          shared?: boolean
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          kind?: string
+          methods?: string[]
+          number?: string
+          shared?: boolean
+          user_id?: string
+        }
+        Relationships: []
+      }
       profile_private: {
         Row: {
           birth_date: string | null
-          phone: string
+          consent_at: string | null
+          consent_version: string
+          first_name: string
+          last_name: string
+          name_suffix: string
+          other_names: string
           updated_at: string
           user_id: string
         }
         Insert: {
           birth_date?: string | null
-          phone?: string
+          consent_at?: string | null
+          consent_version?: string
+          first_name?: string
+          last_name?: string
+          name_suffix?: string
+          other_names?: string
           updated_at?: string
           user_id: string
         }
         Update: {
           birth_date?: string | null
-          phone?: string
+          consent_at?: string | null
+          consent_version?: string
+          first_name?: string
+          last_name?: string
+          name_suffix?: string
+          other_names?: string
           updated_at?: string
           user_id?: string
         }
@@ -214,24 +373,84 @@ export type Database = {
           },
         ]
       }
-      profile_skills: {
+      profiles: {
         Row: {
+          available: boolean
+          avatar_path: string | null
+          bio: string
+          city: string
           created_at: string
-          level: number
-          skill: string
-          user_id: string
+          full_name: string
+          id: string
+          headline: string
+          experience_years: number | null
+          service_area: string
+          certificate_note: string
         }
         Insert: {
+          available?: boolean
+          avatar_path?: string | null
+          bio?: string
+          city?: string
           created_at?: string
-          level?: number
-          skill: string
-          user_id: string
+          full_name?: string
+          id: string
+          headline?: string
+          experience_years?: number | null
+          service_area?: string
+          certificate_note?: string
         }
         Update: {
+          available?: boolean
+          avatar_path?: string | null
+          bio?: string
+          city?: string
           created_at?: string
+          full_name?: string
+          id?: string
+          headline?: string
+          experience_years?: number | null
+          service_area?: string
+          certificate_note?: string
+        }
+        Relationships: []
+      }
+      profile_skills: {
+        Row: {
+          certified: boolean
+          created_at: string
+          had_training: boolean
+          has_experience: boolean
+          level: number
+          notes: string
+          skill: string
+          updated_at: string
+          user_id: string
+          years_experience: number | null
+        }
+        Insert: {
+          certified?: boolean
+          created_at?: string
+          had_training?: boolean
+          has_experience?: boolean
           level?: number
+          notes?: string
+          skill: string
+          updated_at?: string
+          user_id: string
+          years_experience?: number | null
+        }
+        Update: {
+          certified?: boolean
+          created_at?: string
+          had_training?: boolean
+          has_experience?: boolean
+          level?: number
+          notes?: string
           skill?: string
+          updated_at?: string
           user_id?: string
+          years_experience?: number | null
         }
         Relationships: [
           {
@@ -242,45 +461,6 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
-      }
-      profiles: {
-        Row: {
-          available: boolean
-          bio: string
-          certificate_note: string
-          city: string
-          created_at: string
-          experience_years: number | null
-          full_name: string
-          headline: string
-          id: string
-          service_area: string
-        }
-        Insert: {
-          available?: boolean
-          bio?: string
-          certificate_note?: string
-          city?: string
-          created_at?: string
-          experience_years?: number | null
-          full_name?: string
-          headline?: string
-          id: string
-          service_area?: string
-        }
-        Update: {
-          available?: boolean
-          bio?: string
-          certificate_note?: string
-          city?: string
-          created_at?: string
-          experience_years?: number | null
-          full_name?: string
-          headline?: string
-          id?: string
-          service_area?: string
-        }
-        Relationships: []
       }
       reviews: {
         Row: {
@@ -355,21 +535,21 @@ export type Database = {
       }
     }
     Views: {
+      post_stats: {
+        Row: {
+          post_id: string | null
+          taken: number | null
+          vacancies: number | null
+        }
+        Relationships: []
+      }
       profile_rating_stats: {
         Row: {
           avg_rating: number | null
           review_count: number | null
           user_id: string | null
         }
-        Relationships: [
-          {
-            foreignKeyName: "reviews_reviewee_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
       }
     }
     Functions: {
@@ -377,7 +557,52 @@ export type Database = {
         Args: { _reviewee: string; _reviewer: string }
         Returns: boolean
       }
-      is_premium: { Args: { _user_id: string }; Returns: boolean }
+      choose_provider: {
+        Args: { _conversation: string }
+        Returns: string
+      }
+      respond_engagement: {
+        Args: { _accept: boolean; _id: string }
+        Returns: undefined
+      }
+      complete_engagement: {
+        Args: { _id: string }
+        Returns: undefined
+      }
+      cancel_engagement: {
+        Args: { _id: string }
+        Returns: undefined
+      }
+      is_premium: {
+        Args: { _user_id: string }
+        Returns: boolean
+      }
+      mark_conversation_read: {
+        Args: { _conversation: string }
+        Returns: undefined
+      }
+      reply_stats: {
+        Args: { _user: string }
+        Returns: {
+          replies: number
+          median_seconds: number
+        }[]
+      }
+      set_show_last_seen: {
+        Args: { _show: boolean }
+        Returns: undefined
+      }
+      touch_presence: {
+        Args: Record<PropertyKey, never>
+        Returns: undefined
+      }
+      unread_counts: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          conversation_id: string
+          unread: number
+        }[]
+      }
     }
     Enums: {
       [_ in never]: never
@@ -388,20 +613,28 @@ export type Database = {
   }
 }
 
-type DatabaseWithoutInternals = Omit<Database, "__InternalSupabase">
+type DatabaseWithoutInternals = Omit<
+  Database,
+  "__InternalSupabase"
+>
 
-type DefaultSchema = DatabaseWithoutInternals[Extract<keyof Database, "public">]
+type DefaultSchema = DatabaseWithoutInternals[Extract<
+  keyof Database,
+  "public"
+>]
 
 export type Tables<
   DefaultSchemaTableNameOrOptions extends
-    | keyof (DefaultSchema["Tables"] & DefaultSchema["Views"])
+    | keyof (DefaultSchema["Tables"] &
+        DefaultSchema["Views"])
     | { schema: keyof DatabaseWithoutInternals },
-  TableName extends (DefaultSchemaTableNameOrOptions extends {
-    schema: keyof DatabaseWithoutInternals
-  }
-    ? keyof (DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
-        DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Views"])
-    : never) = never,
+  TableName extends
+    (DefaultSchemaTableNameOrOptions extends {
+      schema: keyof DatabaseWithoutInternals
+    }
+      ? keyof (DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
+          DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Views"])
+      : never) = never,
 > = DefaultSchemaTableNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
@@ -425,11 +658,12 @@ export type TablesInsert<
   DefaultSchemaTableNameOrOptions extends
     | keyof DefaultSchema["Tables"]
     | { schema: keyof DatabaseWithoutInternals },
-  TableName extends (DefaultSchemaTableNameOrOptions extends {
-    schema: keyof DatabaseWithoutInternals
-  }
-    ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
-    : never) = never,
+  TableName extends
+    (DefaultSchemaTableNameOrOptions extends {
+      schema: keyof DatabaseWithoutInternals
+    }
+      ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
+      : never) = never,
 > = DefaultSchemaTableNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
@@ -450,11 +684,12 @@ export type TablesUpdate<
   DefaultSchemaTableNameOrOptions extends
     | keyof DefaultSchema["Tables"]
     | { schema: keyof DatabaseWithoutInternals },
-  TableName extends (DefaultSchemaTableNameOrOptions extends {
-    schema: keyof DatabaseWithoutInternals
-  }
-    ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
-    : never) = never,
+  TableName extends
+    (DefaultSchemaTableNameOrOptions extends {
+      schema: keyof DatabaseWithoutInternals
+    }
+      ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
+      : never) = never,
 > = DefaultSchemaTableNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
@@ -492,11 +727,12 @@ export type CompositeTypes<
   PublicCompositeTypeNameOrOptions extends
     | keyof DefaultSchema["CompositeTypes"]
     | { schema: keyof DatabaseWithoutInternals },
-  CompositeTypeName extends (PublicCompositeTypeNameOrOptions extends {
-    schema: keyof DatabaseWithoutInternals
-  }
-    ? keyof DatabaseWithoutInternals[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"]
-    : never) = never,
+  CompositeTypeName extends
+    (PublicCompositeTypeNameOrOptions extends {
+      schema: keyof DatabaseWithoutInternals
+    }
+      ? keyof DatabaseWithoutInternals[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"]
+      : never) = never,
 > = PublicCompositeTypeNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }

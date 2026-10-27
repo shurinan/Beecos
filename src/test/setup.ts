@@ -18,3 +18,11 @@ Object.defineProperty(window, "matchMedia", {
     dispatchEvent: () => {},
   }),
 });
+
+// jsdom não tem ResizeObserver; componentes do Radix (Switch, Checkbox…) usam.
+class ResizeObserverStub {
+  observe() {}
+  unobserve() {}
+  disconnect() {}
+}
+(globalThis as { ResizeObserver?: unknown }).ResizeObserver ??= ResizeObserverStub;

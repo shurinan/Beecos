@@ -12,10 +12,12 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as AuthRouteImport } from './routes/auth'
+import { Route as AuthenticatedContatoRouteImport } from './routes/_authenticated/contato'
 import { Route as AuthenticatedPainelRouteImport } from './routes/_authenticated/painel'
 import { Route as PerfilIdRouteImport } from './routes/perfil.$id'
 import { Route as AuthenticatedMensagensIndexRouteImport } from './routes/_authenticated/mensagens.index'
 import { Route as AuthenticatedMensagensIdRouteImport } from './routes/_authenticated/mensagens.$id'
+import { Route as AuthenticatedPublicacaoIdRouteImport } from './routes/_authenticated/publicacao.$id'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -30,6 +32,11 @@ const AuthRoute = AuthRouteImport.update({
   id: '/auth',
   path: '/auth',
   getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedContatoRoute = AuthenticatedContatoRouteImport.update({
+  id: '/contato',
+  path: '/contato',
+  getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedPainelRoute = AuthenticatedPainelRouteImport.update({
   id: '/painel',
@@ -53,21 +60,31 @@ const AuthenticatedMensagensIdRoute =
     path: '/mensagens/$id',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedPublicacaoIdRoute =
+  AuthenticatedPublicacaoIdRouteImport.update({
+    id: '/publicacao/$id',
+    path: '/publicacao/$id',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/contato': typeof AuthenticatedContatoRoute
   '/painel': typeof AuthenticatedPainelRoute
   '/perfil/$id': typeof PerfilIdRoute
   '/mensagens/$id': typeof AuthenticatedMensagensIdRoute
+  '/publicacao/$id': typeof AuthenticatedPublicacaoIdRoute
   '/mensagens/': typeof AuthenticatedMensagensIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/contato': typeof AuthenticatedContatoRoute
   '/painel': typeof AuthenticatedPainelRoute
   '/perfil/$id': typeof PerfilIdRoute
   '/mensagens/$id': typeof AuthenticatedMensagensIdRoute
+  '/publicacao/$id': typeof AuthenticatedPublicacaoIdRoute
   '/mensagens': typeof AuthenticatedMensagensIndexRoute
 }
 export interface FileRoutesById {
@@ -75,26 +92,44 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/auth': typeof AuthRoute
+  '/_authenticated/contato': typeof AuthenticatedContatoRoute
   '/_authenticated/painel': typeof AuthenticatedPainelRoute
   '/perfil/$id': typeof PerfilIdRoute
   '/_authenticated/mensagens/$id': typeof AuthenticatedMensagensIdRoute
+  '/_authenticated/publicacao/$id': typeof AuthenticatedPublicacaoIdRoute
   '/_authenticated/mensagens/': typeof AuthenticatedMensagensIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
-    '/' | '/auth' | '/painel' | '/perfil/$id' | '/mensagens/$id' | '/mensagens/'
+    | '/'
+    | '/auth'
+    | '/contato'
+    | '/painel'
+    | '/perfil/$id'
+    | '/mensagens/$id'
+    | '/publicacao/$id'
+    | '/mensagens/'
   fileRoutesByTo: FileRoutesByTo
   to:
-    '/' | '/auth' | '/painel' | '/perfil/$id' | '/mensagens/$id' | '/mensagens'
+    | '/'
+    | '/auth'
+    | '/contato'
+    | '/painel'
+    | '/perfil/$id'
+    | '/mensagens/$id'
+    | '/publicacao/$id'
+    | '/mensagens'
   id:
     | '__root__'
     | '/'
     | '/_authenticated'
     | '/auth'
+    | '/_authenticated/contato'
     | '/_authenticated/painel'
     | '/perfil/$id'
     | '/_authenticated/mensagens/$id'
+    | '/_authenticated/publicacao/$id'
     | '/_authenticated/mensagens/'
   fileRoutesById: FileRoutesById
 }
@@ -128,6 +163,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated/contato': {
+      id: '/_authenticated/contato'
+      path: '/contato'
+      fullPath: '/contato'
+      preLoaderRoute: typeof AuthenticatedContatoRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/painel': {
       id: '/_authenticated/painel'
       path: '/painel'
@@ -156,18 +198,29 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedMensagensIdRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/publicacao/$id': {
+      id: '/_authenticated/publicacao/$id'
+      path: '/publicacao/$id'
+      fullPath: '/publicacao/$id'
+      preLoaderRoute: typeof AuthenticatedPublicacaoIdRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
   }
 }
 
 interface AuthenticatedRouteRouteChildren {
+  AuthenticatedContatoRoute: typeof AuthenticatedContatoRoute
   AuthenticatedPainelRoute: typeof AuthenticatedPainelRoute
   AuthenticatedMensagensIdRoute: typeof AuthenticatedMensagensIdRoute
+  AuthenticatedPublicacaoIdRoute: typeof AuthenticatedPublicacaoIdRoute
   AuthenticatedMensagensIndexRoute: typeof AuthenticatedMensagensIndexRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedContatoRoute: AuthenticatedContatoRoute,
   AuthenticatedPainelRoute: AuthenticatedPainelRoute,
   AuthenticatedMensagensIdRoute: AuthenticatedMensagensIdRoute,
+  AuthenticatedPublicacaoIdRoute: AuthenticatedPublicacaoIdRoute,
   AuthenticatedMensagensIndexRoute: AuthenticatedMensagensIndexRoute,
 }
 
