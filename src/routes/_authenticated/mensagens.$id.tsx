@@ -283,15 +283,28 @@ function Chat() {
     const grew = msgs.length > lastCount.current;
     const first = lastCount.current === 0;
     lastCount.current = msgs.length;
-    if (!grew) return;
+    if (!grew) return undefined;
     const last = msgs[msgs.length - 1];
     const nearBottom = window.innerHeight + window.scrollY >= document.body.scrollHeight - 220;
     if (first || last?.sender_id === userId || nearBottom) {
       bottom.current?.scrollIntoView({ behavior: first ? "auto" : "smooth", block: "end" });
       setShowJump(false);
+      if (first) {
+        // Fotos, anexos e o cartão do serviço terminam de carregar depois e empurram o fim para
+        // baixo: confirma a posição mais algumas vezes, parando se a pessoa rolar sozinha.
+        const startY = window.scrollY;
+        const timers = [60, 250, 600, 1200].map((ms) =>
+          setTimeout(() => {
+            if (Math.abs(window.scrollY - startY) > 400 && window.scrollY < startY) return;
+            bottom.current?.scrollIntoView({ behavior: "auto", block: "end" });
+          }, ms),
+        );
+        return () => timers.forEach(clearTimeout);
+      }
     } else {
       setShowJump(true);
     }
+    return undefined;
   }, [msgs, userId]);
 
   useEffect(() => {
