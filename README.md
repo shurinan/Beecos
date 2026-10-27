@@ -26,3 +26,22 @@ cd <repository-name>
 npm i
 npm run dev
 ```
+
+## Anúncios
+
+O app tem dois espaços discretos de publicidade: um no feed (depois do 4º item, só se houver mais itens) e um no fim do perfil público. Eles não aparecem no chat nem nos formulários, e usuários Premium não veem anúncios. Sem anúncio ativo, o espaço não ocupa lugar nenhum.
+
+Os anúncios ficam na tabela `ads` e só quem tem acesso ao banco (painel do Supabase ou `service_role`) cadastra e edita; usuários só leem os ativos.
+
+```sql
+INSERT INTO public.ads (placement, sponsor, title, body, image_url, link_url)
+VALUES ('feed', 'Loja Exemplo', 'Ferramentas com 10% off', 'Para quem trabalha pesado', 'https://exemplo.com/logo.png', 'https://exemplo.com');
+```
+
+- `placement`: `feed` ou `profile`.
+- `active`, `starts_at` e `ends_at` controlam quando o anúncio aparece.
+- `link_url` aceita só `http(s)`; `image_url` só `https`.
+
+## Níveis de habilidade
+
+Cada habilidade do perfil tem um nível de 1 a 5, declarado pelo próprio profissional: 1 "Sei fazer", 2 "Tenho prática", 3 "Experiente", 4 "Especialista", 5 "Profissional certificado". O texto de cursos e certificados também é informado por ele e aparece como tal no perfil; o app não verifica documentos. A confiança vem das avaliações, que só podem ser feitas por quem conversou com a pessoa (os dois enviaram mensagem).
