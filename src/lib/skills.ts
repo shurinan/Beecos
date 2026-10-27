@@ -12,6 +12,7 @@ export const SKILL_LEVELS: LevelInfo[] = [
 export const MAX_LEVEL = 3;
 export const MAX_SKILLS = 20;
 export const MAX_SKILL_NOTES = 500;
+export const MAX_YEARS = 60;
 
 export function levelLabel(level: number): string {
   return SKILL_LEVELS.find((l) => l.level === level)?.label ?? SKILL_LEVELS[0]!.label;
@@ -26,15 +27,20 @@ export function clampLevel(n: number): SkillLevel {
 export type SkillBase = { skill: string; level: number };
 
 /** Habilidade completa, como no formulário "Adicionar habilidade". */
-export type ProfileSkill = SkillBase & {
+export type SkillInput = SkillBase & {
   has_experience: boolean;
+  years_experience: number | null;
   had_training: boolean;
   certified: boolean;
   notes: string;
 };
 
+/** O que vem do banco: o formulário mais a data da última atualização (preenchida pelo banco). */
+export type ProfileSkill = SkillInput & { updated_at: string };
+
 /** Colunas lidas do banco para montar um ProfileSkill. */
-export const SKILL_COLUMNS = "skill, level, has_experience, had_training, certified, notes";
+export const SKILL_COLUMNS =
+  "skill, level, has_experience, years_experience, had_training, certified, notes, updated_at";
 
 /** Mais alto primeiro; empate por nome. */
 export function sortSkills<T extends SkillBase>(skills: T[]): T[] {
@@ -67,4 +73,23 @@ export function normalizeSkill(name: string): string {
 export function formatRating(avg: number | string | null | undefined): string {
   const n = Number(avg);
   return Number.isFinite(n) && n > 0 ? n.toFixed(1).replace(".", ",") : "—";
+}
+
+/** "4 anos", "1 ano" ou "—" quando não informado. */
+export function formatYears(years: number | null | undefined): string {
+  if (years == null) return "—";
+  return `${years} ${years === 1 ? "ano" : "anos"}`;
+}
+
+/** "21 de outubro de 2026", no fuso de Brasília. */
+export function formatLongDate(iso: string | null | undefined): string {
+  if (!iso) return "—";
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return "—";
+  return d.toLocaleDateString("pt-BR", {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+    timeZone: "America/Sao_Paulo",
+  });
 }

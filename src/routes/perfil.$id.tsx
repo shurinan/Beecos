@@ -1,16 +1,16 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
-import { Award, Briefcase, MapPin, MessageCircle, Route as RouteIcon } from "lucide-react";
+import { Award, MapPin, MessageCircle, Route as RouteIcon } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { PostCard, type PostWithAuthor } from "@/components/PostCard";
 import { AdSlot } from "@/components/AdSlot";
-import { SelfDeclared, SkillCard, StarInput, Stars } from "@/components/profile-bits";
+import { Avatar, SelfDeclared, SkillCard, StarInput, Stars } from "@/components/profile-bits";
 import { useAuth } from "@/lib/auth";
-import { initials, openConversation, timeAgo } from "@/lib/data";
+import { openConversation, timeAgo } from "@/lib/data";
 import { limitMessage } from "@/lib/plans";
 import { SKILL_COLUMNS, formatRating, sortSkills, type ProfileSkill } from "@/lib/skills";
 
@@ -21,9 +21,15 @@ export const Route = createFileRoute("/perfil/$id")({
   head: () => ({
     meta: [
       { title: "Perfil — Beecos" },
-      { name: "description", content: "Veja as habilidades, avaliações e publicações deste trabalhador no Beecos." },
+      {
+        name: "description",
+        content: "Veja as habilidades, avaliações e publicações deste trabalhador no Beecos.",
+      },
       { property: "og:title", content: "Perfil — Beecos" },
-      { property: "og:description", content: "Veja as habilidades, avaliações e publicações deste trabalhador no Beecos." },
+      {
+        property: "og:description",
+        content: "Veja as habilidades, avaliações e publicações deste trabalhador no Beecos.",
+      },
     ],
   }),
   component: ProfilePage,
@@ -55,10 +61,16 @@ function ProfilePage() {
           .select("*, profiles(full_name, profile_skills(skill, level))")
           .eq("user_id", id)
           .order("created_at", { ascending: false }),
-        supabase.from("profile_rating_stats").select("review_count, avg_rating").eq("user_id", id).maybeSingle(),
+        supabase
+          .from("profile_rating_stats")
+          .select("review_count, avg_rating")
+          .eq("user_id", id)
+          .maybeSingle(),
         supabase
           .from("reviews")
-          .select("id, reviewer_id, rating, comment, created_at, reviewer:profiles!reviews_reviewer_id_fkey(full_name)")
+          .select(
+            "id, reviewer_id, rating, comment, created_at, reviewer:profiles!reviews_reviewer_id_fkey(full_name)",
+          )
           .eq("reviewee_id", id)
           .order("created_at", { ascending: false })
           .limit(20),
@@ -102,9 +114,7 @@ function ProfilePage() {
     <div className="space-y-5">
       <section className="block-card p-5">
         <div className="flex items-center gap-4">
-          <span className="flex h-16 w-16 shrink-0 items-center justify-center rounded-full border-2 border-foreground bg-primary font-display text-xl">
-            {initials(pr.full_name)}
-          </span>
+          <Avatar name={pr.full_name} path={pr.avatar_path} size={64} />
           <div className="min-w-0">
             <h1 className="text-2xl leading-tight">{pr.full_name || "Usuário"}</h1>
             {pr.headline && <p className="font-semibold">{pr.headline}</p>}
@@ -133,14 +143,6 @@ function ProfilePage() {
         )}
 
         <ul className="mt-3 space-y-1 text-sm">
-          {pr.experience_years != null && (
-            <li className="flex items-center gap-2">
-              <Briefcase className="h-4 w-4 shrink-0" />
-              {pr.experience_years === 0
-                ? "Começando agora"
-                : `${pr.experience_years} ${pr.experience_years === 1 ? "ano" : "anos"} de experiência`}
-            </li>
-          )}
           {pr.service_area && (
             <li className="flex items-center gap-2">
               <RouteIcon className="h-4 w-4 shrink-0" /> Atende: {pr.service_area}
@@ -150,7 +152,10 @@ function ProfilePage() {
             <li className="flex items-start gap-2">
               <Award className="mt-0.5 h-4 w-4 shrink-0" />
               <span>
-                {pr.certificate_note} <span className="text-xs text-muted-foreground">(informado pelo próprio profissional)</span>
+                {pr.certificate_note}{" "}
+                <span className="text-xs text-muted-foreground">
+                  (informado pelo próprio profissional)
+                </span>
               </span>
             </li>
           )}
@@ -171,7 +176,7 @@ function ProfilePage() {
 
       {data.skills.length > 0 && (
         <section className="space-y-2">
-          <h2 className="text-xl">Habilidades</h2>
+          <h2 className="text-xl">Habilidades e experiência</h2>
           <SelfDeclared />
           {data.skills.map((sk) => (
             <SkillCard key={sk.skill} skill={sk} />
@@ -209,7 +214,10 @@ function Reviews({
     queryKey: ["can-review", viewerId, profileId],
     enabled: isOther,
     queryFn: async () => {
-      const { data: ok, error } = await supabase.rpc("can_review", { _reviewer: viewerId!, _reviewee: profileId });
+      const { data: ok, error } = await supabase.rpc("can_review", {
+        _reviewer: viewerId!,
+        _reviewee: profileId,
+      });
       if (error) throw error;
       return ok === true;
     },
@@ -234,7 +242,9 @@ function Reviews({
     const text = comment.trim();
     const { error } = mine
       ? await supabase.from("reviews").update({ rating, comment: text }).eq("id", mine.id)
-      : await supabase.from("reviews").insert({ reviewer_id: viewerId!, reviewee_id: profileId, rating, comment: text });
+      : await supabase
+          .from("reviews")
+          .insert({ reviewer_id: viewerId!, reviewee_id: profileId, rating, comment: text });
     if (error) {
       toast.error("Não foi possível salvar a avaliação");
       return;
@@ -263,13 +273,16 @@ function Reviews({
 
       {isOther && !mine && canReview === false && (
         <p className="text-sm text-muted-foreground">
-          Você poderá avaliar depois de conversar com esta pessoa (os dois precisam ter enviado mensagem).
+          Você poderá avaliar depois de conversar com esta pessoa (os dois precisam ter enviado
+          mensagem).
         </p>
       )}
 
       {showForm && (
         <form onSubmit={save} className="block-card space-y-3 p-4">
-          <p className="font-semibold">{mine ? "Editar sua avaliação" : "Avaliar este profissional"}</p>
+          <p className="font-semibold">
+            {mine ? "Editar sua avaliação" : "Avaliar este profissional"}
+          </p>
           <StarInput value={rating} onChange={setRating} />
           <Textarea
             placeholder="Como foi o serviço? (opcional)"
@@ -278,7 +291,9 @@ function Reviews({
             onChange={(e) => setComment(e.target.value)}
           />
           <div className="flex gap-2">
-            <Button type="submit" className="flex-1">Salvar avaliação</Button>
+            <Button type="submit" className="flex-1">
+              Salvar avaliação
+            </Button>
             {mine && (
               <Button type="button" variant="outline" onClick={() => setEditing(false)}>
                 Cancelar
@@ -302,8 +317,12 @@ function Reviews({
           {r.comment && <p className="mt-1 whitespace-pre-wrap text-sm">{r.comment}</p>}
           {r.reviewer_id === viewerId && !editing && (
             <div className="mt-2 flex gap-3 text-sm font-semibold underline">
-              <button type="button" onClick={startEdit}>Editar</button>
-              <button type="button" onClick={remove}>Apagar</button>
+              <button type="button" onClick={startEdit}>
+                Editar
+              </button>
+              <button type="button" onClick={remove}>
+                Apagar
+              </button>
             </div>
           )}
         </article>

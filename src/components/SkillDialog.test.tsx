@@ -1,12 +1,12 @@
 import { cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { SkillDialog } from "./SkillDialog";
-import type { ProfileSkill } from "@/lib/skills";
+import type { ProfileSkill, SkillInput } from "@/lib/skills";
 
 afterEach(cleanup);
 
 function setup(over: { initial?: ProfileSkill | null; existing?: string[] } = {}) {
-  const onSave = vi.fn(async (_s: ProfileSkill) => true);
+  const onSave = vi.fn(async (_s: SkillInput) => true);
   const onOpenChange = vi.fn();
   render(
     <SkillDialog
@@ -68,6 +68,7 @@ describe("SkillDialog", () => {
       skill: "Pedreiro",
       level: 2,
       has_experience: true,
+      years_experience: null,
       had_training: false,
       certified: true,
       notes: "Aprendi em obra",
@@ -99,15 +100,56 @@ describe("SkillDialog", () => {
     expect(onOpenChange).not.toHaveBeenCalledWith(false);
   });
 
+  it("asks for the years only after answering yes, and sends them", async () => {
+    const { onSave } = setup();
+    expect(screen.queryByLabelText(/Há quantos anos/)).toBeNull();
+    fireEvent.change(screen.getByLabelText("Habilidade"), { target: { value: "Elétrica" } });
+    fireEvent.click(screen.getByLabelText(/Profissional/));
+    fireEvent.click(screen.getAllByLabelText("Sim")[0]!);
+    fireEvent.change(screen.getByLabelText(/Há quantos anos/), { target: { value: "4" } });
+    fireEvent.click(screen.getAllByLabelText("Sim")[1]!);
+    fireEvent.click(screen.getAllByLabelText("Sim")[2]!);
+    submit();
+    await waitFor(() => expect(onSave).toHaveBeenCalledTimes(1));
+    expect(onSave.mock.calls[0]![0]).toMatchObject({
+      has_experience: true,
+      years_experience: 4,
+      had_training: true,
+      certified: true,
+    });
+  });
+
+  it("rejects invalid years and drops them when experience is no", async () => {
+    const { onSave } = setup();
+    fireEvent.change(screen.getByLabelText("Habilidade"), { target: { value: "Pintura" } });
+    fireEvent.click(screen.getByLabelText(/Especialista/));
+    fireEvent.click(screen.getAllByLabelText("Sim")[0]!);
+    fireEvent.change(screen.getByLabelText(/Há quantos anos/), { target: { value: "99" } });
+    fireEvent.click(screen.getAllByLabelText("Não")[1]!);
+    fireEvent.click(screen.getAllByLabelText("Não")[2]!);
+    submit();
+    expect(await screen.findByText("Use um número inteiro de 0 a 60")).toBeTruthy();
+    expect(onSave).not.toHaveBeenCalled();
+    fireEvent.click(screen.getAllByLabelText("Não")[0]!);
+    submit();
+    await waitFor(() => expect(onSave).toHaveBeenCalledTimes(1));
+    expect(onSave.mock.calls[0]![0]).toMatchObject({
+      has_experience: false,
+      years_experience: null,
+    });
+  });
+
   it("prefills when editing and locks the name", () => {
     setup({
       initial: {
         skill: "Pintura",
         level: 3,
         has_experience: true,
+        years_experience: 4,
         had_training: false,
         certified: false,
         notes: "x",
+        updated_at: "2026-10-21T15:00:00Z",
       },
       existing: ["Pintura"],
     });

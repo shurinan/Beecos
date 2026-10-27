@@ -47,3 +47,15 @@ VALUES ('feed', 'Loja Exemplo', 'Ferramentas com 10% off', 'Para quem trabalha p
 Em "Meu perfil", o botão **Adicionar** abre o formulário de habilidade: nome, nível de competência (Quase profissional: pouca supervisão; Profissional: sem supervisão; Especialista: pode treinar outros), três perguntas Sim/Não (experiência profissional, treinamento ou aulas, licenciado/certificado) e "Outras informações". No perfil público, cada habilidade aparece como um cartão com o nível, os selos respondidos "Sim" e as observações.
 
 Tudo é informado pelo próprio profissional e o perfil diz isso; o app não verifica documentos. A confiança vem das avaliações, que só podem ser feitas por quem conversou com a pessoa (os dois enviaram mensagem).
+
+## Perfil em camadas
+
+- **Visão geral** (`/painel`): cabeçalho com foto, resumo do contato e as habilidades.
+- **Habilidades**: cada habilidade tem nível, anos de experiência, treinamento, certificado e observações (migration `0005`).
+- **Contato** (`/contato`): foto de perfil, informações pessoais, autorização de uso dos dados, e-mail, telefones por tipo e endereços físico/postal (migrations `0006` e `0007`).
+
+Tudo do menu de contato é privado (RLS: só o dono lê e escreve). Só a foto (bucket público `avatars`) e o nome preferido aparecem no perfil público.
+
+Antes de publicar este código, aplique as migrations `0005`, `0006` e `0007` no banco: o Lovable não aplica as migrations do repositório sozinho.
+
+O texto da autorização de uso dos dados está em `src/lib/contact.ts` (`CONSENT_TEXT`) e deve ser revisado por quem cuida da parte jurídica. Quando o texto mudar, troque `CONSENT_VERSION`.

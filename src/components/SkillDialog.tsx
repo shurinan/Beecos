@@ -10,10 +10,17 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { MAX_SKILL_NOTES, SKILL_LEVELS, normalizeSkill, type ProfileSkill } from "@/lib/skills";
+import {
+  MAX_SKILL_NOTES,
+  MAX_YEARS,
+  SKILL_LEVELS,
+  normalizeSkill,
+  type ProfileSkill,
+  type SkillInput,
+} from "@/lib/skills";
 
 type Errors = Partial<
-  Record<"skill" | "level" | "has_experience" | "had_training" | "certified", string>
+  Record<"skill" | "level" | "has_experience" | "years" | "had_training" | "certified", string>
 >;
 
 const cardBase =
@@ -86,12 +93,13 @@ export function SkillDialog({
   onOpenChange: (open: boolean) => void;
   initial: ProfileSkill | null;
   existing: string[];
-  onSave: (skill: ProfileSkill) => Promise<boolean>;
+  onSave: (skill: SkillInput) => Promise<boolean>;
 }) {
   const editing = initial !== null;
   const [name, setName] = useState("");
   const [level, setLevel] = useState(0);
   const [experience, setExperience] = useState<boolean | null>(null);
+  const [years, setYears] = useState("");
   const [training, setTraining] = useState<boolean | null>(null);
   const [certified, setCertified] = useState<boolean | null>(null);
   const [notes, setNotes] = useState("");
@@ -103,6 +111,7 @@ export function SkillDialog({
     setName(initial?.skill ?? "");
     setLevel(initial?.level ?? 0);
     setExperience(initial ? initial.has_experience : null);
+    setYears(initial?.years_experience == null ? "" : String(initial.years_experience));
     setTraining(initial ? initial.had_training : null);
     setCertified(initial ? initial.certified : null);
     setNotes(initial?.notes ?? "");
@@ -119,6 +128,13 @@ export function SkillDialog({
       next.skill = "Você já adicionou essa habilidade";
     if (level < 1) next.level = "Escolha o seu nível";
     if (experience === null) next.has_experience = "Responda sim ou não";
+    const yearsNumber = years.trim() === "" ? null : Number(years);
+    if (
+      experience === true &&
+      yearsNumber !== null &&
+      (!Number.isInteger(yearsNumber) || yearsNumber < 0 || yearsNumber > MAX_YEARS)
+    )
+      next.years = `Use um número inteiro de 0 a ${MAX_YEARS}`;
     if (training === null) next.had_training = "Responda sim ou não";
     if (certified === null) next.certified = "Responda sim ou não";
     setErrors(next);
@@ -129,6 +145,7 @@ export function SkillDialog({
       skill: trimmed,
       level,
       has_experience: experience === true,
+      years_experience: experience === true ? yearsNumber : null,
       had_training: training === true,
       certified: certified === true,
       notes: notes.trim(),
@@ -193,6 +210,29 @@ export function SkillDialog({
             error={errors.has_experience}
           >
             <YesNo name="skill-experience" value={experience} onChange={setExperience} />
+            {experience === true && (
+              <div className="space-y-1">
+                <label htmlFor="skill-years" className="text-sm font-semibold">
+                  Há quantos anos?{" "}
+                  <span className="font-normal text-muted-foreground">(opcional)</span>
+                </label>
+                <Input
+                  id="skill-years"
+                  type="number"
+                  inputMode="numeric"
+                  min={0}
+                  max={MAX_YEARS}
+                  className="w-32"
+                  value={years}
+                  onChange={(e) => setYears(e.target.value)}
+                />
+                {errors.years && (
+                  <p role="alert" className="text-xs font-semibold text-destructive">
+                    {errors.years}
+                  </p>
+                )}
+              </div>
+            )}
           </Question>
 
           <Question

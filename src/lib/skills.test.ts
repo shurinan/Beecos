@@ -2,7 +2,9 @@ import { describe, expect, it } from "vitest";
 import {
   SKILL_LEVELS,
   clampLevel,
+  formatLongDate,
   formatRating,
+  formatYears,
   levelLabel,
   normalizeSkill,
   skillBadges,
@@ -54,6 +56,15 @@ describe("skill levels", () => {
     expect(skillBadges({ has_experience: true, had_training: true, certified: true })).toHaveLength(
       3,
     );
+  });
+
+  it("formats years and the update date in Portuguese", () => {
+    expect(formatYears(4)).toBe("4 anos");
+    expect(formatYears(1)).toBe("1 ano");
+    expect(formatYears(null)).toBe("—");
+    expect(formatLongDate("2026-10-21T15:00:00Z")).toBe("21 de outubro de 2026");
+    expect(formatLongDate("lixo")).toBe("—");
+    expect(formatLongDate(null)).toBe("—");
   });
 
   it("normalizes names so 'Pintura' and ' pintura ' are the same skill", () => {
