@@ -21,13 +21,13 @@ export const Route = createFileRoute("/_authenticated/mensagens/")({
 function Inbox() {
   const { userId } = Route.useRouteContext();
   const { byConversation } = useUnread(userId);
-  const { data, isLoading } = useQuery({
+  const { data, isLoading, isError, refetch } = useQuery({
     queryKey: ["conversations", userId],
     queryFn: async () => {
       const { data, error } = await supabase
         .from("conversations")
         .select(
-          "id, last_message_at, user_a, user_b, posts(title), a:profiles!conversations_user_a_fkey(full_name, avatar_path), b:profiles!conversations_user_b_fkey(full_name, avatar_path)",
+          "id, last_message_at, user_a, user_b, posts!conversations_post_id_fkey(title), a:profiles!conversations_user_a_fkey(full_name, avatar_path), b:profiles!conversations_user_b_fkey(full_name, avatar_path)",
         )
         .order("last_message_at", { ascending: false });
       if (error) throw error;
@@ -40,6 +40,14 @@ function Inbox() {
       <h1 className="text-2xl">Conversas</h1>
       <NotificationCard />
       {isLoading && <p className="text-muted-foreground">Carregando…</p>}
+      {isError && (
+        <div className="block-card space-y-3 p-5 text-center">
+          <p className="font-semibold">Não foi possível carregar suas conversas.</p>
+          <button type="button" className="text-sm font-bold underline" onClick={() => refetch()}>
+            Tentar de novo
+          </button>
+        </div>
+      )}
       {data?.length === 0 && (
         <p className="rounded-lg border-2 border-dashed border-foreground/40 p-6 text-center text-muted-foreground">
           Nenhuma conversa ainda. Abra uma publicação e toque em "Conversar".

@@ -126,7 +126,7 @@ function Chat() {
       const { data, error } = await supabase
         .from("conversations")
         .select(
-          "user_a, user_b, posts(id, kind, title, price, user_id), a:profiles!conversations_user_a_fkey(full_name, avatar_path), b:profiles!conversations_user_b_fkey(full_name, avatar_path)",
+          "user_a, user_b, posts!conversations_post_id_fkey(id, kind, title, price, user_id), a:profiles!conversations_user_a_fkey(full_name, avatar_path), b:profiles!conversations_user_b_fkey(full_name, avatar_path)",
         )
         .eq("id", id)
         .maybeSingle();
