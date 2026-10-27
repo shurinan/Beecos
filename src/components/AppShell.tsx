@@ -1,8 +1,9 @@
 import { Link } from "@tanstack/react-router";
-import { Home, MessageCircle, UserRound, LogIn } from "lucide-react";
+import { Bell, Home, MessageCircle, UserRound, LogIn } from "lucide-react";
 import type { ReactNode } from "react";
 import { useAuth } from "@/lib/auth";
 import { useChatBackground, usePresenceHeartbeat, useUnread } from "@/lib/chat-hooks";
+import { useAlerts } from "@/lib/alerts";
 import { InstallPrompt } from "@/components/InstallPrompt";
 
 /** Liga, para quem está logado, o contador de não lidas, os avisos e o "visto por último". */
@@ -15,6 +16,7 @@ function ChatBackground({ userId }: { userId: string }) {
 export function AppShell({ children }: { children: ReactNode }) {
   const { userId } = useAuth();
   const { total: unread } = useUnread(userId);
+  const { unread: alertsUnread } = useAlerts(userId);
   const item =
     "flex flex-1 flex-col items-center gap-0.5 py-2 text-xs font-semibold text-muted-foreground";
   const active = { className: "text-foreground" };
@@ -26,6 +28,23 @@ export function AppShell({ children }: { children: ReactNode }) {
             Beecos
             <span className="text-background [-webkit-text-stroke:1px_var(--foreground)]">.</span>
           </Link>
+          {userId && (
+            <Link
+              to="/avisos"
+              aria-label={alertsUnread > 0 ? `Avisos, ${alertsUnread} não lidos` : "Avisos"}
+              className="relative rounded-md p-2 text-foreground"
+            >
+              <Bell className="h-6 w-6" />
+              {alertsUnread > 0 && (
+                <span
+                  key={alertsUnread}
+                  className="badge-pop absolute right-0 top-0 flex h-4 min-w-4 items-center justify-center rounded-full border border-foreground bg-destructive px-1 text-[10px] font-bold leading-none text-destructive-foreground"
+                >
+                  {alertsUnread > 99 ? "99+" : alertsUnread}
+                </span>
+              )}
+            </Link>
+          )}
           {!userId && (
             <Link
               to="/auth"

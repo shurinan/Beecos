@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as AuthRouteImport } from './routes/auth'
+import { Route as AuthenticatedAvisosRouteImport } from './routes/_authenticated/avisos'
 import { Route as AuthenticatedContatoRouteImport } from './routes/_authenticated/contato'
 import { Route as AuthenticatedPainelRouteImport } from './routes/_authenticated/painel'
 import { Route as PerfilIdRouteImport } from './routes/perfil.$id'
@@ -32,6 +33,11 @@ const AuthRoute = AuthRouteImport.update({
   id: '/auth',
   path: '/auth',
   getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedAvisosRoute = AuthenticatedAvisosRouteImport.update({
+  id: '/avisos',
+  path: '/avisos',
+  getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedContatoRoute = AuthenticatedContatoRouteImport.update({
   id: '/contato',
@@ -70,6 +76,7 @@ const AuthenticatedPublicacaoIdRoute =
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/avisos': typeof AuthenticatedAvisosRoute
   '/contato': typeof AuthenticatedContatoRoute
   '/painel': typeof AuthenticatedPainelRoute
   '/perfil/$id': typeof PerfilIdRoute
@@ -80,6 +87,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/avisos': typeof AuthenticatedAvisosRoute
   '/contato': typeof AuthenticatedContatoRoute
   '/painel': typeof AuthenticatedPainelRoute
   '/perfil/$id': typeof PerfilIdRoute
@@ -92,6 +100,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/auth': typeof AuthRoute
+  '/_authenticated/avisos': typeof AuthenticatedAvisosRoute
   '/_authenticated/contato': typeof AuthenticatedContatoRoute
   '/_authenticated/painel': typeof AuthenticatedPainelRoute
   '/perfil/$id': typeof PerfilIdRoute
@@ -104,6 +113,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/auth'
+    | '/avisos'
     | '/contato'
     | '/painel'
     | '/perfil/$id'
@@ -114,6 +124,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/auth'
+    | '/avisos'
     | '/contato'
     | '/painel'
     | '/perfil/$id'
@@ -125,6 +136,7 @@ export interface FileRouteTypes {
     | '/'
     | '/_authenticated'
     | '/auth'
+    | '/_authenticated/avisos'
     | '/_authenticated/contato'
     | '/_authenticated/painel'
     | '/perfil/$id'
@@ -162,6 +174,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/auth'
       preLoaderRoute: typeof AuthRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/avisos': {
+      id: '/_authenticated/avisos'
+      path: '/avisos'
+      fullPath: '/avisos'
+      preLoaderRoute: typeof AuthenticatedAvisosRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/contato': {
       id: '/_authenticated/contato'
@@ -209,6 +228,7 @@ declare module '@tanstack/react-router' {
 }
 
 interface AuthenticatedRouteRouteChildren {
+  AuthenticatedAvisosRoute: typeof AuthenticatedAvisosRoute
   AuthenticatedContatoRoute: typeof AuthenticatedContatoRoute
   AuthenticatedPainelRoute: typeof AuthenticatedPainelRoute
   AuthenticatedMensagensIdRoute: typeof AuthenticatedMensagensIdRoute
@@ -217,6 +237,7 @@ interface AuthenticatedRouteRouteChildren {
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedAvisosRoute: AuthenticatedAvisosRoute,
   AuthenticatedContatoRoute: AuthenticatedContatoRoute,
   AuthenticatedPainelRoute: AuthenticatedPainelRoute,
   AuthenticatedMensagensIdRoute: AuthenticatedMensagensIdRoute,

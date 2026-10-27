@@ -114,3 +114,8 @@ Cada profissão e serviço tem `aliases` (apelidos de busca, como "bico de pedre
 - O CEP e as coordenadas da vaga ficam em `post_locations`, visível só para o dono da vaga. A tabela pública `posts` não guarda mais endereço; a distância sai da função `my_post_distances`.
 - A vaga publicada pode ser editada (botão "Editar" em Minhas publicações). O tipo não muda e as vagas não podem ficar abaixo das já ocupadas (trigger `posts_edit_guard`).
 - Profissão e serviço são escolhidos num campo que se digita e se escolhe na lista; os serviços ficam recolhidos até abrir.
+
+## Avisos de vagas (migration 0015)
+
+- Ao publicar uma vaga ('job') com profissão e local, o banco avisa quem tem a mesma profissão no perfil e atua até o raio efetivo (20 km, mais a expansão Premium). O autor não é avisado, nem quem pausou/desligou. Editar a vaga não avisa de novo.
+- Tela `/avisos` (sino no topo) com lista, marcar como lido e preferências. Ligar/desligar/pausar é grátis. Colunas `email` e `push` já guardam a escolha para as próximas etapas.
