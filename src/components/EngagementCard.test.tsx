@@ -13,6 +13,8 @@ type Chain = {
   select: () => Chain;
   eq: () => Chain;
   in: () => Chain;
+  order: () => Chain;
+  limit: () => Chain;
   maybeSingle: () => Promise<unknown>;
   then: (res: (v: unknown) => unknown) => Promise<unknown>;
 };
@@ -33,6 +35,8 @@ vi.mock("@/integrations/supabase/client", () => {
       select: () => c,
       eq: () => c,
       in: () => c,
+      order: () => c,
+      limit: () => c,
       maybeSingle: result,
       then: (res) => result().then(res),
     };

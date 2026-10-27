@@ -227,7 +227,12 @@ function Painel() {
 
       <section className="block-card p-5">
         <div className="flex items-start gap-4">
-          <Avatar name={profileFields.full_name} path={data?.profile?.avatar_path} size={80} />
+          <div className="flex shrink-0 flex-col items-center gap-1">
+            <Avatar name={profileFields.full_name} path={data?.profile?.avatar_path} size={80} />
+            <Link to="/contato" className="text-xs font-bold underline">
+              {data?.profile?.avatar_path ? "Trocar foto" : "Adicionar foto"}
+            </Link>
+          </div>
           <div className="min-w-0 flex-1">
             <h2 className="truncate text-2xl leading-tight">
               {profileFields.full_name || "Sem nome"}

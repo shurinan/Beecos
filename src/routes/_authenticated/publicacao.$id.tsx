@@ -65,22 +65,30 @@ function Interested() {
         .maybeSingle();
       if (post.error) throw post.error;
       if (!post.data) return { post: null, people: [] };
+      // quem falou sobre esta publicação (a conversa é uma só por par, com vários assuntos)
       const convs = await supabase
-        .from("conversations")
+        .from("conversation_posts")
         .select(
-          `id, created_at, last_message_at, user_a, user_b, a:profiles!conversations_user_a_fkey(${PERSON}), b:profiles!conversations_user_b_fkey(${PERSON})`,
+          `created_at, conversations!inner(id, last_message_at, user_a, user_b, a:profiles!conversations_user_a_fkey(${PERSON}), b:profiles!conversations_user_b_fkey(${PERSON}))`,
         )
         .eq("post_id", id);
       if (convs.error) throw convs.error;
-      const rows = (convs.data ?? []) as unknown as ConvRow[];
+      const rows = (
+        (convs.data ?? []) as unknown as {
+          created_at: string;
+          conversations: Omit<ConvRow, "created_at">;
+        }[]
+      ).map((r) => ({ ...r.conversations, created_at: r.created_at }));
       const convIds = rows.map((c) => c.id);
       const people = rows.map((c) => (c.user_a === userId ? c.b : c.a)).filter(Boolean) as Person[];
       const [eng, msgs, ratings] = await Promise.all([
         convIds.length
           ? supabase
               .from("engagements")
-              .select("id, conversation_id, status")
+              .select("id, conversation_id, status, created_at")
               .in("conversation_id", convIds)
+              .eq("post_id", id)
+              .order("created_at", { ascending: true })
           : Promise.resolve({ data: [], error: null }),
         convIds.length
           ? supabase
@@ -260,7 +268,7 @@ function Interested() {
                   title={`${chooseLabel(post.kind)}: ${name}?`}
                   description={`${name} vai receber o aviso e precisa aceitar. Você poderá desfazer a escolha enquanto o serviço não for concluído.`}
                   confirmLabel="Escolher"
-                  onConfirm={() => act.choose(c.conversationId, `${name} foi escolhido(a)`)}
+                  onConfirm={() => act.choose(c.conversationId, `${name} foi escolhido(a)`, id)}
                 >
                   <CheckCircle2 /> {chooseLabel(post.kind)}
                 </ConfirmButton>

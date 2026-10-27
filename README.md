@@ -79,3 +79,11 @@ O texto da autorização de uso dos dados está em `src/lib/contact.ts` (`CONSEN
 - **Avaliação só depois de concluído** (`can_review` consulta `engagements`), nos dois sentidos.
 - **Contatos**: cada telefone tem a opção "mostrar para quem conversa comigo" (marcada ao cadastrar, pode desmarcar). Só quem já trocou mensagens com a pessoa (os dois lados escreveram) vê, no perfil dela, com botões de WhatsApp, ligar e SMS. E-mail e endereço nunca são compartilhados.
 - Migration `0010`. As mudanças de estado passam só pelas funções `choose_provider`, `respond_engagement`, `complete_engagement` e `cancel_engagement`; a tabela `engagements` é só de leitura para o app.
+
+## Início, busca e conversa única (migration `0011`)
+
+- **Uma conversa por par de pessoas** (índice único em `conversations`). O app abre conversa só por `open_conversation(_other, _post)`: se já existe, devolve a mesma e passa o assunto para a publicação atual. Os assuntos de cada conversa ficam em `conversation_posts`, e é dali que sai a lista de "Interessados" de cada vaga. A migration junta as conversas repetidas que já existem (fica a mais antiga, com as mensagens de todas). Uma conversa pode ter vários serviços, um depois do outro (só um em aberto por vez); `choose_provider(_conversation, _post)` recebe a publicação.
+- **Busca com filtros** (`search_post_ids`): texto (título, descrição e habilidades de quem publicou), cidade, preço mínimo e máximo, avaliação mínima e só Premium. O preço é lido do texto do anúncio por `parse_price` ("R$ 1.200,50/dia" vira 1200,50; "a combinar" não tem número e some quando se filtra por preço).
+- **Premium em destaque**: `premium_users` expõe só os ids de quem tem plano ativo. No feed, anúncios Premium vêm primeiro, com selo e fundo de destaque; o selo também aparece no perfil.
+- **Foto de perfil** aparece nas conversas, nos anúncios e no perfil; a troca fica em Informações de contato, com atalho na Visão geral.
+- **Início**: para visitantes, apresentação do que há na plataforma e como funciona; para todos, atalhos por assunto e a vitrine de "Comunidades por profissão", marcada como "Em breve" (as comunidades ainda não existem).

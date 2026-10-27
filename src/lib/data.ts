@@ -32,41 +32,19 @@ export function isUuid(value: unknown): value is string {
   return typeof value === "string" && UUID_RE.test(value);
 }
 
-async function findConversation(me: string, other: string, postId: string | null) {
-  let q = supabase
-    .from("conversations")
-    .select("id")
-    .or(`and(user_a.eq.${me},user_b.eq.${other}),and(user_a.eq.${other},user_b.eq.${me})`)
-    .order("created_at")
-    .limit(1);
-  q = postId ? q.eq("post_id", postId) : q.is("post_id", null);
-  const { data, error } = await q;
-  if (error) throw error;
-  return data?.[0]?.id ?? null;
-}
-
-/** Finds an existing conversation between two people (about a post) or creates one. */
+/**
+ * Abre a conversa com alguém. Cada par de pessoas tem uma só conversa: se já existe, devolve a
+ * mesma (e passa o assunto para a publicação atual); se não, cria.
+ */
 export async function openConversation(me: string, other: string, postId: string | null) {
-  // `other` comes from the URL and is interpolated into a PostgREST filter, so it
-  // must be a plain uuid before it gets anywhere near the query string.
+  // Os ids vêm da URL: só uuid de verdade segue adiante.
   if (!isUuid(me) || !isUuid(other) || (postId !== null && !isUuid(postId))) {
     throw new Error("Identificador inválido");
   }
-  const existing = await findConversation(me, other, postId);
-  if (existing) return existing;
-  const { data, error } = await supabase
-    .from("conversations")
-    .insert({ user_a: me, user_b: other, post_id: postId })
-    .select("id")
-    .single();
-  if (error) {
-    // Lost a race with another tab/request: the unique index rejected the
-    // duplicate, so the conversation exists now — reuse it.
-    if ((error as { code?: string }).code === "23505") {
-      const raced = await findConversation(me, other, postId);
-      if (raced) return raced;
-    }
-    throw error; // may be LIMITE_CHATS from the free-plan limit
-  }
-  return data.id;
+  const { data, error } = await supabase.rpc("open_conversation", {
+    _other: other,
+    ...(postId ? { _post: postId } : {}),
+  });
+  if (error) throw error; // pode ser LIMITE_CHATS, do plano grátis
+  return data;
 }

@@ -49,8 +49,15 @@ export function useEngagementActions(userId: string) {
 
   return {
     busy,
-    choose: (conversation: string, ok: string) =>
-      run(() => supabase.rpc("choose_provider", { _conversation: conversation }), ok),
+    choose: (conversation: string, ok: string, post?: string) =>
+      run(
+        () =>
+          supabase.rpc("choose_provider", {
+            _conversation: conversation,
+            ...(post ? { _post: post } : {}),
+          }),
+        ok,
+      ),
     respond: (id: string, accept: boolean) =>
       run(
         () => supabase.rpc("respond_engagement", { _id: id, _accept: accept }),
@@ -71,6 +78,9 @@ export function useEngagement(conversationId: string) {
         .from("engagements")
         .select("id, post_id, conversation_id, client_id, provider_id, status, cancelled_by")
         .eq("conversation_id", conversationId)
+        // uma conversa pode ter vários serviços ao longo do tempo: vale o mais recente
+        .order("created_at", { ascending: false })
+        .limit(1)
         .maybeSingle();
       if (error) throw error;
       return data as Engagement | null;
