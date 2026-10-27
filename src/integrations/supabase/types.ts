@@ -197,6 +197,8 @@ export type Database = {
           city: string;
           created_at: string;
           description: string;
+          hidden_at: string | null;
+          hidden_reason: string | null;
           id: string;
           kind: string;
           price: string;
@@ -769,6 +771,25 @@ export type Database = {
           },
         ];
       };
+      reports: {
+        Row: {
+          created_at: string;
+          details: string;
+          id: string;
+          reason: string;
+          reporter_id: string;
+          resolution_note: string;
+          reviewed_at: string | null;
+          reviewed_by: string | null;
+          status: string;
+          target_id: string;
+          target_label: string;
+          target_type: string;
+        };
+        Insert: never;
+        Update: never;
+        Relationships: [];
+      };
       reviews: {
         Row: {
           comment: string;
@@ -881,6 +902,18 @@ export type Database = {
       choose_provider: {
         Args: { _conversation: string; _post?: string };
         Returns: string;
+      };
+      report_content: {
+        Args: { _type: string; _target: string; _reason: string; _details?: string };
+        Returns: string;
+      };
+      resolve_report: {
+        Args: { _id: string; _action: string; _note?: string };
+        Returns: undefined;
+      };
+      is_moderator: {
+        Args: Record<string, never>;
+        Returns: boolean;
       };
       username_available: {
         Args: { _name: string };

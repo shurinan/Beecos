@@ -5,6 +5,7 @@ import { ArrowLeft, MessageCircle, Users } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
+import { ReportButton } from "@/components/ReportButton";
 import { PostCard, type PostWithAuthor } from "@/components/PostCard";
 import { useAuth } from "@/lib/auth";
 import { openConversation } from "@/lib/data";
@@ -126,6 +127,17 @@ function PostPage() {
         <Button size="lg" className="w-full" onClick={talk}>
           <MessageCircle /> {post.kind === "job" ? "Tenho interesse" : "Conversar e negociar"}
         </Button>
+      )}
+      {userId && !mine && (
+        <div className="text-center">
+          <ReportButton type="post" targetId={post.id} what="esta publicação" />
+        </div>
+      )}
+      {mine && (post as { hidden_at?: string | null }).hidden_at && (
+        <p role="note" className="rounded border-2 border-destructive p-3 text-sm">
+          <b>Esta vaga está oculta.</b> A moderação a tirou das listas e das buscas. Se achar que foi
+          um engano, fale com o suporte.
+        </p>
       )}
     </div>
   );

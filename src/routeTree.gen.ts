@@ -16,6 +16,7 @@ import { Route as ComunidadeRouteImport } from './routes/comunidade'
 import { Route as PlanoRouteImport } from './routes/plano'
 import { Route as AuthenticatedAvisosRouteImport } from './routes/_authenticated/avisos'
 import { Route as AuthenticatedContatoRouteImport } from './routes/_authenticated/contato'
+import { Route as AuthenticatedModeracaoRouteImport } from './routes/_authenticated/moderacao'
 import { Route as AuthenticatedPainelRouteImport } from './routes/_authenticated/painel'
 import { Route as PerfilSlugRouteImport } from './routes/perfil.$slug'
 import { Route as VagasIndexRouteImport } from './routes/vagas.index'
@@ -61,6 +62,11 @@ const AuthenticatedAvisosRoute = AuthenticatedAvisosRouteImport.update({
 const AuthenticatedContatoRoute = AuthenticatedContatoRouteImport.update({
   id: '/contato',
   path: '/contato',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedModeracaoRoute = AuthenticatedModeracaoRouteImport.update({
+  id: '/moderacao',
+  path: '/moderacao',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedPainelRoute = AuthenticatedPainelRouteImport.update({
@@ -140,6 +146,7 @@ export interface FileRoutesByFullPath {
   '/plano': typeof PlanoRoute
   '/avisos': typeof AuthenticatedAvisosRoute
   '/contato': typeof AuthenticatedContatoRoute
+  '/moderacao': typeof AuthenticatedModeracaoRoute
   '/painel': typeof AuthenticatedPainelRoute
   '/perfil/$slug': typeof PerfilSlugRoute
   '/vagas/': typeof VagasIndexRoute
@@ -160,6 +167,7 @@ export interface FileRoutesByTo {
   '/plano': typeof PlanoRoute
   '/avisos': typeof AuthenticatedAvisosRoute
   '/contato': typeof AuthenticatedContatoRoute
+  '/moderacao': typeof AuthenticatedModeracaoRoute
   '/painel': typeof AuthenticatedPainelRoute
   '/perfil/$slug': typeof PerfilSlugRoute
   '/vagas': typeof VagasIndexRoute
@@ -182,6 +190,7 @@ export interface FileRoutesById {
   '/plano': typeof PlanoRoute
   '/_authenticated/avisos': typeof AuthenticatedAvisosRoute
   '/_authenticated/contato': typeof AuthenticatedContatoRoute
+  '/_authenticated/moderacao': typeof AuthenticatedModeracaoRoute
   '/_authenticated/painel': typeof AuthenticatedPainelRoute
   '/perfil/$slug': typeof PerfilSlugRoute
   '/vagas/': typeof VagasIndexRoute
@@ -204,6 +213,7 @@ export interface FileRouteTypes {
     | '/plano'
     | '/avisos'
     | '/contato'
+    | '/moderacao'
     | '/painel'
     | '/perfil/$slug'
     | '/vagas/'
@@ -224,6 +234,7 @@ export interface FileRouteTypes {
     | '/plano'
     | '/avisos'
     | '/contato'
+    | '/moderacao'
     | '/painel'
     | '/perfil/$slug'
     | '/vagas'
@@ -245,6 +256,7 @@ export interface FileRouteTypes {
     | '/plano'
     | '/_authenticated/avisos'
     | '/_authenticated/contato'
+    | '/_authenticated/moderacao'
     | '/_authenticated/painel'
     | '/perfil/$slug'
     | '/vagas/'
@@ -319,6 +331,13 @@ declare module '@tanstack/react-router' {
       path: '/contato'
       fullPath: '/contato'
       preLoaderRoute: typeof AuthenticatedContatoRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/moderacao': {
+      id: '/_authenticated/moderacao'
+      path: '/moderacao'
+      fullPath: '/moderacao'
+      preLoaderRoute: typeof AuthenticatedModeracaoRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/painel': {
@@ -411,6 +430,7 @@ declare module '@tanstack/react-router' {
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedAvisosRoute: typeof AuthenticatedAvisosRoute
   AuthenticatedContatoRoute: typeof AuthenticatedContatoRoute
+  AuthenticatedModeracaoRoute: typeof AuthenticatedModeracaoRoute
   AuthenticatedPainelRoute: typeof AuthenticatedPainelRoute
   AuthenticatedConversasSlugRoute: typeof AuthenticatedConversasSlugRoute
   AuthenticatedMensagensIdRoute: typeof AuthenticatedMensagensIdRoute
@@ -425,6 +445,7 @@ interface AuthenticatedRouteRouteChildren {
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAvisosRoute: AuthenticatedAvisosRoute,
   AuthenticatedContatoRoute: AuthenticatedContatoRoute,
+  AuthenticatedModeracaoRoute: AuthenticatedModeracaoRoute,
   AuthenticatedPainelRoute: AuthenticatedPainelRoute,
   AuthenticatedConversasSlugRoute: AuthenticatedConversasSlugRoute,
   AuthenticatedMensagensIdRoute: AuthenticatedMensagensIdRoute,
