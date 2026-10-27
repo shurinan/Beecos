@@ -6,7 +6,10 @@ import { lovable } from "@/integrations/lovable";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Link } from "@tanstack/react-router";
+import { Checkbox } from "@/components/ui/checkbox";
 import { useAuth } from "@/lib/auth";
+import { TERMS_VERSION } from "@/lib/legal";
 import {
   USERNAME_HELP,
   USERNAME_MAX,
@@ -36,6 +39,7 @@ function AuthPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const [agree, setAgree] = useState(false);
   const { userId } = useAuth();
   const navigate = useNavigate();
 
@@ -69,6 +73,10 @@ function AuthPage() {
         toast.error(`Nome de usuário inválido. ${USERNAME_HELP}`);
         return;
       }
+      if (!agree) {
+        toast.error("Para criar a conta, aceite os Termos e a Política de privacidade.");
+        return;
+      }
       if (usernameState === "taken") {
         toast.error("Esse nome de usuário já está em uso. Escolha outro.");
         return;
@@ -80,7 +88,7 @@ function AuthPage() {
         const { data, error } = await supabase.auth.signUp({
           email,
           password,
-          options: { emailRedirectTo: window.location.origin, data: { full_name: name, username } },
+          options: { emailRedirectTo: window.location.origin, data: { full_name: name, username, terms_version: TERMS_VERSION } },
         });
         if (error) throw error;
         if (!data.session) toast.success("Conta criada! Confira seu email para confirmar.");
@@ -173,6 +181,22 @@ function AuthPage() {
             onChange={(e) => setPassword(e.target.value)}
           />
         </div>
+        {mode === "up" && (
+          <div className="flex items-start gap-2">
+            <Checkbox id="agree" checked={agree} onCheckedChange={(v) => setAgree(v === true)} />
+            <Label htmlFor="agree" className="text-sm font-normal leading-snug">
+              Li e aceito os{" "}
+              <Link to="/termos" target="_blank" className="font-bold underline">
+                Termos de uso
+              </Link>{" "}
+              e a{" "}
+              <Link to="/privacidade" target="_blank" className="font-bold underline">
+                Política de privacidade
+              </Link>
+              .
+            </Label>
+          </div>
+        )}
         <Button type="submit" size="lg" className="w-full" disabled={loading}>
           {loading ? "Aguarde…" : mode === "in" ? "Entrar" : "Criar conta"}
         </Button>

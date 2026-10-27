@@ -676,6 +676,8 @@ export type Database = {
           full_name: string;
           id: string;
           slug: string | null;
+          terms_accepted_at: string | null;
+          terms_version: string | null;
           headline: string;
           experience_years: number | null;
           service_area: string;
@@ -914,6 +916,18 @@ export type Database = {
       is_moderator: {
         Args: Record<string, never>;
         Returns: boolean;
+      };
+      accept_terms: {
+        Args: { _version: string };
+        Returns: undefined;
+      };
+      export_my_data: {
+        Args: Record<string, never>;
+        Returns: Json;
+      };
+      delete_my_account: {
+        Args: Record<string, never>;
+        Returns: undefined;
       };
       username_available: {
         Args: { _name: string };

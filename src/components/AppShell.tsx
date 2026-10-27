@@ -70,6 +70,19 @@ export function AppShell({ children }: { children: ReactNode }) {
       <main className="flex-1 px-4 pb-28 pt-4">
         <InstallPrompt />
         {children}
+        <p className="mt-8 text-center text-xs text-muted-foreground">
+          <Link to="/plano" className="underline">
+            Planos
+          </Link>{" "}
+          ·{" "}
+          <Link to="/termos" className="underline">
+            Termos
+          </Link>{" "}
+          ·{" "}
+          <Link to="/privacidade" className="underline">
+            Privacidade
+          </Link>
+        </p>
       </main>
       <nav className="fixed inset-x-0 bottom-0 z-20 border-t-2 border-foreground bg-background">
         <div className="mx-auto flex max-w-2xl">
