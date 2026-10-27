@@ -86,7 +86,7 @@ O texto da autorização de uso dos dados está em `src/lib/contact.ts` (`CONSEN
 - **Busca com filtros** (`search_post_ids`): texto (título, descrição e habilidades de quem publicou), cidade, preço mínimo e máximo, avaliação mínima e só Premium. O preço é lido do texto do anúncio por `parse_price` ("R$ 1.200,50/dia" vira 1200,50; "a combinar" não tem número e some quando se filtra por preço).
 - **Premium em destaque**: `premium_users` expõe só os ids de quem tem plano ativo. No feed, anúncios Premium vêm primeiro, com selo e fundo de destaque; o selo também aparece no perfil.
 - **Foto de perfil** aparece nas conversas, nos anúncios e no perfil; a troca fica em Informações de contato, com atalho na Visão geral.
-- **Início**: para visitantes, apresentação do que há na plataforma e como funciona; para todos, atalhos por assunto e a vitrine de "Comunidades por profissão", marcada como "Em breve" (as comunidades ainda não existem).
+- **Início**: para visitantes, apresentação do que há na plataforma e como funciona; para todos, atalhos por assunto e a vitrine de "Comunidades por profissão", que leva à Comunidade (feed de grupos por profissão).
 
 ## Catálogo de profissões (migration `0012`)
 

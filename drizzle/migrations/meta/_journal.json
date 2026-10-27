@@ -176,6 +176,20 @@
       "when": 1795100000000,
       "tag": "0024_security_hardening",
       "breakpoints": true
+    },
+    {
+      "idx": 25,
+      "version": "7",
+      "when": 1795200000000,
+      "tag": "0025_communities",
+      "breakpoints": true
+    },
+    {
+      "idx": 26,
+      "version": "7",
+      "when": 1795286400000,
+      "tag": "0026_suggestions",
+      "breakpoints": true
     }
   ]
 }

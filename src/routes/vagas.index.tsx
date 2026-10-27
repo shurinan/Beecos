@@ -177,23 +177,24 @@ function Vagas() {
           })}
         </div>
 
-        <div className="block-card flex items-start gap-3 bg-accent p-4">
+        <Link
+          to="/comunidade"
+          search={{ grupo: undefined }}
+          className="block-card flex items-start gap-3 bg-accent p-4"
+        >
           <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md border-2 border-foreground bg-primary">
             <Users className="h-5 w-5" aria-hidden="true" />
           </span>
           <div className="min-w-0">
             <p className="flex flex-wrap items-center gap-2 font-display">
               Comunidades por profissão
-              <span className="rounded bg-foreground px-1.5 py-0.5 font-sans text-xs font-bold uppercase text-background">
-                Em breve
-              </span>
             </p>
             <p className="text-sm text-muted-foreground">
               Grupos de optometristas, enfermeiros, eletricistas e outros, com vagas rápidas para
               quem é da área.
             </p>
           </div>
-        </div>
+        </Link>
       </section>
 
       <section id="feed" className="scroll-mt-20 space-y-4">

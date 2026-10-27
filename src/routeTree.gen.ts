@@ -12,12 +12,14 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as AuthRouteImport } from './routes/auth'
-import { Route as ComunidadeRouteImport } from './routes/comunidade'
 import { Route as PlanoRouteImport } from './routes/plano'
 import { Route as PrivacidadeRouteImport } from './routes/privacidade'
 import { Route as TermosRouteImport } from './routes/termos'
 import { Route as AuthenticatedAvisosRouteImport } from './routes/_authenticated/avisos'
 import { Route as AuthenticatedModeracaoRouteImport } from './routes/_authenticated/moderacao'
+import { Route as AuthenticatedSugestoesRouteImport } from './routes/_authenticated/sugestoes'
+import { Route as ComunidadeIndexRouteImport } from './routes/comunidade.index'
+import { Route as ComunidadeGruposRouteImport } from './routes/comunidade.grupos'
 import { Route as PerfilSlugRouteImport } from './routes/perfil.$slug'
 import { Route as VagasIndexRouteImport } from './routes/vagas.index'
 import { Route as AuthenticatedConversasIndexRouteImport } from './routes/_authenticated/conversas.index'
@@ -39,11 +41,6 @@ const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
 const AuthRoute = AuthRouteImport.update({
   id: '/auth',
   path: '/auth',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ComunidadeRoute = ComunidadeRouteImport.update({
-  id: '/comunidade',
-  path: '/comunidade',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PlanoRoute = PlanoRouteImport.update({
@@ -70,6 +67,21 @@ const AuthenticatedModeracaoRoute = AuthenticatedModeracaoRouteImport.update({
   id: '/moderacao',
   path: '/moderacao',
   getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedSugestoesRoute = AuthenticatedSugestoesRouteImport.update({
+  id: '/sugestoes',
+  path: '/sugestoes',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const ComunidadeIndexRoute = ComunidadeIndexRouteImport.update({
+  id: '/comunidade/',
+  path: '/comunidade/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ComunidadeGruposRoute = ComunidadeGruposRouteImport.update({
+  id: '/comunidade/grupos',
+  path: '/comunidade/grupos',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const PerfilSlugRoute = PerfilSlugRouteImport.update({
   id: '/perfil/$slug',
@@ -121,13 +133,15 @@ const AuthenticatedVagasProfissaoCodigoInteressadosRoute =
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
-  '/comunidade': typeof ComunidadeRoute
   '/plano': typeof PlanoRoute
   '/privacidade': typeof PrivacidadeRoute
   '/termos': typeof TermosRoute
   '/avisos': typeof AuthenticatedAvisosRoute
   '/moderacao': typeof AuthenticatedModeracaoRoute
+  '/sugestoes': typeof AuthenticatedSugestoesRoute
+  '/comunidade/grupos': typeof ComunidadeGruposRoute
   '/perfil/$slug': typeof PerfilSlugRoute
+  '/comunidade/': typeof ComunidadeIndexRoute
   '/vagas/': typeof VagasIndexRoute
   '/conversas/$slug': typeof AuthenticatedConversasSlugRoute
   '/perfil/contato': typeof AuthenticatedPerfilContatoRoute
@@ -139,13 +153,15 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
-  '/comunidade': typeof ComunidadeRoute
   '/plano': typeof PlanoRoute
   '/privacidade': typeof PrivacidadeRoute
   '/termos': typeof TermosRoute
   '/avisos': typeof AuthenticatedAvisosRoute
   '/moderacao': typeof AuthenticatedModeracaoRoute
+  '/sugestoes': typeof AuthenticatedSugestoesRoute
+  '/comunidade/grupos': typeof ComunidadeGruposRoute
   '/perfil/$slug': typeof PerfilSlugRoute
+  '/comunidade': typeof ComunidadeIndexRoute
   '/vagas': typeof VagasIndexRoute
   '/conversas/$slug': typeof AuthenticatedConversasSlugRoute
   '/perfil/contato': typeof AuthenticatedPerfilContatoRoute
@@ -159,13 +175,15 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/auth': typeof AuthRoute
-  '/comunidade': typeof ComunidadeRoute
   '/plano': typeof PlanoRoute
   '/privacidade': typeof PrivacidadeRoute
   '/termos': typeof TermosRoute
   '/_authenticated/avisos': typeof AuthenticatedAvisosRoute
   '/_authenticated/moderacao': typeof AuthenticatedModeracaoRoute
+  '/_authenticated/sugestoes': typeof AuthenticatedSugestoesRoute
+  '/comunidade/grupos': typeof ComunidadeGruposRoute
   '/perfil/$slug': typeof PerfilSlugRoute
+  '/comunidade/': typeof ComunidadeIndexRoute
   '/vagas/': typeof VagasIndexRoute
   '/_authenticated/conversas/$slug': typeof AuthenticatedConversasSlugRoute
   '/_authenticated/perfil/contato': typeof AuthenticatedPerfilContatoRoute
@@ -179,13 +197,15 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/auth'
-    | '/comunidade'
     | '/plano'
     | '/privacidade'
     | '/termos'
     | '/avisos'
     | '/moderacao'
+    | '/sugestoes'
+    | '/comunidade/grupos'
     | '/perfil/$slug'
+    | '/comunidade/'
     | '/vagas/'
     | '/conversas/$slug'
     | '/perfil/contato'
@@ -197,13 +217,15 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/auth'
-    | '/comunidade'
     | '/plano'
     | '/privacidade'
     | '/termos'
     | '/avisos'
     | '/moderacao'
+    | '/sugestoes'
+    | '/comunidade/grupos'
     | '/perfil/$slug'
+    | '/comunidade'
     | '/vagas'
     | '/conversas/$slug'
     | '/perfil/contato'
@@ -216,13 +238,15 @@ export interface FileRouteTypes {
     | '/'
     | '/_authenticated'
     | '/auth'
-    | '/comunidade'
     | '/plano'
     | '/privacidade'
     | '/termos'
     | '/_authenticated/avisos'
     | '/_authenticated/moderacao'
+    | '/_authenticated/sugestoes'
+    | '/comunidade/grupos'
     | '/perfil/$slug'
+    | '/comunidade/'
     | '/vagas/'
     | '/_authenticated/conversas/$slug'
     | '/_authenticated/perfil/contato'
@@ -236,11 +260,12 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AuthRoute: typeof AuthRoute
-  ComunidadeRoute: typeof ComunidadeRoute
   PlanoRoute: typeof PlanoRoute
   PrivacidadeRoute: typeof PrivacidadeRoute
   TermosRoute: typeof TermosRoute
+  ComunidadeGruposRoute: typeof ComunidadeGruposRoute
   PerfilSlugRoute: typeof PerfilSlugRoute
+  ComunidadeIndexRoute: typeof ComunidadeIndexRoute
   VagasIndexRoute: typeof VagasIndexRoute
   VagasProfissaoCodigoIndexRoute: typeof VagasProfissaoCodigoIndexRoute
 }
@@ -266,13 +291,6 @@ declare module '@tanstack/react-router' {
       path: '/auth'
       fullPath: '/auth'
       preLoaderRoute: typeof AuthRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/comunidade': {
-      id: '/comunidade'
-      path: '/comunidade'
-      fullPath: '/comunidade'
-      preLoaderRoute: typeof ComunidadeRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/plano': {
@@ -309,6 +327,27 @@ declare module '@tanstack/react-router' {
       fullPath: '/moderacao'
       preLoaderRoute: typeof AuthenticatedModeracaoRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/sugestoes': {
+      id: '/_authenticated/sugestoes'
+      path: '/sugestoes'
+      fullPath: '/sugestoes'
+      preLoaderRoute: typeof AuthenticatedSugestoesRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/comunidade/': {
+      id: '/comunidade/'
+      path: '/comunidade'
+      fullPath: '/comunidade/'
+      preLoaderRoute: typeof ComunidadeIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/comunidade/grupos': {
+      id: '/comunidade/grupos'
+      path: '/comunidade/grupos'
+      fullPath: '/comunidade/grupos'
+      preLoaderRoute: typeof ComunidadeGruposRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/perfil/$slug': {
       id: '/perfil/$slug'
@@ -372,6 +411,7 @@ declare module '@tanstack/react-router' {
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedAvisosRoute: typeof AuthenticatedAvisosRoute
   AuthenticatedModeracaoRoute: typeof AuthenticatedModeracaoRoute
+  AuthenticatedSugestoesRoute: typeof AuthenticatedSugestoesRoute
   AuthenticatedConversasSlugRoute: typeof AuthenticatedConversasSlugRoute
   AuthenticatedPerfilContatoRoute: typeof AuthenticatedPerfilContatoRoute
   AuthenticatedConversasIndexRoute: typeof AuthenticatedConversasIndexRoute
@@ -382,6 +422,7 @@ interface AuthenticatedRouteRouteChildren {
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAvisosRoute: AuthenticatedAvisosRoute,
   AuthenticatedModeracaoRoute: AuthenticatedModeracaoRoute,
+  AuthenticatedSugestoesRoute: AuthenticatedSugestoesRoute,
   AuthenticatedConversasSlugRoute: AuthenticatedConversasSlugRoute,
   AuthenticatedPerfilContatoRoute: AuthenticatedPerfilContatoRoute,
   AuthenticatedConversasIndexRoute: AuthenticatedConversasIndexRoute,
@@ -397,11 +438,12 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AuthRoute: AuthRoute,
-  ComunidadeRoute: ComunidadeRoute,
   PlanoRoute: PlanoRoute,
   PrivacidadeRoute: PrivacidadeRoute,
   TermosRoute: TermosRoute,
+  ComunidadeGruposRoute: ComunidadeGruposRoute,
   PerfilSlugRoute: PerfilSlugRoute,
+  ComunidadeIndexRoute: ComunidadeIndexRoute,
   VagasIndexRoute: VagasIndexRoute,
   VagasProfissaoCodigoIndexRoute: VagasProfissaoCodigoIndexRoute,
 }
