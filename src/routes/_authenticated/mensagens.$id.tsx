@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Avatar } from "@/components/profile-bits";
 import { EngagementCard, clientOf } from "@/components/EngagementCard";
 import { Input } from "@/components/ui/input";
-import { useChatChannel } from "@/lib/chat-hooks";
+import { clearConversationNotifications, useChatChannel } from "@/lib/chat-hooks";
 import {
   BLOCKED_TEXT_MESSAGE,
   MAX_MESSAGE_LENGTH,
@@ -230,6 +230,7 @@ function Chat() {
       const last = msgs[msgs.length - 1];
       if (last && last.sender_id !== userId) {
         await supabase.rpc("mark_conversation_read", { _conversation: id });
+        void clearConversationNotifications(id);
         qc.invalidateQueries({ queryKey: ["unread", userId] });
       }
     })();
@@ -242,6 +243,7 @@ function Chat() {
     const onVisible = () => {
       if (document.hidden) return;
       void supabase.rpc("mark_conversation_read", { _conversation: id }).then(() => {
+        void clearConversationNotifications(id);
         qc.invalidateQueries({ queryKey: ["unread", userId] });
       });
     };

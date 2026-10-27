@@ -59,6 +59,19 @@ export async function showSystemNotification(title: string, body: string, url: s
   }
 }
 
+/** Tira da bandeja os avisos de uma conversa: a pessoa já viu as mensagens. */
+export async function clearConversationNotifications(conversationId: string) {
+  toast.dismiss(`/mensagens/${conversationId}`);
+  if (typeof navigator === "undefined" || !("serviceWorker" in navigator)) return;
+  try {
+    const reg = await navigator.serviceWorker.getRegistration();
+    const list = (await reg?.getNotifications({ tag: `/mensagens/${conversationId}` })) ?? [];
+    for (const n of list) n.close();
+  } catch {
+    /* sem service worker: o aviso some sozinho ou ao ser tocado */
+  }
+}
+
 /**
  * Fica ligado enquanto a pessoa está logada: escuta mensagens novas (o banco só envia as das
  * conversas dela), atualiza o contador, a aba do navegador e avisa quando ela não está olhando.
@@ -111,6 +124,7 @@ export function useChatBackground(userId: string | null) {
             void showSystemNotification(`Nova mensagem de ${sender}`, preview.slice(0, 120), url);
           } else {
             toast(`Nova mensagem de ${sender}`, {
+              id: url,
               description: preview.slice(0, 80),
               action: {
                 label: "Abrir",
