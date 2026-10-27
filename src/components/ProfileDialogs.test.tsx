@@ -6,6 +6,7 @@ import { SkillCard } from "./profile-bits";
 afterEach(cleanup);
 
 const profile: ProfileFields = {
+  username: "bruno",
   full_name: "Bruno Espíndola",
   headline: "Eletricista residencial",
   city: "Sorocaba - SP",
@@ -95,5 +96,72 @@ describe("SkillCard", () => {
     expect(screen.getByText("Anos de experiência").nextSibling?.textContent).toBe("—");
     expect(screen.getByText("Licenciado/certificado").nextSibling?.textContent).toBe("Não");
     expect(screen.queryByText("Fez treinamento ou aulas")).toBeNull();
+  });
+});
+
+describe("EditProfileDialog username", () => {
+  it("normalizes while typing and shows when it is free", async () => {
+    const check = vi.fn(async () => true);
+    render(
+      <EditProfileDialog
+        open
+        onOpenChange={() => {}}
+        initial={{ ...profile, username: "" }}
+        onSave={vi.fn(async () => true)}
+        checkUsername={check}
+      />,
+    );
+    fireEvent.change(screen.getByLabelText("Nome de usuário"), { target: { value: "@Bruno.S" } });
+    expect((screen.getByLabelText("Nome de usuário") as HTMLInputElement).value).toBe("bruno.s");
+    expect(await screen.findByText("Disponível ✓")).toBeTruthy();
+    expect(check).toHaveBeenCalledWith("bruno.s");
+  });
+  it("blocks saving a taken username", async () => {
+    const onSave = vi.fn(async () => true);
+    render(
+      <EditProfileDialog
+        open
+        onOpenChange={() => {}}
+        initial={profile}
+        onSave={onSave}
+        checkUsername={async () => false}
+      />,
+    );
+    fireEvent.change(screen.getByLabelText("Nome de usuário"), { target: { value: "ocupado" } });
+    expect(await screen.findByText("Esse nome de usuário já está em uso.")).toBeTruthy();
+    fireEvent.click(screen.getByRole("button", { name: "Salvar" }));
+    expect(await screen.findByRole("alert")).toBeTruthy();
+    expect(onSave).not.toHaveBeenCalled();
+  });
+  it("rejects a bad format without asking the database", async () => {
+    const check = vi.fn(async () => true);
+    render(
+      <EditProfileDialog
+        open
+        onOpenChange={() => {}}
+        initial={profile}
+        onSave={vi.fn(async () => true)}
+        checkUsername={check}
+      />,
+    );
+    fireEvent.change(screen.getByLabelText("Nome de usuário"), { target: { value: "ab" } });
+    expect(await screen.findByText(/De 3 a 30 caracteres/)).toBeTruthy();
+    expect(check).not.toHaveBeenCalled();
+  });
+  it("lets the person keep an unchanged username without checking", async () => {
+    const check = vi.fn(async () => false);
+    const onSave = vi.fn(async (_v: ProfileFields) => true);
+    render(
+      <EditProfileDialog
+        open
+        onOpenChange={() => {}}
+        initial={profile}
+        onSave={onSave}
+        checkUsername={check}
+      />,
+    );
+    fireEvent.click(screen.getByRole("button", { name: "Salvar" }));
+    await waitFor(() => expect(onSave).toHaveBeenCalled());
+    expect(check).not.toHaveBeenCalled();
   });
 });

@@ -135,3 +135,7 @@ Cada profissão e serviço tem `aliases` (apelidos de busca, como "bico de pedre
 
 - O endereço do perfil (`/perfil/<usuario>`) é um nome de usuário único, como numa rede social: 3 a 30 caracteres, letras minúsculas sem acento, números e hífen, sem repetir e fora da lista de palavras reservadas.
 - Não existe mais numeração automática (`-2`). Se o nome sugerido já está em uso, o perfil fica sem usuário (o link usa o id) até a pessoa escolher. A tela de escolha ainda não foi construída; o banco já valida (`USUARIO_EM_USO`, `USUARIO_INVALIDO`) e `username_available(nome)` diz se está livre.
+
+## Formato do usuário (migration 0019)
+
+- O nome de usuário aceita letras minúsculas sem acento, números, ponto, sublinhado e hífen (como no Instagram), de 3 a 30 caracteres. No perfil, o `@usuario` aparece em destaque e o nome fica logo abaixo. A pessoa escolhe em "Editar perfil", com verificação se está livre.
