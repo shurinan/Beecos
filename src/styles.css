@@ -104,11 +104,11 @@
 
 .dark {
   color-scheme: dark;
-  --background: oklch(0.28 0.008 260);
+  --background: oklch(0.31 0.008 265);
   --foreground: oklch(0.92 0.006 95);
-  --card: oklch(0.33 0.01 260);
+  --card: oklch(0.36 0.01 265);
   --card-foreground: oklch(0.95 0.006 95);
-  --popover: oklch(0.33 0.01 260);
+  --popover: oklch(0.36 0.01 265);
   --popover-foreground: oklch(0.95 0.006 95);
   --primary: oklch(0.86 0.17 92);
   --primary-foreground: oklch(0.16 0.01 260);
@@ -145,6 +145,14 @@
 }
 
 /* No escuro, o amarelo continua amarelo: o que está em cima dele (texto, ícones) fica escuro. */
+.dark .border-foreground,
+.dark .block-card {
+  border-color: oklch(1 0 0 / 14%);
+}
+.dark .block-card {
+  box-shadow: none;
+}
+
 .dark .bg-primary {
   color: var(--primary-foreground);
 }
