@@ -22,6 +22,7 @@ import {
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { PostCard, type PostWithAuthor } from "@/components/PostCard";
+import { usePostDistances, useWorkArea } from "@/lib/geo";
 import { usePostStats } from "@/lib/services-hooks";
 import { AdSlot } from "@/components/AdSlot";
 import { FEED_AD_AFTER, shouldShowFeedAd } from "@/lib/ads";
@@ -130,6 +131,8 @@ function Index() {
   });
 
   const slots = usePostStats(posts?.map((p) => p.id));
+  const distances = usePostDistances(userId, posts?.map((p) => p.id) ?? []);
+  const { data: workArea, isSuccess: areaLoaded } = useWorkArea(userId);
 
   function pickTopic(q: string) {
     setFilters((f) => ({ ...f, q }));
@@ -365,6 +368,16 @@ function Index() {
           </div>
         )}
 
+        {userId && areaLoaded && !workArea && (
+          <Link
+            to="/painel"
+            className="block-card flex items-center justify-between gap-3 p-3 text-sm font-semibold"
+          >
+            Informe o seu CEP para ver a distância das vagas
+            <span className="font-bold underline">Informar →</span>
+          </Link>
+        )}
+
         <div className="space-y-4">
           {isLoading && <p className="text-center text-muted-foreground">Carregando…</p>}
           {posts?.length === 0 && (
@@ -376,7 +389,7 @@ function Index() {
           )}
           {posts?.map((p, i) => (
             <div key={p.id} className="space-y-4">
-              <PostCard post={p} slots={slots[p.id]} />
+              <PostCard post={p} slots={slots[p.id]} distance={distances.get(p.id)} />
               {i === FEED_AD_AFTER - 1 && shouldShowFeedAd(posts.length) && (
                 <AdSlot placement="feed" />
               )}
