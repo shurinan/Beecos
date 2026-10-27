@@ -14,6 +14,8 @@ import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as ComunidadeRouteImport } from './routes/comunidade'
 import { Route as PlanoRouteImport } from './routes/plano'
+import { Route as PrivacidadeRouteImport } from './routes/privacidade'
+import { Route as TermosRouteImport } from './routes/termos'
 import { Route as AuthenticatedAvisosRouteImport } from './routes/_authenticated/avisos'
 import { Route as AuthenticatedContatoRouteImport } from './routes/_authenticated/contato'
 import { Route as AuthenticatedModeracaoRouteImport } from './routes/_authenticated/moderacao'
@@ -52,6 +54,16 @@ const ComunidadeRoute = ComunidadeRouteImport.update({
 const PlanoRoute = PlanoRouteImport.update({
   id: '/plano',
   path: '/plano',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PrivacidadeRoute = PrivacidadeRouteImport.update({
+  id: '/privacidade',
+  path: '/privacidade',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TermosRoute = TermosRouteImport.update({
+  id: '/termos',
+  path: '/termos',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticatedAvisosRoute = AuthenticatedAvisosRouteImport.update({
@@ -144,6 +156,8 @@ export interface FileRoutesByFullPath {
   '/auth': typeof AuthRoute
   '/comunidade': typeof ComunidadeRoute
   '/plano': typeof PlanoRoute
+  '/privacidade': typeof PrivacidadeRoute
+  '/termos': typeof TermosRoute
   '/avisos': typeof AuthenticatedAvisosRoute
   '/contato': typeof AuthenticatedContatoRoute
   '/moderacao': typeof AuthenticatedModeracaoRoute
@@ -165,6 +179,8 @@ export interface FileRoutesByTo {
   '/auth': typeof AuthRoute
   '/comunidade': typeof ComunidadeRoute
   '/plano': typeof PlanoRoute
+  '/privacidade': typeof PrivacidadeRoute
+  '/termos': typeof TermosRoute
   '/avisos': typeof AuthenticatedAvisosRoute
   '/contato': typeof AuthenticatedContatoRoute
   '/moderacao': typeof AuthenticatedModeracaoRoute
@@ -188,6 +204,8 @@ export interface FileRoutesById {
   '/auth': typeof AuthRoute
   '/comunidade': typeof ComunidadeRoute
   '/plano': typeof PlanoRoute
+  '/privacidade': typeof PrivacidadeRoute
+  '/termos': typeof TermosRoute
   '/_authenticated/avisos': typeof AuthenticatedAvisosRoute
   '/_authenticated/contato': typeof AuthenticatedContatoRoute
   '/_authenticated/moderacao': typeof AuthenticatedModeracaoRoute
@@ -211,6 +229,8 @@ export interface FileRouteTypes {
     | '/auth'
     | '/comunidade'
     | '/plano'
+    | '/privacidade'
+    | '/termos'
     | '/avisos'
     | '/contato'
     | '/moderacao'
@@ -232,6 +252,8 @@ export interface FileRouteTypes {
     | '/auth'
     | '/comunidade'
     | '/plano'
+    | '/privacidade'
+    | '/termos'
     | '/avisos'
     | '/contato'
     | '/moderacao'
@@ -254,6 +276,8 @@ export interface FileRouteTypes {
     | '/auth'
     | '/comunidade'
     | '/plano'
+    | '/privacidade'
+    | '/termos'
     | '/_authenticated/avisos'
     | '/_authenticated/contato'
     | '/_authenticated/moderacao'
@@ -277,6 +301,8 @@ export interface RootRouteChildren {
   AuthRoute: typeof AuthRoute
   ComunidadeRoute: typeof ComunidadeRoute
   PlanoRoute: typeof PlanoRoute
+  PrivacidadeRoute: typeof PrivacidadeRoute
+  TermosRoute: typeof TermosRoute
   PerfilSlugRoute: typeof PerfilSlugRoute
   VagasIndexRoute: typeof VagasIndexRoute
   VagasProfissaoCodigoIndexRoute: typeof VagasProfissaoCodigoIndexRoute
@@ -317,6 +343,20 @@ declare module '@tanstack/react-router' {
       path: '/plano'
       fullPath: '/plano'
       preLoaderRoute: typeof PlanoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/privacidade': {
+      id: '/privacidade'
+      path: '/privacidade'
+      fullPath: '/privacidade'
+      preLoaderRoute: typeof PrivacidadeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/termos': {
+      id: '/termos'
+      path: '/termos'
+      fullPath: '/termos'
+      preLoaderRoute: typeof TermosRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticated/avisos': {
@@ -467,6 +507,8 @@ const rootRouteChildren: RootRouteChildren = {
   AuthRoute: AuthRoute,
   ComunidadeRoute: ComunidadeRoute,
   PlanoRoute: PlanoRoute,
+  PrivacidadeRoute: PrivacidadeRoute,
+  TermosRoute: TermosRoute,
   PerfilSlugRoute: PerfilSlugRoute,
   VagasIndexRoute: VagasIndexRoute,
   VagasProfissaoCodigoIndexRoute: VagasProfissaoCodigoIndexRoute,

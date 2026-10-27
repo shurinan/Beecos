@@ -1,5 +1,6 @@
 import { usernameErrorMessage } from "@/lib/username";
 import { postGaps } from "@/lib/post-gaps";
+import { PrivacyCard } from "@/components/PrivacyCard";
 import { postParams, profileParam } from "@/lib/urls";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
@@ -681,6 +682,15 @@ function Painel() {
           );
         })}
       </section>
+
+      <PrivacyCard
+        userId={userId}
+        avatarPath={data?.profile?.avatar_path}
+        onDeleted={() => {
+          qc.clear();
+          navigate({ to: "/auth", replace: true });
+        }}
+      />
 
       <Button variant="outline" className="w-full" onClick={signOut}>
         Sair
