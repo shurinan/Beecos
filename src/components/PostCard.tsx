@@ -1,7 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { useAuth } from "@/lib/auth";
 import { MapPin, Banknote, Crown } from "lucide-react";
-import { coverColor, FILLED_COVER, professionIcon } from "@/lib/post-look";
+import { FILLED_COVER, resolveCover, resolveIcon } from "@/lib/post-look";
 import { inscritosLabel } from "@/lib/community";
 import { Avatar } from "@/components/profile-bits";
 import { KIND_LABEL, timeAgo, type PostKind } from "@/lib/data";
@@ -25,6 +25,11 @@ export type PostWithAuthor = {
   user_id: string;
   vacancies?: number;
   premium?: boolean;
+  cover_color?: string | null;
+  cover_icon?: string | null;
+  urgent?: boolean;
+  negotiable?: boolean;
+  highlight?: boolean;
   professions?: { name: string; slug?: string | null } | null;
   services?: { name: string } | null;
   profiles: {
@@ -59,12 +64,19 @@ export function PostCard({
     kind === "job"
       ? vacanciesLabel(slots ?? (post.vacancies ? { vacancies: post.vacancies, taken: 0 } : null))
       : null;
-  const Icon = professionIcon(post.professions?.name);
-  const cover = filled ? FILLED_COVER : coverColor(post.professions?.slug ?? post.professions?.name);
+  const Icon = resolveIcon(post.cover_icon, post.professions?.name);
+  const cover = filled
+    ? FILLED_COVER
+    : resolveCover(post.cover_color, post.professions?.slug ?? post.professions?.name);
+  const highlighted = !!post.premium && !!post.highlight && !filled;
   const params = post.slug ? postParams({ slug: post.slug, professions: post.professions ?? null }) : null;
   const tag = "rounded px-2 py-0.5 text-xs font-bold uppercase tracking-wide";
   return (
-    <article className={"block-card overflow-hidden " + (filled ? "opacity-75" : "")}>
+    <article
+      className={
+        "block-card overflow-hidden " + (filled ? "opacity-75 " : "") + (highlighted ? "bg-primary/10" : "")
+      }
+    >
       <div
         className="relative flex min-h-[76px] flex-wrap items-end gap-1.5 px-4 pb-3 pt-4 text-[#1B1D23]"
         style={{ background: cover }}
@@ -84,6 +96,9 @@ export function PostCard({
           <span className={tag + " flex items-center gap-1 bg-white"}>
             <Crown className="h-3 w-3" aria-hidden="true" /> Premium
           </span>
+        )}
+        {post.urgent && !filled && (
+          <span className={tag + " bg-destructive text-destructive-foreground"}>Urgente</span>
         )}
         {filled && <span className={tag + " bg-[#5a5d66] text-white"}>Preenchida</span>}
       </div>
@@ -128,9 +143,10 @@ export function PostCard({
               )}
             </span>
           )}
-          {post.price && (
+          {(post.negotiable || post.price) && (
             <span className="flex items-center gap-1 rounded-full border-[1.5px] border-foreground bg-card px-2.5 py-0.5">
-              <Banknote className="h-3.5 w-3.5" aria-hidden="true" /> {post.price}
+              <Banknote className="h-3.5 w-3.5" aria-hidden="true" />{" "}
+              {post.negotiable ? "Combinar valor" : post.price}
             </span>
           )}
         </div>

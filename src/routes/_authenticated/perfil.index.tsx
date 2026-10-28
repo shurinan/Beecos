@@ -304,6 +304,13 @@ function Painel() {
           other: p.profession_id === null,
           serviceIds: p.service_id ? [p.service_id] : [],
         },
+        look: {
+          coverColor: p.cover_color,
+          icon: p.cover_icon,
+          urgent: p.urgent,
+          negotiable: p.negotiable,
+          highlight: p.highlight,
+        },
       },
     });
     setEditOpen(true);
@@ -571,6 +578,7 @@ function Painel() {
         catalog={catalog}
         minVacancies={editing?.minVacancies ?? 0}
         onSave={saveEdit}
+        premium={!!usage?.premium}
       />
       <WorkAreaDialog
         open={areaOpen}
@@ -613,6 +621,7 @@ function Painel() {
           catalog={catalog}
           idPrefix="new-post"
           minVacancies={0}
+          premium={!!usage?.premium}
         />
         <Button type="submit" className="w-full" size="lg">
           Publicar

@@ -16,6 +16,24 @@ export type PostDraft = {
   /** Resultado da consulta do CEP; nulo enquanto não foi consultado. */
   place: Place | null;
   pick: CatalogSelection;
+  /** Como a vaga aparece: cor e ícone da capa, selos e destaque. Tudo opcional. */
+  look: PostLook;
+};
+
+export type PostLook = {
+  coverColor: string | null;
+  icon: string | null;
+  urgent: boolean;
+  negotiable: boolean;
+  highlight: boolean;
+};
+
+export const EMPTY_LOOK: PostLook = {
+  coverColor: null,
+  icon: null,
+  urgent: false,
+  negotiable: false,
+  highlight: false,
 };
 
 export const EMPTY_DRAFT: PostDraft = {
@@ -28,6 +46,7 @@ export const EMPTY_DRAFT: PostDraft = {
   cep: "",
   place: null,
   pick: EMPTY_SELECTION,
+  look: EMPTY_LOOK,
 };
 
 export const MAX_VACANCIES = 20;
@@ -64,5 +83,10 @@ export function draftColumns(d: PostDraft) {
     vacancies: d.kind === "job" ? d.vacancies : 1,
     profession_id: d.pick.professionId,
     service_id: d.pick.serviceIds[0] ?? null,
+    cover_color: d.look.coverColor,
+    cover_icon: d.look.icon,
+    urgent: d.kind === "job" && d.look.urgent,
+    negotiable: d.kind === "job" && d.look.negotiable,
+    highlight: d.look.highlight,
   };
 }

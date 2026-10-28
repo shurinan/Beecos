@@ -195,6 +195,11 @@ export type Database = {
       posts: {
         Row: {
           city: string;
+          cover_color: string | null;
+          cover_icon: string | null;
+          highlight: boolean;
+          negotiable: boolean;
+          urgent: boolean;
           created_at: string;
           description: string;
           hidden_at: string | null;
@@ -212,6 +217,11 @@ export type Database = {
         };
         Insert: {
           city?: string;
+          cover_color?: string | null;
+          cover_icon?: string | null;
+          highlight?: boolean;
+          negotiable?: boolean;
+          urgent?: boolean;
           created_at?: string;
           description?: string;
           id?: string;
@@ -226,6 +236,11 @@ export type Database = {
         };
         Update: {
           city?: string;
+          cover_color?: string | null;
+          cover_icon?: string | null;
+          highlight?: boolean;
+          negotiable?: boolean;
+          urgent?: boolean;
           created_at?: string;
           description?: string;
           id?: string;

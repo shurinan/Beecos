@@ -1,4 +1,4 @@
-import { Bike, Briefcase, HardHat, HeartPulse, Scissors, Sparkles, Truck, Wrench, Zap } from "lucide-react";
+import { Bike, Briefcase, HardHat, HeartPulse, House, Scissors, Sparkles, Truck, Wrench, Zap } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 
 /** Cores de capa do card (pastéis do Beecos; o texto sobre elas é sempre escuro). */
@@ -31,4 +31,28 @@ export function professionIcon(name: string | null | undefined): LucideIcon {
   const n = norm(name ?? "");
   for (const [re, icon] of RULES) if (re.test(n)) return icon;
   return Briefcase;
+}
+
+/** Ícones que quem publica pode escolher (a chave é a gravada no banco). */
+export const LOOK_ICONS: { key: string; label: string; Icon: LucideIcon }[] = [
+  { key: "briefcase", label: "Maleta", Icon: Briefcase },
+  { key: "zap", label: "Raio", Icon: Zap },
+  { key: "wrench", label: "Chave", Icon: Wrench },
+  { key: "sparkles", label: "Brilho", Icon: Sparkles },
+  { key: "hard-hat", label: "Capacete", Icon: HardHat },
+  { key: "truck", label: "Caminhão", Icon: Truck },
+  { key: "heart-pulse", label: "Saúde", Icon: HeartPulse },
+  { key: "scissors", label: "Tesoura", Icon: Scissors },
+  { key: "bike", label: "Bicicleta", Icon: Bike },
+  { key: "house", label: "Casa", Icon: House },
+];
+
+/** O ícone escolhido; se não houver, o da profissão. */
+export function resolveIcon(key: string | null | undefined, professionName: string | null | undefined): LucideIcon {
+  return LOOK_ICONS.find((i) => i.key === key)?.Icon ?? professionIcon(professionName);
+}
+
+/** A cor escolhida; se não houver (ou for inválida), a da profissão. */
+export function resolveCover(color: string | null | undefined, professionKey: string | null | undefined): string {
+  return (COVER_COLORS as readonly string[]).includes(color ?? "") ? (color as string) : coverColor(professionKey);
 }
