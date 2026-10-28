@@ -2,7 +2,7 @@ import { toast } from "sonner";
 import { Crown, Lock } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 import { PostCard } from "@/components/PostCard";
-import { COVER_COLORS, LOOK_ICONS, resolveCover } from "@/lib/post-look";
+import { COVER_BG, COVER_COLORS, coverVars, LOOK_ICONS, resolveCover } from "@/lib/post-look";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
@@ -44,11 +44,17 @@ export function PostFormFields({
   }
 
   const look = draft.look;
-  const setLook = (patch: Partial<typeof look>) => onChange({ ...draft, look: { ...look, ...patch } });
-  const profession = draft.pick.professionId ? catalog?.professions.get(draft.pick.professionId) : undefined;
-  const service = draft.pick.serviceIds[0] ? catalog?.services.get(draft.pick.serviceIds[0]) : undefined;
+  const setLook = (patch: Partial<typeof look>) =>
+    onChange({ ...draft, look: { ...look, ...patch } });
+  const profession = draft.pick.professionId
+    ? catalog?.professions.get(draft.pick.professionId)
+    : undefined;
+  const service = draft.pick.serviceIds[0]
+    ? catalog?.services.get(draft.pick.serviceIds[0])
+    : undefined;
   const chosenCover = resolveCover(look.coverColor, profession?.name);
-  const sw = "h-9 w-9 rounded-full border-2 transition-transform hover:scale-110 focus-visible:outline-2 focus-visible:outline-offset-2 ";
+  const sw =
+    "h-9 w-9 rounded-full border-2 transition-transform hover:scale-110 focus-visible:outline-2 focus-visible:outline-offset-2 ";
 
   return (
     <>
@@ -136,10 +142,15 @@ export function PostFormFields({
           </p>
         </div>
       )}
-      <section className="space-y-4 rounded-xl border-2 border-foreground/15 bg-muted/40 p-3" aria-label="Personalizar a vaga">
+      <section
+        className="space-y-4 rounded-xl border-2 border-foreground/15 bg-muted/40 p-3"
+        aria-label="Personalizar a vaga"
+      >
         <h3 className="text-base font-extrabold">Personalizar {job ? "a vaga" : "o anúncio"}</h3>
         <div className="pointer-events-none select-none" aria-hidden="true">
-          <p className="mb-1.5 text-xs font-bold uppercase tracking-wide text-muted-foreground">Prévia</p>
+          <p className="mb-1.5 text-xs font-bold uppercase tracking-wide text-muted-foreground">
+            Prévia
+          </p>
           <PostCard
             post={{
               id: "preview",
@@ -175,22 +186,35 @@ export function PostFormFields({
                 aria-label={`Cor ${c}`}
                 aria-pressed={chosenCover === c}
                 onClick={() => setLook({ coverColor: c })}
-                className={sw + (chosenCover === c ? "border-foreground shadow-[0_0_0_2px_var(--background),0_0_0_4px_var(--foreground)]" : "border-foreground/30")}
-                style={{ background: c }}
+                className={
+                  COVER_BG +
+                  " " +
+                  sw +
+                  (chosenCover === c
+                    ? "border-foreground shadow-[0_0_0_2px_var(--background),0_0_0_4px_var(--foreground)]"
+                    : "border-foreground/30")
+                }
+                style={coverVars(c)}
               />
             ))}
           </div>
         </fieldset>
         <fieldset>
           <legend className="mb-1.5 text-sm font-bold">
-            Ícone <span className="font-normal text-muted-foreground">· Grátis · padrão: o da profissão</span>
+            Ícone{" "}
+            <span className="font-normal text-muted-foreground">
+              · Grátis · padrão: o da profissão
+            </span>
           </legend>
           <div className="flex flex-wrap gap-2">
             <button
               type="button"
               aria-pressed={look.icon === null}
               onClick={() => setLook({ icon: null })}
-              className={"rounded-lg border-2 px-2.5 py-1.5 text-xs font-bold " + (look.icon === null ? "border-foreground bg-primary" : "border-foreground/30")}
+              className={
+                "rounded-lg border-2 px-2.5 py-1.5 text-xs font-bold " +
+                (look.icon === null ? "border-foreground bg-primary" : "border-foreground/30")
+              }
             >
               Padrão
             </button>
@@ -201,7 +225,10 @@ export function PostFormFields({
                 aria-label={label}
                 aria-pressed={look.icon === key}
                 onClick={() => setLook({ icon: key })}
-                className={"flex h-9 w-9 items-center justify-center rounded-lg border-2 " + (look.icon === key ? "border-foreground bg-primary" : "border-foreground/30")}
+                className={
+                  "flex h-9 w-9 items-center justify-center rounded-lg border-2 " +
+                  (look.icon === key ? "border-foreground bg-primary" : "border-foreground/30")
+                }
               >
                 <Icon className="h-5 w-5" aria-hidden="true" />
               </button>
@@ -212,14 +239,30 @@ export function PostFormFields({
           <legend className="mb-1.5 text-sm font-bold">Selos</legend>
           {job && (
             <>
-              <LookToggle label="Urgente" hint="Grátis" checked={look.urgent} onChange={(v) => setLook({ urgent: v })} />
-              <LookToggle label="Combinar valor" hint="Grátis · no lugar do preço" checked={look.negotiable} onChange={(v) => setLook({ negotiable: v })} />
+              <LookToggle
+                label="Urgente"
+                hint="Grátis"
+                checked={look.urgent}
+                onChange={(v) => setLook({ urgent: v })}
+              />
+              <LookToggle
+                label="Combinar valor"
+                hint="Grátis · no lugar do preço"
+                checked={look.negotiable}
+                onChange={(v) => setLook({ negotiable: v })}
+              />
             </>
           )}
           <LookToggle
             label="Destaque na lista"
             hint="Premium"
-            icon={premium ? <Crown className="h-4 w-4" aria-hidden="true" /> : <Lock className="h-4 w-4" aria-hidden="true" />}
+            icon={
+              premium ? (
+                <Crown className="h-4 w-4" aria-hidden="true" />
+              ) : (
+                <Lock className="h-4 w-4" aria-hidden="true" />
+              )
+            }
             checked={premium && look.highlight}
             disabled={!premium}
             onChange={(v) => setLook({ highlight: v })}
@@ -227,7 +270,9 @@ export function PostFormFields({
           {!premium && (
             <p className="text-xs text-muted-foreground">
               O destaque é do plano Premium.{" "}
-              <Link to="/plano" className="font-bold underline">Conhecer o Premium</Link>
+              <Link to="/plano" className="font-bold underline">
+                Conhecer o Premium
+              </Link>
             </p>
           )}
         </fieldset>
@@ -252,7 +297,12 @@ function LookToggle({
   icon?: React.ReactNode;
 }) {
   return (
-    <label className={"flex items-center justify-between gap-3 rounded-lg border-2 border-foreground/15 bg-card px-3 py-2 " + (disabled ? "opacity-60" : "cursor-pointer")}>
+    <label
+      className={
+        "flex items-center justify-between gap-3 rounded-lg border-2 border-foreground/15 bg-card px-3 py-2 " +
+        (disabled ? "opacity-60" : "cursor-pointer")
+      }
+    >
       <span className="flex items-center gap-2 text-sm font-semibold">
         {icon}
         {label}
