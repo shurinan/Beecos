@@ -5,6 +5,7 @@ import { ArrowDown, ArrowLeft, FileText, Paperclip, Send, X, Zap } from "lucide-
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
+import { MessageStatus } from "@/components/MessageStatus";
 import { Avatar } from "@/components/profile-bits";
 import { EngagementCard, clientOf } from "@/components/EngagementCard";
 import { Input } from "@/components/ui/input";
@@ -20,6 +21,8 @@ import {
   formatLastSeen,
   isBlockedTextError,
   isImageType,
+  isNetworkError,
+  receiptState,
   replySpeedLabel,
   validateAttachment,
 } from "@/lib/chat";
@@ -163,6 +166,14 @@ function Chat({ id }: { id: string }) {
   const [text, setText] = useState("");
   const [file, setFile] = useState<File | null>(null);
   const [sending, setSending] = useState(false);
+  // mensagens de texto ainda não salvas (sem conexão): mostram um relógio e são reenviadas sozinhas
+  const [pending, setPendingState] = useState<{ id: string; content: string; created_at: string }[]>([]);
+  const pendingRef = useRef(pending);
+  const flushing = useRef(false);
+  function setPending(next: typeof pending) {
+    pendingRef.current = next;
+    setPendingState(next);
+  }
   const [showJump, setShowJump] = useState(false);
   const [firstNewId, setFirstNewId] = useState<string | null>(null);
   const bottom = useRef<HTMLDivElement>(null);
@@ -234,6 +245,14 @@ function Chat({ id }: { id: string }) {
         .eq("user_id", otherId!)
         .maybeSingle();
       return data?.last_seen_at ?? null;
+    },
+  });
+  const { data: otherReadAt } = useQuery({
+    queryKey: ["other-read", id],
+    refetchInterval: () => (document.hidden ? false : 5_000),
+    queryFn: async () => {
+      const { data } = await supabase.rpc("conversation_other_read", { _conversation: id });
+      return (data as string | null) ?? null;
     },
   });
   const { data: stats } = useQuery({
@@ -335,13 +354,14 @@ function Chat({ id }: { id: string }) {
 
   // Desce até a última mensagem se eu enviei ou se já estava no fim; senão avisa que tem novidade.
   useEffect(() => {
-    const grew = msgs.length > lastCount.current;
+    const total = msgs.length + pending.length;
+    const grew = total > lastCount.current;
     const first = lastCount.current === 0;
-    lastCount.current = msgs.length;
+    lastCount.current = total;
     if (!grew) return undefined;
     const last = msgs[msgs.length - 1];
     const nearBottom = window.innerHeight + window.scrollY >= document.body.scrollHeight - 220;
-    if (first || last?.sender_id === userId || nearBottom) {
+    if (first || pending.length > 0 || last?.sender_id === userId || nearBottom) {
       bottom.current?.scrollIntoView({ behavior: first ? "auto" : "smooth", block: "end" });
       setShowJump(false);
       if (first) {
@@ -360,7 +380,7 @@ function Chat({ id }: { id: string }) {
       setShowJump(true);
     }
     return undefined;
-  }, [msgs, userId]);
+  }, [msgs, pending.length, userId]);
 
   useEffect(() => {
     const onScroll = () => {
@@ -378,12 +398,72 @@ function Chat({ id }: { id: string }) {
     setFile(f);
   }
 
+  /** Tenta salvar uma mensagem de texto; "wait" = sem conexão, tenta de novo depois. */
+  async function deliver(p: { id: string; content: string }): Promise<"ok" | "wait" | "fail"> {
+    const { data, error } = await supabase
+      .from("messages")
+      .insert({ id: p.id, conversation_id: id, sender_id: userId, content: p.content })
+      .select(MSG_COLUMNS)
+      .single();
+    if (!error) {
+      qc.setQueryData<Msg[]>(["msgs", id], (old = []) =>
+        old.some((x) => x.id === data.id) ? old : [...old, data as Msg],
+      );
+      return "ok";
+    }
+    if (error.code === "23505") {
+      // a primeira tentativa chegou, só a resposta se perdeu
+      void refetchMsgs();
+      return "ok";
+    }
+    if (isNetworkError(error)) return "wait";
+    toast.error(isBlockedTextError(error) ? BLOCKED_TEXT_MESSAGE : "Mensagem não enviada");
+    return "fail";
+  }
+
+  async function flush() {
+    if (flushing.current) return;
+    flushing.current = true;
+    try {
+      for (const p of [...pendingRef.current]) {
+        const r = await deliver(p);
+        if (r === "wait") break;
+        setPending(pendingRef.current.filter((x) => x.id !== p.id));
+        if (r === "fail") setText((t) => t || p.content); // o texto volta ao campo para corrigir
+      }
+    } finally {
+      flushing.current = false;
+    }
+  }
+
+  useEffect(() => {
+    if (pending.length === 0) return undefined;
+    const retry = () => void flush();
+    const timer = window.setInterval(retry, 5_000);
+    window.addEventListener("online", retry);
+    return () => {
+      window.clearInterval(timer);
+      window.removeEventListener("online", retry);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pending.length]);
+
   async function send(e: React.FormEvent) {
     e.preventDefault();
     const content = text.trim();
     if ((!content && !file) || sending) return;
-    setSending(true);
     notifyTyping(false);
+    if (!file) {
+      // só texto: aparece na hora com um relógio e vai para o servidor em seguida
+      setPending([
+        ...pendingRef.current,
+        { id: crypto.randomUUID(), content, created_at: new Date().toISOString() },
+      ]);
+      setText("");
+      void flush();
+      return;
+    }
+    setSending(true);
     let attachment: Pick<
       Msg,
       "attachment_path" | "attachment_name" | "attachment_type" | "attachment_size"
@@ -561,17 +641,40 @@ function Chat({ id }: { id: string }) {
                 >
                   <Attachment msg={m} />
                   {m.content}
-                  <div className="mt-0.5 text-right text-[10px] opacity-60">
-                    {new Date(m.created_at).toLocaleTimeString("pt-BR", {
-                      hour: "2-digit",
-                      minute: "2-digit",
-                    })}
+                  <div className="mt-0.5 flex items-center justify-end gap-1 text-[10px]">
+                    <span className="opacity-60">
+                      {new Date(m.created_at).toLocaleTimeString("pt-BR", {
+                        hour: "2-digit",
+                        minute: "2-digit",
+                      })}
+                    </span>
+                    {mine && (
+                      <MessageStatus
+                        state={receiptState(m.created_at, otherReadAt, otherSeen, otherOnline)}
+                      />
+                    )}
                   </div>
                 </div>
               </div>
             </div>
           );
         })}
+        {pending.map((p) => (
+          <div key={p.id} className="flex justify-end">
+            <div className="selectable max-w-[80%] whitespace-pre-wrap break-words rounded-2xl rounded-br-sm border-2 border-foreground bg-primary px-3 py-2 text-sm">
+              {p.content}
+              <div className="mt-0.5 flex items-center justify-end gap-1 text-[10px]">
+                <span className="opacity-60">
+                  {new Date(p.created_at).toLocaleTimeString("pt-BR", {
+                    hour: "2-digit",
+                    minute: "2-digit",
+                  })}
+                </span>
+                <MessageStatus state="waiting" />
+              </div>
+            </div>
+          </div>
+        ))}
         {otherTyping && (
           <div className="flex justify-start" aria-hidden="true">
             <div className="msg-in msg-in-theirs flex gap-1 rounded-2xl rounded-bl-sm border-2 border-foreground bg-card px-3 py-3">
