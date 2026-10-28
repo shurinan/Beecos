@@ -125,5 +125,22 @@ export function isNetworkError(err: unknown): boolean {
   const e = err as { message?: string; code?: string; status?: number } | null;
   if (!e) return false;
   if (e.status === 0) return true;
-  return /failed to fetch|networkerror|network request failed|load failed|fetch failed/i.test(e.message ?? "");
+  return /failed to fetch|networkerror|network request failed|load failed|fetch failed/i.test(
+    e.message ?? "",
+  );
 }
+
+/** Links são proibidos no chat. Mesma regra do banco (contains_link), para avisar antes de enviar. */
+const LINK_RE =
+  /(https?:|ftp:|www\.|(?<![a-z0-9-])[a-z0-9-]+\.(?:com|net|org|edu|gov|br|io|me|app|link|ly|gl|co|info|xyz|site|online|store|shop|tv|cc|gg|dev|page|click|top|biz|us|ai)(?![a-z0-9-]))/i;
+
+export function hasLink(text: string): boolean {
+  return LINK_RE.test(text);
+}
+
+export function isLinkError(error: { message?: string } | null | undefined): boolean {
+  return !!error?.message?.includes("LINK_BLOQUEADO");
+}
+
+export const LINK_MESSAGE =
+  "Links não são permitidos no chat. Combine tudo por aqui, sem endereços de sites.";

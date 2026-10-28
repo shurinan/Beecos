@@ -511,6 +511,42 @@ export type Database = {
           },
         ];
       };
+      conversation_prefs: {
+        Row: {
+          archived: boolean;
+          cleared_at: string | null;
+          conversation_id: string;
+          favorite: boolean;
+          note: string | null;
+          pinned_at: string | null;
+          remind_at: string | null;
+          tag: string | null;
+          user_id: string;
+        };
+        Insert: {
+          archived?: boolean;
+          cleared_at?: string | null;
+          conversation_id: string;
+          favorite?: boolean;
+          note?: string | null;
+          pinned_at?: string | null;
+          remind_at?: string | null;
+          tag?: string | null;
+          user_id: string;
+        };
+        Update: {
+          archived?: boolean;
+          cleared_at?: string | null;
+          conversation_id?: string;
+          favorite?: boolean;
+          note?: string | null;
+          pinned_at?: string | null;
+          remind_at?: string | null;
+          tag?: string | null;
+          user_id?: string;
+        };
+        Relationships: [];
+      };
       conversation_reads: {
         Row: {
           conversation_id: string;

@@ -1,10 +1,12 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { useEffect, useRef, useState } from "react";
-import { ArrowDown, ArrowLeft, FileText, Paperclip, Send, X, Zap } from "lucide-react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { ArrowDown, ArrowLeft, FileText, Paperclip, Send, StickyNote, X, Zap } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
+import { ConversationMenu } from "@/components/ConversationMenu";
+import { reminderDue, useConvPrefs } from "@/lib/conversation-prefs";
 import { MessageStatus } from "@/components/MessageStatus";
 import { Avatar } from "@/components/profile-bits";
 import { EngagementCard, clientOf } from "@/components/EngagementCard";
@@ -14,6 +16,9 @@ import { profileParam } from "@/lib/urls";
 import { clearConversationNotifications, useChatChannel } from "@/lib/chat-hooks";
 import {
   BLOCKED_TEXT_MESSAGE,
+  LINK_MESSAGE,
+  hasLink,
+  isLinkError,
   MAX_MESSAGE_LENGTH,
   attachmentPath,
   cleanFileName,
@@ -162,12 +167,15 @@ function ChatRoute() {
 
 function Chat({ id }: { id: string }) {
   const { userId } = Route.useRouteContext();
+  const navigate = useNavigate();
   const qc = useQueryClient();
   const [text, setText] = useState("");
   const [file, setFile] = useState<File | null>(null);
   const [sending, setSending] = useState(false);
   // mensagens de texto ainda não salvas (sem conexão): mostram um relógio e são reenviadas sozinhas
-  const [pending, setPendingState] = useState<{ id: string; content: string; created_at: string }[]>([]);
+  const [pending, setPendingState] = useState<
+    { id: string; content: string; created_at: string }[]
+  >([]);
   const pendingRef = useRef(pending);
   const flushing = useRef(false);
   function setPending(next: typeof pending) {
@@ -202,7 +210,7 @@ function Chat({ id }: { id: string }) {
   });
 
   const {
-    data: msgs = [],
+    data: allMsgs = [],
     isError: msgsError,
     isSuccess: msgsLoaded,
     refetch: refetchMsgs,
@@ -218,6 +226,15 @@ function Chat({ id }: { id: string }) {
       return (data ?? []) as Msg[];
     },
   });
+
+  // "excluir conversa" esconde o que veio antes da exclusão (só para mim)
+  const prefs = useConvPrefs(userId);
+  const myPref = prefs.get(id);
+  const clearedAt = myPref?.cleared_at ?? null;
+  const msgs = useMemo(
+    () => (clearedAt ? allMsgs.filter((m) => m.created_at > clearedAt) : allMsgs),
+    [allMsgs, clearedAt],
+  );
 
   const other = conv ? (conv.user_a === userId ? conv.b : conv.a) : null;
   const otherId = conv ? (conv.user_a === userId ? conv.user_b : conv.user_a) : null;
@@ -417,7 +434,13 @@ function Chat({ id }: { id: string }) {
       return "ok";
     }
     if (isNetworkError(error)) return "wait";
-    toast.error(isBlockedTextError(error) ? BLOCKED_TEXT_MESSAGE : "Mensagem não enviada");
+    toast.error(
+      isLinkError(error)
+        ? LINK_MESSAGE
+        : isBlockedTextError(error)
+          ? BLOCKED_TEXT_MESSAGE
+          : "Mensagem não enviada",
+    );
     return "fail";
   }
 
@@ -452,6 +475,7 @@ function Chat({ id }: { id: string }) {
     e.preventDefault();
     const content = text.trim();
     if ((!content && !file) || sending) return;
+    if (hasLink(content)) return void toast.error(LINK_MESSAGE);
     notifyTyping(false);
     if (!file) {
       // só texto: aparece na hora com um relógio e vai para o servidor em seguida
@@ -496,7 +520,13 @@ function Chat({ id }: { id: string }) {
       .single();
     setSending(false);
     if (error) {
-      toast.error(isBlockedTextError(error) ? BLOCKED_TEXT_MESSAGE : "Mensagem não enviada");
+      toast.error(
+        isLinkError(error)
+          ? LINK_MESSAGE
+          : isBlockedTextError(error)
+            ? BLOCKED_TEXT_MESSAGE
+            : "Mensagem não enviada",
+      );
       return; // o texto e o anexo continuam no campo para a pessoa corrigir
     }
     setText("");
@@ -570,7 +600,23 @@ function Chat({ id }: { id: string }) {
           ) : (
             <span className="font-bold">…</span>
           )}
+          <ConversationMenu
+            conversationId={id}
+            userId={userId}
+            onDeleted={() => navigate({ to: "/conversas", replace: true })}
+          />
         </div>
+        {myPref?.note && (
+          <p className="mt-1 flex items-start gap-1.5 rounded-lg border-2 border-dashed border-foreground/40 bg-primary/10 px-2 py-1 text-xs">
+            <StickyNote className="mt-0.5 h-3.5 w-3.5 shrink-0" aria-hidden="true" />
+            <span className="min-w-0 whitespace-pre-wrap break-words">
+              <b>Seu recado:</b> {myPref.note}
+              {reminderDue(myPref.remind_at) && (
+                <b className="ml-1 text-destructive">· lembrete de hoje</b>
+              )}
+            </span>
+          </p>
+        )}
         {conv?.posts && (
           <p className="mt-1 truncate px-1 text-xs text-muted-foreground">
             Sobre: {conv.posts.title}
