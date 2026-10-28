@@ -16,7 +16,6 @@ import { Route as AuthRouteImport } from './routes/auth'
 import { Route as PlanoRouteImport } from './routes/plano'
 import { Route as PrivacidadeRouteImport } from './routes/privacidade'
 import { Route as TermosRouteImport } from './routes/termos'
-import { Route as ZzPreviewRouteImport } from './routes/zz-preview'
 import { Route as AuthenticatedAvisosRouteImport } from './routes/_authenticated/avisos'
 import { Route as AuthenticatedModeracaoRouteImport } from './routes/_authenticated/moderacao'
 import { Route as AuthenticatedSugestoesRouteImport } from './routes/_authenticated/sugestoes'
@@ -63,11 +62,6 @@ const PrivacidadeRoute = PrivacidadeRouteImport.update({
 const TermosRoute = TermosRouteImport.update({
   id: '/termos',
   path: '/termos',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ZzPreviewRoute = ZzPreviewRouteImport.update({
-  id: '/zz-preview',
-  path: '/zz-preview',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticatedAvisosRoute = AuthenticatedAvisosRouteImport.update({
@@ -149,7 +143,6 @@ export interface FileRoutesByFullPath {
   '/plano': typeof PlanoRoute
   '/privacidade': typeof PrivacidadeRoute
   '/termos': typeof TermosRoute
-  '/zz-preview': typeof ZzPreviewRoute
   '/avisos': typeof AuthenticatedAvisosRoute
   '/moderacao': typeof AuthenticatedModeracaoRoute
   '/sugestoes': typeof AuthenticatedSugestoesRoute
@@ -171,7 +164,6 @@ export interface FileRoutesByTo {
   '/plano': typeof PlanoRoute
   '/privacidade': typeof PrivacidadeRoute
   '/termos': typeof TermosRoute
-  '/zz-preview': typeof ZzPreviewRoute
   '/avisos': typeof AuthenticatedAvisosRoute
   '/moderacao': typeof AuthenticatedModeracaoRoute
   '/sugestoes': typeof AuthenticatedSugestoesRoute
@@ -195,7 +187,6 @@ export interface FileRoutesById {
   '/plano': typeof PlanoRoute
   '/privacidade': typeof PrivacidadeRoute
   '/termos': typeof TermosRoute
-  '/zz-preview': typeof ZzPreviewRoute
   '/_authenticated/avisos': typeof AuthenticatedAvisosRoute
   '/_authenticated/moderacao': typeof AuthenticatedModeracaoRoute
   '/_authenticated/sugestoes': typeof AuthenticatedSugestoesRoute
@@ -219,7 +210,6 @@ export interface FileRouteTypes {
     | '/plano'
     | '/privacidade'
     | '/termos'
-    | '/zz-preview'
     | '/avisos'
     | '/moderacao'
     | '/sugestoes'
@@ -241,7 +231,6 @@ export interface FileRouteTypes {
     | '/plano'
     | '/privacidade'
     | '/termos'
-    | '/zz-preview'
     | '/avisos'
     | '/moderacao'
     | '/sugestoes'
@@ -264,7 +253,6 @@ export interface FileRouteTypes {
     | '/plano'
     | '/privacidade'
     | '/termos'
-    | '/zz-preview'
     | '/_authenticated/avisos'
     | '/_authenticated/moderacao'
     | '/_authenticated/sugestoes'
@@ -288,7 +276,6 @@ export interface RootRouteChildren {
   PlanoRoute: typeof PlanoRoute
   PrivacidadeRoute: typeof PrivacidadeRoute
   TermosRoute: typeof TermosRoute
-  ZzPreviewRoute: typeof ZzPreviewRoute
   ComunidadeGruposRoute: typeof ComunidadeGruposRoute
   PerfilSlugRoute: typeof PerfilSlugRoute
   ComunidadeIndexRoute: typeof ComunidadeIndexRoute
@@ -345,13 +332,6 @@ declare module '@tanstack/react-router' {
       path: '/termos'
       fullPath: '/termos'
       preLoaderRoute: typeof TermosRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/zz-preview': {
-      id: '/zz-preview'
-      path: '/zz-preview'
-      fullPath: '/zz-preview'
-      preLoaderRoute: typeof ZzPreviewRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticated/avisos': {
@@ -482,7 +462,6 @@ const rootRouteChildren: RootRouteChildren = {
   PlanoRoute: PlanoRoute,
   PrivacidadeRoute: PrivacidadeRoute,
   TermosRoute: TermosRoute,
-  ZzPreviewRoute: ZzPreviewRoute,
   ComunidadeGruposRoute: ComunidadeGruposRoute,
   PerfilSlugRoute: PerfilSlugRoute,
   ComunidadeIndexRoute: ComunidadeIndexRoute,

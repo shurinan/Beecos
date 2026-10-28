@@ -1,19 +1,16 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect } from "react";
-import { ArrowLeft, MessageCircle, Users } from "lucide-react";
-import { toast } from "sonner";
+import { ArrowLeft } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
-import { ReportButton } from "@/components/ReportButton";
+import { PostActions } from "@/components/PostActions";
 import { PostCard, type PostWithAuthor } from "@/components/PostCard";
 import { useAuth } from "@/lib/auth";
-import { openConversation } from "@/lib/data";
 import { usePostDistances } from "@/lib/geo";
-import { limitMessage } from "@/lib/plans";
 import { usePostStats } from "@/lib/services-hooks";
 import { useInterestCounts } from "@/lib/community";
-import { postParams, profileParam } from "@/lib/urls";
+import { postParams } from "@/lib/urls";
 
 export const Route = createFileRoute("/vagas/$profissao/$codigo/")({
   head: () => ({
@@ -67,20 +64,6 @@ function PostPage() {
   const interest = useInterestCounts(post ? [post.id] : []);
   const distance = usePostDistances(userId, post ? [post.id] : []).get(post?.id ?? "");
 
-  async function talk() {
-    if (!post) return;
-    if (!userId) return navigate({ to: "/auth" });
-    try {
-      await openConversation(userId, post.user_id, post.id);
-      navigate({
-        to: "/conversas/$slug",
-        params: { slug: profileParam({ id: post.user_id, slug: post.profiles?.slug }) },
-      });
-    } catch (e) {
-      toast.error(limitMessage(e) ?? "Não foi possível abrir a conversa");
-    }
-  }
-
   const back = (
     <Link
       to="/vagas"
@@ -119,28 +102,7 @@ function PostPage() {
         interested={interest.get(post.id) ?? 0}
         full
       />
-      {mine ? (
-        <Button asChild size="lg" variant="outline" className="w-full">
-          <Link
-            to="/vagas/$profissao/$codigo/interessados"
-            params={postParams({
-              slug: post.slug ?? codigo,
-              professions: post.professions ?? null,
-            })}
-          >
-            <Users /> Ver interessados
-          </Link>
-        </Button>
-      ) : (
-        <Button size="lg" className="w-full" onClick={talk}>
-          <MessageCircle /> {post.kind === "job" ? "Tenho interesse" : "Conversar e negociar"}
-        </Button>
-      )}
-      {userId && !mine && (
-        <div className="text-center">
-          <ReportButton type="post" targetId={post.id} what="esta publicação" />
-        </div>
-      )}
+      <PostActions post={post} />
       {mine && (post as { hidden_at?: string | null }).hidden_at && (
         <p role="note" className="rounded border-2 border-destructive p-3 text-sm">
           <b>Esta vaga está oculta.</b> A moderação a tirou das listas e das buscas. Se achar que foi
