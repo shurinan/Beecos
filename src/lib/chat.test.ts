@@ -4,6 +4,7 @@ import {
   cleanFileName,
   formatFileSize,
   formatLastSeen,
+  hasLink,
   isBlockedTextError,
   replySpeedLabel,
   tabTitle,
@@ -106,7 +107,35 @@ describe("isNetworkError", () => {
     expect(isNetworkError({ message: "Load failed" })).toBe(true);
   });
   it("não confunde com recusa do servidor", () => {
-    expect(isNetworkError({ message: "new row violates row-level security", code: "42501" })).toBe(false);
+    expect(isNetworkError({ message: "new row violates row-level security", code: "42501" })).toBe(
+      false,
+    );
     expect(isNetworkError(null)).toBe(false);
+  });
+});
+
+describe("links no chat", () => {
+  it("bloqueia endereços", () => {
+    for (const t of [
+      "https://x.com/a",
+      "http://golpe",
+      "veja www.site",
+      "meu site é loja.com.br",
+      "wa.me/5511999999999",
+      "bit.ly/abc",
+      "olha casa.com",
+    ])
+      expect(hasLink(t)).toBe(true);
+  });
+  it("deixa o texto normal passar", () => {
+    for (const t of [
+      "Preciso de pedreiro hoje",
+      "R$ 150,50 o dia",
+      "Chego às 8h.Combinado",
+      "Tem 3.5 metros",
+      "ok.",
+      "Rua das Flores, 123 - apto 4",
+    ])
+      expect(hasLink(t)).toBe(false);
   });
 });
