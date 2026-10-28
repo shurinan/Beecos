@@ -24,6 +24,7 @@ import {
 import { useAuth } from "@/lib/auth";
 import { Avatar, SelfDeclared, SkillCard } from "@/components/profile-bits";
 import { SkillDialog } from "@/components/SkillDialog";
+import { ModeratorShortcut } from "@/components/ModeratorShortcut";
 import { PostFormFields } from "@/components/PostFormFields";
 import { PostEditDialog } from "@/components/PostEditDialog";
 import { EMPTY_DRAFT, draftColumns, draftError, type PostDraft } from "@/lib/post-form";
@@ -386,6 +387,8 @@ function Painel() {
           Ver como os outros veem
         </Link>
       </div>
+
+      <ModeratorShortcut />
 
       <section className="block-card space-y-3 p-5">
         <div className="flex items-center justify-between">
