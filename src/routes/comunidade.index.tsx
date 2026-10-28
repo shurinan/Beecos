@@ -120,7 +120,7 @@ function Community() {
               <li>
                 <Link
                   to="/comunidade/grupos"
-                  className="block whitespace-nowrap rounded-full border-2 border-dashed border-foreground px-3 py-1.5 text-sm font-semibold"
+                  className="block whitespace-nowrap rounded-full border-2 border-dashed border-foreground px-3 py-1.5 text-sm font-semibold transition-[background-color,box-shadow,transform] duration-150 hover:bg-foreground/[0.07] hover:shadow-[inset_0_1px_3px_rgba(0,0,0,0.18)] active:scale-95"
                 >
                   + Grupos
                 </Link>
@@ -215,7 +215,7 @@ function Chip({
       search={{ grupo: to }}
       aria-current={active ? "page" : undefined}
       className={
-        "block whitespace-nowrap rounded-full border-2 border-foreground px-3 py-1.5 text-sm font-semibold " +
+        "block whitespace-nowrap rounded-full border-2 border-foreground px-3 py-1.5 text-sm font-semibold transition-[background-color,box-shadow,transform] duration-150 hover:bg-foreground/[0.07] hover:shadow-[inset_0_1px_3px_rgba(0,0,0,0.18)] active:scale-95 " +
         (active ? "bg-foreground text-background" : "")
       }
     >

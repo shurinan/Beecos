@@ -167,7 +167,7 @@ function Vagas() {
                 onClick={() => pickTopic(on ? "" : t.q)}
                 aria-pressed={on}
                 className={
-                  "flex min-h-10 items-center gap-1.5 rounded-full border-2 border-foreground px-3 text-sm font-bold " +
+                  "flex min-h-10 items-center gap-1.5 rounded-full border-2 border-foreground px-3 text-sm font-bold transition-[background-color,box-shadow,transform] duration-150 hover:bg-foreground/[0.07] hover:shadow-[inset_0_1px_3px_rgba(0,0,0,0.18)] active:scale-95 " +
                   (on ? "bg-foreground text-background" : "bg-card")
                 }
               >

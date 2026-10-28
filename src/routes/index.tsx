@@ -145,7 +145,7 @@ function Index() {
                 key={t.label}
                 to="/vagas"
                 search={{ q: t.q, tipo: undefined }}
-                className="flex min-h-10 items-center gap-1.5 rounded-full border-2 border-foreground bg-card px-3 text-sm font-bold"
+                className="flex min-h-10 items-center gap-1.5 rounded-full border-2 border-foreground bg-card px-3 text-sm font-bold transition-[background-color,box-shadow,transform] duration-150 hover:bg-foreground/[0.07] hover:shadow-[inset_0_1px_3px_rgba(0,0,0,0.18)] active:scale-95"
               >
                 <Icon className="h-4 w-4" aria-hidden="true" /> {t.label}
               </Link>
