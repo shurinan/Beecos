@@ -1,6 +1,8 @@
 import { Link } from "@tanstack/react-router";
 import { useAuth } from "@/lib/auth";
 import { MapPin, Banknote, Crown } from "lucide-react";
+import { coverColor, FILLED_COVER, professionIcon } from "@/lib/post-look";
+import { inscritosLabel } from "@/lib/community";
 import { Avatar } from "@/components/profile-bits";
 import { KIND_LABEL, timeAgo, type PostKind } from "@/lib/data";
 import { levelLabel, topSkill, type SkillBase } from "@/lib/skills";
@@ -37,6 +39,7 @@ export function PostCard({
   post,
   slots,
   distance,
+  interested,
   full = false,
 }: {
   /** Na página da vaga: mostra o texto inteiro, sem cortar com "…". */
@@ -45,6 +48,8 @@ export function PostCard({
   slots?: PostSlots | undefined;
   /** Distância até quem está vendo; só existe para quem informou onde atua. */
   distance?: PostDistance | undefined;
+  /** Quantas pessoas estão negociando a vaga agora. */
+  interested?: number | undefined;
 }) {
   const kind = post.kind as PostKind;
   const { userId } = useAuth();
@@ -54,120 +59,128 @@ export function PostCard({
     kind === "job"
       ? vacanciesLabel(slots ?? (post.vacancies ? { vacancies: post.vacancies, taken: 0 } : null))
       : null;
+  const Icon = professionIcon(post.professions?.name);
+  const cover = filled ? FILLED_COVER : coverColor(post.professions?.slug ?? post.professions?.name);
+  const params = post.slug ? postParams({ slug: post.slug, professions: post.professions ?? null }) : null;
+  const tag = "rounded px-2 py-0.5 text-xs font-bold uppercase tracking-wide";
   return (
-    <article className={"block-card p-4 " + (post.premium ? "bg-accent" : "")}>
-      <div className="mb-2 flex items-center justify-between">
-        <span className="flex items-center gap-2">
-          <span
+    <article className={"block-card overflow-hidden " + (filled ? "opacity-75" : "")}>
+      <div
+        className="relative flex min-h-[76px] flex-wrap items-end gap-1.5 px-4 pb-3 pt-4 text-[#1B1D23]"
+        style={{ background: cover }}
+      >
+        <Icon
+          className="absolute right-3 top-2.5 h-12 w-12 opacity-90"
+          strokeWidth={1.5}
+          aria-hidden="true"
+        />
+        <span className={tag + " bg-[#1B1D23] text-[#F9C80E]"}>
+          {post.professions?.name ?? KIND_LABEL[kind]}
+        </span>
+        {post.professions && kind !== "job" && (
+          <span className={tag + " border border-[#1B1D23] bg-white/70"}>{KIND_LABEL[kind]}</span>
+        )}
+        {post.premium && (
+          <span className={tag + " flex items-center gap-1 bg-white"}>
+            <Crown className="h-3 w-3" aria-hidden="true" /> Premium
+          </span>
+        )}
+        {filled && <span className={tag + " bg-[#5a5d66] text-white"}>Preenchida</span>}
+      </div>
+      <div className="space-y-2.5 p-4">
+        <h3 className="text-lg leading-tight">
+          {params ? (
+            <Link to="/vagas/$profissao/$codigo" params={params} className="hover:underline">
+              {post.title}
+            </Link>
+          ) : (
+            post.title
+          )}
+        </h3>
+        {post.professions && post.services && (
+          <p className="text-sm font-semibold text-muted-foreground">
+            {catalogLabel(post.professions, post.services)}
+          </p>
+        )}
+        {post.description && (
+          <p
             className={
-              kind === "job"
-                ? "rounded bg-primary px-2 py-0.5 text-xs font-bold uppercase text-primary-foreground border border-foreground"
-                : "rounded bg-secondary px-2 py-0.5 text-xs font-bold uppercase text-secondary-foreground"
+              "text-sm text-muted-foreground " +
+              (full ? "selectable whitespace-pre-wrap break-words" : "line-clamp-2")
             }
           >
-            {KIND_LABEL[kind]}
-          </span>
-          {post.premium && (
-            <span className="flex items-center gap-1 rounded border border-foreground bg-foreground px-2 py-0.5 text-xs font-bold uppercase text-background">
-              <Crown className="h-3 w-3" aria-hidden="true" /> Premium
+            {post.description}
+          </p>
+        )}
+        <div className="flex flex-wrap gap-1.5 text-sm font-semibold">
+          {post.city && (
+            <span className="flex items-center gap-1 rounded-full border-[1.5px] border-foreground bg-card px-2.5 py-0.5">
+              <MapPin className="h-3.5 w-3.5" aria-hidden="true" /> {post.city}
             </span>
           )}
-        </span>
-        <span className="flex items-center gap-2 text-xs text-muted-foreground">
-          {vacancy && (
-            <span
-              className={
-                "rounded px-1.5 py-0.5 font-bold " +
-                (filled
-                  ? "bg-muted text-foreground line-through decoration-2"
-                  : "bg-secondary text-secondary-foreground")
-              }
-            >
-              {vacancy}
+          {distance && (
+            <span className="rounded-full border-[1.5px] border-foreground bg-card px-2.5 py-0.5">
+              a {formatKm(distance.km)} de você
+              {distance.far && (
+                <span className="ml-1.5 rounded border border-foreground bg-destructive px-1.5 py-0.5 text-xs font-bold text-destructive-foreground">
+                  Pode ser longe
+                </span>
+              )}
             </span>
           )}
-          {timeAgo(post.created_at)}
-        </span>
-      </div>
-      <h3 className="text-lg leading-tight">
-        {post.slug ? (
+          {post.price && (
+            <span className="flex items-center gap-1 rounded-full border-[1.5px] border-foreground bg-card px-2.5 py-0.5">
+              <Banknote className="h-3.5 w-3.5" aria-hidden="true" /> {post.price}
+            </span>
+          )}
+        </div>
+        {userId ? (
           <Link
-            to="/vagas/$profissao/$codigo"
-            params={postParams({ slug: post.slug, professions: post.professions ?? null })}
-            className="hover:underline"
+            to="/perfil/$slug"
+            params={{ slug: profileParam({ id: post.user_id, slug: post.profiles?.slug }) }}
+            search={{ post: post.id }}
+            className="flex items-center gap-2"
           >
-            {post.title}
+            <Avatar
+              name={post.profiles?.full_name ?? ""}
+              path={post.profiles?.avatar_path}
+              size={32}
+            />
+            <span className="min-w-0 text-sm font-semibold leading-tight">
+              {post.profiles?.full_name || "Usuário"}
+              {top && (
+                <span className="block truncate text-xs font-normal text-muted-foreground">
+                  {top.skill} · {levelLabel(top.level)}
+                </span>
+              )}
+            </span>
           </Link>
         ) : (
-          post.title
+          <Link to="/auth" className="block text-sm font-bold underline">
+            Entre para ver quem publicou →
+          </Link>
         )}
-      </h3>
-      {post.professions && (
-        <p className="mt-0.5 text-sm font-semibold text-muted-foreground">
-          {catalogLabel(post.professions, post.services)}
-        </p>
-      )}
-      {post.description && (
-        <p
-          className={
-            "mt-1 text-sm text-muted-foreground " + (full ? "selectable whitespace-pre-wrap break-words" : "line-clamp-3")
-          }
-        >
-          {post.description}
-        </p>
-      )}
-      <div className="mt-3 flex flex-wrap gap-3 text-sm font-medium">
-        {post.city && (
-          <span className="flex items-center gap-1">
-            <MapPin className="h-4 w-4" /> {post.city}
+        <div className="flex items-center justify-between gap-3 border-t-[1.5px] border-dashed border-foreground/40 pt-2.5 text-sm">
+          <span className="min-w-0 text-muted-foreground">
+            {[
+              vacancy,
+              kind === "job" && interested !== undefined ? inscritosLabel(interested) : null,
+              timeAgo(post.created_at),
+            ]
+              .filter(Boolean)
+              .join(" · ")}
           </span>
-        )}
-        {distance && (
-          <span className="flex items-center gap-1">
-            a {formatKm(distance.km)} de você
-            {distance.far && (
-              <span className="ml-1 rounded border border-foreground bg-destructive px-1.5 py-0.5 text-xs font-bold text-destructive-foreground">
-                Pode ser longe
-              </span>
-            )}
-          </span>
-        )}
-        {post.price && (
-          <span className="flex items-center gap-1">
-            <Banknote className="h-4 w-4" /> {post.price}
-          </span>
-        )}
+          {params && (
+            <Link
+              to="/vagas/$profissao/$codigo"
+              params={params}
+              className="shrink-0 font-bold underline"
+            >
+              {kind === "job" ? "Ver vaga" : "Ver"}
+            </Link>
+          )}
+        </div>
       </div>
-      {userId ? (
-        <Link
-          to="/perfil/$slug"
-          params={{ slug: profileParam({ id: post.user_id, slug: post.profiles?.slug }) }}
-          search={{ post: post.id }}
-          className="mt-3 flex items-center gap-2 border-t border-dashed border-foreground/30 pt-3"
-        >
-          <Avatar
-            name={post.profiles?.full_name ?? ""}
-            path={post.profiles?.avatar_path}
-            size={36}
-          />
-          <span className="min-w-0 text-sm font-semibold">
-            {post.profiles?.full_name || "Usuário"}
-            {top && (
-              <span className="block truncate text-xs font-normal text-muted-foreground">
-                {top.skill} · {levelLabel(top.level)}
-              </span>
-            )}
-          </span>
-          <span className="ml-auto text-sm font-bold underline">Ver e conversar →</span>
-        </Link>
-      ) : (
-        <Link
-          to="/auth"
-          className="mt-3 flex items-center justify-between gap-2 border-t border-dashed border-foreground/30 pt-3 text-sm font-bold underline"
-        >
-          Entre para ver quem publicou e conversar →
-        </Link>
-      )}
     </article>
   );
 }
