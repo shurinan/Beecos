@@ -12,6 +12,7 @@ import { openConversation } from "@/lib/data";
 import { usePostDistances } from "@/lib/geo";
 import { limitMessage } from "@/lib/plans";
 import { usePostStats } from "@/lib/services-hooks";
+import { useInterestCounts } from "@/lib/community";
 import { postParams, profileParam } from "@/lib/urls";
 
 export const Route = createFileRoute("/vagas/$profissao/$codigo/")({
@@ -63,6 +64,7 @@ function PostPage() {
   }, [canonical, profissao, navigate]);
 
   const slots = usePostStats(post ? [post.id] : []);
+  const interest = useInterestCounts(post ? [post.id] : []);
   const distance = usePostDistances(userId, post ? [post.id] : []).get(post?.id ?? "");
 
   async function talk() {
@@ -110,7 +112,13 @@ function PostPage() {
   return (
     <div className="space-y-4">
       {back}
-      <PostCard post={post} slots={slots[post.id]} distance={distance} full />
+      <PostCard
+        post={post}
+        slots={slots[post.id]}
+        distance={distance}
+        interested={interest.get(post.id) ?? 0}
+        full
+      />
       {mine ? (
         <Button asChild size="lg" variant="outline" className="w-full">
           <Link
