@@ -848,6 +848,7 @@ export type Database = {
           details: string;
           id: string;
           reason: string;
+          reported_id: string | null;
           reporter_id: string;
           resolution_note: string;
           reviewed_at: string | null;
@@ -998,6 +999,14 @@ export type Database = {
       choose_provider: {
         Args: { _conversation: string; _post?: string };
         Returns: string;
+      };
+      my_hold_until: {
+        Args: Record<PropertyKey, never>;
+        Returns: string | null;
+      };
+      moderator_case: {
+        Args: { _report: string };
+        Returns: Json;
       };
       report_content: {
         Args: { _type: string; _target: string; _reason: string; _details?: string };

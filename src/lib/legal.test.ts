@@ -4,7 +4,7 @@ import { TERMS_VERSION, accountErrorMessage, termsErrorMessage } from "./legal";
 
 describe("legal", () => {
   it("a versão dos termos é a mesma do banco", () => {
-    const sql = readFileSync("drizzle/migrations/0023_lgpd.sql", "utf8");
+    const sql = readFileSync("drizzle/migrations/0030_moderation_vigilance.sql", "utf8");
     expect(sql).toContain(`SELECT '${TERMS_VERSION}'`);
   });
   it("traduz os erros", () => {

@@ -144,3 +144,11 @@ export function isLinkError(error: { message?: string } | null | undefined): boo
 
 export const LINK_MESSAGE =
   "Links não são permitidos no chat. Combine tudo por aqui, sem endereços de sites.";
+
+/** Conta em vigilância por denúncia (2 horas): o banco recusa a mensagem. */
+export function isHoldError(error: { message?: string } | null | undefined): boolean {
+  return !!error?.message?.includes("CONTA_EM_ANALISE");
+}
+
+export const HOLD_MESSAGE =
+  "Há uma denúncia em análise envolvendo uma das contas. Por até 2 horas não é possível enviar mensagens nesta conversa.";

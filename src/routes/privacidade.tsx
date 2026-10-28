@@ -41,12 +41,14 @@ function Privacy() {
           endereço da vaga <b>nunca é mostrado</b> a outras pessoas; elas veem apenas a distância.
         </li>
         <li>
-          <b>Uso:</b> vagas, conversas e mensagens, avaliações, avisos recebidos, preferências, plano
-          e o horário em que você esteve online pela última vez.
+          <b>Uso:</b> vagas, conversas e mensagens, avaliações, avisos recebidos, preferências,
+          plano e o horário em que você esteve online pela última vez.
         </li>
         <li>
           <b>Denúncias:</b> as que você enviar e as que forem feitas sobre você, com a decisão da
-          moderação.
+          moderação. Quando há uma denúncia, a moderação pode ver a publicação ou o perfil
+          denunciado, dados básicos das duas contas e a conversa entre as duas pessoas, com registro
+          de cada acesso, e as duas contas ficam 2 horas em vigilância.
         </li>
       </ul>
 
@@ -89,8 +91,12 @@ function Privacy() {
       <h2>Por quanto tempo</h2>
       <p>
         Guardamos os dados enquanto a sua conta existir. Ao excluir a conta, o seu perfil, as suas
-        vagas, conversas e demais dados são apagados. Cópias de segurança podem demorar um pouco
-        mais para sumir, e podemos manter o que a lei exigir.
+        vagas, conversas e demais dados deixam de aparecer no app e de ser acessíveis a outras
+        pessoas. Por segurança, <b>guardamos uma cópia protegida</b> do que foi apagado
+        (publicações, mensagens, conversas, avaliações e dados básicos da conta), acessível apenas à
+        moderação, para apurar denúncias, prevenir fraudes, cumprir obrigações legais e exercer
+        direitos em caso de disputa. Essa cópia é mantida pelo tempo necessário a essas finalidades.
+        Cópias de segurança podem demorar um pouco mais para sumir.
       </p>
 
       <h2>Os seus direitos</h2>
@@ -120,7 +126,11 @@ function Privacy() {
       <p>
         {PRIVACY_CONTACT_EMAIL ? (
           <>
-            Canal de privacidade: <a className="font-bold underline" href={`mailto:${PRIVACY_CONTACT_EMAIL}`}>{PRIVACY_CONTACT_EMAIL}</a>.
+            Canal de privacidade:{" "}
+            <a className="font-bold underline" href={`mailto:${PRIVACY_CONTACT_EMAIL}`}>
+              {PRIVACY_CONTACT_EMAIL}
+            </a>
+            .
           </>
         ) : (
           "O e-mail do nosso canal de privacidade será divulgado aqui. Enquanto isso, os pedidos de acesso, correção e exclusão podem ser feitos direto no seu perfil."

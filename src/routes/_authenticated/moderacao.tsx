@@ -5,6 +5,7 @@ import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
+import { ModerationCase } from "@/components/ModerationCase";
 import { REPORT_REASONS, resolveReport } from "@/lib/reports";
 import { timeAgo } from "@/lib/data";
 import { postParams, profileParam } from "@/lib/urls";
@@ -49,7 +50,10 @@ function Moderation() {
       const profIds = reports.filter((r) => r.target_type === "profile").map((r) => r.target_id);
       const [posts, profs] = await Promise.all([
         postIds.length
-          ? supabase.from("posts").select("id, slug, hidden_at, professions(slug)").in("id", postIds)
+          ? supabase
+              .from("posts")
+              .select("id, slug, hidden_at, professions(slug)")
+              .in("id", postIds)
           : Promise.resolve({ data: [], error: null }),
         profIds.length
           ? supabase.from("profiles").select("id, slug").in("id", profIds)
@@ -68,7 +72,8 @@ function Moderation() {
     <div className="space-y-4">
       <h1 className="text-2xl">Moderação</h1>
       <p className="text-sm text-muted-foreground">
-        Denúncias abertas. Nada foi removido: você decide cada caso.
+        Denúncias abertas. Nada é removido sozinho: você decide cada caso. As duas contas ficam 2
+        horas em vigilância; descartar a denúncia encerra a vigilância.
       </p>
       {isLoading && <p className="text-muted-foreground">Carregando…</p>}
       {data?.reports.length === 0 && <p>Nenhuma denúncia aberta.</p>}
@@ -125,6 +130,7 @@ function ReportCard({
 }) {
   const [note, setNote] = useState("");
   const [busy, setBusy] = useState(false);
+  const [caseOpen, setCaseOpen] = useState(false);
   const reason = REPORT_REASONS.find((x) => x.value === report.reason)?.label ?? report.reason;
   async function act(action: "dismiss" | "hide_post" | "restore_post" | "done") {
     setBusy(true);
@@ -150,6 +156,12 @@ function ReportCard({
       </p>
       {report.details && <p className="text-sm">“{report.details}”</p>}
       <p className="text-sm">{link}</p>
+      <Button type="button" variant="outline" size="sm" onClick={() => setCaseOpen(true)}>
+        Abrir o caso (pessoas e conversa)
+      </Button>
+      {caseOpen && (
+        <ModerationCase reportId={report.id} open={caseOpen} onOpenChange={setCaseOpen} />
+      )}
       <Textarea
         aria-label="Observação da decisão"
         placeholder="Observação (opcional)"
@@ -158,20 +170,44 @@ function ReportCard({
         onChange={(e) => setNote(e.target.value)}
       />
       <div className="flex flex-wrap gap-2">
-        <Button type="button" variant="outline" size="sm" disabled={busy} onClick={() => act("dismiss")}>
+        <Button
+          type="button"
+          variant="outline"
+          size="sm"
+          disabled={busy}
+          onClick={() => act("dismiss")}
+        >
           Descartar
         </Button>
         {report.target_type === "post" &&
           (hidden ? (
-            <Button type="button" variant="outline" size="sm" disabled={busy} onClick={() => act("restore_post")}>
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              disabled={busy}
+              onClick={() => act("restore_post")}
+            >
               Reexibir vaga
             </Button>
           ) : (
-            <Button type="button" variant="destructive" size="sm" disabled={busy} onClick={() => act("hide_post")}>
+            <Button
+              type="button"
+              variant="destructive"
+              size="sm"
+              disabled={busy}
+              onClick={() => act("hide_post")}
+            >
               Ocultar vaga
             </Button>
           ))}
-        <Button type="button" variant="outline" size="sm" disabled={busy} onClick={() => act("done")}>
+        <Button
+          type="button"
+          variant="outline"
+          size="sm"
+          disabled={busy}
+          onClick={() => act("done")}
+        >
           Tratada por outro meio
         </Button>
       </div>
