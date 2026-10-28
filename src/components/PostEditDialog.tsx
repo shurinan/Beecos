@@ -23,6 +23,7 @@ export function PostEditDialog({
   minVacancies,
   onSave,
   lookup = lookupCep,
+  premium = false,
 }: {
   open: boolean;
   onOpenChange: (open: boolean) => void;
@@ -32,6 +33,7 @@ export function PostEditDialog({
   /** Recebe o rascunho já com o ponto do CEP (se houver). */
   onSave: (draft: PostDraft) => Promise<boolean>;
   lookup?: typeof lookupCep;
+  premium?: boolean;
 }) {
   const [draft, setDraft] = useState<PostDraft | null>(initial);
   const [busy, setBusy] = useState(false);
@@ -76,7 +78,7 @@ export function PostEditDialog({
             As mudanças valem na hora para quem está vendo a publicação.
           </DialogDescription>
         </DialogHeader>
-        <form onSubmit={submit} className="space-y-3" noValidate>
+        <form onSubmit={submit} className="space-y-4" noValidate>
           <PostFormFields
             draft={draft}
             onChange={setDraft}
@@ -84,13 +86,14 @@ export function PostEditDialog({
             idPrefix="edit-post"
             minVacancies={minVacancies}
             lookup={lookup}
+            premium={premium}
           />
-          <DialogFooter className="gap-2">
+          <DialogFooter className="sticky bottom-0 -mx-1 gap-2 bg-background/95 px-1 py-2 backdrop-blur">
             <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
               Cancelar
             </Button>
             <Button type="submit" loading={busy}>
-              Salvar alterações
+              Salvar
             </Button>
           </DialogFooter>
         </form>
