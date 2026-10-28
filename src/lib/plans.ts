@@ -14,6 +14,8 @@ export function limitMessage(err: unknown): string | null {
     return "Esta vaga já está negociando com 5 pessoas. Tente de novo mais tarde, se alguém for dispensado.";
   if (msg.includes("NEGOCIACAO_ENCERRADA"))
     return "Quem publicou esta vaga encerrou a negociação com você.";
+  if (msg.includes("CONTA_EM_ANALISE"))
+    return "Há uma denúncia em análise envolvendo uma das contas. Por até 2 horas não é possível negociar, publicar vagas nem receber propostas.";
   return null;
 }
 

@@ -7,6 +7,7 @@ import { useAlerts } from "@/lib/alerts";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { SuggestionButton } from "@/components/SuggestionButton";
 import { BackButton } from "@/components/BackButton";
+import { HoldBanner } from "@/components/HoldBanner";
 import { AssistedHelp } from "@/components/AssistedHelp";
 import { InstallPrompt } from "@/components/InstallPrompt";
 
@@ -74,6 +75,7 @@ export function AppShell({ children }: { children: ReactNode }) {
       <AssistedHelp />
       {userId && <ChatBackground userId={userId} />}
       <main className="flex-1 px-4 pb-28 pt-4">
+        <HoldBanner />
         <InstallPrompt />
         {children}
         <p className="mt-8 text-center text-xs text-muted-foreground">

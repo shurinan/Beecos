@@ -22,9 +22,9 @@ function Terms() {
       <h2>O que o Beecos é (e não é)</h2>
       <ul>
         <li>
-          Somos um ponto de encontro: publicamos vagas e perfis e oferecemos chat. <b>Não somos
-          parte</b> do serviço combinado entre vocês, não empregamos ninguém e não garantimos a
-          qualidade, o preço nem o pagamento de um serviço.
+          Somos um ponto de encontro: publicamos vagas e perfis e oferecemos chat.{" "}
+          <b>Não somos parte</b> do serviço combinado entre vocês, não empregamos ninguém e não
+          garantimos a qualidade, o preço nem o pagamento de um serviço.
         </li>
         <li>
           O preço, o horário e as condições são combinados diretamente no chat, entre as duas
@@ -50,10 +50,34 @@ function Terms() {
 
       <h2>Denúncias e moderação</h2>
       <p>
-        Qualquer pessoa pode denunciar uma vaga ou um perfil. Nenhuma denúncia bloqueia nada
-        automaticamente: uma pessoa da moderação avalia cada caso e pode ocultar uma publicação que
-        descumpra estas regras. Contas com abuso repetido podem ser suspensas.
+        Qualquer pessoa pode denunciar uma vaga ou um perfil. Uma pessoa da moderação avalia cada
+        caso e pode ocultar uma publicação que descumpra estas regras. Contas com abuso repetido
+        podem ser suspensas.
       </p>
+      <ul>
+        <li>
+          <b>Vigilância de 2 horas nas duas contas.</b> Assim que uma denúncia é enviada, a conta de
+          quem denunciou e a conta de quem foi denunciado ficam em vigilância por 2 horas: nesse
+          período não é possível negociar, publicar vagas nem receber propostas, e as duas contas
+          veem um aviso. É uma medida de cuidado enquanto o caso é analisado, não uma punição nem
+          uma decisão sobre quem tem razão. Se a moderação descartar a denúncia, a vigilância é
+          encerrada na hora.
+        </li>
+        <li>
+          <b>Análise do caso.</b> Para avaliar uma denúncia, a moderação pode ver a publicação ou o
+          perfil denunciado, as informações básicas das duas contas, outras publicações do
+          denunciado e a conversa entre as duas pessoas (inclusive os arquivos enviados nela). Nada
+          além disso é aberto, a moderação não entra na conta de ninguém, e cada acesso fica
+          registrado.
+        </li>
+        <li>
+          <b>O que é apagado fica guardado.</b> Publicações, mensagens, conversas, avaliações e
+          contas apagadas por você não somem por completo: uma cópia fica guardada de forma
+          protegida, só para a moderação, para apurar denúncias, prevenir fraudes, cumprir
+          obrigações legais e nos defender em caso de disputa. Essas cópias não aparecem para outras
+          pessoas e são mantidas pelo tempo necessário a essas finalidades.
+        </li>
+      </ul>
 
       <h2>Planos</h2>
       <p>
@@ -70,8 +94,9 @@ function Terms() {
 
       <h2>Encerrar a conta</h2>
       <p>
-        Você pode excluir sua conta quando quiser, no seu perfil, em “Privacidade e dados”. Podemos
-        suspender ou encerrar contas que violem estes termos.
+        Você pode excluir sua conta quando quiser, no seu perfil, em “Privacidade e dados”. O que
+        for apagado fica guardado nos termos da seção “Denúncias e moderação”. Podemos suspender ou
+        encerrar contas que violem estes termos.
       </p>
 
       <h2>Mudanças</h2>

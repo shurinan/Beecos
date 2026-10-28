@@ -16,7 +16,9 @@ import { profileParam } from "@/lib/urls";
 import { clearConversationNotifications, useChatChannel } from "@/lib/chat-hooks";
 import {
   BLOCKED_TEXT_MESSAGE,
+  HOLD_MESSAGE,
   LINK_MESSAGE,
+  isHoldError,
   hasLink,
   isLinkError,
   MAX_MESSAGE_LENGTH,
@@ -435,7 +437,9 @@ function Chat({ id }: { id: string }) {
     }
     if (isNetworkError(error)) return "wait";
     toast.error(
-      isLinkError(error)
+      isHoldError(error)
+        ? HOLD_MESSAGE
+        : isLinkError(error)
         ? LINK_MESSAGE
         : isBlockedTextError(error)
           ? BLOCKED_TEXT_MESSAGE
@@ -521,7 +525,9 @@ function Chat({ id }: { id: string }) {
     setSending(false);
     if (error) {
       toast.error(
-        isLinkError(error)
+        isHoldError(error)
+          ? HOLD_MESSAGE
+          : isLinkError(error)
           ? LINK_MESSAGE
           : isBlockedTextError(error)
             ? BLOCKED_TEXT_MESSAGE

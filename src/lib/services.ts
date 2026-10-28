@@ -71,6 +71,8 @@ export function availableActions(
 }
 
 const ERRORS: Record<string, string> = {
+  CONTA_EM_ANALISE:
+    "Há uma denúncia em análise envolvendo uma das contas. Por até 2 horas não é possível negociar nem fechar serviço.",
   SO_QUEM_CONTRATA_ESCOLHE: "Só quem contrata pode escolher.",
   AINDA_SEM_RESPOSTA: "Espere a pessoa responder na conversa antes de escolher.",
   VAGAS_PREENCHIDAS: "Todas as vagas dessa publicação já foram preenchidas.",
