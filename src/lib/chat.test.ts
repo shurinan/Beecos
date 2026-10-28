@@ -82,3 +82,31 @@ describe("misc", () => {
     expect(tabTitle("Beecos", 250)).toBe("(99+) Beecos");
   });
 });
+
+import { isNetworkError, receiptState } from "./chat";
+
+describe("receiptState", () => {
+  const sent = "2026-10-28T12:00:00Z";
+  it("enviada quando ninguém viu", () => {
+    expect(receiptState(sent, null, null)).toBe("sent");
+    expect(receiptState(sent, "2026-10-28T11:59:00Z", "2026-10-28T11:00:00Z")).toBe("sent");
+  });
+  it("entregue quando a pessoa está online ou apareceu depois", () => {
+    expect(receiptState(sent, null, null, true)).toBe("delivered");
+    expect(receiptState(sent, null, "2026-10-28T12:00:30Z")).toBe("delivered");
+  });
+  it("lida quando abriu a conversa depois", () => {
+    expect(receiptState(sent, "2026-10-28T12:01:00Z", null)).toBe("read");
+  });
+});
+
+describe("isNetworkError", () => {
+  it("reconhece queda de conexão", () => {
+    expect(isNetworkError({ message: "TypeError: Failed to fetch" })).toBe(true);
+    expect(isNetworkError({ message: "Load failed" })).toBe(true);
+  });
+  it("não confunde com recusa do servidor", () => {
+    expect(isNetworkError({ message: "new row violates row-level security", code: "42501" })).toBe(false);
+    expect(isNetworkError(null)).toBe(false);
+  });
+});

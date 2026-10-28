@@ -972,6 +972,10 @@ export type Database = {
         Args: Record<string, never>;
         Returns: undefined;
       };
+      conversation_other_read: {
+        Args: { _conversation: string };
+        Returns: string | null;
+      };
       community_overview: {
         Args: Record<string, never>;
         Returns: { profession_id: string; members: number; open_jobs: number }[];

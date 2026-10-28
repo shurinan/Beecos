@@ -100,3 +100,30 @@ export const BLOCKED_TEXT_MESSAGE =
 export function tabTitle(base: string, unread: number): string {
   return unread > 0 ? `(${unread > 99 ? "99+" : unread}) ${base}` : base;
 }
+
+/** Situação de uma mensagem minha: aguardando envio, enviada, entregue ou lida. */
+export type MessageState = "waiting" | "sent" | "delivered" | "read";
+
+/**
+ * Enviada: já está salva. Entregue: a outra pessoa estava no app (agora ou depois do envio).
+ * Lida: ela abriu a conversa depois do envio. Se ela esconde o "visto por último", só chega "enviada".
+ */
+export function receiptState(
+  createdAt: string,
+  otherReadAt: string | null | undefined,
+  otherSeenAt: string | null | undefined,
+  otherOnline = false,
+): Exclude<MessageState, "waiting"> {
+  if (otherReadAt && otherReadAt >= createdAt) return "read";
+  if (otherOnline || (otherSeenAt && otherSeenAt >= createdAt)) return "delivered";
+  return "sent";
+}
+
+/** Falha de conexão (e não uma recusa do servidor): vale tentar de novo depois. */
+export function isNetworkError(err: unknown): boolean {
+  if (typeof navigator !== "undefined" && navigator.onLine === false) return true;
+  const e = err as { message?: string; code?: string; status?: number } | null;
+  if (!e) return false;
+  if (e.status === 0) return true;
+  return /failed to fetch|networkerror|network request failed|load failed|fetch failed/i.test(e.message ?? "");
+}
