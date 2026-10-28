@@ -28,8 +28,10 @@ function Inbox() {
       const { data, error } = await supabase
         .from("conversations")
         .select(
-          "id, last_message_at, user_a, user_b, posts!conversations_post_id_fkey(title), a:profiles!conversations_user_a_fkey(full_name, slug, avatar_path), b:profiles!conversations_user_b_fkey(full_name, slug, avatar_path)",
+          "id, last_message_at, user_a, user_b, posts!conversations_post_id_fkey(title), a:profiles!conversations_user_a_fkey(full_name, slug, avatar_path), b:profiles!conversations_user_b_fkey(full_name, slug, avatar_path), messages!inner(id)",
         )
+        // só entra na lista a conversa que já tem mensagem; tocar em "Tenho interesse" e sair não cria item
+        .limit(1, { referencedTable: "messages" })
         .order("last_message_at", { ascending: false });
       if (error) throw error;
       return data;
@@ -51,7 +53,7 @@ function Inbox() {
       )}
       {data?.length === 0 && (
         <p className="rounded-lg border-2 border-dashed border-foreground/40 p-6 text-center text-muted-foreground">
-          Nenhuma conversa ainda. Abra uma publicação e toque em "Conversar".
+          Nenhuma conversa ainda. Ela aparece aqui quando alguém escrever.
         </p>
       )}
       {data?.map((c) => {
