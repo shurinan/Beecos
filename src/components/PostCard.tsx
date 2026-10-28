@@ -7,7 +7,7 @@ import { PostActions } from "@/components/PostActions";
 import { postCode } from "@/lib/post-code";
 import { useAuth } from "@/lib/auth";
 import { MapPin, Banknote, Crown } from "lucide-react";
-import { FILLED_COVER, resolveCover, resolveIcon } from "@/lib/post-look";
+import { COVER_BG, coverVars, FILLED_COVER, resolveCover, resolveIcon } from "@/lib/post-look";
 import { inscritosLabel } from "@/lib/community";
 import { Avatar } from "@/components/profile-bits";
 import { KIND_LABEL, timeAgo, type PostKind } from "@/lib/data";
@@ -92,8 +92,11 @@ export function PostCard({
         }
       >
         <div
-          className="relative flex min-h-[76px] flex-wrap items-end gap-1.5 px-4 pb-3 pt-4 text-[#1B1D23]"
-          style={{ background: cover }}
+          className={
+            "relative flex min-h-[76px] flex-wrap items-end gap-1.5 px-4 pb-3 pt-4 text-[#1B1D23] " +
+            (filled ? "" : COVER_BG)
+          }
+          style={filled ? { background: cover } : coverVars(cover)}
         >
           <Icon
             className="absolute right-3 top-2.5 h-12 w-12 opacity-90"
