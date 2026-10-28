@@ -22,7 +22,7 @@ export function AppShell({ children }: { children: ReactNode }) {
   const { total: unread } = useUnread(userId);
   const { unread: alertsUnread } = useAlerts(userId);
   const bub =
-    "flex h-10 w-10 items-center justify-center rounded-full transition-colors group-data-[status=active]:bg-foreground/15 group-data-[status=active]:shadow-[inset_0_2px_5px_rgba(0,0,0,0.3)]";
+    "flex h-10 w-10 items-center justify-center rounded-full transition-[background-color,box-shadow,transform] duration-150 group-hover:bg-foreground/[0.07] group-hover:shadow-[inset_0_1px_3px_rgba(0,0,0,0.18)] group-active:scale-95 group-data-[status=active]:bg-foreground/15! group-data-[status=active]:shadow-[inset_0_2px_5px_rgba(0,0,0,0.3)]!";
   const item =
     "group flex flex-1 flex-col items-center gap-0.5 py-1 text-xs font-semibold text-muted-foreground";
   const active = { className: "text-foreground" };
@@ -113,7 +113,7 @@ export function AppShell({ children }: { children: ReactNode }) {
             aria-label="Comunidade"
             className="group relative -mt-7 flex flex-1 flex-col items-center gap-0.5 text-xs font-bold text-foreground"
           >
-            <span className="flex h-16 w-16 items-center justify-center rounded-full border-2 border-foreground bg-primary text-primary-foreground shadow-md active:scale-95">
+            <span className="flex h-16 w-16 items-center justify-center rounded-full border-2 border-foreground bg-primary text-primary-foreground shadow-md transition-shadow duration-150 group-hover:shadow-lg group-active:scale-95">
               <Users className="h-8 w-8" />
             </span>
             Comunidade
