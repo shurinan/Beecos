@@ -21,8 +21,10 @@ export function AppShell({ children }: { children: ReactNode }) {
   const { userId } = useAuth();
   const { total: unread } = useUnread(userId);
   const { unread: alertsUnread } = useAlerts(userId);
+  const bub =
+    "flex h-10 w-10 items-center justify-center rounded-full transition-colors group-data-[status=active]:bg-foreground/15 group-data-[status=active]:shadow-[inset_0_2px_5px_rgba(0,0,0,0.3)]";
   const item =
-    "flex flex-1 flex-col items-center gap-0.5 py-2 text-xs font-semibold text-muted-foreground";
+    "group flex flex-1 flex-col items-center gap-0.5 py-1 text-xs font-semibold text-muted-foreground";
   const active = { className: "text-foreground" };
   return (
     <div className="mx-auto flex min-h-screen max-w-2xl flex-col">
@@ -95,7 +97,7 @@ export function AppShell({ children }: { children: ReactNode }) {
       <nav className="fixed inset-x-0 bottom-0 z-20 border-t-2 border-foreground bg-background">
         <div className="mx-auto flex max-w-2xl">
           <Link to="/" className={item} activeProps={active} activeOptions={{ exact: true }}>
-            <Home className="h-5 w-5" /> Início
+            <span className={bub}><Home className="h-5 w-5" /></span> Início
           </Link>
           <Link
             to="/vagas"
@@ -103,13 +105,13 @@ export function AppShell({ children }: { children: ReactNode }) {
             className={item}
             activeProps={active}
           >
-            <Briefcase className="h-5 w-5" /> Vagas
+            <span className={bub}><Briefcase className="h-5 w-5" /></span> Vagas
           </Link>
           <Link
             to="/comunidade"
             search={{ grupo: undefined }}
             aria-label="Comunidade"
-            className="relative -mt-7 flex flex-1 flex-col items-center gap-0.5 text-xs font-bold text-foreground"
+            className="group relative -mt-7 flex flex-1 flex-col items-center gap-0.5 text-xs font-bold text-foreground"
           >
             <span className="flex h-16 w-16 items-center justify-center rounded-full border-2 border-foreground bg-primary text-primary-foreground shadow-md active:scale-95">
               <Users className="h-8 w-8" />
@@ -119,7 +121,7 @@ export function AppShell({ children }: { children: ReactNode }) {
           {userId ? (
             <>
               <Link to="/conversas" className={item} activeProps={active}>
-                <span className="relative">
+                <span className={bub + " relative"}>
                   <MessageCircle className="h-5 w-5" />
                   {unread > 0 && (
                     <span
@@ -134,12 +136,12 @@ export function AppShell({ children }: { children: ReactNode }) {
                 Conversas
               </Link>
               <Link to="/perfil" className={item} activeProps={active}>
-                <UserRound className="h-5 w-5" /> Meu perfil
+                <span className={bub}><UserRound className="h-5 w-5" /></span> Meu perfil
               </Link>
             </>
           ) : (
             <Link to="/auth" className={item} activeProps={active}>
-              <LogIn className="h-5 w-5" /> Entrar
+              <span className={bub}><LogIn className="h-5 w-5" /></span> Entrar
             </Link>
           )}
           {!userId && <div className="flex-1" aria-hidden="true" />}
