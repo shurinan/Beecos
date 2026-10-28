@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import {
   Bike,
   Briefcase,
@@ -30,6 +30,7 @@ import { FEED_AD_AFTER, shouldShowFeedAd } from "@/lib/ads";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/lib/auth";
+import { parsePostCode } from "@/lib/post-code";
 import type { PostKind } from "@/lib/data";
 import {
   EMPTY_FILTERS,
@@ -140,9 +141,35 @@ function Vagas() {
     },
   });
 
-  const slots = usePostStats(posts?.map((p) => p.id));
-  const distances = usePostDistances(userId, posts?.map((p) => p.id) ?? []);
-  const interest = useInterestCounts(posts?.map((p) => p.id) ?? []);
+  // quem digita o código de uma vaga (A3F9C1, #a3f9c1 ou o link) a encontra direto
+  const code = parsePostCode(typed.q);
+  const { data: byCode } = useQuery({
+    queryKey: ["post-by-code", code, !!userId],
+    enabled: ready && code !== null,
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("posts")
+        .select(
+          userId
+            ? "*, professions(name, slug), services(name), profiles(full_name, slug, avatar_path, profile_skills(skill, level))"
+            : "*, professions(name, slug), services(name)",
+        )
+        .like("slug", `%-${code}`)
+        .is("hidden_at", null)
+        .maybeSingle();
+      if (error) throw error;
+      return data as unknown as PostWithAuthor | null;
+    },
+  });
+  const shown = useMemo(() => {
+    if (!posts) return posts;
+    if (!code || !byCode) return posts;
+    return [byCode, ...posts.filter((p) => p.id !== byCode.id)];
+  }, [posts, byCode, code]);
+
+  const slots = usePostStats(shown?.map((p) => p.id));
+  const distances = usePostDistances(userId, shown?.map((p) => p.id) ?? []);
+  const interest = useInterestCounts(shown?.map((p) => p.id) ?? []);
   const { data: workArea, isSuccess: areaLoaded } = useWorkArea(userId);
 
   function pickTopic(q: string) {
@@ -223,7 +250,7 @@ function Vagas() {
             <Input
               value={filters.q}
               onChange={(e) => set("q", e.target.value)}
-              placeholder="Buscar: pedreiro, limpeza…"
+              placeholder="Buscar: pedreiro, limpeza ou código da vaga"
               aria-label="Buscar"
               className="h-11 border-2 pl-9"
             />
@@ -328,14 +355,14 @@ function Vagas() {
 
         <div className="space-y-4">
           {isLoading && <p className="text-center text-muted-foreground">Carregando…</p>}
-          {posts?.length === 0 && (
+          {shown?.length === 0 && (
             <div className="rounded-lg border-2 border-dashed border-foreground/40 p-8 text-center text-muted-foreground">
               {hasSearch
                 ? "Nada encontrado com esses filtros. Tente tirar algum."
                 : "Nada por aqui ainda. Seja o primeiro a publicar!"}
             </div>
           )}
-          {posts?.map((p, i) => (
+          {shown?.map((p, i) => (
             <div key={p.id} className="space-y-4">
               <PostCard
                 post={p}
@@ -343,7 +370,7 @@ function Vagas() {
                 distance={distances.get(p.id)}
                 interested={interest.get(p.id) ?? 0}
               />
-              {i === FEED_AD_AFTER - 1 && shouldShowFeedAd(posts.length) && (
+              {i === FEED_AD_AFTER - 1 && shouldShowFeedAd(shown.length) && (
                 <AdSlot placement="feed" />
               )}
             </div>
