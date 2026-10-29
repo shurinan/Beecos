@@ -25,7 +25,7 @@ import { profileParam } from "@/lib/urls";
 import { ReportButton } from "@/components/ReportButton";
 import { usePremiumIds } from "@/lib/discovery";
 import { useCatalog } from "@/lib/catalog";
-import { limitMessage } from "@/lib/plans";
+import { showInterestError } from "@/lib/interest";
 import { PHONE_KIND_LABEL, formatMethods, type ContactPhone } from "@/lib/contact";
 import { telUrl, whatsappUrl } from "@/lib/services";
 import { usePostStats } from "@/lib/services-hooks";
@@ -195,7 +195,7 @@ function ProfilePage({ id }: { id: string }) {
       await openConversation(userId, id, post ?? null);
       navigate({ to: "/conversas/$slug", params: { slug: profileParam(pr) } });
     } catch (e) {
-      toast.error(limitMessage(e) ?? "Não foi possível abrir a conversa");
+      showInterestError(e);
     }
   }
 

@@ -3,7 +3,6 @@ import { Banknote, Clock, MapPin } from "lucide-react";
 import type { PostWithAuthor } from "@/components/PostCard";
 import { Button } from "@/components/ui/button";
 import { timeAgo } from "@/lib/data";
-import { inscritosLabel } from "@/lib/community";
 import { formatKm, type PostDistance } from "@/lib/geo";
 import { isFilled, vacanciesLabel } from "@/lib/services";
 import type { PostSlots } from "@/lib/services-hooks";
@@ -14,7 +13,6 @@ export function CommunityPostCard({
   post,
   slots,
   distance,
-  interested,
   mine,
   onApply,
   busy,
@@ -22,14 +20,15 @@ export function CommunityPostCard({
   post: PostWithAuthor;
   slots: PostSlots | undefined;
   distance: PostDistance | undefined;
-  interested: number;
   mine: boolean;
   onApply: () => void;
   busy: boolean;
 }) {
   const filled = isFilled(slots);
   const label = vacanciesLabel(slots ?? { vacancies: post.vacancies ?? 1, taken: 0 });
-  const params = post.slug ? postParams({ slug: post.slug, professions: post.professions ?? null }) : null;
+  const params = post.slug
+    ? postParams({ slug: post.slug, professions: post.professions ?? null })
+    : null;
   const author = post.profiles?.slug ? `@${post.profiles.slug}` : post.profiles?.full_name;
   return (
     <article className="block-card space-y-3 p-4">
@@ -93,10 +92,7 @@ export function CommunityPostCard({
           </Button>
         ) : null}
       </div>
-      <p className="text-xs text-muted-foreground">
-        {inscritosLabel(interested)}
-        {author ? ` · ${author}` : ""}
-      </p>
+      {author && <p className="text-xs text-muted-foreground">{author}</p>}
     </article>
   );
 }
