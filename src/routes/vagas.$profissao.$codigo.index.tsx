@@ -39,7 +39,7 @@ function PostPage() {
         .from("posts")
         .select(
           userId
-            ? "*, professions(name, slug), services(name), profiles(full_name, slug, avatar_path, profile_skills(skill, level))"
+            ? "*, professions(name, slug), services(name), profiles!posts_user_id_fkey(full_name, slug, avatar_path, profile_skills(skill, level))"
             : "*, professions(name, slug), services(name)",
         )
         .eq("slug", codigo)

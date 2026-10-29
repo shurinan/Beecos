@@ -9,7 +9,9 @@ ALTER TABLE public.notifications ADD CONSTRAINT notifications_kind_check CHECK (
 
 CREATE TABLE public.post_waitlist (
   post_id uuid NOT NULL REFERENCES public.posts(id) ON DELETE CASCADE,
-  user_id uuid NOT NULL REFERENCES public.profiles(id) ON DELETE CASCADE,
+  -- sem FK para profiles de propósito: uma tabela ligando posts e profiles cria um caminho extra e o PostgREST
+  -- passa a recusar o embed posts → profiles por ambiguidade (o feed ficava vazio). A limpeza é pelo gatilho abaixo.
+  user_id uuid NOT NULL,
   created_at timestamptz NOT NULL DEFAULT now(),
   PRIMARY KEY (post_id, user_id)
 );
@@ -98,3 +100,11 @@ BEGIN
     PERFORM public._promote_waitlist(_post);
   END IF;
 END $$;
+
+CREATE FUNCTION public.cleanup_waitlist_on_profile_delete() RETURNS trigger LANGUAGE plpgsql SECURITY DEFINER SET search_path = public AS $$
+BEGIN
+  DELETE FROM public.post_waitlist WHERE user_id = OLD.id;
+  RETURN OLD;
+END $$;
+REVOKE EXECUTE ON FUNCTION public.cleanup_waitlist_on_profile_delete() FROM PUBLIC, anon, authenticated;
+CREATE TRIGGER profiles_waitlist_cleanup AFTER DELETE ON public.profiles FOR EACH ROW EXECUTE FUNCTION public.cleanup_waitlist_on_profile_delete();

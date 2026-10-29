@@ -122,7 +122,7 @@ function Vagas() {
         // quem não está logado não lê perfis (só quem tem conta), então não pede o autor
         .select(
           userId
-            ? "*, professions(name, slug), services(name), profiles(full_name, slug, avatar_path, profile_skills(skill, level))"
+            ? "*, professions(name, slug), services(name), profiles!posts_user_id_fkey(full_name, slug, avatar_path, profile_skills(skill, level))"
             : "*, professions(name), services(name)",
         )
         .in(
@@ -150,7 +150,7 @@ function Vagas() {
         .from("posts")
         .select(
           userId
-            ? "*, professions(name, slug), services(name), profiles(full_name, slug, avatar_path, profile_skills(skill, level))"
+            ? "*, professions(name, slug), services(name), profiles!posts_user_id_fkey(full_name, slug, avatar_path, profile_skills(skill, level))"
             : "*, professions(name, slug), services(name)",
         )
         .like("slug", `%-${code}`)
