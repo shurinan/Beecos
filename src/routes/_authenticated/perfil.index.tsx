@@ -129,12 +129,12 @@ function Painel() {
   const { data: workArea } = useWorkArea(userId);
   const [areaOpen, setAreaOpen] = useState(false);
   const [draft, setDraft] = useState<PostDraft>(EMPTY_DRAFT);
-  // "Quero contratar" da tela inicial chega aqui com #nova-vaga: abre direto o cadastro da vaga
+  // "Quero contratar" (#nova-vaga) e "Quero trabalhar" (#estou-disponivel) da tela inicial abrem direto o cadastro
   const hash = useRouterState({ select: (s) => s.location.hash });
   const loaded = !!data;
   useEffect(() => {
-    if (!loaded || hash !== "nova-vaga") return;
-    setDraft((x) => ({ ...x, kind: "job" }));
+    if (!loaded || (hash !== "nova-vaga" && hash !== "estou-disponivel")) return;
+    setDraft((x) => ({ ...x, kind: hash === "nova-vaga" ? "job" : "available" }));
     const t = window.setTimeout(() => {
       const form = document.getElementById("nova-vaga");
       form?.scrollIntoView({ behavior: "smooth", block: "start" });
