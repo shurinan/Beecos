@@ -21,15 +21,28 @@ export const COVER_BG =
   "bg-[color-mix(in_srgb,var(--cover)_50%,white)] dark:bg-[color-mix(in_srgb,var(--cover)_30%,white)]";
 export const coverVars = (color: string) => ({ "--cover": color }) as React.CSSProperties;
 
-/** Mesma chave, mesma cor: a capa não muda de uma visita para a outra. */
+const norm = (s: string) => s.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase();
+
+/** Cor padrão por tipo de serviço (elétrica amarela, obra pêssego…); o que não casa cai numa cor estável. */
+const COLOR_RULES: [RegExp, string][] = [
+  [/eletric|eletron/, "#F9C80E"],
+  [/encanad|hidraul|bombeir|cano/, "#8FB8F0"],
+  [/limpez|faxin|diarista|lavand|jardin/, "#7FC8A9"],
+  [/obra|pedrei|pintor|reform|construc|gesso|azulej|telhad|marceneir|carpint/, "#F2A48B"],
+  [/mudanc|frete|carret|transport|motorist|entrega|motoboy|ciclist|courier/, "#C9B5F0"],
+  [/saude|enferm|optom|cuidador|fisio|medic|dentis|psicol|nutri/, "#7FC8A9"],
+  [/beleza|cabel|barbeir|manicur|maquia|estetic|depila/, "#C9B5F0"],
+];
+
+/** Cor padrão da capa a partir do nome ou endereço da profissão. */
 export function coverColor(key: string | null | undefined): string {
   const k = key ?? "";
+  const n = norm(k);
+  for (const [re, c] of COLOR_RULES) if (re.test(n)) return c;
   let h = 0;
   for (let i = 0; i < k.length; i++) h = (h * 31 + k.charCodeAt(i)) >>> 0;
   return COVER_COLORS[h % COVER_COLORS.length]!;
 }
-
-const norm = (s: string) => s.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase();
 
 const RULES: [RegExp, LucideIcon][] = [
   [/eletric|eletron/, Zap],

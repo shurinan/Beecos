@@ -239,7 +239,7 @@ function Vagas() {
                   : "bg-background text-foreground")
               }
             >
-              {k === "job" ? "Vagas" : "Trabalhadores"}
+              {k === "job" ? "Vagas em aberto" : "Trabalhadores disponíveis"}
             </button>
           ))}
         </div>

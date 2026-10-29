@@ -72,26 +72,26 @@ function Index() {
       <section className="block-card overflow-hidden">
         <div className="p-5">
           <p className="mb-2 inline-block rounded border-2 border-foreground bg-accent px-2 py-0.5 text-xs font-bold uppercase">
-            Bicos perto de você
+            Oportunidades perto de você
           </p>
           <h1 className="text-4xl leading-[0.95]">
-            Trabalho pesado,
+            Precisou? Achou.
             <br />
-            <span className="bg-primary px-1">negócio direto.</span>
+            <span className="bg-primary px-1">Combinou? Fechou.</span>
           </h1>
           <p className="mt-3 text-muted-foreground">
-            Ache um bico ou alguém pra ajudar. Combine o preço no chat, escolha quem vai fazer e
-            avalie no final.
+            Encontre serviços, profissionais e oportunidades perto de você. Combine tudo direto pelo
+            chat.
           </p>
           <div className="mt-4 grid gap-2 sm:grid-cols-2">
             <Button asChild size="lg" className="w-full">
               <Link to={userId ? "/perfil" : "/auth"}>
-                <Plus /> Preciso de alguém
+                <Plus /> Quero contratar
               </Link>
             </Button>
             <Button asChild size="lg" variant="outline" className="w-full">
               <Link to="/vagas" search={{ q: undefined, tipo: undefined }}>
-                Procuro um bico
+                Quero trabalhar
               </Link>
             </Button>
           </div>
