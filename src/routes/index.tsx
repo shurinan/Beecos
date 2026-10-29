@@ -85,12 +85,12 @@ function Index() {
           </p>
           <div className="mt-4 grid gap-2 sm:grid-cols-2">
             <Button asChild size="lg" className="w-full">
-              <Link to={userId ? "/perfil" : "/auth"} hash={userId ? "nova-vaga" : ""}>
+              <Link to="/publicar" search={{ tipo: "contratar" }}>
                 <Plus /> Quero contratar
               </Link>
             </Button>
             <Button asChild size="lg" variant="outline" className="w-full">
-              <Link to={userId ? "/perfil" : "/auth"} hash={userId ? "estou-disponivel" : ""}>
+              <Link to="/publicar" search={{ tipo: "trabalhar" }}>
                 Quero trabalhar
               </Link>
             </Button>
