@@ -329,6 +329,13 @@ function Contato() {
           aparecem só a foto e o nome preferido. Os telefones que você marcar aparecem para quem já
           conversou com você.
         </p>
+        <p className="mt-1 text-sm text-muted-foreground">
+          Para que serve: facilitar o contato com quem você negocia, só quando você quiser
+          compartilhar. Tudo é opcional.{" "}
+          <Link to="/privacidade" className="font-bold underline">
+            Política de privacidade
+          </Link>
+        </p>
       </div>
 
       <Section title="Privacidade no chat">

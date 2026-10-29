@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { LegalPage } from "@/components/LegalPage";
+import { PRIVACY_CONTACT_EMAIL } from "@/lib/legal";
 
 export const Route = createFileRoute("/termos")({
   head: () => ({
@@ -71,19 +72,58 @@ function Terms() {
           registrado.
         </li>
         <li>
-          <b>O que é apagado fica guardado.</b> Publicações, mensagens, conversas, avaliações e
-          contas apagadas por você não somem por completo: uma cópia fica guardada de forma
-          protegida, só para a moderação, para apurar denúncias, prevenir fraudes, cumprir
-          obrigações legais e nos defender em caso de disputa. Essas cópias não aparecem para outras
-          pessoas e são mantidas pelo tempo necessário a essas finalidades.
+          <b>Guarda por 7 dias só quando há denúncia.</b> Se a sua conta fez ou recebeu uma
+          denúncia, o que for apagado (publicações, mensagens, conversas, avaliações e dados básicos
+          da conta) fica guardado de forma protegida por 7 dias, só para a moderação auditar o caso;
+          depois disso é apagado. Sem denúncia, o que você apaga é apagado de vez.
+        </li>
+        <li>
+          <b>Má-fé.</b> Denunciar alguém só para prejudicar é proibido. A moderação pode marcar uma
+          denúncia como de má-fé; quem tiver duas denúncias assim em 90 dias perde o direito de
+          denunciar e pode ter a conta encerrada.
         </li>
       </ul>
 
-      <h2>Planos</h2>
+      <h2>Planos e pagamentos</h2>
+      <ul>
+        <li>
+          O plano Grátis tem limites mensais de vagas publicadas e de novas conversas. O Premium
+          remove esses limites e inclui os benefícios listados na página de planos. Alguns recursos
+          também podem ser comprados avulsos, como o selo Urgente numa vaga.
+        </li>
+        <li>
+          O Premium é cobrado por mês. Antes de pagar, você vê o valor, a forma de pagamento e
+          quando a próxima cobrança acontece. O pagamento é processado pelo Asaas.
+        </li>
+        <li>
+          <b>Arrependimento em 7 dias:</b> você pode desistir de uma compra em até 7 dias corridos
+          depois de pagar e receber o valor de volta, sem custo (Código de Defesa do Consumidor,
+          art. 49).
+        </li>
+        <li>
+          <b>Cancelamento:</b> use “Cancelar assinatura” em Meu perfil › Seu plano, quando quiser. O
+          Premium continua até o fim do período já pago e não é cobrado de novo.
+        </li>
+      </ul>
+
+      <h2>O que você publica</h2>
       <p>
-        O plano Grátis tem limites mensais de vagas publicadas e de novas conversas. O plano Premium
-        remove esses limites e inclui os benefícios descritos na página de planos. Os valores e as
-        condições de cobrança serão informados antes de qualquer pagamento.
+        O conteúdo que você publica (textos, fotos e avaliações) continua sendo seu. Ao publicar,
+        você autoriza o Beecos a exibi-lo no app enquanto ele estiver publicado. Você pode apagar o
+        que publicou a qualquer momento. Se algo publicado por outra pessoa violar um direito seu,
+        denuncie no app ou escreva para o nosso contato.
+      </p>
+      <p>
+        Fotos e PDFs enviados no chat ficam disponíveis por 48 horas e depois são apagados; o texto
+        da conversa continua.
+      </p>
+
+      <h2>Responsabilidade</h2>
+      <p>
+        O Beecos aproxima as pessoas, mas não presta, não fiscaliza e não garante os serviços
+        combinados entre elas. Cada pessoa responde pelo que publica, pelo que combina e pelo
+        serviço que presta ou contrata. Fazemos o possível para manter o app no ar e seguro, mas ele
+        pode ficar fora do ar por manutenção ou por falhas que não controlamos.
       </p>
 
       <h2>Avaliações</h2>
@@ -94,15 +134,16 @@ function Terms() {
 
       <h2>Encerrar a conta</h2>
       <p>
-        Você pode excluir sua conta quando quiser, no seu perfil, em “Privacidade e dados”. O que
-        for apagado fica guardado nos termos da seção “Denúncias e moderação”. Podemos suspender ou
-        encerrar contas que violem estes termos.
+        Você pode excluir sua conta quando quiser, no seu perfil, em “Privacidade e dados”. Sem
+        denúncia, tudo é apagado; com denúncia, vale a guarda de 7 dias da seção “Denúncias e
+        moderação”. Podemos suspender ou encerrar contas que violem estes termos.
       </p>
 
       <h2>Mudanças</h2>
       <p>
         Se estes termos mudarem de forma relevante, pediremos que você leia e aceite de novo. O uso
-        do Beecos é regido pelas leis do Brasil.
+        do Beecos é regido pelas leis do Brasil, e você pode recorrer ao foro do seu domicílio.
+        Contato: {PRIVACY_CONTACT_EMAIL}.
       </p>
     </LegalPage>
   );

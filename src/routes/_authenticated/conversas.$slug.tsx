@@ -94,7 +94,7 @@ function Attachment({ msg }: { msg: Msg }) {
       <a href={url} target="_blank" rel="noopener noreferrer" className="mb-1 block">
         <img
           src={url}
-          alt={name}
+          alt={`Imagem enviada no chat: ${name}`}
           loading="lazy"
           className="max-h-60 w-full rounded-lg border-2 border-foreground object-cover"
         />
@@ -782,7 +782,12 @@ function Chat({ id }: { id: string }) {
             <span className="shrink-0 text-xs text-muted-foreground">
               {formatFileSize(file.size)}
             </span>
-            <button type="button" aria-label="Remover anexo" onClick={() => setFile(null)}>
+            <button
+              type="button"
+              aria-label="Remover anexo"
+              onClick={() => setFile(null)}
+              className="flex h-8 w-8 items-center justify-center rounded-full hover:bg-foreground/[0.07]"
+            >
               <X className="h-4 w-4" />
             </button>
             <span className="basis-full text-xs text-muted-foreground">

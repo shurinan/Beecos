@@ -88,7 +88,9 @@ function Groups() {
                   <div className="min-w-0">
                     <p className="truncate font-semibold">{p.name}</p>
                     <p className="text-xs text-muted-foreground">
-                      {n ? `${n.members} ${n.members === 1 ? "participante" : "participantes"} · ${n.open_jobs} ${n.open_jobs === 1 ? "vaga aberta" : "vagas abertas"}` : " "}
+                      {n
+                        ? `${n.members} ${n.members === 1 ? "participante" : "participantes"} · ${n.open_jobs} ${n.open_jobs === 1 ? "vaga aberta" : "vagas abertas"}`
+                        : " "}
                     </p>
                   </div>
                   {userId ? (

@@ -1,9 +1,9 @@
 /** Versão dos Termos e da Política em vigor. Precisa ser igual a public.current_terms_version() no banco. */
-export const TERMS_VERSION = "2026-10-28";
-export const TERMS_UPDATED_LABEL = "28 de outubro de 2026";
+export const TERMS_VERSION = "2026-10-29";
+export const TERMS_UPDATED_LABEL = "29 de outubro de 2026";
 
 /** E-mail do canal de privacidade (encarregado). Preencha quando existir: aparece nas duas páginas. */
-export const PRIVACY_CONTACT_EMAIL: string | null = null;
+export const PRIVACY_CONTACT_EMAIL: string | null = "contato@beecos.com.br";
 
 export function termsErrorMessage(err: unknown): string | null {
   const msg = (err as { message?: string } | null)?.message ?? "";

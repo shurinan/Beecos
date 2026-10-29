@@ -118,7 +118,7 @@
   --muted-foreground: oklch(0.78 0.012 260);
   --accent: oklch(0.38 0.05 92);
   --accent-foreground: oklch(0.95 0.006 95);
-  --destructive: oklch(0.62 0.22 27);
+  --destructive: oklch(0.54 0.2 27); /* branco por cima chega a 4,5:1 (WCAG AA) */
   --destructive-foreground: oklch(0.98 0 0);
   --border: oklch(0.92 0.006 95 / 22%);
   --input: oklch(0.92 0.006 95 / 30%);
@@ -262,4 +262,10 @@
   .badge-pop {
     animation: none;
   }
+}
+
+/* No tema escuro, o vermelho de fundo (selos, contadores) fica escuro para o texto branco ler bem;
+   o vermelho usado como cor de texto fica claro, para ler bem sobre o fundo escuro. */
+.dark .text-destructive {
+  color: oklch(0.74 0.16 27);
 }

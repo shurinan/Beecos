@@ -8,11 +8,7 @@ type Open = { entry: HelpEntry; rect: DOMRect };
 const TARGET = "[data-ajuda], button, a, [role='button']";
 
 function labelOf(el: Element): string {
-  return (
-    el.getAttribute("data-ajuda") ||
-    el.getAttribute("aria-label") ||
-    (el.textContent ?? "")
-  );
+  return el.getAttribute("data-ajuda") || el.getAttribute("aria-label") || (el.textContent ?? "");
 }
 
 /**
@@ -88,6 +84,16 @@ export function AssistedHelp() {
       if (e.key === "Escape") setOpen(null);
     };
     const close = () => setOpen(null);
+    // teclado: parar 2 segundos num botão com o Tab também mostra a ajuda
+    const onFocusIn = (e: FocusEvent) => {
+      const el = (e.target as Element | null)?.closest(TARGET);
+      if (el && el.matches(":focus-visible")) arm(el, false);
+    };
+    const onFocusOut = (e: FocusEvent) => {
+      clear();
+      const next = e.relatedTarget as Node | null;
+      if (!(box.current && next && box.current.contains(next))) setOpen(null);
+    };
 
     document.addEventListener("pointerover", onOver);
     document.addEventListener("pointerout", onOut);
@@ -98,8 +104,12 @@ export function AssistedHelp() {
     document.addEventListener("click", onClick, true);
     document.addEventListener("contextmenu", onContext);
     document.addEventListener("keydown", onKey);
+    document.addEventListener("focusin", onFocusIn);
+    document.addEventListener("focusout", onFocusOut);
     window.addEventListener("scroll", close, true);
     return () => {
+      document.removeEventListener("focusin", onFocusIn);
+      document.removeEventListener("focusout", onFocusOut);
       clear();
       document.removeEventListener("pointerover", onOver);
       document.removeEventListener("pointerout", onOut);
@@ -143,10 +153,26 @@ export function AssistedHelp() {
         const shade = { background: "rgba(0,0,0,0.45)" };
         return (
           <>
-            <div aria-hidden="true" className={dim} style={{ left: 0, top: 0, right: 0, height: Math.max(0, y1), ...shade }} />
-            <div aria-hidden="true" className={dim} style={{ left: 0, top: y2, right: 0, bottom: 0, ...shade }} />
-            <div aria-hidden="true" className={dim} style={{ left: 0, top: y1, width: Math.max(0, x1), height: y2 - y1, ...shade }} />
-            <div aria-hidden="true" className={dim} style={{ left: x2, top: y1, right: 0, height: y2 - y1, ...shade }} />
+            <div
+              aria-hidden="true"
+              className={dim}
+              style={{ left: 0, top: 0, right: 0, height: Math.max(0, y1), ...shade }}
+            />
+            <div
+              aria-hidden="true"
+              className={dim}
+              style={{ left: 0, top: y2, right: 0, bottom: 0, ...shade }}
+            />
+            <div
+              aria-hidden="true"
+              className={dim}
+              style={{ left: 0, top: y1, width: Math.max(0, x1), height: y2 - y1, ...shade }}
+            />
+            <div
+              aria-hidden="true"
+              className={dim}
+              style={{ left: x2, top: y1, right: 0, height: y2 - y1, ...shade }}
+            />
             <div
               aria-hidden="true"
               className="pointer-events-none fixed z-40 rounded-xl border-[3px] border-primary"

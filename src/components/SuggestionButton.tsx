@@ -68,7 +68,11 @@ export function SuggestionButton() {
             aria-label="Sua ideia"
           />
           <DialogFooter>
-            <Button type="button" disabled={busy || !suggestionValid(text)} onClick={() => void submit()}>
+            <Button
+              type="button"
+              disabled={busy || !suggestionValid(text)}
+              onClick={() => void submit()}
+            >
               Enviar ideia
             </Button>
           </DialogFooter>

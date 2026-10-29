@@ -24,6 +24,7 @@ import {
 import { useAuth } from "@/lib/auth";
 import { Avatar, SelfDeclared, SkillCard } from "@/components/profile-bits";
 import { SkillDialog } from "@/components/SkillDialog";
+import { ConfirmButton } from "@/components/ConfirmButton";
 import { ModeratorShortcut } from "@/components/ModeratorShortcut";
 import { PostEditDialog } from "@/components/PostEditDialog";
 import { draftColumns, type PostDraft } from "@/lib/post-form";
@@ -358,7 +359,37 @@ function Painel() {
           </span>
         </div>
         {usage?.premium ? (
-          <p>Vagas e conversas ilimitadas.</p>
+          <div className="space-y-2">
+            <p>Vagas e conversas ilimitadas.</p>
+            <p className="text-sm text-muted-foreground">
+              {usage.activeUntil
+                ? `Premium até ${new Date(usage.activeUntil).toLocaleDateString("pt-BR")}.`
+                : "Premium sem data para terminar."}
+            </p>
+            {usage.cancelRequestedAt ? (
+              <p role="status" className="rounded border-2 border-foreground/30 p-2 text-sm">
+                Cancelamento pedido em{" "}
+                {new Date(usage.cancelRequestedAt).toLocaleDateString("pt-BR")}. O Premium continua
+                até o fim do período pago e não renova.
+              </p>
+            ) : (
+              <ConfirmButton
+                variant="outline"
+                size="sm"
+                title="Cancelar a assinatura Premium?"
+                description="O Premium continua até o fim do período já pago e não renova. Se você assinou há menos de 7 dias, o valor pago é devolvido."
+                confirmLabel="Cancelar assinatura"
+                onConfirm={async () => {
+                  const { error } = await supabase.rpc("request_subscription_cancel");
+                  if (error) return void toast.error("Não foi possível cancelar. Tente de novo.");
+                  toast.success("Cancelamento pedido.");
+                  void qc.invalidateQueries({ queryKey: ["plan", userId] });
+                }}
+              >
+                Cancelar assinatura
+              </ConfirmButton>
+            )}
+          </div>
         ) : (
           <>
             <p className="text-sm">
