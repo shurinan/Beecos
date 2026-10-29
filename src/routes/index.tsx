@@ -49,14 +49,30 @@ const TOPIC_ICON = {
 } as const;
 
 const FIND = [
-  { icon: Briefcase, title: "Vagas", text: "Gente precisando de ajuda hoje, perto de você." },
+  {
+    icon: Briefcase,
+    title: "Vagas",
+    text: "Gente precisando de ajuda hoje, perto de você.",
+    link: { to: "/vagas", search: { q: undefined, tipo: undefined } },
+  },
   {
     icon: Users,
     title: "Trabalhadores",
     text: "Profissionais disponíveis, com habilidades e nível.",
+    link: { to: "/vagas", search: { q: undefined, tipo: "trabalhadores" } },
   },
-  { icon: MessageCircle, title: "Chat direto", text: "Combine preço e horário sem intermediário." },
-  { icon: Star, title: "Avaliações", text: "Só quem concluiu um serviço pode avaliar." },
+  {
+    icon: MessageCircle,
+    title: "Chat direto",
+    text: "Combine preço e horário sem intermediário.",
+    link: { to: "/conversas" },
+  },
+  {
+    icon: Star,
+    title: "Avaliações",
+    text: "Só quem concluiu um serviço pode avaliar.",
+    link: { to: "/ajuda", hash: "avaliacoes" },
+  },
 ] as const;
 
 const STEPS = [
@@ -103,14 +119,26 @@ function Index() {
         <section className="space-y-3">
           <h2 className="text-xl">O que você encontra aqui</h2>
           <div className="grid grid-cols-2 gap-3">
-            {FIND.map(({ icon: Icon, title, text }) => (
-              <div key={title} className="block-card space-y-1 p-3">
+            {FIND.map(({ icon: Icon, title, text, link }) => (
+              <Link
+                key={title}
+                {...link}
+                className="block-card group block space-y-1 p-3 transition-[background-color,box-shadow,transform] duration-150 hover:bg-foreground/[0.04] active:scale-[0.98]"
+              >
                 <span className="flex h-9 w-9 items-center justify-center rounded-md border-2 border-foreground bg-primary">
                   <Icon className="h-5 w-5" aria-hidden="true" />
                 </span>
-                <h3 className="text-base">{title}</h3>
+                <h3 className="flex items-center gap-1 text-base">
+                  {title}
+                  <span
+                    aria-hidden="true"
+                    className="transition-transform group-hover:translate-x-0.5"
+                  >
+                    →
+                  </span>
+                </h3>
                 <p className="text-sm leading-snug text-muted-foreground">{text}</p>
-              </div>
+              </Link>
             ))}
           </div>
         </section>

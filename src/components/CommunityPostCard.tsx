@@ -1,6 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { Banknote, Clock, MapPin } from "lucide-react";
-import type { PostWithAuthor } from "@/components/PostCard";
+import { useState } from "react";
+import { PostDialog, type PostWithAuthor } from "@/components/PostCard";
 import { Button } from "@/components/ui/button";
 import { timeAgo } from "@/lib/data";
 import { formatKm, type PostDistance } from "@/lib/geo";
@@ -24,6 +25,7 @@ export function CommunityPostCard({
   onApply: () => void;
   busy: boolean;
 }) {
+  const [open, setOpen] = useState(false);
   const filled = isFilled(slots);
   const label = vacanciesLabel(slots ?? { vacancies: post.vacancies ?? 1, taken: 0 });
   const params = post.slug
@@ -85,14 +87,19 @@ export function CommunityPostCard({
           </Button>
         )}
         {params ? (
-          <Button asChild variant="outline">
-            <Link to="/vagas/$profissao/$codigo" params={params}>
-              Saiba mais
-            </Link>
+          <Button type="button" variant="outline" onClick={() => setOpen(true)}>
+            Saiba mais
           </Button>
         ) : null}
       </div>
       {author && <p className="text-xs text-muted-foreground">{author}</p>}
+      <PostDialog
+        post={post}
+        slots={slots}
+        distance={distance}
+        open={open}
+        onOpenChange={setOpen}
+      />
     </article>
   );
 }

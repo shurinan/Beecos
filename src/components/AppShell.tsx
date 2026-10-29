@@ -1,4 +1,6 @@
-import { Link } from "@tanstack/react-router";
+import { Link, useRouter, useRouterState } from "@tanstack/react-router";
+import { useEffect } from "react";
+import { takeDestination } from "@/lib/after-login";
 import { Bell, Briefcase, Home, MessageCircle, UserRound, LogIn, Users } from "lucide-react";
 import type { ReactNode } from "react";
 import { useAuth } from "@/lib/auth";
@@ -15,6 +17,18 @@ import { InstallPrompt } from "@/components/InstallPrompt";
 function ChatBackground({ userId }: { userId: string }) {
   useChatBackground(userId);
   usePresenceHeartbeat(userId);
+  return null;
+}
+
+/** Quem entrou com o Google volta para a tela inicial: daqui seguimos para a tela que a pessoa tinha tocado. */
+function AfterLogin({ userId }: { userId: string }) {
+  const router = useRouter();
+  const path = useRouterState({ select: (s) => s.location.pathname });
+  useEffect(() => {
+    if (path === "/auth") return; // a tela de entrar cuida disso
+    const dest = takeDestination();
+    if (dest) router.history.replace(dest);
+  }, [userId, path, router]);
   return null;
 }
 
@@ -74,6 +88,7 @@ export function AppShell({ children }: { children: ReactNode }) {
       </header>
       <AssistedHelp />
       {userId && <ChatBackground userId={userId} />}
+      {userId && <AfterLogin userId={userId} />}
       <main className="flex-1 px-4 pb-28 pt-4">
         <HoldBanner />
         <InstallPrompt />
@@ -99,7 +114,10 @@ export function AppShell({ children }: { children: ReactNode }) {
       <nav className="fixed inset-x-0 bottom-0 z-20 border-t-2 border-foreground bg-background">
         <div className="mx-auto flex max-w-2xl">
           <Link to="/" className={item} activeProps={active} activeOptions={{ exact: true }}>
-            <span className={bub}><Home className="h-5 w-5" /></span> Início
+            <span className={bub}>
+              <Home className="h-5 w-5" />
+            </span>{" "}
+            Início
           </Link>
           <Link
             to="/vagas"
@@ -107,7 +125,10 @@ export function AppShell({ children }: { children: ReactNode }) {
             className={item}
             activeProps={active}
           >
-            <span className={bub}><Briefcase className="h-5 w-5" /></span> Vagas
+            <span className={bub}>
+              <Briefcase className="h-5 w-5" />
+            </span>{" "}
+            Vagas
           </Link>
           <Link
             to="/comunidade"
@@ -138,12 +159,18 @@ export function AppShell({ children }: { children: ReactNode }) {
                 Conversas
               </Link>
               <Link to="/perfil" className={item} activeProps={active}>
-                <span className={bub}><UserRound className="h-5 w-5" /></span> Meu perfil
+                <span className={bub}>
+                  <UserRound className="h-5 w-5" />
+                </span>{" "}
+                Meu perfil
               </Link>
             </>
           ) : (
             <Link to="/auth" className={item} activeProps={active}>
-              <span className={bub}><LogIn className="h-5 w-5" /></span> Entrar
+              <span className={bub}>
+                <LogIn className="h-5 w-5" />
+              </span>{" "}
+              Entrar
             </Link>
           )}
           {!userId && <div className="flex-1" aria-hidden="true" />}

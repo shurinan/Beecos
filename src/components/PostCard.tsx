@@ -76,7 +76,6 @@ export function PostCard({
     : null;
   const expandable = !full && !!params;
   const [open, setOpen] = useState(false);
-  const code = postCode(post.slug);
   const tag = "rounded px-2 py-0.5 text-xs font-bold uppercase tracking-wide";
   return (
     <>
@@ -209,48 +208,74 @@ export function PostCard({
           </div>
         </div>
       </article>
-      {expandable && params && (
-        <Dialog open={open} onOpenChange={setOpen}>
-          <DialogContent className="max-h-[90vh] gap-3 overflow-y-auto border-0 bg-transparent p-0 shadow-none sm:max-w-lg [&>button]:text-background">
-            <DialogTitle className="sr-only">{post.title}</DialogTitle>
-            <DialogDescription className="sr-only">Detalhes da vaga</DialogDescription>
-            <div className="space-y-3 rounded-lg bg-background p-3">
-              {code && (
-                <div className="flex flex-wrap items-center justify-between gap-2 text-sm">
-                  <button
-                    type="button"
-                    className="flex items-center gap-1.5 rounded-full border-2 border-foreground px-3 py-1 font-mono font-bold"
-                    aria-label={`Copiar o código ${code}`}
-                    onClick={() => {
-                      navigator.clipboard?.writeText(code).then(
-                        () => toast.success("Código copiado"),
-                        () => toast.error("Não foi possível copiar"),
-                      );
-                    }}
-                  >
-                    #{code} <Copy className="h-3.5 w-3.5" aria-hidden="true" />
-                  </button>
-                  <Link
-                    to="/vagas/$profissao/$codigo"
-                    params={params}
-                    onClick={() => setOpen(false)}
-                    className="flex items-center gap-1 font-bold underline"
-                  >
-                    Página da vaga <ExternalLink className="h-3.5 w-3.5" aria-hidden="true" />
-                  </Link>
-                </div>
-              )}
-              <PostCard
-                post={post}
-                slots={slots}
-                distance={distance}
-                full
-              />
-              <PostActions post={post} onNavigate={() => setOpen(false)} />
-            </div>
-          </DialogContent>
-        </Dialog>
+      {expandable && (
+        <PostDialog
+          post={post}
+          slots={slots}
+          distance={distance}
+          open={open}
+          onOpenChange={setOpen}
+        />
       )}
     </>
+  );
+}
+
+/** O popup da vaga: código, texto inteiro e as ações. Usado nos cards de Vagas e da Comunidade. */
+export function PostDialog({
+  post,
+  slots,
+  distance,
+  open,
+  onOpenChange,
+}: {
+  post: PostWithAuthor;
+  slots?: PostSlots | undefined;
+  distance?: PostDistance | undefined;
+  open: boolean;
+  onOpenChange: (v: boolean) => void;
+}) {
+  const params = post.slug
+    ? postParams({ slug: post.slug, professions: post.professions ?? null })
+    : null;
+  const code = postCode(post.slug);
+  const setOpen = onOpenChange;
+  if (!params) return null;
+  return (
+    <Dialog open={open} onOpenChange={setOpen}>
+      <DialogContent className="max-h-[90vh] gap-3 overflow-y-auto border-0 bg-transparent p-0 shadow-none sm:max-w-lg [&>button]:text-background">
+        <DialogTitle className="sr-only">{post.title}</DialogTitle>
+        <DialogDescription className="sr-only">Detalhes da vaga</DialogDescription>
+        <div className="space-y-3 rounded-lg bg-background p-3">
+          {code && (
+            <div className="flex flex-wrap items-center justify-between gap-2 text-sm">
+              <button
+                type="button"
+                className="flex items-center gap-1.5 rounded-full border-2 border-foreground px-3 py-1 font-mono font-bold"
+                aria-label={`Copiar o código ${code}`}
+                onClick={() => {
+                  navigator.clipboard?.writeText(code).then(
+                    () => toast.success("Código copiado"),
+                    () => toast.error("Não foi possível copiar"),
+                  );
+                }}
+              >
+                #{code} <Copy className="h-3.5 w-3.5" aria-hidden="true" />
+              </button>
+              <Link
+                to="/vagas/$profissao/$codigo"
+                params={params}
+                onClick={() => setOpen(false)}
+                className="flex items-center gap-1 font-bold underline"
+              >
+                Página da vaga <ExternalLink className="h-3.5 w-3.5" aria-hidden="true" />
+              </Link>
+            </div>
+          )}
+          <PostCard post={post} slots={slots} distance={distance} full />
+          <PostActions post={post} onNavigate={() => setOpen(false)} />
+        </div>
+      </DialogContent>
+    </Dialog>
   );
 }

@@ -99,7 +99,7 @@ export function helpFor(label: string | null | undefined): HelpEntry | null {
   return HELP[head] ?? null;
 }
 
-export const FAQ: { q: string; a: string }[] = [
+export const FAQ: { q: string; a: string; id?: string }[] = [
   {
     q: "O que é o Beecos?",
     a: "Um lugar para achar quem faz o serviço que você precisa, e para quem trabalha encontrar vagas perto de casa.",
@@ -107,6 +107,11 @@ export const FAQ: { q: string; a: string }[] = [
   {
     q: "Como publico uma vaga?",
     a: "Toque em Quero contratar na tela inicial, ou em Publicar na tela de Vagas ou em Meu perfil. Diga a profissão, o serviço, o valor e quantas pessoas você precisa. Para oferecer o seu trabalho, escolha Quero trabalhar.",
+  },
+  {
+    id: "avaliacoes",
+    q: "Como funcionam as avaliações?",
+    a: "Só dá para avaliar depois que o serviço é marcado como concluído no chat. Aí as duas pessoas podem se avaliar com estrelas e um comentário, e a nota aparece no perfil de cada uma.",
   },
   {
     q: "Meu endereço fica público?",
