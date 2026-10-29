@@ -68,10 +68,15 @@ export function useEngagementActions(userId: string) {
       run(() => supabase.rpc("complete_engagement", { _id: id }), "Serviço concluído"),
     cancel: (id: string) =>
       run(() => supabase.rpc("cancel_engagement", { _id: id }), "Serviço cancelado"),
-    closeNegotiation: (conversation: string, post: string) =>
+    closeNegotiation: (conversation: string, post: string, release = false) =>
       run(
-        () => supabase.rpc("close_negotiation", { _conversation: conversation, _post: post }),
-        "Negociação encerrada",
+        () =>
+          supabase.rpc("close_negotiation", {
+            _conversation: conversation,
+            _post: post,
+            _release: release,
+          }),
+        release ? "Negociação encerrada. A vaga recebe um novo contato." : "Negociação encerrada",
       ),
     reopenNegotiation: (conversation: string, post: string) =>
       run(

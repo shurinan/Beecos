@@ -239,6 +239,13 @@
       "when": 1795891200000,
       "tag": "0033_close_for_all",
       "breakpoints": true
+    },
+    {
+      "idx": 34,
+      "version": "7",
+      "when": 1795977600000,
+      "tag": "0034_close_and_release",
+      "breakpoints": true
     }
   ]
 }
