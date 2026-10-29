@@ -141,6 +141,7 @@ export type Database = {
       };
       messages: {
         Row: {
+          attachment_expired_at: string | null;
           attachment_name: string | null;
           attachment_path: string | null;
           attachment_size: number | null;
@@ -856,7 +857,8 @@ export type Database = {
           id: string;
           reason: string;
           reported_id: string | null;
-          reporter_id: string;
+          bad_faith: boolean;
+          reporter_id: string | null;
           resolution_note: string;
           reviewed_at: string | null;
           reviewed_by: string | null;
@@ -1018,6 +1020,10 @@ export type Database = {
       moderator_case: {
         Args: { _report: string };
         Returns: Json;
+      };
+      reporter_bad_faith: {
+        Args: { _report: string };
+        Returns: number;
       };
       report_content: {
         Args: { _type: string; _target: string; _reason: string; _details?: string };

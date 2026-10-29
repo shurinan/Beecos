@@ -132,7 +132,9 @@ function ReportCard({
   const [busy, setBusy] = useState(false);
   const [caseOpen, setCaseOpen] = useState(false);
   const reason = REPORT_REASONS.find((x) => x.value === report.reason)?.label ?? report.reason;
-  async function act(action: "dismiss" | "hide_post" | "restore_post" | "done") {
+  async function act(
+    action: "dismiss" | "dismiss_bad_faith" | "hide_post" | "restore_post" | "done",
+  ) {
     setBusy(true);
     try {
       await resolveReport(report.id, action, note);
@@ -178,6 +180,16 @@ function ReportCard({
           onClick={() => act("dismiss")}
         >
           Descartar
+        </Button>
+        <Button
+          type="button"
+          variant="outline"
+          size="sm"
+          disabled={busy}
+          title="Descarta e marca como má-fé. Com 2 marcações em 90 dias, a pessoa não pode mais denunciar."
+          onClick={() => act("dismiss_bad_faith")}
+        >
+          Descartar: má-fé
         </Button>
         {report.target_type === "post" &&
           (hidden ? (

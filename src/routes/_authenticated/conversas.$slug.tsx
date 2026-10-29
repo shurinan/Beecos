@@ -22,6 +22,8 @@ import {
   hasLink,
   isLinkError,
   MAX_MESSAGE_LENGTH,
+  ATTACHMENT_HOURS,
+  attachmentExpired,
   attachmentPath,
   cleanFileName,
   formatFileSize,
@@ -56,15 +58,17 @@ type Msg = {
   attachment_name: string | null;
   attachment_type: string | null;
   attachment_size: number | null;
+  attachment_expired_at?: string | null;
 };
 const MSG_COLUMNS =
-  "id, sender_id, content, kind, created_at, attachment_path, attachment_name, attachment_type, attachment_size";
+  "id, sender_id, content, kind, created_at, attachment_path, attachment_name, attachment_type, attachment_size, attachment_expired_at";
 
 function Attachment({ msg }: { msg: Msg }) {
   const path = msg.attachment_path;
+  const expired = attachmentExpired(msg);
   const { data: url, isError } = useQuery({
     queryKey: ["signed", path],
-    enabled: !!path,
+    enabled: !!path && !expired,
     staleTime: 50 * 60_000,
     queryFn: async () => {
       const { data, error } = await supabase.storage
@@ -76,6 +80,15 @@ function Attachment({ msg }: { msg: Msg }) {
   });
   if (!path) return null;
   const name = msg.attachment_name ?? "arquivo";
+  if (expired) {
+    return (
+      <p className="mb-1 flex items-center gap-2 rounded-lg border-2 border-dashed border-current/40 p-2 text-xs opacity-80">
+        <FileText className="h-4 w-4 shrink-0" aria-hidden="true" />
+        {isImageType(msg.attachment_type) ? "Foto" : "Arquivo"} expirado. Os arquivos do chat ficam{" "}
+        {ATTACHMENT_HOURS} horas.
+      </p>
+    );
+  }
   if (isImageType(msg.attachment_type)) {
     return url ? (
       <a href={url} target="_blank" rel="noopener noreferrer" className="mb-1 block">
@@ -440,10 +453,10 @@ function Chat({ id }: { id: string }) {
       isHoldError(error)
         ? HOLD_MESSAGE
         : isLinkError(error)
-        ? LINK_MESSAGE
-        : isBlockedTextError(error)
-          ? BLOCKED_TEXT_MESSAGE
-          : "Mensagem não enviada",
+          ? LINK_MESSAGE
+          : isBlockedTextError(error)
+            ? BLOCKED_TEXT_MESSAGE
+            : "Mensagem não enviada",
     );
     return "fail";
   }
@@ -528,10 +541,10 @@ function Chat({ id }: { id: string }) {
         isHoldError(error)
           ? HOLD_MESSAGE
           : isLinkError(error)
-          ? LINK_MESSAGE
-          : isBlockedTextError(error)
-            ? BLOCKED_TEXT_MESSAGE
-            : "Mensagem não enviada",
+            ? LINK_MESSAGE
+            : isBlockedTextError(error)
+              ? BLOCKED_TEXT_MESSAGE
+              : "Mensagem não enviada",
       );
       return; // o texto e o anexo continuam no campo para a pessoa corrigir
     }
@@ -761,7 +774,7 @@ function Chat({ id }: { id: string }) {
         className="fixed inset-x-0 bottom-[60px] z-10 mx-auto max-w-2xl border-t-2 border-foreground bg-background p-3"
       >
         {file && (
-          <div className="mb-2 flex items-center gap-2 rounded-lg border-2 border-foreground p-2 text-sm">
+          <div className="mb-2 flex flex-wrap items-center gap-2 rounded-lg border-2 border-foreground p-2 text-sm">
             <FileText className="h-5 w-5 shrink-0" />
             <span className="min-w-0 flex-1 truncate font-semibold">
               {cleanFileName(file.name)}
@@ -772,6 +785,10 @@ function Chat({ id }: { id: string }) {
             <button type="button" aria-label="Remover anexo" onClick={() => setFile(null)}>
               <X className="h-4 w-4" />
             </button>
+            <span className="basis-full text-xs text-muted-foreground">
+              O arquivo fica disponível por {ATTACHMENT_HOURS} horas. Depois, só o texto da conversa
+              fica.
+            </span>
           </div>
         )}
         <div className="flex gap-2">

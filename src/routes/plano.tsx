@@ -2,7 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { Check, Crown, Minus } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
-import { FREE_CHATS_PER_MONTH, FREE_JOBS_PER_MONTH, PREMIUM_PRICE } from "@/lib/plans";
+import { FREE_CHATS_PER_MONTH, FREE_JOBS_PER_MONTH, PREMIUM_PRICE, URGENT_PRICE } from "@/lib/plans";
 
 export const Route = createFileRoute("/plano")({
   head: () => ({
@@ -26,6 +26,10 @@ const ROWS: { label: string; free: Cell; premium: Cell }[] = [
   { label: "Escolher de quais profissões receber avisos", free: false, premium: true },
   { label: "Aparece primeiro nas buscas", free: false, premium: true },
   { label: "Selo Premium no perfil e nas vagas", free: false, premium: true },
+  { label: "Selo Urgente na vaga", free: `${URGENT_PRICE} por vaga`, premium: "Incluído" },
+  { label: "Destaque na lista de vagas", free: false, premium: true },
+  { label: "Fotos na vaga (até 5)", free: false, premium: true },
+  { label: "Fila de espera e trocar quem negocia", free: false, premium: true },
   { label: "Sem anúncios", free: false, premium: true },
   { label: "Chat, avaliações e negociação", free: true, premium: true },
 ];

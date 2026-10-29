@@ -3,6 +3,8 @@ import { supabase } from "@/integrations/supabase/client";
 export const FREE_JOBS_PER_MONTH = 2;
 export const FREE_CHATS_PER_MONTH = 5;
 export const PREMIUM_PRICE = "R$ 14,90/mês";
+/** Selo Urgente para quem não é Premium (pagamento avulso). */
+export const URGENT_PRICE = "R$ 2";
 
 export function limitMessage(err: unknown): string | null {
   const msg = (err as { message?: string } | null)?.message ?? "";

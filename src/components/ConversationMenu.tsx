@@ -58,7 +58,7 @@ import {
   useSetPref,
   type PrefPatch,
 } from "@/lib/conversation-prefs";
-import { isImageType, formatFileSize } from "@/lib/chat";
+import { ATTACHMENT_HOURS, attachmentExpired, formatFileSize, isImageType } from "@/lib/chat";
 
 /** Menu da conversa (⋮): favoritar, fixar, arquivar, etiqueta, recado, mídias e excluir. */
 export function ConversationMenu({
@@ -303,6 +303,7 @@ type MediaRow = {
   attachment_name: string;
   attachment_type: string;
   attachment_size: number;
+  attachment_expired_at: string | null;
 };
 
 function MediaDialog({
@@ -331,7 +332,7 @@ function MediaDialog({
       if (clearedAt) q = q.gt("created_at", clearedAt);
       const { data: rows, error } = await q;
       if (error) throw error;
-      const list = (rows ?? []) as MediaRow[];
+      const list = ((rows ?? []) as MediaRow[]).filter((r) => !attachmentExpired(r));
       if (list.length === 0) return [] as (MediaRow & { url: string | null })[];
       const signed = await supabase.storage.from("chat-files").createSignedUrls(
         list.map((r) => r.attachment_path),
@@ -346,7 +347,10 @@ function MediaDialog({
       <DialogContent className="max-h-[85vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>Mídias enviadas</DialogTitle>
-          <DialogDescription>Fotos e PDFs trocados nesta conversa.</DialogDescription>
+          <DialogDescription>
+            Fotos e PDFs das últimas {ATTACHMENT_HOURS} horas. Depois disso o arquivo é apagado;
+            salve o que precisar.
+          </DialogDescription>
         </DialogHeader>
         {isLoading && <p className="text-muted-foreground">Carregando…</p>}
         {isError && <p>Não foi possível carregar as mídias.</p>}

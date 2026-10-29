@@ -152,3 +152,14 @@ export function isHoldError(error: { message?: string } | null | undefined): boo
 
 export const HOLD_MESSAGE =
   "Há uma denúncia em análise envolvendo uma das contas. Por até 2 horas não é possível enviar mensagens nesta conversa.";
+
+/** Fotos e PDFs do chat ficam 48 horas; depois o arquivo é apagado e só o texto da mensagem fica. */
+export const ATTACHMENT_HOURS = 48;
+
+export function attachmentExpired(
+  msg: { created_at: string; attachment_expired_at?: string | null },
+  now = Date.now(),
+): boolean {
+  if (msg.attachment_expired_at) return true;
+  return now - new Date(msg.created_at).getTime() > ATTACHMENT_HOURS * 3600_000;
+}
