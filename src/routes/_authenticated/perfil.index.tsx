@@ -2,7 +2,7 @@ import { usernameErrorMessage } from "@/lib/username";
 import { postGaps } from "@/lib/post-gaps";
 import { PrivacyCard } from "@/components/PrivacyCard";
 import { postParams, profileParam } from "@/lib/urls";
-import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate, useRouterState } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
@@ -129,6 +129,19 @@ function Painel() {
   const { data: workArea } = useWorkArea(userId);
   const [areaOpen, setAreaOpen] = useState(false);
   const [draft, setDraft] = useState<PostDraft>(EMPTY_DRAFT);
+  // "Quero contratar" da tela inicial chega aqui com #nova-vaga: abre direto o cadastro da vaga
+  const hash = useRouterState({ select: (s) => s.location.hash });
+  const loaded = !!data;
+  useEffect(() => {
+    if (!loaded || hash !== "nova-vaga") return;
+    setDraft((x) => ({ ...x, kind: "job" }));
+    const t = window.setTimeout(() => {
+      const form = document.getElementById("nova-vaga");
+      form?.scrollIntoView({ behavior: "smooth", block: "start" });
+      form?.querySelector<HTMLElement>("input, textarea, button")?.focus({ preventScroll: true });
+    }, 150);
+    return () => window.clearTimeout(t);
+  }, [loaded, hash]);
   const [editing, setEditing] = useState<{
     id: string;
     draft: PostDraft;
@@ -601,7 +614,7 @@ function Painel() {
         onSave={saveSkill}
       />
 
-      <form onSubmit={createPost} className="block-card space-y-3 p-5">
+      <form id="nova-vaga" onSubmit={createPost} className="block-card scroll-mt-20 space-y-3 p-5">
         <h2 className="text-xl">Nova publicação</h2>
         <div className="grid grid-cols-2 overflow-hidden rounded-lg border-2 border-foreground">
           {(["job", "available"] as PostKind[]).map((k) => (
