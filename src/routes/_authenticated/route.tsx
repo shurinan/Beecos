@@ -4,6 +4,7 @@ import { TermsGate } from "@/components/TermsGate";
 import { rememberDestination } from "@/lib/after-login";
 
 export const Route = createFileRoute("/_authenticated")({
+  staticData: { sitemap: "exclude-subtree" },
   ssr: false,
   beforeLoad: async ({ location }) => {
     const { data } = await supabase.auth.getUser();

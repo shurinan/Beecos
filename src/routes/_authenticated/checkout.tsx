@@ -16,6 +16,7 @@ import { ANNUAL_PER_MONTH, ANNUAL_SAVING, getPlanUsage, PREMIUM_PRICE } from "@/
 type Tipo = "premium" | "anual" | "urgente";
 
 export const Route = createFileRoute("/_authenticated/checkout")({
+  staticData: { sitemap: false },
   validateSearch: (q: Record<string, unknown>): { tipo: Tipo; vaga?: string | undefined } => ({
     tipo: q["tipo"] === "urgente" ? "urgente" : q["tipo"] === "anual" ? "anual" : "premium",
     vaga: typeof q["vaga"] === "string" ? q["vaga"] : undefined,

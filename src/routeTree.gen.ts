@@ -15,6 +15,7 @@ import { Route as AjudaRouteImport } from './routes/ajuda'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as PlanoRouteImport } from './routes/plano'
 import { Route as PrivacidadeRouteImport } from './routes/privacidade'
+import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as TermosRouteImport } from './routes/termos'
 import { Route as AuthenticatedAvisosRouteImport } from './routes/_authenticated/avisos'
 import { Route as AuthenticatedCheckoutRouteImport } from './routes/_authenticated/checkout'
@@ -60,6 +61,11 @@ const PlanoRoute = PlanoRouteImport.update({
 const PrivacidadeRoute = PrivacidadeRouteImport.update({
   id: '/privacidade',
   path: '/privacidade',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
+  id: '/sitemap.xml',
+  path: '/sitemap.xml',
   getParentRoute: () => rootRouteImport,
 } as any)
 const TermosRoute = TermosRouteImport.update({
@@ -160,6 +166,7 @@ export interface FileRoutesByFullPath {
   '/auth': typeof AuthRoute
   '/plano': typeof PlanoRoute
   '/privacidade': typeof PrivacidadeRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/termos': typeof TermosRoute
   '/avisos': typeof AuthenticatedAvisosRoute
   '/checkout': typeof AuthenticatedCheckoutRoute
@@ -184,6 +191,7 @@ export interface FileRoutesByTo {
   '/auth': typeof AuthRoute
   '/plano': typeof PlanoRoute
   '/privacidade': typeof PrivacidadeRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/termos': typeof TermosRoute
   '/avisos': typeof AuthenticatedAvisosRoute
   '/checkout': typeof AuthenticatedCheckoutRoute
@@ -210,6 +218,7 @@ export interface FileRoutesById {
   '/auth': typeof AuthRoute
   '/plano': typeof PlanoRoute
   '/privacidade': typeof PrivacidadeRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/termos': typeof TermosRoute
   '/_authenticated/avisos': typeof AuthenticatedAvisosRoute
   '/_authenticated/checkout': typeof AuthenticatedCheckoutRoute
@@ -236,6 +245,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/plano'
     | '/privacidade'
+    | '/sitemap.xml'
     | '/termos'
     | '/avisos'
     | '/checkout'
@@ -260,6 +270,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/plano'
     | '/privacidade'
+    | '/sitemap.xml'
     | '/termos'
     | '/avisos'
     | '/checkout'
@@ -285,6 +296,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/plano'
     | '/privacidade'
+    | '/sitemap.xml'
     | '/termos'
     | '/_authenticated/avisos'
     | '/_authenticated/checkout'
@@ -311,6 +323,7 @@ export interface RootRouteChildren {
   AuthRoute: typeof AuthRoute
   PlanoRoute: typeof PlanoRoute
   PrivacidadeRoute: typeof PrivacidadeRoute
+  SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   TermosRoute: typeof TermosRoute
   ComunidadeGruposRoute: typeof ComunidadeGruposRoute
   PerfilSlugRoute: typeof PerfilSlugRoute
@@ -361,6 +374,13 @@ declare module '@tanstack/react-router' {
       path: '/privacidade'
       fullPath: '/privacidade'
       preLoaderRoute: typeof PrivacidadeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sitemap.xml': {
+      id: '/sitemap.xml'
+      path: '/sitemap.xml'
+      fullPath: '/sitemap.xml'
+      preLoaderRoute: typeof SitemapDotxmlRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/termos': {
@@ -524,6 +544,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthRoute: AuthRoute,
   PlanoRoute: PlanoRoute,
   PrivacidadeRoute: PrivacidadeRoute,
+  SitemapDotxmlRoute: SitemapDotxmlRoute,
   TermosRoute: TermosRoute,
   ComunidadeGruposRoute: ComunidadeGruposRoute,
   PerfilSlugRoute: PerfilSlugRoute,

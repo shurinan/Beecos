@@ -19,6 +19,7 @@ import { useAuth } from "@/lib/auth";
 import { TOPICS } from "@/lib/discovery";
 
 export const Route = createFileRoute("/")({
+  staticData: { sitemap: true },
   head: () => ({
     meta: [
       { title: "Beecos — Vagas e trabalhadores na sua cidade" },

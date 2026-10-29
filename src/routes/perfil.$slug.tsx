@@ -33,6 +33,7 @@ import { BLOCKED_TEXT_MESSAGE, isBlockedTextError, replySpeedLabel } from "@/lib
 import { SKILL_COLUMNS, formatRating, sortSkills, type ProfileSkill } from "@/lib/skills";
 
 export const Route = createFileRoute("/perfil/$slug")({
+  staticData: { sitemap: false },
   validateSearch: (s: Record<string, unknown>) => ({
     post: typeof s["post"] === "string" ? (s["post"] as string) : undefined,
   }),

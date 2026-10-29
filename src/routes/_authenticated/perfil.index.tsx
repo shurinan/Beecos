@@ -45,6 +45,7 @@ import {
 } from "@/lib/plans";
 
 export const Route = createFileRoute("/_authenticated/perfil/")({
+  staticData: { sitemap: false },
   head: () => ({
     meta: [
       { title: "Meu perfil — Beecos" },

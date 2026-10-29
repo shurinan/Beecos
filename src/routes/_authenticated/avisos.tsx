@@ -10,6 +10,7 @@ import { timeAgo } from "@/lib/data";
 import { postParams } from "@/lib/urls";
 
 export const Route = createFileRoute("/_authenticated/avisos")({
+  staticData: { sitemap: false },
   head: () => ({
     meta: [
       { title: "Avisos — Beecos" },

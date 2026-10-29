@@ -49,6 +49,7 @@ import {
 import { formatLongDate } from "@/lib/skills";
 
 export const Route = createFileRoute("/_authenticated/perfil/contato")({
+  staticData: { sitemap: false },
   head: () => ({
     meta: [
       { title: "Informações de contato — Beecos" },

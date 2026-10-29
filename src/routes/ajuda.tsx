@@ -3,6 +3,7 @@ import { useEffect } from "react";
 import { FAQ } from "@/lib/help";
 
 export const Route = createFileRoute("/ajuda")({
+  staticData: { sitemap: true },
   head: () => ({
     meta: [
       { title: "Ajuda e perguntas frequentes — Beecos" },

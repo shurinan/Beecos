@@ -16,3 +16,5 @@ Disallow: /moderacao
 Disallow: /avisos
 Disallow: /conversas
 Disallow: /auth
+
+Sitemap: https://beecos.com.br/sitemap.xml

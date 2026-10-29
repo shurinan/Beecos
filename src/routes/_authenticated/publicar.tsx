@@ -18,6 +18,7 @@ import { KIND_ACTION } from "@/lib/data";
 type Tipo = "contratar" | "trabalhar";
 
 export const Route = createFileRoute("/_authenticated/publicar")({
+  staticData: { sitemap: false },
   validateSearch: (q: Record<string, unknown>): { tipo: Tipo } => ({
     tipo: q["tipo"] === "trabalhar" ? "trabalhar" : "contratar",
   }),

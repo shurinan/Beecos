@@ -37,6 +37,7 @@ import {
 } from "@/lib/chat";
 
 export const Route = createFileRoute("/_authenticated/conversas/$slug")({
+  staticData: { sitemap: false },
   head: () => ({
     meta: [
       { title: "Chat — Beecos" },

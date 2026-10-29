@@ -17,6 +17,7 @@ import {
 } from "@/lib/plans";
 
 export const Route = createFileRoute("/plano")({
+  staticData: { sitemap: true },
   head: () => ({
     meta: [
       { title: "Plano Grátis e Premium — Beecos" },

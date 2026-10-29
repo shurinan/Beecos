@@ -18,6 +18,7 @@ import { useUnread } from "@/lib/chat-hooks";
 import { NotificationCard } from "@/components/InstallPrompt";
 
 export const Route = createFileRoute("/_authenticated/conversas/")({
+  staticData: { sitemap: false },
   head: () => ({
     meta: [
       { title: "Conversas — Beecos" },
