@@ -26,6 +26,7 @@ import { Avatar, SelfDeclared, SkillCard } from "@/components/profile-bits";
 import { SkillDialog } from "@/components/SkillDialog";
 import { ConfirmButton } from "@/components/ConfirmButton";
 import { cancelSubscription } from "@/lib/billing";
+import { CheckoutButton } from "@/components/CheckoutButton";
 import { ModeratorShortcut } from "@/components/ModeratorShortcut";
 import { PostEditDialog } from "@/components/PostEditDialog";
 import { draftColumns, type PostDraft } from "@/lib/post-form";
@@ -410,9 +411,14 @@ function Painel() {
             <div className="rounded-lg border-2 border-foreground bg-accent p-3">
               <p className="font-display">Premium — {PREMIUM_PRICE}</p>
               <p className="text-sm">Publique vagas sem limite e converse com quem quiser.</p>
-              <Button className="mt-2 w-full" onClick={() => toast("Pagamento em breve!")}>
+              <CheckoutButton
+                userId={userId}
+                kind="premium"
+                what={`Premium, ${PREMIUM_PRICE}.`}
+                className="mt-2 w-full"
+              >
                 Quero ser Premium
-              </Button>
+              </CheckoutButton>
               <Link to="/plano" className="mt-2 block text-center text-sm font-bold underline">
                 Comparar Grátis × Premium
               </Link>
@@ -581,7 +587,7 @@ function Painel() {
         premium={!!usage?.premium}
         suggestedCep={data?.address?.postal_code}
         onSave={saveWorkArea}
-        onUpgrade={() => toast("Pagamento em breve!")}
+        onUpgrade={() => void navigate({ to: "/plano" })}
       />
       <SkillDialog
         open={skillDialog.open}
