@@ -8,7 +8,6 @@ import { postCode } from "@/lib/post-code";
 import { useAuth } from "@/lib/auth";
 import { MapPin, Banknote, Crown } from "lucide-react";
 import { COVER_BG, coverVars, FILLED_COVER, resolveCover, resolveIcon } from "@/lib/post-look";
-import { inscritosLabel } from "@/lib/community";
 import { Avatar } from "@/components/profile-bits";
 import { KIND_LABEL, timeAgo, type PostKind } from "@/lib/data";
 import { levelLabel, topSkill, type SkillBase } from "@/lib/skills";
@@ -199,13 +198,7 @@ export function PostCard({
           )}
           <div className="flex items-center justify-between gap-3 border-t-[1.5px] border-dashed border-foreground/40 pt-2.5 text-sm">
             <span className="min-w-0 text-muted-foreground">
-              {[
-                vacancy,
-                kind === "job" && interested !== undefined ? inscritosLabel(interested) : null,
-                timeAgo(post.created_at),
-              ]
-                .filter(Boolean)
-                .join(" · ")}
+              {[vacancy, timeAgo(post.created_at)].filter(Boolean).join(" · ")}
             </span>
             {expandable && (
               <button

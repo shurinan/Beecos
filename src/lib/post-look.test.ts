@@ -10,6 +10,15 @@ describe("coverColor", () => {
   });
 });
 
+describe("cor por tipo de serviço", () => {
+  it("cada área tem a sua cor", () => {
+    expect(coverColor("Eletricista")).toBe("#F9C80E");
+    expect(coverColor("pedreiro")).toBe("#F2A48B");
+    expect(coverColor("encanador")).not.toBe(coverColor("eletricista"));
+    expect(coverColor("eletricista-residencial")).toBe("#F9C80E");
+  });
+});
+
 describe("professionIcon", () => {
   it("acha pelo nome, sem ligar para acento", () => {
     expect(professionIcon("Eletricista")).toBe(Zap);
