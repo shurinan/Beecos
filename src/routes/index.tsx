@@ -90,7 +90,7 @@ function Index() {
               </Link>
             </Button>
             <Button asChild size="lg" variant="outline" className="w-full">
-              <Link to="/vagas" search={{ q: undefined, tipo: undefined }}>
+              <Link to={userId ? "/perfil" : "/auth"} hash={userId ? "estou-disponivel" : ""}>
                 Quero trabalhar
               </Link>
             </Button>
