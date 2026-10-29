@@ -16,16 +16,46 @@ async function failure(error: unknown): Promise<string> {
   return "Não foi possível falar com o pagamento agora. Tente de novo em instantes.";
 }
 
-/** Cria a cobrança e devolve o link do Asaas (Pix, boleto ou cartão). */
+export type PayMethod = "pix" | "boleto" | "card";
+
+export type Charge =
+  | { method: "card"; paymentId: string; url: string }
+  | {
+      method: "pix";
+      paymentId: string;
+      pix: { image: string; code: string; expires: string | null };
+    }
+  | { method: "boleto"; paymentId: string; boleto: { line: string; url: string } };
+
+type CheckoutReply = Partial<Charge> & { error?: string };
+
+/**
+ * Cria a cobrança no Asaas. Pix e boleto voltam para mostrar na própria tela; o cartão volta com o
+ * link da página segura do Asaas (o número do cartão nunca passa pelo Beecos).
+ */
 export async function startCheckout(input: {
   kind: "premium" | "annual" | "urgent";
+  method: PayMethod;
   cpf?: string | undefined;
   postId?: string | undefined;
-}): Promise<{ url: string } | { error: string }> {
-  const { data, error } = await supabase.functions.invoke<Reply>("asaas-checkout", { body: input });
+}): Promise<Charge | { error: string }> {
+  const { data, error } = await supabase.functions.invoke<CheckoutReply>("asaas-checkout", {
+    body: input,
+  });
   if (error) return { error: await failure(error) };
-  if (!data?.url) return { error: data?.error ?? "O pagamento não devolveu o link." };
-  return { url: data.url };
+  if (!data?.paymentId || !data.method)
+    return { error: data?.error ?? "O pagamento não devolveu a cobrança." };
+  return data as Charge;
+}
+
+/** Fica olhando se o Asaas já confirmou este pagamento (o webhook grava no banco). */
+export async function isPaid(paymentId: string): Promise<boolean> {
+  const { data } = await supabase
+    .from("payments")
+    .select("status")
+    .eq("asaas_payment_id", paymentId)
+    .maybeSingle();
+  return data?.status === "paid";
 }
 
 /** Cancela o Premium. `refunded` é verdadeiro quando o valor foi devolvido (até 7 dias). */
