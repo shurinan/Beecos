@@ -39,8 +39,8 @@ function PostPage() {
         .from("posts")
         .select(
           userId
-            ? "*, professions(name, slug), services(name), profiles!posts_user_id_fkey(full_name, slug, avatar_path, profile_skills(skill, level))"
-            : "*, professions(name, slug), services(name)",
+            ? "*, professions(name, slug), services(name), post_photos(id, path, sort), profiles!posts_user_id_fkey(full_name, slug, avatar_path, profile_skills(skill, level))"
+            : "*, professions(name, slug), services(name), post_photos(id, path, sort)",
         )
         .eq("slug", codigo)
         .maybeSingle();
@@ -93,17 +93,12 @@ function PostPage() {
   return (
     <div className="space-y-4">
       {back}
-      <PostCard
-        post={post}
-        slots={slots[post.id]}
-        distance={distance}
-        full
-      />
+      <PostCard post={post} slots={slots[post.id]} distance={distance} full />
       <PostActions post={post} />
       {mine && (post as { hidden_at?: string | null }).hidden_at && (
         <p role="note" className="rounded border-2 border-destructive p-3 text-sm">
-          <b>Esta vaga está oculta.</b> A moderação a tirou das listas e das buscas. Se achar que foi
-          um engano, fale com o suporte.
+          <b>Esta vaga está oculta.</b> A moderação a tirou das listas e das buscas. Se achar que
+          foi um engano, fale com o suporte.
         </p>
       )}
     </div>

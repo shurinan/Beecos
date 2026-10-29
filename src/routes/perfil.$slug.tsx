@@ -130,7 +130,7 @@ function ProfilePage({ id }: { id: string }) {
         supabase
           .from("posts")
           .select(
-            "*, professions(name, slug), services(name), profiles!posts_user_id_fkey(full_name, slug, profile_skills(skill, level))",
+            "*, professions(name, slug), services(name), post_photos(id, path, sort), profiles!posts_user_id_fkey(full_name, slug, profile_skills(skill, level))",
           )
           .eq("user_id", id)
           .order("created_at", { ascending: false }),

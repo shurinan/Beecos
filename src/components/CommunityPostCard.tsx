@@ -1,5 +1,6 @@
 import { Link } from "@tanstack/react-router";
-import { Banknote, Clock, MapPin } from "lucide-react";
+import { Banknote, Camera, Clock, MapPin } from "lucide-react";
+import { photoUrl, sortPhotos } from "@/lib/post-photos";
 import { useState } from "react";
 import { PostDialog, type PostWithAuthor } from "@/components/PostCard";
 import { Button } from "@/components/ui/button";
@@ -70,6 +71,22 @@ export function CommunityPostCard({
           </span>
         )}
       </p>
+      {(post.post_photos?.length ?? 0) > 0 && (
+        <button
+          type="button"
+          onClick={() => setOpen(true)}
+          className="flex items-center gap-2 text-sm font-semibold"
+        >
+          <img
+            src={photoUrl(sortPhotos(post.post_photos)[0]!.path)}
+            alt=""
+            loading="lazy"
+            className="h-10 w-10 rounded-md border-2 border-foreground object-cover"
+          />
+          <Camera className="h-4 w-4" aria-hidden="true" />
+          {post.post_photos!.length} {post.post_photos!.length === 1 ? "foto" : "fotos"}
+        </button>
+      )}
       <div className="grid grid-cols-2 gap-2">
         {filled ? (
           <Button type="button" variant="outline" disabled>

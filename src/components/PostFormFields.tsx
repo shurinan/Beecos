@@ -1,5 +1,7 @@
+import { useEffect, useMemo, useRef } from "react";
 import { toast } from "sonner";
-import { Crown, Lock } from "lucide-react";
+import { Camera, Crown, Lock, X } from "lucide-react";
+import { MAX_PHOTOS, photoError, photosLeft, photoUrl } from "@/lib/post-photos";
 import { Link } from "@tanstack/react-router";
 import { PostCard } from "@/components/PostCard";
 import { URGENT_PRICE } from "@/lib/plans";
@@ -54,6 +56,25 @@ export function PostFormFields({
     ? catalog?.services.get(draft.pick.serviceIds[0])
     : undefined;
   const chosenCover = resolveCover(look.coverColor, profession?.name);
+  const photos = draft.photos;
+  const photoInput = useRef<HTMLInputElement>(null);
+  const addedUrls = useMemo(() => photos.added.map((f) => URL.createObjectURL(f)), [photos.added]);
+  useEffect(() => () => addedUrls.forEach((u) => URL.revokeObjectURL(u)), [addedUrls]);
+  const keptUrls = photos.kept.map((p) => photoUrl(p.path));
+  const left = photosLeft(photos.kept.length, photos.added.length);
+  function pickPhotos(list: FileList | null) {
+    const files = Array.from(list ?? []);
+    const ok: File[] = [];
+    for (const f of files) {
+      const problem = photoError(f);
+      if (problem) toast.error(problem);
+      else ok.push(f);
+    }
+    if (ok.length > left) toast.error(`Cabem até ${MAX_PHOTOS} fotos por vaga.`);
+    const take = ok.slice(0, left);
+    if (take.length)
+      onChange({ ...draft, photos: { ...photos, added: [...photos.added, ...take] } });
+  }
   const sw =
     "h-9 w-9 rounded-full border-2 transition-transform hover:scale-110 focus-visible:outline-2 focus-visible:outline-offset-2 ";
 
@@ -173,6 +194,7 @@ export function PostFormFields({
               services: service ? { name: service.name } : null,
               profiles: null,
             }}
+            photoUrls={premium ? [...keptUrls, ...addedUrls] : []}
           />
         </div>
         <fieldset>
@@ -280,8 +302,103 @@ export function PostFormFields({
             </p>
           )}
         </fieldset>
+        <fieldset className="space-y-2">
+          <legend className="mb-1.5 flex items-center gap-1.5 text-sm font-bold">
+            {premium ? (
+              <Crown className="h-4 w-4" aria-hidden="true" />
+            ) : (
+              <Lock className="h-4 w-4" aria-hidden="true" />
+            )}
+            Fotos{" "}
+            <span className="font-normal text-muted-foreground">· Premium · até {MAX_PHOTOS}</span>
+          </legend>
+          {premium ? (
+            <>
+              <div className="flex flex-wrap gap-2">
+                {photos.kept.map((p, i) => (
+                  <Thumb
+                    key={p.id}
+                    url={keptUrls[i]!}
+                    label={`Tirar a foto ${i + 1}`}
+                    onRemove={() =>
+                      onChange({
+                        ...draft,
+                        photos: {
+                          ...photos,
+                          kept: photos.kept.filter((x) => x.id !== p.id),
+                          removed: [...photos.removed, p],
+                        },
+                      })
+                    }
+                  />
+                ))}
+                {photos.added.map((f, i) => (
+                  <Thumb
+                    key={addedUrls[i]}
+                    url={addedUrls[i]!}
+                    label={`Tirar a foto nova ${i + 1}`}
+                    onRemove={() =>
+                      onChange({
+                        ...draft,
+                        photos: { ...photos, added: photos.added.filter((x) => x !== f) },
+                      })
+                    }
+                  />
+                ))}
+                {left > 0 && (
+                  <button
+                    type="button"
+                    onClick={() => photoInput.current?.click()}
+                    className="flex h-20 w-20 flex-col items-center justify-center gap-1 rounded-lg border-2 border-dashed border-foreground/50 text-xs font-bold hover:bg-foreground/[0.05]"
+                  >
+                    <Camera className="h-5 w-5" aria-hidden="true" />
+                    Adicionar
+                  </button>
+                )}
+              </div>
+              <input
+                ref={photoInput}
+                type="file"
+                accept="image/jpeg,image/png,image/webp"
+                multiple
+                className="sr-only"
+                aria-label="Escolher fotos"
+                onChange={(e) => {
+                  pickPhotos(e.target.files);
+                  e.target.value = "";
+                }}
+              />
+              <p className="text-xs text-muted-foreground">
+                Mostre o serviço ou o local. Não deixe aparecer endereço, rosto ou documento.
+              </p>
+            </>
+          ) : (
+            <p className="text-xs text-muted-foreground">
+              Fotos na vaga são do plano Premium.{" "}
+              <Link to="/plano" className="font-bold underline">
+                Conhecer o Premium
+              </Link>
+            </p>
+          )}
+        </fieldset>
       </section>
     </>
+  );
+}
+
+function Thumb({ url, label, onRemove }: { url: string; label: string; onRemove: () => void }) {
+  return (
+    <span className="relative h-20 w-20 overflow-hidden rounded-lg border-2 border-foreground bg-muted">
+      <img src={url} alt="" className="h-full w-full object-cover" />
+      <button
+        type="button"
+        aria-label={label}
+        onClick={onRemove}
+        className="absolute right-0.5 top-0.5 flex h-6 w-6 items-center justify-center rounded-full bg-[#1B1D23] text-white"
+      >
+        <X className="h-3.5 w-3.5" aria-hidden="true" />
+      </button>
+    </span>
   );
 }
 

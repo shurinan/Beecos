@@ -6,7 +6,8 @@ export const MAX_GROUPS = 30;
 
 export function communityErrorMessage(err: unknown): string | null {
   const msg = (err as { message?: string } | null)?.message ?? "";
-  if (msg.includes("GRUPOS_DEMAIS")) return `Você já está em ${MAX_GROUPS} grupos. Saia de algum para entrar em outro.`;
+  if (msg.includes("GRUPOS_DEMAIS"))
+    return `Você já está em ${MAX_GROUPS} grupos. Saia de algum para entrar em outro.`;
   return null;
 }
 
@@ -31,7 +32,9 @@ export function useMyCommunities(userId: string | null) {
       .from("community_members")
       .insert({ user_id: userId!, profession_id: professionId });
     if (error && error.code !== "23505") throw error;
-    qc.setQueryData<string[]>(key, (old) => (old?.includes(professionId) ? old : [...(old ?? []), professionId]));
+    qc.setQueryData<string[]>(key, (old) =>
+      old?.includes(professionId) ? old : [...(old ?? []), professionId],
+    );
     await qc.invalidateQueries({ queryKey: key });
   }
   async function leave(professionId: string) {
@@ -60,7 +63,8 @@ export function useCommunityOverview() {
       const { data, error } = await supabase.rpc("community_overview");
       if (error) throw error;
       const map = new Map<string, CommunityNumbers>();
-      for (const r of data ?? []) map.set(r.profession_id, { members: r.members, open_jobs: r.open_jobs });
+      for (const r of data ?? [])
+        map.set(r.profession_id, { members: r.members, open_jobs: r.open_jobs });
       return map;
     },
   });
@@ -77,8 +81,8 @@ export function useCommunityFeed(professionIds: string[], signedIn: boolean) {
         .from("posts")
         .select(
           signedIn
-            ? "*, professions(name, slug), services(name), profiles!posts_user_id_fkey(full_name, slug, avatar_path, profile_skills(skill, level))"
-            : "*, professions(name, slug), services(name)",
+            ? "*, professions(name, slug), services(name), post_photos(id, path, sort), profiles!posts_user_id_fkey(full_name, slug, avatar_path, profile_skills(skill, level))"
+            : "*, professions(name, slug), services(name), post_photos(id, path, sort)",
         )
         .eq("kind", "job")
         .in("profession_id", professionIds)
