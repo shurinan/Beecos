@@ -2,11 +2,11 @@ import { usernameErrorMessage } from "@/lib/username";
 import { postGaps } from "@/lib/post-gaps";
 import { PrivacyCard } from "@/components/PrivacyCard";
 import { postParams, profileParam } from "@/lib/urls";
-import { createFileRoute, Link, useNavigate, useRouterState } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { toast } from "sonner";
-import { Mail, MapPin, Pencil, Smartphone, Trash2, Users } from "lucide-react";
+import { Mail, MapPin, Pencil, Plus, Smartphone, Trash2, Users } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -25,12 +25,11 @@ import { useAuth } from "@/lib/auth";
 import { Avatar, SelfDeclared, SkillCard } from "@/components/profile-bits";
 import { SkillDialog } from "@/components/SkillDialog";
 import { ModeratorShortcut } from "@/components/ModeratorShortcut";
-import { PostFormFields } from "@/components/PostFormFields";
 import { PostEditDialog } from "@/components/PostEditDialog";
-import { EMPTY_DRAFT, draftColumns, draftError, type PostDraft } from "@/lib/post-form";
+import { draftColumns, type PostDraft } from "@/lib/post-form";
 import { useCatalog } from "@/lib/catalog";
 import { WorkAreaDialog, type WorkAreaInput } from "@/components/WorkAreaDialog";
-import { GeoError, formatCep, isValidCep, lookupCep, useWorkArea, type Place } from "@/lib/geo";
+import { formatCep, useWorkArea } from "@/lib/geo";
 import { EditProfileDialog, type ProfileFields } from "@/components/ProfileDialogs";
 import { BLOCKED_TEXT_MESSAGE, isBlockedTextError } from "@/lib/chat";
 import { addressLines, type ContactAddress } from "@/lib/contact";
@@ -39,7 +38,6 @@ import {
   FREE_JOBS_PER_MONTH,
   PREMIUM_PRICE,
   getPlanUsage,
-  limitMessage,
 } from "@/lib/plans";
 
 export const Route = createFileRoute("/_authenticated/perfil/")({
@@ -128,35 +126,12 @@ function Painel() {
   const { data: catalog } = useCatalog();
   const { data: workArea } = useWorkArea(userId);
   const [areaOpen, setAreaOpen] = useState(false);
-  const [draft, setDraft] = useState<PostDraft>(EMPTY_DRAFT);
-  // "Quero contratar" (#nova-vaga) e "Quero trabalhar" (#estou-disponivel) da tela inicial abrem direto o cadastro
-  const hash = useRouterState({ select: (s) => s.location.hash });
-  const loaded = !!data;
-  useEffect(() => {
-    if (!loaded || (hash !== "nova-vaga" && hash !== "estou-disponivel")) return;
-    setDraft((x) => ({ ...x, kind: hash === "nova-vaga" ? "job" : "available" }));
-    const t = window.setTimeout(() => {
-      const form = document.getElementById("nova-vaga");
-      form?.scrollIntoView({ behavior: "smooth", block: "start" });
-      form?.querySelector<HTMLElement>("input, textarea, button")?.focus({ preventScroll: true });
-    }, 150);
-    return () => window.clearTimeout(t);
-  }, [loaded, hash]);
   const [editing, setEditing] = useState<{
     id: string;
     draft: PostDraft;
     minVacancies: number;
   } | null>(null);
   const [editOpen, setEditOpen] = useState(false);
-
-  useEffect(() => {
-    if (data?.profile) setDraft((x) => ({ ...x, city: x.city || data.profile!.city }));
-  }, [data?.profile]);
-
-  // O CEP da vaga começa igual ao de onde a pessoa atua (ela pode trocar).
-  useEffect(() => {
-    if (workArea) setDraft((x) => ({ ...x, cep: x.cep || formatCep(workArea.postal_code) }));
-  }, [workArea]);
 
   async function saveWorkArea(a: WorkAreaInput): Promise<boolean> {
     const { error } = await supabase.from("work_areas").upsert({
@@ -245,53 +220,6 @@ function Painel() {
       toast.error("Não foi possível remover a habilidade");
       return;
     }
-    qc.invalidateQueries();
-  }
-
-  async function createPost(e: React.FormEvent) {
-    e.preventDefault();
-    const problem = draftError(draft);
-    if (problem) {
-      toast.error(problem);
-      return;
-    }
-    let place = draft.place;
-    if (!place && isValidCep(draft.cep)) {
-      try {
-        place = await lookupCep(draft.cep);
-      } catch (err) {
-        toast.error(err instanceof GeoError ? err.message : "Não foi possível buscar o CEP");
-        return;
-      }
-    }
-    const { data: created, error } = await supabase
-      .from("posts")
-      .insert({ ...draftColumns(draft), kind: draft.kind, user_id: userId })
-      .select("id")
-      .single();
-    if (error || !created) {
-      toast.error(
-        error && isBlockedTextError(error)
-          ? BLOCKED_TEXT_MESSAGE
-          : ((error && limitMessage(error)) ?? "Erro ao publicar"),
-      );
-      return;
-    }
-    if (place) {
-      const loc = await supabase.from("post_locations").insert({
-        post_id: created.id,
-        postal_code: place.cep,
-        lat: place.lat,
-        lng: place.lng,
-      });
-      if (loc.error) {
-        toast.error(
-          "Publicado, mas não foi possível guardar o CEP. Edite a vaga para tentar de novo.",
-        );
-      }
-    }
-    toast.success("Publicado!");
-    setDraft({ ...EMPTY_DRAFT, kind: draft.kind, city: draft.city, cep: draft.cep });
     qc.invalidateQueries();
   }
 
@@ -614,38 +542,15 @@ function Painel() {
         onSave={saveSkill}
       />
 
-      <form id="nova-vaga" onSubmit={createPost} className="block-card scroll-mt-20 space-y-3 p-5">
-        <h2 className="text-xl">Nova publicação</h2>
-        <div className="grid grid-cols-2 overflow-hidden rounded-lg border-2 border-foreground">
-          {(["job", "available"] as PostKind[]).map((k) => (
-            <button
-              type="button"
-              key={k}
-              onClick={() => setDraft({ ...draft, kind: k })}
-              className={
-                "py-2 text-sm font-bold " +
-                (draft.kind === k ? "bg-foreground text-background" : "bg-background")
-              }
-            >
-              {k === "job" ? "Oferecer vaga" : "Estou disponível"}
-            </button>
-          ))}
-        </div>
-        <PostFormFields
-          draft={draft}
-          onChange={setDraft}
-          catalog={catalog}
-          idPrefix="new-post"
-          minVacancies={0}
-          premium={!!usage?.premium}
-        />
-        <Button type="submit" className="w-full" size="lg">
-          Publicar
-        </Button>
-      </form>
-
       <section className="space-y-2">
-        <h2 className="text-xl">Minhas publicações</h2>
+        <div className="flex items-center justify-between gap-2">
+          <h2 className="text-xl">Minhas publicações</h2>
+          <Button asChild size="sm">
+            <Link to="/publicar" search={{ tipo: "contratar" }}>
+              <Plus /> Nova publicação
+            </Link>
+          </Button>
+        </div>
         {data?.posts.length === 0 && (
           <p className="text-muted-foreground">Você ainda não publicou nada.</p>
         )}

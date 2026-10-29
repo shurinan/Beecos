@@ -225,6 +225,13 @@
       "when": 1795718400000,
       "tag": "0031_waitlist",
       "breakpoints": true
+    },
+    {
+      "idx": 32,
+      "version": "7",
+      "when": 1795804800000,
+      "tag": "0032_group_alerts",
+      "breakpoints": true
     }
   ]
 }

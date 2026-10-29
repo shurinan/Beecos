@@ -18,6 +18,7 @@ import { Route as PrivacidadeRouteImport } from './routes/privacidade'
 import { Route as TermosRouteImport } from './routes/termos'
 import { Route as AuthenticatedAvisosRouteImport } from './routes/_authenticated/avisos'
 import { Route as AuthenticatedModeracaoRouteImport } from './routes/_authenticated/moderacao'
+import { Route as AuthenticatedPublicarRouteImport } from './routes/_authenticated/publicar'
 import { Route as AuthenticatedSugestoesRouteImport } from './routes/_authenticated/sugestoes'
 import { Route as ComunidadeIndexRouteImport } from './routes/comunidade.index'
 import { Route as ComunidadeGruposRouteImport } from './routes/comunidade.grupos'
@@ -72,6 +73,11 @@ const AuthenticatedAvisosRoute = AuthenticatedAvisosRouteImport.update({
 const AuthenticatedModeracaoRoute = AuthenticatedModeracaoRouteImport.update({
   id: '/moderacao',
   path: '/moderacao',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedPublicarRoute = AuthenticatedPublicarRouteImport.update({
+  id: '/publicar',
+  path: '/publicar',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedSugestoesRoute = AuthenticatedSugestoesRouteImport.update({
@@ -145,6 +151,7 @@ export interface FileRoutesByFullPath {
   '/termos': typeof TermosRoute
   '/avisos': typeof AuthenticatedAvisosRoute
   '/moderacao': typeof AuthenticatedModeracaoRoute
+  '/publicar': typeof AuthenticatedPublicarRoute
   '/sugestoes': typeof AuthenticatedSugestoesRoute
   '/comunidade/grupos': typeof ComunidadeGruposRoute
   '/perfil/$slug': typeof PerfilSlugRoute
@@ -166,6 +173,7 @@ export interface FileRoutesByTo {
   '/termos': typeof TermosRoute
   '/avisos': typeof AuthenticatedAvisosRoute
   '/moderacao': typeof AuthenticatedModeracaoRoute
+  '/publicar': typeof AuthenticatedPublicarRoute
   '/sugestoes': typeof AuthenticatedSugestoesRoute
   '/comunidade/grupos': typeof ComunidadeGruposRoute
   '/perfil/$slug': typeof PerfilSlugRoute
@@ -189,6 +197,7 @@ export interface FileRoutesById {
   '/termos': typeof TermosRoute
   '/_authenticated/avisos': typeof AuthenticatedAvisosRoute
   '/_authenticated/moderacao': typeof AuthenticatedModeracaoRoute
+  '/_authenticated/publicar': typeof AuthenticatedPublicarRoute
   '/_authenticated/sugestoes': typeof AuthenticatedSugestoesRoute
   '/comunidade/grupos': typeof ComunidadeGruposRoute
   '/perfil/$slug': typeof PerfilSlugRoute
@@ -212,6 +221,7 @@ export interface FileRouteTypes {
     | '/termos'
     | '/avisos'
     | '/moderacao'
+    | '/publicar'
     | '/sugestoes'
     | '/comunidade/grupos'
     | '/perfil/$slug'
@@ -233,6 +243,7 @@ export interface FileRouteTypes {
     | '/termos'
     | '/avisos'
     | '/moderacao'
+    | '/publicar'
     | '/sugestoes'
     | '/comunidade/grupos'
     | '/perfil/$slug'
@@ -255,6 +266,7 @@ export interface FileRouteTypes {
     | '/termos'
     | '/_authenticated/avisos'
     | '/_authenticated/moderacao'
+    | '/_authenticated/publicar'
     | '/_authenticated/sugestoes'
     | '/comunidade/grupos'
     | '/perfil/$slug'
@@ -348,6 +360,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedModeracaoRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/publicar': {
+      id: '/_authenticated/publicar'
+      path: '/publicar'
+      fullPath: '/publicar'
+      preLoaderRoute: typeof AuthenticatedPublicarRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/sugestoes': {
       id: '/_authenticated/sugestoes'
       path: '/sugestoes'
@@ -431,6 +450,7 @@ declare module '@tanstack/react-router' {
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedAvisosRoute: typeof AuthenticatedAvisosRoute
   AuthenticatedModeracaoRoute: typeof AuthenticatedModeracaoRoute
+  AuthenticatedPublicarRoute: typeof AuthenticatedPublicarRoute
   AuthenticatedSugestoesRoute: typeof AuthenticatedSugestoesRoute
   AuthenticatedConversasSlugRoute: typeof AuthenticatedConversasSlugRoute
   AuthenticatedPerfilContatoRoute: typeof AuthenticatedPerfilContatoRoute
@@ -442,6 +462,7 @@ interface AuthenticatedRouteRouteChildren {
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAvisosRoute: AuthenticatedAvisosRoute,
   AuthenticatedModeracaoRoute: AuthenticatedModeracaoRoute,
+  AuthenticatedPublicarRoute: AuthenticatedPublicarRoute,
   AuthenticatedSugestoesRoute: AuthenticatedSugestoesRoute,
   AuthenticatedConversasSlugRoute: AuthenticatedConversasSlugRoute,
   AuthenticatedPerfilContatoRoute: AuthenticatedPerfilContatoRoute,

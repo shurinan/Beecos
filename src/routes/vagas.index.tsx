@@ -237,10 +237,26 @@ function Vagas() {
                   : "bg-background text-foreground")
               }
             >
-              {k === "job" ? "Vagas em aberto" : "Trabalhadores disponíveis"}
+              <span className="block">{k === "job" ? "Quero trabalhar" : "Quero contratar"}</span>
+              <span className="block text-xs font-normal opacity-80">
+                {k === "job" ? "ver vagas em aberto" : "ver trabalhadores disponíveis"}
+              </span>
             </button>
           ))}
         </div>
+
+        <Link
+          to="/publicar"
+          search={{ tipo: filters.kind === "job" ? "contratar" : "trabalhar" }}
+          className="flex items-center justify-between gap-3 rounded-lg border-2 border-dashed border-foreground/50 px-3 py-2 text-sm font-semibold hover:bg-foreground/[0.05]"
+        >
+          {filters.kind === "job"
+            ? "Precisa de alguém? Publique uma vaga"
+            : "Quer trabalhar? Publique que você está disponível"}
+          <span className="flex items-center gap-1 font-bold">
+            <Plus className="h-4 w-4" aria-hidden="true" /> Publicar
+          </span>
+        </Link>
 
         <div className="flex gap-2">
           <div className="relative flex-1">
@@ -362,11 +378,7 @@ function Vagas() {
           )}
           {shown?.map((p, i) => (
             <div key={p.id} className="space-y-4">
-              <PostCard
-                post={p}
-                slots={slots[p.id]}
-                distance={distances.get(p.id)}
-              />
+              <PostCard post={p} slots={slots[p.id]} distance={distances.get(p.id)} />
               {i === FEED_AD_AFTER - 1 && shouldShowFeedAd(shown.length) && (
                 <AdSlot placement="feed" />
               )}

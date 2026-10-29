@@ -7,6 +7,12 @@ export const KIND_LABEL: Record<PostKind, string> = {
   available: "Disponível",
 };
 
+/** O nome de cada tipo do ponto de vista de quem publica (tela inicial, publicar e abas). */
+export const KIND_ACTION: Record<PostKind, string> = {
+  job: "Quero contratar",
+  available: "Quero trabalhar",
+};
+
 export function timeAgo(iso: string) {
   const diff = (Date.now() - new Date(iso).getTime()) / 1000;
   if (diff < 60) return "agora";
