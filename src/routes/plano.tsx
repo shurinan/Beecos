@@ -1,12 +1,16 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { useQuery } from "@tanstack/react-query";
 import { Check, Crown, Minus } from "lucide-react";
-import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
+import { CheckoutButton } from "@/components/CheckoutButton";
+import { useAuth } from "@/lib/auth";
+import { rememberDestination } from "@/lib/after-login";
 import {
   FREE_CHATS_PER_MONTH,
   FREE_JOBS_PER_MONTH,
   PREMIUM_PRICE,
   URGENT_PRICE,
+  getPlanUsage,
 } from "@/lib/plans";
 
 export const Route = createFileRoute("/plano")({
@@ -55,6 +59,15 @@ function Mark({ value }: { value: Cell }) {
 }
 
 function PlanPage() {
+  const { userId } = useAuth();
+  const navigate = useNavigate();
+  const { data: usage } = useQuery({
+    queryKey: ["plan", userId],
+    queryFn: () => getPlanUsage(userId!),
+    enabled: !!userId,
+    // quem acabou de pagar volta para esta tela: atualiza sozinho ao voltar
+    refetchOnWindowFocus: true,
+  });
   return (
     <div className="space-y-5">
       <header className="space-y-1">
@@ -102,13 +115,41 @@ function PlanPage() {
       <section className="block-card space-y-2 p-5">
         <p className="font-display text-xl">Premium — {PREMIUM_PRICE}</p>
         <p className="text-sm text-muted-foreground">
-          O pagamento será feito pelo Asaas (Pix, boleto ou cartão). Ainda não está aberto. Você
-          pode desistir em até 7 dias depois de pagar e receber o valor de volta, e cancelar quando
-          quiser em Meu perfil: o Premium vai até o fim do período pago e não é cobrado de novo.
+          O pagamento é feito pelo Asaas (Pix, boleto ou cartão). Você pode desistir em até 7 dias
+          depois de pagar e receber o valor de volta, e cancelar quando quiser em Meu perfil: o
+          Premium vai até o fim do período pago e não é cobrado de novo.
         </p>
-        <Button className="w-full" onClick={() => toast("O pagamento abre em breve!")}>
-          Quero ser Premium
-        </Button>
+        {usage?.premium ? (
+          <p
+            role="status"
+            className="rounded border-2 border-foreground p-2 text-center text-sm font-bold"
+          >
+            Você já é Premium
+            {usage.activeUntil
+              ? ` até ${new Date(usage.activeUntil).toLocaleDateString("pt-BR")}`
+              : ""}
+            .
+          </p>
+        ) : userId ? (
+          <CheckoutButton
+            userId={userId}
+            kind="premium"
+            what={`Premium, ${PREMIUM_PRICE}.`}
+            className="w-full"
+          >
+            Quero ser Premium
+          </CheckoutButton>
+        ) : (
+          <Button
+            className="w-full"
+            onClick={() => {
+              rememberDestination("/plano");
+              void navigate({ to: "/auth" });
+            }}
+          >
+            Entrar para ser Premium
+          </Button>
+        )}
         <p className="text-center text-xs text-muted-foreground">
           Os limites do plano Grátis zeram todo mês. Quem publicou antes continua publicado.
         </p>

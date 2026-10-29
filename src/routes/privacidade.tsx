@@ -78,7 +78,8 @@ function Privacy() {
           do app (Supabase e Lovable); login com Google, se você usar; as fontes de letra do site
           (Google Fonts, que recebe o seu endereço IP ao carregar a página); a busca do CEP e da
           cidade (BrasilAPI e OpenStreetMap, que recebem o CEP digitado); pagamento (Asaas) e e-mail
-          (Resend). Elas só tratam os dados para nos prestar o serviço.
+          (Resend). Elas só tratam os dados para nos prestar o serviço. Ao pagar, o Asaas pede o seu
+          CPF: ele fica com o Asaas e o Beecos não o guarda.
         </li>
         <li>
           <b>Autoridades,</b> quando a lei exigir.
