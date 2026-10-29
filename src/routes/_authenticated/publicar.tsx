@@ -102,7 +102,8 @@ function Publicar() {
     }
     const { data: created, error } = await supabase
       .from("posts")
-      .insert({ ...draftColumns(draft), kind: draft.kind, user_id: userId })
+      // slug é gerado pelo trigger posts_slug no banco; o valor vazio é substituído
+      .insert({ ...draftColumns(draft), kind: draft.kind, user_id: userId, slug: "" })
       .select("id, slug, professions(slug)")
       .single();
     if (error || !created) {
