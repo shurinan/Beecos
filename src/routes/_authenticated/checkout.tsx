@@ -214,7 +214,9 @@ function Checkout() {
           <p className="text-right font-display text-xl leading-tight">
             {price}
             {!urgent && (
-              <span className="block text-xs font-normal text-muted-foreground">por mês</span>
+              <span className="block text-xs font-normal text-muted-foreground">
+                {annual ? `≈ ${ANNUAL_PER_MONTH} por mês` : "por mês"}
+              </span>
             )}
           </p>
         </div>
