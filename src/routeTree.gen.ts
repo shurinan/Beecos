@@ -17,7 +17,9 @@ import { Route as PlanoRouteImport } from './routes/plano'
 import { Route as PrivacidadeRouteImport } from './routes/privacidade'
 import { Route as TermosRouteImport } from './routes/termos'
 import { Route as AuthenticatedAvisosRouteImport } from './routes/_authenticated/avisos'
+import { Route as AuthenticatedCheckoutRouteImport } from './routes/_authenticated/checkout'
 import { Route as AuthenticatedModeracaoRouteImport } from './routes/_authenticated/moderacao'
+import { Route as AuthenticatedPagamentoRouteImport } from './routes/_authenticated/pagamento'
 import { Route as AuthenticatedPublicarRouteImport } from './routes/_authenticated/publicar'
 import { Route as AuthenticatedSugestoesRouteImport } from './routes/_authenticated/sugestoes'
 import { Route as ComunidadeIndexRouteImport } from './routes/comunidade.index'
@@ -70,9 +72,19 @@ const AuthenticatedAvisosRoute = AuthenticatedAvisosRouteImport.update({
   path: '/avisos',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedCheckoutRoute = AuthenticatedCheckoutRouteImport.update({
+  id: '/checkout',
+  path: '/checkout',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedModeracaoRoute = AuthenticatedModeracaoRouteImport.update({
   id: '/moderacao',
   path: '/moderacao',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedPagamentoRoute = AuthenticatedPagamentoRouteImport.update({
+  id: '/pagamento',
+  path: '/pagamento',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedPublicarRoute = AuthenticatedPublicarRouteImport.update({
@@ -150,7 +162,9 @@ export interface FileRoutesByFullPath {
   '/privacidade': typeof PrivacidadeRoute
   '/termos': typeof TermosRoute
   '/avisos': typeof AuthenticatedAvisosRoute
+  '/checkout': typeof AuthenticatedCheckoutRoute
   '/moderacao': typeof AuthenticatedModeracaoRoute
+  '/pagamento': typeof AuthenticatedPagamentoRoute
   '/publicar': typeof AuthenticatedPublicarRoute
   '/sugestoes': typeof AuthenticatedSugestoesRoute
   '/comunidade/grupos': typeof ComunidadeGruposRoute
@@ -172,7 +186,9 @@ export interface FileRoutesByTo {
   '/privacidade': typeof PrivacidadeRoute
   '/termos': typeof TermosRoute
   '/avisos': typeof AuthenticatedAvisosRoute
+  '/checkout': typeof AuthenticatedCheckoutRoute
   '/moderacao': typeof AuthenticatedModeracaoRoute
+  '/pagamento': typeof AuthenticatedPagamentoRoute
   '/publicar': typeof AuthenticatedPublicarRoute
   '/sugestoes': typeof AuthenticatedSugestoesRoute
   '/comunidade/grupos': typeof ComunidadeGruposRoute
@@ -196,7 +212,9 @@ export interface FileRoutesById {
   '/privacidade': typeof PrivacidadeRoute
   '/termos': typeof TermosRoute
   '/_authenticated/avisos': typeof AuthenticatedAvisosRoute
+  '/_authenticated/checkout': typeof AuthenticatedCheckoutRoute
   '/_authenticated/moderacao': typeof AuthenticatedModeracaoRoute
+  '/_authenticated/pagamento': typeof AuthenticatedPagamentoRoute
   '/_authenticated/publicar': typeof AuthenticatedPublicarRoute
   '/_authenticated/sugestoes': typeof AuthenticatedSugestoesRoute
   '/comunidade/grupos': typeof ComunidadeGruposRoute
@@ -220,7 +238,9 @@ export interface FileRouteTypes {
     | '/privacidade'
     | '/termos'
     | '/avisos'
+    | '/checkout'
     | '/moderacao'
+    | '/pagamento'
     | '/publicar'
     | '/sugestoes'
     | '/comunidade/grupos'
@@ -242,7 +262,9 @@ export interface FileRouteTypes {
     | '/privacidade'
     | '/termos'
     | '/avisos'
+    | '/checkout'
     | '/moderacao'
+    | '/pagamento'
     | '/publicar'
     | '/sugestoes'
     | '/comunidade/grupos'
@@ -265,7 +287,9 @@ export interface FileRouteTypes {
     | '/privacidade'
     | '/termos'
     | '/_authenticated/avisos'
+    | '/_authenticated/checkout'
     | '/_authenticated/moderacao'
+    | '/_authenticated/pagamento'
     | '/_authenticated/publicar'
     | '/_authenticated/sugestoes'
     | '/comunidade/grupos'
@@ -353,11 +377,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAvisosRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/checkout': {
+      id: '/_authenticated/checkout'
+      path: '/checkout'
+      fullPath: '/checkout'
+      preLoaderRoute: typeof AuthenticatedCheckoutRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/moderacao': {
       id: '/_authenticated/moderacao'
       path: '/moderacao'
       fullPath: '/moderacao'
       preLoaderRoute: typeof AuthenticatedModeracaoRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/pagamento': {
+      id: '/_authenticated/pagamento'
+      path: '/pagamento'
+      fullPath: '/pagamento'
+      preLoaderRoute: typeof AuthenticatedPagamentoRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/publicar': {
@@ -449,7 +487,9 @@ declare module '@tanstack/react-router' {
 
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedAvisosRoute: typeof AuthenticatedAvisosRoute
+  AuthenticatedCheckoutRoute: typeof AuthenticatedCheckoutRoute
   AuthenticatedModeracaoRoute: typeof AuthenticatedModeracaoRoute
+  AuthenticatedPagamentoRoute: typeof AuthenticatedPagamentoRoute
   AuthenticatedPublicarRoute: typeof AuthenticatedPublicarRoute
   AuthenticatedSugestoesRoute: typeof AuthenticatedSugestoesRoute
   AuthenticatedConversasSlugRoute: typeof AuthenticatedConversasSlugRoute
@@ -461,7 +501,9 @@ interface AuthenticatedRouteRouteChildren {
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAvisosRoute: AuthenticatedAvisosRoute,
+  AuthenticatedCheckoutRoute: AuthenticatedCheckoutRoute,
   AuthenticatedModeracaoRoute: AuthenticatedModeracaoRoute,
+  AuthenticatedPagamentoRoute: AuthenticatedPagamentoRoute,
   AuthenticatedPublicarRoute: AuthenticatedPublicarRoute,
   AuthenticatedSugestoesRoute: AuthenticatedSugestoesRoute,
   AuthenticatedConversasSlugRoute: AuthenticatedConversasSlugRoute,

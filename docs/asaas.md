@@ -24,3 +24,8 @@ Token de autenticação: o mesmo `ASAAS_WEBHOOK_TOKEN`. Versão da API: v3. Even
 - Devolveu ou chargeback → Premium termina na hora (Urgente: o selo sai da vaga).
 - Cancelar → o Asaas para de cobrar; o Premium vai até o fim do período pago.
 - Premium vitalício (sem data de fim) nunca é alterado pelo webhook.
+
+## Telas
+- `/checkout?tipo=premium` ou `?tipo=urgente&vaga=<id>`: resumo do pedido, CPF (só na primeira vez), aceite dos Termos e botão para o Asaas.
+- `/pagamento?tipo=premium|urgente`: "Pagamento confirmado!" (confere o banco a cada 3 s por 2 minutos).
+- Para o Asaas trazer a pessoa de volta a `/pagamento` depois de pagar, crie o segredo `ASAAS_SUCCESS_URL` com o endereço do site (ex.: `https://beecos.com.br`). O domínio precisa estar cadastrado na conta do Asaas; sem o segredo, a pessoa volta pelo navegador.
