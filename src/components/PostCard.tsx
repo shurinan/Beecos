@@ -1,6 +1,8 @@
 import { Link } from "@tanstack/react-router";
 import { useState } from "react";
-import { Copy, ExternalLink } from "lucide-react";
+import { Camera, Copy, ExternalLink } from "lucide-react";
+import { PhotoGallery } from "@/components/PhotoGallery";
+import { photoUrl, sortPhotos, type PostPhoto } from "@/lib/post-photos";
 import { toast } from "sonner";
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@/components/ui/dialog";
 import { PostActions } from "@/components/PostActions";
@@ -35,6 +37,8 @@ export type PostWithAuthor = {
   urgent?: boolean;
   negotiable?: boolean;
   highlight?: boolean;
+  /** Fotos (Premium), vindas do embed post_photos. */
+  post_photos?: PostPhoto[] | null;
   professions?: { name: string; slug?: string | null } | null;
   services?: { name: string } | null;
   profiles: {
@@ -50,9 +54,12 @@ export function PostCard({
   slots,
   distance,
   full = false,
+  photoUrls,
 }: {
   /** Na página da vaga: mostra o texto inteiro, sem cortar com "…". */
   full?: boolean;
+  /** Prévia do formulário: endereços das fotos ainda não enviadas. */
+  photoUrls?: string[];
   post: PostWithAuthor;
   slots?: PostSlots | undefined;
   /** Distância até quem está vendo; só existe para quem informou onde atua. */
@@ -66,6 +73,7 @@ export function PostCard({
     kind === "job"
       ? vacanciesLabel(slots ?? (post.vacancies ? { vacancies: post.vacancies, taken: 0 } : null))
       : null;
+  const photos = photoUrls ?? sortPhotos(post.post_photos).map((p) => photoUrl(p.path));
   const Icon = resolveIcon(post.cover_icon, post.professions?.name);
   const cover = filled
     ? FILLED_COVER
@@ -115,19 +123,36 @@ export function PostCard({
           {filled && <span className={tag + " bg-[#5a5d66] text-white"}>Preenchida</span>}
         </div>
         <div className="space-y-2.5 p-4">
-          <h3 className="text-lg leading-tight">
-            {expandable ? (
+          <div className="flex items-start gap-3">
+            <h3 className="min-w-0 flex-1 text-lg leading-tight">
+              {expandable ? (
+                <button
+                  type="button"
+                  onClick={() => setOpen(true)}
+                  className="text-left hover:underline"
+                >
+                  {post.title}
+                </button>
+              ) : (
+                post.title
+              )}
+            </h3>
+            {!full && photos.length > 0 && (
               <button
                 type="button"
-                onClick={() => setOpen(true)}
-                className="text-left hover:underline"
+                onClick={() => expandable && setOpen(true)}
+                aria-label={`${photos.length} ${photos.length === 1 ? "foto" : "fotos"}: ver`}
+                className="relative h-11 w-11 shrink-0 overflow-hidden rounded-md border-2 border-foreground bg-muted"
               >
-                {post.title}
+                <img src={photos[0]} alt="" loading="lazy" className="h-full w-full object-cover" />
+                <span className="absolute bottom-0 right-0 flex items-center gap-0.5 rounded-tl bg-[#1B1D23] px-1 text-[10px] font-bold text-white">
+                  <Camera className="h-2.5 w-2.5" aria-hidden="true" />
+                  {photos.length}
+                </span>
               </button>
-            ) : (
-              post.title
             )}
-          </h3>
+          </div>
+          {full && photos.length > 0 && <PhotoGallery urls={photos} title={post.title} />}
           {post.professions && post.services && (
             <p className="text-sm font-semibold text-muted-foreground">
               {catalogLabel(post.professions, post.services)}

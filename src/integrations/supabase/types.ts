@@ -513,6 +513,20 @@ export type Database = {
           },
         ];
       };
+      post_photos: {
+        Row: { created_at: string; id: string; path: string; post_id: string; sort: number };
+        Insert: { created_at?: string; id?: string; path: string; post_id: string; sort?: number };
+        Update: { sort?: number };
+        Relationships: [
+          {
+            foreignKeyName: "post_photos_post_id_fkey";
+            columns: ["post_id"];
+            isOneToOne: false;
+            referencedRelation: "posts";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
       post_waitlist: {
         Row: { created_at: string; post_id: string; user_id: string };
         Insert: never;

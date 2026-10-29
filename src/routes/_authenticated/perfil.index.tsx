@@ -27,6 +27,7 @@ import { SkillDialog } from "@/components/SkillDialog";
 import { ModeratorShortcut } from "@/components/ModeratorShortcut";
 import { PostEditDialog } from "@/components/PostEditDialog";
 import { draftColumns, type PostDraft } from "@/lib/post-form";
+import { removePostPhotoFiles, sortPhotos, syncPhotos } from "@/lib/post-photos";
 import { useCatalog } from "@/lib/catalog";
 import { WorkAreaDialog, type WorkAreaInput } from "@/components/WorkAreaDialog";
 import { formatCep, useWorkArea } from "@/lib/geo";
@@ -76,7 +77,7 @@ function Painel() {
         supabase.from("profile_skills").select(SKILL_COLUMNS).eq("user_id", userId),
         supabase
           .from("posts")
-          .select("*, professions(slug)")
+          .select("*, professions(slug), post_photos(id, path, sort)")
           .eq("user_id", userId)
           .order("created_at", { ascending: false }),
       ]);
@@ -253,6 +254,7 @@ function Painel() {
           negotiable: p.negotiable,
           highlight: p.highlight,
         },
+        photos: { kept: sortPhotos(p.post_photos), added: [], removed: [] },
       },
     });
     setEditOpen(true);
@@ -285,13 +287,25 @@ function Painel() {
     } else if (next.cep.trim() === "") {
       await supabase.from("post_locations").delete().eq("post_id", editing.id);
     }
+    if (next.photos.added.length || next.photos.removed.length) {
+      const failed = await syncPhotos({
+        userId,
+        postId: editing.id,
+        add: next.photos.added,
+        remove: next.photos.removed,
+        startSort: Math.max(-1, ...next.photos.kept.map((x) => x.sort)) + 1,
+      });
+      if (failed) toast.error(`Salvo, mas ${failed} foto(s) não foram enviadas. Tente de novo.`);
+    }
     toast.success("Publicação atualizada");
     qc.invalidateQueries();
     return true;
   }
 
   async function deletePost(id: string) {
+    const photoPaths = (data?.posts.find((x) => x.id === id)?.post_photos ?? []).map((x) => x.path);
     const { error } = await supabase.from("posts").delete().eq("id", id);
+    if (!error) await removePostPhotoFiles(photoPaths);
     if (error) {
       toast.error("Não foi possível excluir a publicação");
       return;

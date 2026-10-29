@@ -12,6 +12,7 @@ import { GeoError, formatCep, isValidCep, lookupCep, useWorkArea } from "@/lib/g
 import { BLOCKED_TEXT_MESSAGE, isBlockedTextError } from "@/lib/chat";
 import { getPlanUsage, limitMessage } from "@/lib/plans";
 import { postParams } from "@/lib/urls";
+import { syncPhotos } from "@/lib/post-photos";
 import { KIND_ACTION } from "@/lib/data";
 
 type Tipo = "contratar" | "trabalhar";
@@ -119,6 +120,19 @@ function Publicar() {
       if (loc.error)
         toast.error(
           "Publicado, mas não foi possível guardar o CEP. Edite a publicação para tentar de novo.",
+        );
+    }
+    if (draft.photos.added.length) {
+      const failed = await syncPhotos({
+        userId,
+        postId: created.id,
+        add: draft.photos.added,
+        remove: [],
+        startSort: 0,
+      });
+      if (failed)
+        toast.error(
+          `Publicado, mas ${failed} foto(s) não foram enviadas. Edite a vaga para tentar de novo.`,
         );
     }
     setBusy(false);

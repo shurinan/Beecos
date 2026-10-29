@@ -3,6 +3,7 @@ import { Download, Trash2 } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
+import { removeAllMyPhotoFiles } from "@/lib/post-photos";
 import { Button } from "@/components/ui/button";
 import { ConfirmButton } from "@/components/ConfirmButton";
 import { accountErrorMessage } from "@/lib/legal";
@@ -43,8 +44,16 @@ export function PrivacyCard({
   async function remove() {
     setBusy(true);
     try {
-      // a foto fica num armazenamento à parte: sai antes de a conta sumir
+      // com serviço em andamento a exclusão é recusada: confere antes de apagar os arquivos
+      const active = await supabase
+        .from("engagements")
+        .select("id", { count: "exact", head: true })
+        .or(`client_id.eq.${userId},provider_id.eq.${userId}`)
+        .in("status", ["proposed", "accepted"]);
+      if ((active.count ?? 0) > 0) throw new Error("CONTA_COM_SERVICO_ATIVO");
+      // as fotos ficam num armazenamento à parte: saem antes de a conta sumir
       if (avatarPath) await supabase.storage.from("avatars").remove([avatarPath]);
+      await removeAllMyPhotoFiles(userId).catch(() => undefined);
       const { error } = await supabase.rpc("delete_my_account");
       if (error) throw error;
       toast.success("Conta excluída. Sentiremos a sua falta.");
@@ -57,7 +66,11 @@ export function PrivacyCard({
   }
 
   return (
-    <section className="block-card space-y-3 p-5" aria-label="Privacidade e dados" data-user={userId}>
+    <section
+      className="block-card space-y-3 p-5"
+      aria-label="Privacidade e dados"
+      data-user={userId}
+    >
       <h2 className="text-xl">Privacidade e dados</h2>
       <p className="text-sm text-muted-foreground">
         Os seus dados são seus. Baixe uma cópia ou exclua a conta quando quiser. Veja também os{" "}

@@ -1,3 +1,4 @@
+import type { PostPhoto } from "@/lib/post-photos";
 import type { CatalogSelection } from "@/components/CatalogPicker";
 import { EMPTY_SELECTION } from "@/components/CatalogPicker";
 import type { PostKind } from "@/lib/data";
@@ -18,7 +19,12 @@ export type PostDraft = {
   pick: CatalogSelection;
   /** Como a vaga aparece: cor e ícone da capa, selos e destaque. Tudo opcional. */
   look: PostLook;
+  /** Fotos (Premium): as que já estão na vaga, as novas escolhidas e as marcadas para tirar. */
+  photos: PhotoDraft;
 };
+
+export type PhotoDraft = { kept: PostPhoto[]; added: File[]; removed: PostPhoto[] };
+export const EMPTY_PHOTOS: PhotoDraft = { kept: [], added: [], removed: [] };
 
 export type PostLook = {
   coverColor: string | null;
@@ -47,6 +53,7 @@ export const EMPTY_DRAFT: PostDraft = {
   place: null,
   pick: EMPTY_SELECTION,
   look: EMPTY_LOOK,
+  photos: EMPTY_PHOTOS,
 };
 
 export const MAX_VACANCIES = 20;
