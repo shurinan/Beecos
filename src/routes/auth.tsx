@@ -1,4 +1,5 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, useNavigate, useRouter } from "@tanstack/react-router";
+import { takeDestination } from "@/lib/after-login";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
@@ -42,10 +43,14 @@ function AuthPage() {
   const [agree, setAgree] = useState(false);
   const { userId } = useAuth();
   const navigate = useNavigate();
+  const router = useRouter();
 
   useEffect(() => {
-    if (userId) navigate({ to: "/perfil", replace: true });
-  }, [userId, navigate]);
+    if (!userId) return;
+    const dest = takeDestination();
+    if (dest) router.history.replace(dest);
+    else navigate({ to: "/perfil", replace: true });
+  }, [userId, navigate, router]);
 
   // Confere, ao digitar, se o nome de usuário está livre (a cada pausa de 400 ms).
   useEffect(() => {
@@ -88,7 +93,10 @@ function AuthPage() {
         const { data, error } = await supabase.auth.signUp({
           email,
           password,
-          options: { emailRedirectTo: window.location.origin, data: { full_name: name, username, terms_version: TERMS_VERSION } },
+          options: {
+            emailRedirectTo: window.location.origin,
+            data: { full_name: name, username, terms_version: TERMS_VERSION },
+          },
         });
         if (error) throw error;
         if (!data.session) toast.success("Conta criada! Confira seu email para confirmar.");
