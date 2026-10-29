@@ -60,6 +60,30 @@ function callback(tipo: "premium" | "anual" | "urgente") {
 }
 
 const today = () => new Date().toISOString().slice(0, 10);
+const inDays = (n: number) => new Date(Date.now() + n * 86400_000).toISOString().slice(0, 10);
+
+type Method = "pix" | "boleto" | "card";
+const BILLING: Record<Method, string> = { pix: "PIX", boleto: "BOLETO", card: "CREDIT_CARD" };
+
+// Pix e boleto aparecem dentro do app (não têm dado sensível). O cartão vai para a página segura do Asaas:
+// o número do cartão nunca passa pelo servidor do Beecos.
+async function deliver(id: string, invoiceUrl: string, method: Method | undefined) {
+  if (method === "pix") {
+    const q = await asaas(`/payments/${id}/pixQrCode`);
+    return { method, paymentId: id, pix: { image: q.encodedImage as string, code: q.payload as string, expires: q.expirationDate as string | null } };
+  }
+  if (method === "boleto") {
+    const f = await asaas(`/payments/${id}/identificationField`);
+    const p = await asaas(`/payments/${id}`);
+    return { method, paymentId: id, boleto: { line: f.identificationField as string, url: (p.bankSlipUrl as string | null) ?? invoiceUrl } };
+  }
+  return { method: "card" as const, paymentId: id, url: invoiceUrl };
+}
+
+// já existe uma cobrança aberta: troca a forma de pagamento nela, se preciso
+async function switchMethod(id: string, method: Method | undefined) {
+  if (method) await asaas(`/payments/${id}`, { method: "PUT", body: { billingType: BILLING[method] } });
+}
 
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: CORS });
@@ -75,16 +99,20 @@ Deno.serve(async (req) => {
   const user = auth?.user;
   if (!user) return json({ error: "Entre na sua conta para continuar." }, 401);
 
-  let body: { kind?: string; cpf?: string; postId?: string };
+  let body: { kind?: string; cpf?: string; postId?: string; method?: string };
   try {
     body = await req.json();
   } catch {
     return json({ error: "pedido inválido" }, 400);
   }
   const kind = body.kind;
+  const method: Method | undefined =
+    body.method === "pix" || body.method === "boleto" || body.method === "card" ? body.method : undefined;
   if (kind !== "premium" && kind !== "annual" && kind !== "urgent") return json({ error: "pedido inválido" }, 400);
 
   try {
+    if (kind === "urgent" && method === "boleto")
+      return json({ error: "O boleto não está disponível para o selo Urgente. Use Pix ou cartão." }, 400);
     // 1) cliente no Asaas (reaproveita o que já existe)
     let { data: cust } = await db.from("asaas_customers").select("customer_id").eq("user_id", user.id).maybeSingle();
     if (!cust) {
@@ -118,7 +146,7 @@ Deno.serve(async (req) => {
       // já existe uma cobrança aberta? devolve o mesmo link
       const { data: open } = await db
         .from("payments")
-        .select("invoice_url")
+        .select("asaas_payment_id, invoice_url")
         .eq("user_id", user.id)
         .eq("kind", "premium")
         .eq("status", "pending")
@@ -126,15 +154,18 @@ Deno.serve(async (req) => {
         .order("created_at", { ascending: false })
         .limit(1)
         .maybeSingle();
-      if (open?.invoice_url) return json({ url: open.invoice_url });
+      if (open?.invoice_url) {
+        await switchMethod(open.asaas_payment_id as string, method);
+        return json(await deliver(open.asaas_payment_id as string, open.invoice_url as string, method));
+      }
 
       const s = await asaas("/subscriptions", {
         method: "POST",
         body: {
           customer,
-          billingType: "UNDEFINED",
+          billingType: method ? BILLING[method] : "UNDEFINED",
           value: PREMIUM_VALUE,
-          nextDueDate: today(),
+          nextDueDate: method === "boleto" ? inDays(3) : today(),
           cycle: "MONTHLY",
           description: "Beecos Premium (mensal)",
           externalReference: `premium:${user.id}`,
@@ -153,7 +184,7 @@ Deno.serve(async (req) => {
         _status: "pending",
         _url: first.invoiceUrl,
       });
-      return json({ url: first.invoiceUrl });
+      return json(await deliver(first.id, first.invoiceUrl, method));
     }
 
     if (kind === "annual") {
@@ -173,7 +204,7 @@ Deno.serve(async (req) => {
 
       const { data: open } = await db
         .from("payments")
-        .select("invoice_url")
+        .select("asaas_payment_id, invoice_url")
         .eq("user_id", user.id)
         .eq("kind", "annual")
         .eq("status", "pending")
@@ -181,14 +212,17 @@ Deno.serve(async (req) => {
         .order("created_at", { ascending: false })
         .limit(1)
         .maybeSingle();
-      if (open?.invoice_url) return json({ url: open.invoice_url });
+      if (open?.invoice_url) {
+        await switchMethod(open.asaas_payment_id as string, method);
+        return json(await deliver(open.asaas_payment_id as string, open.invoice_url as string, method));
+      }
 
       const due = new Date(Date.now() + 3 * 86400_000).toISOString().slice(0, 10);
       const p = await asaas("/payments", {
         method: "POST",
         body: {
           customer,
-          billingType: "UNDEFINED",
+          billingType: method ? BILLING[method] : "UNDEFINED",
           value: ANNUAL_VALUE,
           dueDate: due,
           description: "Beecos Premium anual (12 meses)",
@@ -205,7 +239,7 @@ Deno.serve(async (req) => {
         _status: "pending",
         _url: p.invoiceUrl,
       });
-      return json({ url: p.invoiceUrl });
+      return json(await deliver(p.id, p.invoiceUrl, method));
     }
 
     // urgent
@@ -221,7 +255,7 @@ Deno.serve(async (req) => {
 
     const { data: open } = await db
       .from("payments")
-      .select("invoice_url")
+      .select("asaas_payment_id, invoice_url")
       .eq("user_id", user.id)
       .eq("kind", "urgent")
       .eq("post_id", postId)
@@ -229,14 +263,17 @@ Deno.serve(async (req) => {
       .not("invoice_url", "is", null)
       .limit(1)
       .maybeSingle();
-    if (open?.invoice_url) return json({ url: open.invoice_url });
+    if (open?.invoice_url) {
+        await switchMethod(open.asaas_payment_id as string, method);
+        return json(await deliver(open.asaas_payment_id as string, open.invoice_url as string, method));
+      }
 
     const due = new Date(Date.now() + 3 * 86400_000).toISOString().slice(0, 10);
     const p = await asaas("/payments", {
       method: "POST",
       body: {
         customer,
-        billingType: "UNDEFINED",
+        billingType: method ? BILLING[method] : "UNDEFINED",
         value: URGENT_VALUE,
         dueDate: due,
         description: "Beecos: selo Urgente em uma vaga",
@@ -253,7 +290,7 @@ Deno.serve(async (req) => {
       _status: "pending",
       _url: p.invoiceUrl,
     });
-    return json({ url: p.invoiceUrl });
+    return json(await deliver(p.id, p.invoiceUrl, method));
   } catch (e) {
     return json({ error: e instanceof Error ? e.message : "Não foi possível criar a cobrança." }, 502);
   }

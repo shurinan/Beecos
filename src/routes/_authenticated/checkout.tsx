@@ -1,6 +1,6 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { toast } from "sonner";
 import { ArrowLeft, Check, Crown, Lock, ShieldCheck } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
@@ -8,7 +8,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
-import { hasBillingProfile, startCheckout } from "@/lib/billing";
+import { hasBillingProfile, startCheckout, type Charge, type PayMethod } from "@/lib/billing";
+import { PayPanel } from "@/components/PayPanel";
 import { formatCpf, isValidCpf } from "@/lib/cpf";
 import { ANNUAL_PER_MONTH, ANNUAL_SAVING, getPlanUsage, PREMIUM_PRICE } from "@/lib/plans";
 
@@ -48,6 +49,8 @@ function Checkout() {
   const [cpf, setCpf] = useState("");
   const [accepted, setAccepted] = useState(false);
   const [busy, setBusy] = useState(false);
+  const [method, setMethod] = useState<PayMethod>("pix");
+  const [charge, setCharge] = useState<Charge | null>(null);
 
   const { data: usage } = useQuery({
     queryKey: ["plan", userId],
@@ -94,15 +97,21 @@ function Checkout() {
     setBusy(true);
     const r = await startCheckout({
       kind: urgent ? "urgent" : annual ? "annual" : "premium",
+      method,
       postId: urgent ? vaga : undefined,
       cpf: needCpf ? cpf : undefined,
     });
-    if ("error" in r) {
-      setBusy(false);
-      return void toast.error(r.error);
-    }
-    window.location.assign(r.url);
+    setBusy(false);
+    if ("error" in r) return void toast.error(r.error);
+    // cartão: a página segura do Asaas recebe os dados; Pix e boleto aparecem aqui mesmo
+    if (r.method === "card") return void window.location.assign(r.url);
+    setCharge(r);
   }
+
+  const goPaid = useCallback(
+    () => void navigate({ to: "/pagamento", search: { tipo }, replace: true }),
+    [navigate, tipo],
+  );
 
   return (
     <form
@@ -259,89 +268,151 @@ function Checkout() {
         </p>
       )}
 
-      {needCpf && (
-        <div className="space-y-1.5">
-          <Label htmlFor="cpf">Seu CPF</Label>
-          <Input
-            id="cpf"
-            inputMode="numeric"
-            autoComplete="off"
-            placeholder="000.000.000-00"
-            value={cpf}
-            maxLength={14}
-            onChange={(e) => setCpf(formatCpf(e.target.value))}
-            className="h-12 border-2 border-foreground text-lg"
-          />
-          <p className="text-xs text-muted-foreground">
-            O Asaas, que cuida do pagamento, pede o CPF. O Beecos não guarda.
-          </p>
-        </div>
+      {charge && charge.method !== "card" ? (
+        <PayPanel charge={charge} price={price} onPaid={goPaid} onBack={() => setCharge(null)} />
+      ) : (
+        <>
+          {needCpf && (
+            <div className="space-y-1.5">
+              <Label htmlFor="cpf">Seu CPF</Label>
+              <Input
+                id="cpf"
+                inputMode="numeric"
+                autoComplete="off"
+                placeholder="000.000.000-00"
+                value={cpf}
+                maxLength={14}
+                onChange={(e) => setCpf(formatCpf(e.target.value))}
+                className="h-12 border-2 border-foreground text-lg"
+              />
+              <p className="text-xs text-muted-foreground">
+                O Asaas, que cuida do pagamento, pede o CPF. O Beecos não guarda.
+              </p>
+            </div>
+          )}
+          {known && (
+            <p className="text-xs text-muted-foreground">Seu CPF já está cadastrado no Asaas.</p>
+          )}
+
+          <fieldset className="space-y-2">
+            <legend className="mb-1 text-sm font-bold">Como pagar</legend>
+            <div className="grid gap-2" role="radiogroup" aria-label="Forma de pagamento">
+              {(
+                [
+                  {
+                    m: "pix",
+                    name: "Pix",
+                    hint: urgent ? "O selo entra na hora" : "Libera na hora",
+                  },
+                  {
+                    m: "card",
+                    name: "Cartão de crédito",
+                    hint: "Você digita no ambiente seguro do Asaas",
+                  },
+                  ...(urgent
+                    ? []
+                    : [{ m: "boleto", name: "Boleto", hint: "Confirma em até 1 dia útil" }]),
+                ] as { m: PayMethod; name: string; hint: string }[]
+              ).map((o) => {
+                const on = method === o.m;
+                return (
+                  <button
+                    key={o.m}
+                    type="button"
+                    role="radio"
+                    aria-checked={on}
+                    onClick={() => setMethod(o.m)}
+                    className={
+                      "flex min-h-14 items-center gap-3 rounded-lg border-2 border-foreground p-3 text-left transition-[background-color] " +
+                      (on ? "bg-foreground text-background" : "bg-card hover:bg-foreground/[0.07]")
+                    }
+                  >
+                    <span
+                      aria-hidden="true"
+                      className={
+                        "flex h-5 w-5 flex-none items-center justify-center rounded-full border-2 " +
+                        (on ? "border-background" : "border-foreground")
+                      }
+                    >
+                      {on && <span className="h-2.5 w-2.5 rounded-full bg-background" />}
+                    </span>
+                    <span className="min-w-0 flex-1">
+                      <span className="block font-bold">{o.name}</span>
+                      <span
+                        className={"block text-xs " + (on ? "opacity-80" : "text-muted-foreground")}
+                      >
+                        {o.hint}
+                      </span>
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+            {method === "card" && (
+              <p className="flex items-start gap-2 rounded-md bg-accent p-2.5 text-xs">
+                <Lock className="mt-0.5 h-3.5 w-3.5 flex-none" aria-hidden="true" />
+                <span>
+                  Ao continuar você vai para a página segura do Asaas (endereço com cadeado), onde
+                  digita os dados do cartão. O Beecos nunca vê nem guarda o número do seu cartão.
+                </span>
+              </p>
+            )}
+          </fieldset>
+
+          {!urgent && (
+            <p className="flex items-start gap-2.5 rounded-lg border-2 border-dashed border-foreground bg-card p-3 text-sm">
+              <ShieldCheck className="mt-0.5 h-5 w-5 flex-none" aria-hidden="true" />
+              <span>
+                <b>7 dias para desistir.</b>{" "}
+                {annual
+                  ? "Desista em Meu perfil e o valor volta para você."
+                  : "Cancele em Meu perfil e o valor volta para você."}
+              </span>
+            </p>
+          )}
+
+          <div className="flex items-start gap-2.5 text-sm">
+            <Checkbox
+              id="aceite"
+              checked={accepted}
+              onCheckedChange={(v) => setAccepted(v === true)}
+              className="mt-0.5 h-5 w-5"
+            />
+            <Label htmlFor="aceite" className="font-normal leading-snug">
+              Li e aceito os{" "}
+              <Link to="/termos" className="font-bold underline" target="_blank">
+                Termos de uso
+              </Link>{" "}
+              e a{" "}
+              <Link to="/privacidade" className="font-bold underline" target="_blank">
+                Privacidade
+              </Link>
+              .
+            </Label>
+          </div>
+
+          <div className="space-y-2 pt-1">
+            <Button
+              type="submit"
+              size="lg"
+              className="h-14 w-full text-lg"
+              loading={busy}
+              disabled={alreadyPremium || !!postProblem || known === undefined}
+            >
+              {method === "pix"
+                ? "Gerar Pix"
+                : method === "boleto"
+                  ? "Gerar boleto"
+                  : "Pagar com cartão"}{" "}
+              · {price}
+            </Button>
+            <p className="flex items-center justify-center gap-1.5 text-xs text-muted-foreground">
+              <Lock className="h-3.5 w-3.5" aria-hidden="true" /> Conexão criptografada · pagamento
+              pelo Asaas
+            </p>
+          </div>
+        </>
       )}
-      {known && (
-        <p className="text-xs text-muted-foreground">Seu CPF já está cadastrado no Asaas.</p>
-      )}
-
-      <div className="space-y-2">
-        <p className="text-sm font-bold">Como pagar</p>
-        <div className="grid grid-cols-3 gap-2 text-center text-sm font-bold">
-          {["Pix", "Cartão", "Boleto"].map((m) => (
-            <span key={m} className="rounded-lg border-2 border-foreground bg-card p-2.5">
-              {m}
-            </span>
-          ))}
-        </div>
-        <p className="text-xs text-muted-foreground">
-          Você escolhe na próxima tela. Com Pix {urgent ? "o selo entra" : "o Premium libera"} na
-          hora.
-        </p>
-      </div>
-
-      {!urgent && (
-        <p className="flex items-start gap-2.5 rounded-lg border-2 border-dashed border-foreground bg-card p-3 text-sm">
-          <ShieldCheck className="mt-0.5 h-5 w-5 flex-none" aria-hidden="true" />
-          <span>
-            <b>7 dias para desistir.</b>{" "}
-            {annual
-              ? "Desista em Meu perfil e o valor volta para você."
-              : "Cancele em Meu perfil e o valor volta para você."}
-          </span>
-        </p>
-      )}
-
-      <div className="flex items-start gap-2.5 text-sm">
-        <Checkbox
-          id="aceite"
-          checked={accepted}
-          onCheckedChange={(v) => setAccepted(v === true)}
-          className="mt-0.5 h-5 w-5"
-        />
-        <Label htmlFor="aceite" className="font-normal leading-snug">
-          Li e aceito os{" "}
-          <Link to="/termos" className="font-bold underline" target="_blank">
-            Termos de uso
-          </Link>{" "}
-          e a{" "}
-          <Link to="/privacidade" className="font-bold underline" target="_blank">
-            Privacidade
-          </Link>
-          .
-        </Label>
-      </div>
-
-      <div className="space-y-2 pt-1">
-        <Button
-          type="submit"
-          size="lg"
-          className="h-14 w-full text-lg"
-          loading={busy}
-          disabled={alreadyPremium || !!postProblem || known === undefined}
-        >
-          Ir para o pagamento · {price}
-        </Button>
-        <p className="flex items-center justify-center gap-1.5 text-xs text-muted-foreground">
-          <Lock className="h-3.5 w-3.5" aria-hidden="true" /> Pagamento seguro pelo Asaas
-        </p>
-      </div>
     </form>
   );
 }
