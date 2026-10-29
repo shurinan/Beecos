@@ -131,12 +131,7 @@ function PlanPage() {
             .
           </p>
         ) : userId ? (
-          <CheckoutButton
-            userId={userId}
-            kind="premium"
-            what={`Premium, ${PREMIUM_PRICE}.`}
-            className="w-full"
-          >
+          <CheckoutButton kind="premium" className="w-full">
             Quero ser Premium
           </CheckoutButton>
         ) : (

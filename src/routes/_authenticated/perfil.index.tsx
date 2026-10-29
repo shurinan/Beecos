@@ -411,12 +411,7 @@ function Painel() {
             <div className="rounded-lg border-2 border-foreground bg-accent p-3">
               <p className="font-display">Premium — {PREMIUM_PRICE}</p>
               <p className="text-sm">Publique vagas sem limite e converse com quem quiser.</p>
-              <CheckoutButton
-                userId={userId}
-                kind="premium"
-                what={`Premium, ${PREMIUM_PRICE}.`}
-                className="mt-2 w-full"
-              >
+              <CheckoutButton kind="premium" className="mt-2 w-full">
                 Quero ser Premium
               </CheckoutButton>
               <Link to="/plano" className="mt-2 block text-center text-sm font-bold underline">

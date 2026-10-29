@@ -50,6 +50,14 @@ async function asaas(path: string, init: { method?: string; body?: unknown } = {
   return data;
 }
 
+// Depois de pagar, o Asaas devolve a pessoa para o Beecos. Só liga se ASAAS_SUCCESS_URL existir
+// (o endereço do site, ex.: https://beecos.com.br): o Asaas só aceita o domínio cadastrado na conta.
+function callback(tipo: "premium" | "urgente") {
+  const base = Deno.env.get("ASAAS_SUCCESS_URL");
+  if (!base) return {};
+  return { callback: { successUrl: `${base.replace(/\/$/, "")}/pagamento?tipo=${tipo}`, autoRedirect: true } };
+}
+
 const today = () => new Date().toISOString().slice(0, 10);
 
 Deno.serve(async (req) => {
@@ -129,6 +137,7 @@ Deno.serve(async (req) => {
           cycle: "MONTHLY",
           description: "Beecos Premium (mensal)",
           externalReference: `premium:${user.id}`,
+          ...callback("premium"),
         },
       });
       const list = await asaas(`/subscriptions/${s.id}/payments`);
@@ -179,6 +188,7 @@ Deno.serve(async (req) => {
         dueDate: due,
         description: "Beecos: selo Urgente em uma vaga",
         externalReference: `urgent:${postId}`,
+        ...callback("urgente"),
       },
     });
     await db.rpc("asaas_apply_payment", {

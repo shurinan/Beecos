@@ -69,13 +69,11 @@ export function PostActions({
     <>
       {mine && canBuyUrgent && userId && (
         <CheckoutButton
-          userId={userId}
           kind="urgent"
           postId={post.id}
           variant="outline"
           size="lg"
           className="w-full"
-          what={`Selo Urgente nesta vaga, ${URGENT_PRICE}.`}
         >
           Colocar selo Urgente — {URGENT_PRICE}
         </CheckoutButton>
