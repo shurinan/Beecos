@@ -7,6 +7,7 @@ import { useCatalog } from "@/lib/catalog";
 import { communityErrorMessage, useCommunityOverview, useMyCommunities } from "@/lib/community";
 
 export const Route = createFileRoute("/comunidade/grupos")({
+  staticData: { sitemap: true },
   head: () => ({
     meta: [
       { title: "Grupos da comunidade — Beecos" },

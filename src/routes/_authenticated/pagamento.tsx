@@ -9,6 +9,7 @@ import { getPlanUsage } from "@/lib/plans";
 type Tipo = "premium" | "anual" | "urgente";
 
 export const Route = createFileRoute("/_authenticated/pagamento")({
+  staticData: { sitemap: false },
   validateSearch: (q: Record<string, unknown>): { tipo: Tipo } => ({
     tipo: q["tipo"] === "urgente" ? "urgente" : q["tipo"] === "anual" ? "anual" : "premium",
   }),

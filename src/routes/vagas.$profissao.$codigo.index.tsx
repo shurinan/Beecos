@@ -12,6 +12,7 @@ import { usePostStats } from "@/lib/services-hooks";
 import { postParams } from "@/lib/urls";
 
 export const Route = createFileRoute("/vagas/$profissao/$codigo/")({
+  staticData: { sitemap: false },
   head: () => ({
     meta: [
       { title: "Vaga — Beecos" },

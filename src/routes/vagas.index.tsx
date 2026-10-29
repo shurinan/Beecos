@@ -42,6 +42,7 @@ import {
 } from "@/lib/discovery";
 
 export const Route = createFileRoute("/vagas/")({
+  staticData: { sitemap: true },
   validateSearch: (q: Record<string, unknown>) => ({
     q: typeof q["q"] === "string" ? (q["q"] as string) : undefined,
     tipo: q["tipo"] === "trabalhadores" ? ("trabalhadores" as const) : undefined,

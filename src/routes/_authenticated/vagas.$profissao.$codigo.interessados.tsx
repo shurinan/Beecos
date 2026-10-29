@@ -23,6 +23,7 @@ import { usePostStats } from "@/lib/services-hooks";
 import { getPlanUsage } from "@/lib/plans";
 
 export const Route = createFileRoute("/_authenticated/vagas/$profissao/$codigo/interessados")({
+  staticData: { sitemap: false },
   head: () => ({
     meta: [
       { title: "Interessados — Beecos" },

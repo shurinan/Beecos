@@ -19,6 +19,7 @@ import { usePostStats } from "@/lib/services-hooks";
 import { profileParam } from "@/lib/urls";
 
 export const Route = createFileRoute("/comunidade/")({
+  staticData: { sitemap: true },
   validateSearch: (q: Record<string, unknown>) => ({
     grupo: typeof q["grupo"] === "string" ? (q["grupo"] as string) : undefined,
   }),

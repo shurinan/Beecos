@@ -11,6 +11,7 @@ import { timeAgo } from "@/lib/data";
 import { postParams, profileParam } from "@/lib/urls";
 
 export const Route = createFileRoute("/_authenticated/moderacao")({
+  staticData: { sitemap: false },
   head: () => ({ meta: [{ title: "Moderação — Beecos" }, { name: "robots", content: "noindex" }] }),
   component: Moderation,
 });

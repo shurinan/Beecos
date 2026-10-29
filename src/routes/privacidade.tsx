@@ -3,6 +3,7 @@ import { LegalPage } from "@/components/LegalPage";
 import { PRIVACY_CONTACT_EMAIL } from "@/lib/legal";
 
 export const Route = createFileRoute("/privacidade")({
+  staticData: { sitemap: true },
   head: () => ({
     meta: [
       { title: "Política de privacidade — Beecos" },

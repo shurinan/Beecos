@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { timeAgo } from "@/lib/data";
 
 export const Route = createFileRoute("/_authenticated/sugestoes")({
+  staticData: { sitemap: false },
   head: () => ({ meta: [{ title: "Sugestões — Beecos" }, { name: "robots", content: "noindex" }] }),
   component: Suggestions,
 });
