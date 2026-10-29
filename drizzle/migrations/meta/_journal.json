@@ -232,6 +232,13 @@
       "when": 1795804800000,
       "tag": "0032_group_alerts",
       "breakpoints": true
+    },
+    {
+      "idx": 33,
+      "version": "7",
+      "when": 1795891200000,
+      "tag": "0033_close_for_all",
+      "breakpoints": true
     }
   ]
 }

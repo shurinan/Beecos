@@ -20,6 +20,7 @@ import {
   type EngagementStatus,
 } from "@/lib/services";
 import { usePostStats } from "@/lib/services-hooks";
+import { getPlanUsage } from "@/lib/plans";
 
 export const Route = createFileRoute("/_authenticated/vagas/$profissao/$codigo/interessados")({
   head: () => ({
@@ -83,6 +84,12 @@ function InterestedRoute() {
 function Interested({ id }: { id: string }) {
   const { userId } = Route.useRouteContext();
   const act = useEngagementActions(userId);
+  const { data: usage } = useQuery({
+    queryKey: ["plan", userId],
+    queryFn: () => getPlanUsage(userId),
+  });
+  // Grátis: encerrar não libera lugar (a negociação encerrada continua contando). Premium: libera e chama a fila.
+  const premium = !!usage?.premium;
   const { byConversation } = useUnread(userId);
   const slots = usePostStats([id])[id];
 
@@ -194,7 +201,7 @@ function Interested({ id }: { id: string }) {
   const who = isJob ? "Prestador" : "Interessado";
   const holdsSlot = (c: (typeof data.people)[number]) =>
     !!c.engagement && c.engagement.status !== "cancelled";
-  const openCount = data.people.filter((c) => !c.closed && !holdsSlot(c)).length;
+  const openCount = data.people.filter((c) => (premium ? !c.closed : true) && !holdsSlot(c)).length;
   const negotiationsFull = openCount >= MAX_NEGOTIATIONS;
 
   return (
@@ -218,8 +225,13 @@ function Interested({ id }: { id: string }) {
 
       {isJob && data.people.length > 0 && (
         <p className="text-sm font-semibold" aria-live="polite">
-          {openCount} de {MAX_NEGOTIATIONS} negociações abertas
-          {negotiationsFull && ". Encerre uma para que outra pessoa possa entrar em contato."}
+          {premium
+            ? `${openCount} de ${MAX_NEGOTIATIONS} negociações abertas`
+            : `${openCount} de ${MAX_NEGOTIATIONS} orçamentos recebidos`}
+          {negotiationsFull &&
+            (premium
+              ? ". Encerre uma para que o próximo da fila entre no lugar."
+              : ". No plano Grátis, a vaga não recebe mais ninguém. Com o Premium, ao encerrar uma negociação, o próximo da fila entra no lugar.")}
         </p>
       )}
 
@@ -329,7 +341,11 @@ function Interested({ id }: { id: string }) {
                   variant="outline"
                   loading={act.busy}
                   title={`Encerrar a negociação com ${name}?`}
-                  description={`${name} é avisado(a) no chat e abre espaço para outra pessoa. A conversa continua, e você pode reabrir depois se houver espaço.`}
+                  description={
+                    premium
+                      ? `${name} é avisado(a) no chat e o próximo da fila entra no lugar. A conversa continua, e você pode reabrir depois se houver espaço.`
+                      : `${name} é avisado(a) no chat. A conversa continua e você pode reabrir depois. No plano Grátis, encerrar não abre espaço para outra pessoa.`
+                  }
                   confirmLabel="Encerrar"
                   onConfirm={() => act.closeNegotiation(c.conversationId, id)}
                 >
@@ -341,14 +357,14 @@ function Interested({ id }: { id: string }) {
                   type="button"
                   size="sm"
                   variant="outline"
-                  disabled={act.busy || negotiationsFull}
+                  disabled={act.busy || (premium && negotiationsFull)}
                   onClick={() => act.reopenNegotiation(c.conversationId, id)}
                 >
                   Reabrir negociação
                 </Button>
               )}
             </div>
-            {isJob && closed && negotiationsFull && (
+            {isJob && closed && premium && negotiationsFull && (
               <p className="text-xs text-muted-foreground">
                 Para reabrir, encerre outra negociação primeiro.
               </p>
