@@ -25,6 +25,7 @@ import { useAuth } from "@/lib/auth";
 import { Avatar, SelfDeclared, SkillCard } from "@/components/profile-bits";
 import { SkillDialog } from "@/components/SkillDialog";
 import { ConfirmButton } from "@/components/ConfirmButton";
+import { cancelSubscription } from "@/lib/billing";
 import { ModeratorShortcut } from "@/components/ModeratorShortcut";
 import { PostEditDialog } from "@/components/PostEditDialog";
 import { draftColumns, type PostDraft } from "@/lib/post-form";
@@ -380,9 +381,13 @@ function Painel() {
                 description="O Premium continua até o fim do período já pago e não renova. Se você assinou há menos de 7 dias, o valor pago é devolvido."
                 confirmLabel="Cancelar assinatura"
                 onConfirm={async () => {
-                  const { error } = await supabase.rpc("request_subscription_cancel");
-                  if (error) return void toast.error("Não foi possível cancelar. Tente de novo.");
-                  toast.success("Cancelamento pedido.");
+                  const r = await cancelSubscription();
+                  if ("error" in r) return void toast.error(r.error);
+                  toast.success(
+                    r.refunded
+                      ? "Assinatura cancelada. O valor será devolvido pelo Asaas."
+                      : "Cancelamento pedido.",
+                  );
                   void qc.invalidateQueries({ queryKey: ["plan", userId] });
                 }}
               >

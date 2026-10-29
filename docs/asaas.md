@@ -1,0 +1,26 @@
+# Pagamentos pelo Asaas
+
+Duas coisas são vendidas: **Premium** (assinatura mensal, R$ 14,90) e **selo Urgente avulso** (R$ 2 por vaga).
+
+## Peças
+| Peça | Onde | O que faz |
+|---|---|---|
+| `asaas-checkout` | supabase/functions | Cria o cliente e a cobrança no Asaas e devolve o link de pagamento. Exige login. |
+| `asaas-webhook` | supabase/functions | Recebe os avisos do Asaas e libera/retira o Premium e o Urgente. Exige o token no cabeçalho `asaas-access-token`. |
+| `asaas-cancel` | supabase/functions | Cancela a assinatura; devolve o valor se a 1ª cobrança foi paga há até 7 dias. Exige login. |
+| `payments`, `asaas_customers` | migração 0038 | Registro dos pagamentos e ligação pessoa ↔ cliente do Asaas. O CPF nunca é guardado aqui. |
+
+## Segredos (Lovable Cloud → Secrets)
+- `ASAAS_API_KEY`: chave de API do Asaas (começa com `$aact_`).
+- `ASAAS_ENV`: `sandbox` (testes) ou `production`.
+- `ASAAS_WEBHOOK_TOKEN`: um texto longo e aleatório (32+ caracteres) que você inventa; o mesmo vai no painel do Asaas.
+
+## Webhook no Asaas
+URL: `https://qfheectjquxfgmexahem.supabase.co/functions/v1/asaas-webhook`
+Token de autenticação: o mesmo `ASAAS_WEBHOOK_TOKEN`. Versão da API: v3. Eventos: `PAYMENT_CREATED`, `PAYMENT_CONFIRMED`, `PAYMENT_RECEIVED`, `PAYMENT_OVERDUE`, `PAYMENT_REFUNDED`, `PAYMENT_CHARGEBACK_REQUESTED`, `PAYMENT_DELETED`, `SUBSCRIPTION_DELETED`, `SUBSCRIPTION_INACTIVATED`.
+
+## Regras
+- Pagou → Premium por +1 mês a partir do fim do período atual (ou de agora). O mesmo aviso repetido não estende duas vezes.
+- Devolveu ou chargeback → Premium termina na hora (Urgente: o selo sai da vaga).
+- Cancelar → o Asaas para de cobrar; o Premium vai até o fim do período pago.
+- Premium vitalício (sem data de fim) nunca é alterado pelo webhook.

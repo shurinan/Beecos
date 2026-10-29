@@ -9,6 +9,8 @@ import type { PostWithAuthor } from "@/components/PostCard";
 import { useAuth } from "@/lib/auth";
 import { openConversation } from "@/lib/data";
 import { postParams, profileParam } from "@/lib/urls";
+import { CheckoutButton } from "@/components/CheckoutButton";
+import { getPlanUsage, URGENT_PRICE } from "@/lib/plans";
 
 /** Os botões da vaga (tenho interesse, ver interessados, denunciar), na página e no popup. */
 export function PostActions({
@@ -37,6 +39,14 @@ export function PostActions({
     },
   });
 
+  // dono de vaga sem selo Urgente e sem Premium pode comprar o selo (avulso)
+  const { data: usage } = useQuery({
+    queryKey: ["plan", userId],
+    queryFn: () => getPlanUsage(userId!),
+    enabled: !!userId && mine && post.kind === "job" && !post.urgent,
+  });
+  const canBuyUrgent = mine && post.kind === "job" && !post.urgent && !!usage && !usage.premium;
+
   async function talk() {
     if (!userId) {
       onNavigate?.();
@@ -57,6 +67,19 @@ export function PostActions({
 
   return (
     <>
+      {mine && canBuyUrgent && userId && (
+        <CheckoutButton
+          userId={userId}
+          kind="urgent"
+          postId={post.id}
+          variant="outline"
+          size="lg"
+          className="w-full"
+          what={`Selo Urgente nesta vaga, ${URGENT_PRICE}.`}
+        >
+          Colocar selo Urgente — {URGENT_PRICE}
+        </CheckoutButton>
+      )}
       {mine ? (
         post.slug && (
           <Button asChild size="lg" variant="outline" className="w-full">

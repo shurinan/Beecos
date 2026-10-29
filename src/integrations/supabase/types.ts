@@ -952,11 +952,32 @@ export type Database = {
           },
         ];
       };
+      payments: {
+        Row: {
+          asaas_payment_id: string;
+          asaas_subscription_id: string | null;
+          created_at: string;
+          id: string;
+          invoice_url: string | null;
+          kind: string;
+          paid_at: string | null;
+          post_id: string | null;
+          refunded_at: string | null;
+          status: string;
+          user_id: string;
+          value: number;
+        };
+        Insert: never;
+        Update: never;
+        Relationships: [];
+      };
       subscriptions: {
         Row: {
           active_until: string | null;
+          asaas_subscription_id: string | null;
           cancel_requested_at: string | null;
           created_at: string;
+          first_paid_at: string | null;
           plan: string;
           user_id: string;
         };

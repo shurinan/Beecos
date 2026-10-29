@@ -264,9 +264,17 @@ export function PostFormFields({
             <>
               <LookToggle
                 label="Urgente"
-                hint={premium ? "Incluído no Premium" : `${URGENT_PRICE} por vaga`}
-                {...(premium ? {} : { icon: <Lock className="h-4 w-4" aria-hidden="true" /> })}
-                checked={premium && look.urgent}
+                hint={
+                  premium
+                    ? "Incluído no Premium"
+                    : look.urgent
+                      ? "Já pago nesta vaga"
+                      : `${URGENT_PRICE} por vaga · pague na vaga publicada`
+                }
+                {...(premium || look.urgent
+                  ? {}
+                  : { icon: <Lock className="h-4 w-4" aria-hidden="true" /> })}
+                checked={look.urgent}
                 disabled={!premium}
                 onChange={(v) => setLook({ urgent: v })}
               />
@@ -294,8 +302,8 @@ export function PostFormFields({
           />
           {!premium && (
             <p className="text-xs text-muted-foreground">
-              O destaque é do plano Premium. O selo Urgente custa {URGENT_PRICE} por vaga, e o
-              pagamento avulso abre em breve; no Premium ele já vem incluído.{" "}
+              O destaque é do plano Premium. O selo Urgente custa {URGENT_PRICE} por vaga: publique
+              e toque em “Colocar selo Urgente” na vaga. No Premium ele já vem incluído.{" "}
               <Link to="/plano" className="font-bold underline">
                 Conhecer o Premium
               </Link>

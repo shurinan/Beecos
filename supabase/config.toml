@@ -1,3 +1,12 @@
 project_id = "qfheectjquxfgmexahem"
 [functions.cleanup-chat-files]
 verify_jwt = false
+
+[functions.asaas-checkout]
+verify_jwt = false
+
+[functions.asaas-cancel]
+verify_jwt = false
+
+[functions.asaas-webhook]
+verify_jwt = false
