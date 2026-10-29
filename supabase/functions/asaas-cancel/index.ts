@@ -39,10 +39,32 @@ Deno.serve(async (req) => {
 
   const { data: sub } = await db
     .from("subscriptions")
-    .select("plan, asaas_subscription_id, first_paid_at, cancel_requested_at")
+    .select("plan, asaas_subscription_id, first_paid_at, cancel_requested_at, plan_term")
     .eq("user_id", user.id)
     .maybeSingle();
   if (!sub || sub.plan !== "premium") return json({ error: "Você não tem assinatura." }, 404);
+
+  // plano anual: não há assinatura a encerrar; só a desistência em até 7 dias devolve o valor
+  if (sub.plan_term === "annual") {
+    const { data: pay } = await db
+      .from("payments")
+      .select("asaas_payment_id, paid_at")
+      .eq("user_id", user.id)
+      .eq("kind", "annual")
+      .eq("status", "paid")
+      .order("paid_at", { ascending: false })
+      .limit(1)
+      .maybeSingle();
+    if (!pay?.paid_at || Date.now() - new Date(pay.paid_at).getTime() > REFUND_DAYS * 86400_000)
+      return json({ error: "O plano anual não renova sozinho, então não há o que cancelar. A devolução vale só até 7 dias depois do pagamento." }, 409);
+    const r = await asaas(`/payments/${pay.asaas_payment_id}/refund`, "POST", { description: "Desistência em até 7 dias" });
+    if (!r.ok) {
+      console.error("asaas refund", r.status, JSON.stringify(r.data));
+      return json({ error: "Não foi possível devolver agora. Fale com contato@beecos.com.br." }, 502);
+    }
+    await db.from("subscriptions").update({ active_until: new Date().toISOString() }).eq("user_id", user.id);
+    return json({ ok: true, refunded: true });
+  }
 
   // assinatura cobrada pelo Asaas: encerra por lá para não cobrar de novo
   if (sub.asaas_subscription_id) {

@@ -9,6 +9,9 @@ import {
   FREE_CHATS_PER_MONTH,
   FREE_JOBS_PER_MONTH,
   PREMIUM_PRICE,
+  ANNUAL_PRICE,
+  ANNUAL_PER_MONTH,
+  ANNUAL_SAVING,
   URGENT_PRICE,
   getPlanUsage,
 } from "@/lib/plans";
@@ -113,11 +116,27 @@ function PlanPage() {
       </div>
 
       <section className="block-card space-y-2 p-5">
-        <p className="font-display text-xl">Premium — {PREMIUM_PRICE}</p>
+        <p className="font-display text-xl">Premium</p>
+        <div className="grid grid-cols-2 gap-2 text-center">
+          <div className="rounded-lg border-2 border-foreground bg-card p-3">
+            <p className="text-sm font-bold">Mensal</p>
+            <p className="font-display text-xl leading-tight">R$ 14,90</p>
+            <p className="text-xs text-muted-foreground">por mês</p>
+          </div>
+          <div className="relative rounded-lg border-2 border-foreground bg-accent p-3">
+            <span className="absolute -top-2.5 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-md border-2 border-foreground bg-primary px-1.5 text-[11px] font-bold uppercase text-primary-foreground">
+              Economize {ANNUAL_SAVING}
+            </span>
+            <p className="text-sm font-bold">Anual</p>
+            <p className="font-display text-xl leading-tight">{ANNUAL_PRICE}</p>
+            <p className="text-xs text-muted-foreground">≈ {ANNUAL_PER_MONTH} por mês</p>
+          </div>
+        </div>
         <p className="text-sm text-muted-foreground">
+          O anual é um pagamento único e vale 12 meses: você paga 10 e leva 12. Não renova sozinho.
           O pagamento é feito pelo Asaas (Pix, boleto ou cartão). Você pode desistir em até 7 dias
-          depois de pagar e receber o valor de volta, e cancelar quando quiser em Meu perfil: o
-          Premium vai até o fim do período pago e não é cobrado de novo.
+          depois de pagar e receber o valor de volta. No mensal, cancele quando quiser em Meu
+          perfil: o Premium vai até o fim do período pago e não é cobrado de novo.
         </p>
         {usage?.premium ? (
           <p
@@ -131,9 +150,14 @@ function PlanPage() {
             .
           </p>
         ) : userId ? (
-          <CheckoutButton kind="premium" className="w-full">
-            Quero ser Premium
-          </CheckoutButton>
+          <div className="space-y-2">
+            <CheckoutButton kind="annual" className="w-full">
+              Quero o plano anual · {ANNUAL_PRICE}
+            </CheckoutButton>
+            <CheckoutButton kind="premium" variant="outline" className="w-full">
+              Prefiro pagar por mês · R$ 14,90
+            </CheckoutButton>
+          </div>
         ) : (
           <Button
             className="w-full"

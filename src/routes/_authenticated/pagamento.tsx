@@ -6,11 +6,11 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { getPlanUsage } from "@/lib/plans";
 
-type Tipo = "premium" | "urgente";
+type Tipo = "premium" | "anual" | "urgente";
 
 export const Route = createFileRoute("/_authenticated/pagamento")({
   validateSearch: (q: Record<string, unknown>): { tipo: Tipo } => ({
-    tipo: q["tipo"] === "urgente" ? "urgente" : "premium",
+    tipo: q["tipo"] === "urgente" ? "urgente" : q["tipo"] === "anual" ? "anual" : "premium",
   }),
   head: () => ({ meta: [{ title: "Pagamento — Beecos" }, { name: "robots", content: "noindex" }] }),
   component: Pagamento,
@@ -38,7 +38,7 @@ function Pagamento() {
       const { data } = await supabase
         .from("payments")
         .select("status, value, paid_at, created_at")
-        .eq("kind", urgent ? "urgent" : "premium")
+        .eq("kind", urgent ? "urgent" : tipo === "anual" ? "annual" : "premium")
         .order("created_at", { ascending: false })
         .limit(1)
         .maybeSingle();
@@ -95,7 +95,9 @@ function Pagamento() {
       <dl className="block-card space-y-2 p-4 text-left text-sm">
         <div className="flex justify-between gap-2">
           <dt className="text-muted-foreground">{urgent ? "Item" : "Plano"}</dt>
-          <dd className="font-bold">{urgent ? "Selo Urgente" : "Beecos Premium"}</dd>
+          <dd className="font-bold">
+            {urgent ? "Selo Urgente" : tipo === "anual" ? "Beecos Premium Anual" : "Beecos Premium"}
+          </dd>
         </div>
         <div className="flex justify-between gap-2">
           <dt className="text-muted-foreground">Valor</dt>

@@ -368,7 +368,36 @@ function Painel() {
                 ? `Premium até ${new Date(usage.activeUntil).toLocaleDateString("pt-BR")}.`
                 : "Premium sem data para terminar."}
             </p>
-            {usage.cancelRequestedAt ? (
+            {usage.annual ? (
+              <div className="space-y-2">
+                <p role="status" className="rounded border-2 border-foreground/30 p-2 text-sm">
+                  Plano anual: não renova sozinho, então nada é cobrado de novo.
+                </p>
+                {usage.firstPaidAt &&
+                Date.now() - new Date(usage.firstPaidAt).getTime() <= 7 * 86400_000 ? (
+                  <ConfirmButton
+                    variant="outline"
+                    size="sm"
+                    title="Desistir do plano anual?"
+                    description="Você está dentro dos 7 dias: o valor pago é devolvido e o Premium termina agora."
+                    confirmLabel="Desistir e receber de volta"
+                    onConfirm={async () => {
+                      const r = await cancelSubscription();
+                      if ("error" in r) return void toast.error(r.error);
+                      toast.success("Pronto. O valor será devolvido pelo Asaas.");
+                      void qc.invalidateQueries({ queryKey: ["plan", userId] });
+                    }}
+                  >
+                    Desistir da compra (7 dias)
+                  </ConfirmButton>
+                ) : usage.activeUntil &&
+                  new Date(usage.activeUntil).getTime() - Date.now() <= 30 * 86400_000 ? (
+                  <CheckoutButton kind="annual" size="sm" variant="outline">
+                    Renovar plano anual
+                  </CheckoutButton>
+                ) : null}
+              </div>
+            ) : usage.cancelRequestedAt ? (
               <p role="status" className="rounded border-2 border-foreground/30 p-2 text-sm">
                 Cancelamento pedido em{" "}
                 {new Date(usage.cancelRequestedAt).toLocaleDateString("pt-BR")}. O Premium continua

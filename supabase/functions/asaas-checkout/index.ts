@@ -5,6 +5,7 @@
 import { createClient } from "jsr:@supabase/supabase-js@2";
 
 const PREMIUM_VALUE = 14.9;
+const ANNUAL_VALUE = 149.0;
 const URGENT_VALUE = 2.0;
 
 const CORS = {
@@ -52,7 +53,7 @@ async function asaas(path: string, init: { method?: string; body?: unknown } = {
 
 // Depois de pagar, o Asaas devolve a pessoa para o Beecos. Só liga se ASAAS_SUCCESS_URL existir
 // (o endereço do site, ex.: https://beecos.com.br): o Asaas só aceita o domínio cadastrado na conta.
-function callback(tipo: "premium" | "urgente") {
+function callback(tipo: "premium" | "anual" | "urgente") {
   const base = Deno.env.get("ASAAS_SUCCESS_URL");
   if (!base) return {};
   return { callback: { successUrl: `${base.replace(/\/$/, "")}/pagamento?tipo=${tipo}`, autoRedirect: true } };
@@ -81,7 +82,7 @@ Deno.serve(async (req) => {
     return json({ error: "pedido inválido" }, 400);
   }
   const kind = body.kind;
-  if (kind !== "premium" && kind !== "urgent") return json({ error: "pedido inválido" }, 400);
+  if (kind !== "premium" && kind !== "annual" && kind !== "urgent") return json({ error: "pedido inválido" }, 400);
 
   try {
     // 1) cliente no Asaas (reaproveita o que já existe)
@@ -153,6 +154,58 @@ Deno.serve(async (req) => {
         _url: first.invoiceUrl,
       });
       return json({ url: first.invoiceUrl });
+    }
+
+    if (kind === "annual") {
+      const { data: sub } = await db
+        .from("subscriptions")
+        .select("plan, active_until, cancel_requested_at, asaas_subscription_id, plan_term")
+        .eq("user_id", user.id)
+        .maybeSingle();
+      const active = sub?.plan === "premium" && (!sub.active_until || new Date(sub.active_until) > new Date());
+      if (active && !sub?.active_until) return json({ error: "Você já é Premium." }, 409);
+      // assinatura mensal ativa seguiria cobrando: cancelar antes
+      if (active && sub?.plan_term === "monthly" && sub.asaas_subscription_id && !sub.cancel_requested_at)
+        return json({ error: "Cancele a assinatura mensal em Meu perfil antes de assinar o plano anual." }, 409);
+      // anual com mais de 30 dias pela frente: ainda não precisa renovar
+      if (active && sub?.plan_term === "annual" && new Date(sub.active_until!).getTime() - Date.now() > 30 * 86400_000)
+        return json({ error: "Seu plano anual ainda tem mais de 30 dias. Renove perto do fim." }, 409);
+
+      const { data: open } = await db
+        .from("payments")
+        .select("invoice_url")
+        .eq("user_id", user.id)
+        .eq("kind", "annual")
+        .eq("status", "pending")
+        .not("invoice_url", "is", null)
+        .order("created_at", { ascending: false })
+        .limit(1)
+        .maybeSingle();
+      if (open?.invoice_url) return json({ url: open.invoice_url });
+
+      const due = new Date(Date.now() + 3 * 86400_000).toISOString().slice(0, 10);
+      const p = await asaas("/payments", {
+        method: "POST",
+        body: {
+          customer,
+          billingType: "UNDEFINED",
+          value: ANNUAL_VALUE,
+          dueDate: due,
+          description: "Beecos Premium anual (12 meses)",
+          externalReference: `annual:${user.id}`,
+          ...callback("anual"),
+        },
+      });
+      await db.rpc("asaas_apply_payment", {
+        _payment_id: p.id,
+        _customer: customer,
+        _subscription: null,
+        _ref: `annual:${user.id}`,
+        _value: ANNUAL_VALUE,
+        _status: "pending",
+        _url: p.invoiceUrl,
+      });
+      return json({ url: p.invoiceUrl });
     }
 
     // urgent

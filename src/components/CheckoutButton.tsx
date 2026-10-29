@@ -11,7 +11,7 @@ export function CheckoutButton({
   size = "default",
   className,
 }: {
-  kind: "premium" | "urgent";
+  kind: "premium" | "annual" | "urgent";
   postId?: string;
   children: ReactNode;
   variant?: "default" | "outline";
@@ -22,7 +22,10 @@ export function CheckoutButton({
     <Button asChild variant={variant} size={size} {...(className ? { className } : {})}>
       <Link
         to="/checkout"
-        search={{ tipo: kind === "urgent" ? "urgente" : "premium", vaga: postId }}
+        search={{
+          tipo: kind === "urgent" ? "urgente" : kind === "annual" ? "anual" : "premium",
+          vaga: postId,
+        }}
       >
         {children}
       </Link>

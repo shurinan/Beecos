@@ -18,7 +18,7 @@ async function failure(error: unknown): Promise<string> {
 
 /** Cria a cobrança e devolve o link do Asaas (Pix, boleto ou cartão). */
 export async function startCheckout(input: {
-  kind: "premium" | "urgent";
+  kind: "premium" | "annual" | "urgent";
   cpf?: string | undefined;
   postId?: string | undefined;
 }): Promise<{ url: string } | { error: string }> {
