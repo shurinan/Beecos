@@ -92,8 +92,10 @@ function Terms() {
           também podem ser comprados avulsos, como o selo Urgente numa vaga.
         </li>
         <li>
-          O Premium é cobrado por mês. Antes de pagar, você vê o valor, a forma de pagamento e
-          quando a próxima cobrança acontece. O pagamento é processado pelo Asaas.
+          O Premium pode ser mensal (cobrado todo mês) ou anual (pagamento único de R$ 149, válido
+          por 12 meses, que não renova sozinho). Antes de pagar, você vê o valor, a forma de
+          pagamento e, no mensal, quando a próxima cobrança acontece. O pagamento é processado pelo
+          Asaas.
         </li>
         <li>
           <b>Arrependimento em 7 dias:</b> você pode desistir de uma compra em até 7 dias corridos
@@ -102,7 +104,8 @@ function Terms() {
         </li>
         <li>
           <b>Cancelamento:</b> use “Cancelar assinatura” em Meu perfil › Seu plano, quando quiser. O
-          Premium continua até o fim do período já pago e não é cobrado de novo.
+          Premium continua até o fim do período já pago e não é cobrado de novo. O plano anual não
+          renova sozinho; dentro dos 7 dias, a desistência é feita no mesmo lugar.
         </li>
       </ul>
 

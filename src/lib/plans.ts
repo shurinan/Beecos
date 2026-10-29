@@ -3,6 +3,11 @@ import { supabase } from "@/integrations/supabase/client";
 export const FREE_JOBS_PER_MONTH = 2;
 export const FREE_CHATS_PER_MONTH = 5;
 export const PREMIUM_PRICE = "R$ 14,90/mês";
+/** Plano anual: pagamento único, vale 12 meses (equivale a 10 meses do mensal). */
+export const ANNUAL_PRICE = "R$ 149";
+export const ANNUAL_PER_MONTH = "R$ 12,42";
+/** 1 − 149 ÷ (12 × 14,90) = 16,7%. */
+export const ANNUAL_SAVING = "17%";
 /** Selo Urgente para quem não é Premium (pagamento avulso). */
 export const URGENT_PRICE = "R$ 2";
 
@@ -29,7 +34,11 @@ export async function getPlanUsage(userId: string) {
   monthStart.setHours(0, 0, 0, 0);
   const since = monthStart.toISOString();
   const [sub, jobs, chats] = await Promise.all([
-    supabase.from("subscriptions").select("plan, active_until, cancel_requested_at").eq("user_id", userId).maybeSingle(),
+    supabase
+      .from("subscriptions")
+      .select("plan, active_until, cancel_requested_at, plan_term, first_paid_at")
+      .eq("user_id", userId)
+      .maybeSingle(),
     supabase
       .from("posts")
       .select("id", { count: "exact", head: true })
@@ -49,6 +58,8 @@ export async function getPlanUsage(userId: string) {
     premium,
     activeUntil: s?.active_until ?? null,
     cancelRequestedAt: s?.cancel_requested_at ?? null,
+    annual: s?.plan_term === "annual",
+    firstPaidAt: s?.first_paid_at ?? null,
     jobs: jobs.count ?? 0,
     chats: chats.count ?? 0,
   };

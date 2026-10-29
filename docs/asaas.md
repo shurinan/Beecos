@@ -29,3 +29,7 @@ Token de autenticação: o mesmo `ASAAS_WEBHOOK_TOKEN`. Versão da API: v3. Even
 - `/checkout?tipo=premium` ou `?tipo=urgente&vaga=<id>`: resumo do pedido, CPF (só na primeira vez), aceite dos Termos e botão para o Asaas.
 - `/pagamento?tipo=premium|urgente`: "Pagamento confirmado!" (confere o banco a cada 3 s por 2 minutos).
 - Para o Asaas trazer a pessoa de volta a `/pagamento` depois de pagar, crie o segredo `ASAAS_SUCCESS_URL` com o endereço do site (ex.: `https://beecos.com.br`). O domínio precisa estar cadastrado na conta do Asaas; sem o segredo, a pessoa volta pelo navegador.
+
+## Plano anual
+R$ 149 em pagamento único (cobrança avulsa, `externalReference = annual:<pessoa>`), vale 12 meses e não renova sozinho. Equivale a 10 meses do mensal: economia de 1 − 149/178,80 = 16,7% (mostrado como 17%). Desistência em até 7 dias devolve o valor (botão em Meu perfil). Quem tem mensal ativo precisa cancelar antes; anual com mais de 30 dias pela frente não compra outro.
+Parcelamento no cartão: depende da configuração de parcelas da conta no Asaas (ver Configurações da conta no painel); o app não calcula juros.

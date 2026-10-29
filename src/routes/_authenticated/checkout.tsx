@@ -10,13 +10,13 @@ import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { hasBillingProfile, startCheckout } from "@/lib/billing";
 import { formatCpf, isValidCpf } from "@/lib/cpf";
-import { getPlanUsage, PREMIUM_PRICE } from "@/lib/plans";
+import { ANNUAL_PER_MONTH, ANNUAL_SAVING, getPlanUsage, PREMIUM_PRICE } from "@/lib/plans";
 
-type Tipo = "premium" | "urgente";
+type Tipo = "premium" | "anual" | "urgente";
 
 export const Route = createFileRoute("/_authenticated/checkout")({
   validateSearch: (q: Record<string, unknown>): { tipo: Tipo; vaga?: string | undefined } => ({
-    tipo: q["tipo"] === "urgente" ? "urgente" : "premium",
+    tipo: q["tipo"] === "urgente" ? "urgente" : q["tipo"] === "anual" ? "anual" : "premium",
     vaga: typeof q["vaga"] === "string" ? q["vaga"] : undefined,
   }),
   head: () => ({
@@ -33,9 +33,9 @@ const PREMIUM_BENEFITS = [
   "Fila de espera e troca de quem negocia",
 ];
 
-function nextMonth(): string {
+function monthsAhead(n: number): string {
   const d = new Date();
-  d.setMonth(d.getMonth() + 1);
+  d.setMonth(d.getMonth() + n);
   return d.toLocaleDateString("pt-BR");
 }
 
@@ -44,6 +44,7 @@ function Checkout() {
   const { tipo, vaga } = Route.useSearch();
   const navigate = useNavigate();
   const urgent = tipo === "urgente";
+  const annual = tipo === "anual";
   const [cpf, setCpf] = useState("");
   const [accepted, setAccepted] = useState(false);
   const [busy, setBusy] = useState(false);
@@ -69,8 +70,11 @@ function Checkout() {
     },
   });
 
-  const price = urgent ? "R$ 2,00" : "R$ 14,90";
-  const alreadyPremium = !urgent && !!usage?.premium && !usage.cancelRequestedAt;
+  const price = urgent ? "R$ 2,00" : annual ? "R$ 149,00" : "R$ 14,90";
+  const alreadyPremium =
+    !urgent &&
+    !!usage?.premium &&
+    (annual ? !usage.activeUntil : !usage.cancelRequestedAt || usage.annual);
   const postProblem = urgent
     ? !vaga
       ? "Escolha a vaga que vai receber o selo."
@@ -89,7 +93,7 @@ function Checkout() {
     if (!accepted) return void toast.error("Aceite os Termos de uso para continuar.");
     setBusy(true);
     const r = await startCheckout({
-      kind: urgent ? "urgent" : "premium",
+      kind: urgent ? "urgent" : annual ? "annual" : "premium",
       postId: urgent ? vaga : undefined,
       cpf: needCpf ? cpf : undefined,
     });
@@ -126,6 +130,45 @@ function Checkout() {
         </p>
       </header>
 
+      {!urgent && (
+        <div className="grid grid-cols-2 gap-2" role="radiogroup" aria-label="Escolha o plano">
+          {(
+            [
+              { t: "premium", name: "Mensal", price: "R$ 14,90", per: "por mês" },
+              { t: "anual", name: "Anual", price: "R$ 149", per: `≈ ${ANNUAL_PER_MONTH} por mês` },
+            ] as const
+          ).map((o) => {
+            const on = tipo === o.t;
+            return (
+              <button
+                key={o.t}
+                type="button"
+                role="radio"
+                aria-checked={on}
+                onClick={() =>
+                  void navigate({ to: "/checkout", search: { tipo: o.t }, replace: true })
+                }
+                className={
+                  "relative flex flex-col items-start gap-0.5 rounded-lg border-2 border-foreground p-3 text-left transition-[background-color,box-shadow] " +
+                  (on ? "bg-foreground text-background" : "bg-card hover:bg-foreground/[0.07]")
+                }
+              >
+                {o.t === "anual" && (
+                  <span className="absolute -top-2.5 right-2 rounded-md border-2 border-foreground bg-primary px-1.5 text-[11px] font-bold uppercase text-primary-foreground">
+                    Economize {ANNUAL_SAVING}
+                  </span>
+                )}
+                <span className="font-bold">{o.name}</span>
+                <span className="font-display text-xl leading-tight">{o.price}</span>
+                <span className={"text-xs " + (on ? "opacity-80" : "text-muted-foreground")}>
+                  {o.per}
+                </span>
+              </button>
+            );
+          })}
+        </div>
+      )}
+
       {urgent && post && !postProblem && (
         <div className="block-card space-y-1 p-3">
           <p className="text-xs font-bold uppercase tracking-wide text-muted-foreground">
@@ -149,10 +192,14 @@ function Checkout() {
           </span>
           <div className="min-w-0 flex-1">
             <p className="font-display text-xl leading-tight">
-              {urgent ? "Selo Urgente" : "Beecos Premium"}
+              {urgent ? "Selo Urgente" : annual ? "Beecos Premium Anual" : "Beecos Premium"}
             </p>
             <p className="text-sm text-muted-foreground">
-              {urgent ? "Pagamento único, só nesta vaga" : "Assinatura mensal"}
+              {urgent
+                ? "Pagamento único, só nesta vaga"
+                : annual
+                  ? "Pagamento único · vale 12 meses"
+                  : "Assinatura mensal"}
             </p>
           </div>
           <p className="text-right font-display text-xl leading-tight">
@@ -188,16 +235,27 @@ function Checkout() {
               <span>Hoje você paga</span>
               <b>{price}</b>
             </p>
-            <p className="-mt-1 text-xs text-muted-foreground">
-              Próxima cobrança em {nextMonth()}. Cancele quando quiser. ({PREMIUM_PRICE})
-            </p>
+            {annual ? (
+              <p className="-mt-1 text-xs text-muted-foreground">
+                Vale até {monthsAhead(12)}. Não renova sozinho: nada é cobrado de novo. Você paga 10
+                meses e leva 12 (economia de {ANNUAL_SAVING}).
+              </p>
+            ) : (
+              <p className="-mt-1 text-xs text-muted-foreground">
+                Próxima cobrança em {monthsAhead(1)}. Cancele quando quiser. ({PREMIUM_PRICE})
+              </p>
+            )}
           </>
         )}
       </section>
 
       {(alreadyPremium || postProblem) && (
         <p role="alert" className="rounded-md border-2 border-foreground p-3 text-sm font-bold">
-          {alreadyPremium ? "Você já é Premium." : postProblem}
+          {alreadyPremium
+            ? annual
+              ? "Você já é Premium sem data para acabar."
+              : "Você já é Premium."
+            : postProblem}
         </p>
       )}
 
@@ -242,7 +300,10 @@ function Checkout() {
         <p className="flex items-start gap-2.5 rounded-lg border-2 border-dashed border-foreground bg-card p-3 text-sm">
           <ShieldCheck className="mt-0.5 h-5 w-5 flex-none" aria-hidden="true" />
           <span>
-            <b>7 dias para desistir.</b> Cancele em Meu perfil e o valor volta para você.
+            <b>7 dias para desistir.</b>{" "}
+            {annual
+              ? "Desista em Meu perfil e o valor volta para você."
+              : "Cancele em Meu perfil e o valor volta para você."}
           </span>
         </p>
       )}
