@@ -57,6 +57,7 @@ export type Database = {
           conversation_id: string;
           created_at: string;
           post_id: string;
+          released: boolean;
         };
         Insert: {
           closed_at?: string | null;
@@ -995,7 +996,7 @@ export type Database = {
         Returns: boolean;
       };
       close_negotiation: {
-        Args: { _conversation: string; _post: string };
+        Args: { _conversation: string; _post: string; _release?: boolean };
         Returns: undefined;
       };
       reopen_negotiation: {

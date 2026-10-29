@@ -1,7 +1,7 @@
 import { profileParam } from "@/lib/urls";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { ArrowLeft, CheckCircle2, MessageCircle, XCircle } from "lucide-react";
+import { ArrowLeft, CheckCircle2, Lock, MessageCircle, UserPlus, XCircle } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { ConfirmButton } from "@/components/ConfirmButton";
@@ -107,7 +107,7 @@ function Interested({ id }: { id: string }) {
       const convs = await supabase
         .from("conversation_posts")
         .select(
-          `created_at, closed_at, conversations!inner(id, last_message_at, user_a, user_b, a:profiles!conversations_user_a_fkey(${PERSON}), b:profiles!conversations_user_b_fkey(${PERSON}))`,
+          `created_at, closed_at, released, conversations!inner(id, last_message_at, user_a, user_b, a:profiles!conversations_user_a_fkey(${PERSON}), b:profiles!conversations_user_b_fkey(${PERSON}))`,
         )
         .eq("post_id", id);
       if (convs.error) throw convs.error;
@@ -115,9 +115,15 @@ function Interested({ id }: { id: string }) {
         (convs.data ?? []) as unknown as {
           created_at: string;
           closed_at: string | null;
+          released: boolean;
           conversations: Omit<ConvRow, "created_at">;
         }[]
-      ).map((r) => ({ ...r.conversations, created_at: r.created_at, closed_at: r.closed_at }));
+      ).map((r) => ({
+        ...r.conversations,
+        created_at: r.created_at,
+        closed_at: r.closed_at,
+        released: r.released,
+      }));
       const convIds = rows.map((c) => c.id);
       const people = rows.map((c) => (c.user_a === userId ? c.b : c.a)).filter(Boolean) as Person[];
       const [eng, msgs, ratings] = await Promise.all([
@@ -164,6 +170,7 @@ function Interested({ id }: { id: string }) {
             last_message_at: c.last_message_at,
             rank: c.rank,
             closed: !!c.closed_at,
+            released: !!c.released,
             person,
             replied: !!person && replied.has(`${c.id}:${person.id}`),
             engagement: e ? { id: e.id, status: e.status as EngagementStatus } : null,
@@ -201,7 +208,7 @@ function Interested({ id }: { id: string }) {
   const who = isJob ? "Prestador" : "Interessado";
   const holdsSlot = (c: (typeof data.people)[number]) =>
     !!c.engagement && c.engagement.status !== "cancelled";
-  const openCount = data.people.filter((c) => (premium ? !c.closed : true) && !holdsSlot(c)).length;
+  const openCount = data.people.filter((c) => !(c.closed && c.released) && !holdsSlot(c)).length;
   const negotiationsFull = openCount >= MAX_NEGOTIATIONS;
 
   return (
@@ -225,13 +232,11 @@ function Interested({ id }: { id: string }) {
 
       {isJob && data.people.length > 0 && (
         <p className="text-sm font-semibold" aria-live="polite">
-          {premium
-            ? `${openCount} de ${MAX_NEGOTIATIONS} negociações abertas`
-            : `${openCount} de ${MAX_NEGOTIATIONS} orçamentos recebidos`}
+          {openCount} de {MAX_NEGOTIATIONS} lugares de negociação ocupados
           {negotiationsFull &&
             (premium
-              ? ". Encerre uma para que o próximo da fila entre no lugar."
-              : ". No plano Grátis, a vaga não recebe mais ninguém. Com o Premium, ao encerrar uma negociação, o próximo da fila entra no lugar.")}
+              ? ". Use “Encerrar e receber novo contato” para abrir um lugar: entra o primeiro da fila ou um novo interessado."
+              : ". A vaga não recebe mais ninguém. Com o Premium, você pode encerrar uma negociação e receber um novo contato no lugar.")}
         </p>
       )}
 
@@ -324,47 +329,51 @@ function Interested({ id }: { id: string }) {
               {isJob && open && !closed && (
                 <ConfirmButton
                   size="sm"
-                  variant="default"
-                  loading={act.busy}
-                  disabled={!c.replied || full}
-                  title={`${chooseLabel(post.kind)}: ${name}?`}
-                  description={`${name} vai receber o aviso e precisa aceitar. Você poderá desfazer a escolha enquanto o serviço não for concluído.`}
-                  confirmLabel="Escolher"
-                  onConfirm={() => act.choose(c.conversationId, `${name} foi escolhido(a)`, id)}
-                >
-                  <CheckCircle2 /> {chooseLabel(post.kind)}
-                </ConfirmButton>
-              )}
-              {isJob && open && !closed && (
-                <ConfirmButton
-                  size="sm"
                   variant="outline"
                   loading={act.busy}
                   title={`Encerrar a negociação com ${name}?`}
-                  description={
-                    premium
-                      ? `${name} é avisado(a) no chat e o próximo da fila entra no lugar. A conversa continua, e você pode reabrir depois se houver espaço.`
-                      : `${name} é avisado(a) no chat. A conversa continua e você pode reabrir depois. No plano Grátis, encerrar não abre espaço para outra pessoa.`
-                  }
+                  description={`${name} é avisado(a) no chat e a conversa continua. O lugar dele(a) continua ocupado: ninguém novo entra por causa disso. Você pode reabrir depois.`}
                   confirmLabel="Encerrar"
                   onConfirm={() => act.closeNegotiation(c.conversationId, id)}
                 >
-                  <XCircle /> Encerrar negociação
+                  <XCircle /> Encerrar
                 </ConfirmButton>
               )}
+              {isJob &&
+                open &&
+                !(closed && c.released) &&
+                (premium ? (
+                  <ConfirmButton
+                    size="sm"
+                    variant="outline"
+                    loading={act.busy}
+                    title={`Encerrar com ${name} e receber novo contato?`}
+                    description={`${name} é avisado(a) no chat e a conversa continua. O lugar fica livre: entra o primeiro da fila de espera ou, se não houver fila, a vaga volta a aceitar um novo interessado.`}
+                    confirmLabel="Encerrar e liberar"
+                    onConfirm={() => act.closeNegotiation(c.conversationId, id, true)}
+                  >
+                    <UserPlus /> Encerrar e receber novo contato
+                  </ConfirmButton>
+                ) : (
+                  <Button asChild size="sm" variant="outline">
+                    <Link to="/plano" title="Recurso do plano Premium">
+                      <Lock /> Encerrar e receber novo contato · Premium
+                    </Link>
+                  </Button>
+                ))}
               {isJob && closed && (
                 <Button
                   type="button"
                   size="sm"
                   variant="outline"
-                  disabled={act.busy || (premium && negotiationsFull)}
+                  disabled={act.busy || (c.released && negotiationsFull)}
                   onClick={() => act.reopenNegotiation(c.conversationId, id)}
                 >
                   Reabrir negociação
                 </Button>
               )}
             </div>
-            {isJob && closed && premium && negotiationsFull && (
+            {isJob && closed && c.released && negotiationsFull && (
               <p className="text-xs text-muted-foreground">
                 Para reabrir, encerre outra negociação primeiro.
               </p>
