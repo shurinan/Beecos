@@ -85,7 +85,7 @@ function Index() {
           </p>
           <div className="mt-4 grid gap-2 sm:grid-cols-2">
             <Button asChild size="lg" className="w-full">
-              <Link to={userId ? "/perfil" : "/auth"}>
+              <Link to={userId ? "/perfil" : "/auth"} hash={userId ? "nova-vaga" : ""}>
                 <Plus /> Quero contratar
               </Link>
             </Button>
