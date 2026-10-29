@@ -10,8 +10,10 @@ export function limitMessage(err: unknown): string | null {
     return `Você já publicou ${FREE_JOBS_PER_MONTH} vagas este mês. Seja Premium para publicar sem limite.`;
   if (msg.includes("LIMITE_CHATS"))
     return `Você já iniciou ${FREE_CHATS_PER_MONTH} conversas este mês. Seja Premium para conversar sem limite.`;
-  if (msg.includes("NEGOCIACOES_CHEIAS"))
-    return "Esta vaga já está negociando com 5 pessoas. Tente de novo mais tarde, se alguém for dispensado.";
+  if (msg.includes("FILA_ESPERA"))
+    return "Você está na fila de espera. Avisamos quando chegar a sua vez.";
+  if (msg.includes("VAGA_PREENCHIDA")) return "Essa oportunidade foi preenchida.";
+  if (msg.includes("NEGOCIACOES_CHEIAS")) return "Essa oportunidade foi preenchida.";
   if (msg.includes("NEGOCIACAO_ENCERRADA"))
     return "Quem publicou esta vaga encerrou a negociação com você.";
   if (msg.includes("CONTA_EM_ANALISE"))

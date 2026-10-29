@@ -49,7 +49,6 @@ export function PostCard({
   post,
   slots,
   distance,
-  interested,
   full = false,
 }: {
   /** Na página da vaga: mostra o texto inteiro, sem cortar com "…". */
@@ -58,8 +57,6 @@ export function PostCard({
   slots?: PostSlots | undefined;
   /** Distância até quem está vendo; só existe para quem informou onde atua. */
   distance?: PostDistance | undefined;
-  /** Quantas pessoas estão negociando a vaga agora. */
-  interested?: number | undefined;
 }) {
   const kind = post.kind as PostKind;
   const { userId } = useAuth();
@@ -247,7 +244,6 @@ export function PostCard({
                 post={post}
                 slots={slots}
                 distance={distance}
-                interested={interested}
                 full
               />
               <PostActions post={post} onNavigate={() => setOpen(false)} />

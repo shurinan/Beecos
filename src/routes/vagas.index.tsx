@@ -24,7 +24,6 @@ import { supabase } from "@/integrations/supabase/client";
 import { PostCard, type PostWithAuthor } from "@/components/PostCard";
 import { usePostDistances, useWorkArea } from "@/lib/geo";
 import { usePostStats } from "@/lib/services-hooks";
-import { useInterestCounts } from "@/lib/community";
 import { AdSlot } from "@/components/AdSlot";
 import { FEED_AD_AFTER, shouldShowFeedAd } from "@/lib/ads";
 import { Input } from "@/components/ui/input";
@@ -169,7 +168,6 @@ function Vagas() {
 
   const slots = usePostStats(shown?.map((p) => p.id));
   const distances = usePostDistances(userId, shown?.map((p) => p.id) ?? []);
-  const interest = useInterestCounts(shown?.map((p) => p.id) ?? []);
   const { data: workArea, isSuccess: areaLoaded } = useWorkArea(userId);
 
   function pickTopic(q: string) {
@@ -368,7 +366,6 @@ function Vagas() {
                 post={p}
                 slots={slots[p.id]}
                 distance={distances.get(p.id)}
-                interested={interest.get(p.id) ?? 0}
               />
               {i === FEED_AD_AFTER - 1 && shouldShowFeedAd(shown.length) && (
                 <AdSlot placement="feed" />

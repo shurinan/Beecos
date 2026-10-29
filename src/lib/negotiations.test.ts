@@ -4,7 +4,7 @@ import { MAX_NEGOTIATIONS, serviceErrorMessage } from "@/lib/services";
 
 describe("negotiation limit messages", () => {
   it("says the job is full for the interested person", () => {
-    expect(limitMessage({ message: "NEGOCIACOES_CHEIAS" })).toMatch(/5 pessoas/);
+    expect(limitMessage({ message: "NEGOCIACOES_CHEIAS" })).toMatch(/preenchida/);
   });
   it("says it was closed", () => {
     expect(limitMessage({ message: "NEGOCIACAO_ENCERRADA" })).toMatch(/encerrou/);

@@ -9,7 +9,6 @@ import { PostCard, type PostWithAuthor } from "@/components/PostCard";
 import { useAuth } from "@/lib/auth";
 import { usePostDistances } from "@/lib/geo";
 import { usePostStats } from "@/lib/services-hooks";
-import { useInterestCounts } from "@/lib/community";
 import { postParams } from "@/lib/urls";
 
 export const Route = createFileRoute("/vagas/$profissao/$codigo/")({
@@ -61,7 +60,6 @@ function PostPage() {
   }, [canonical, profissao, navigate]);
 
   const slots = usePostStats(post ? [post.id] : []);
-  const interest = useInterestCounts(post ? [post.id] : []);
   const distance = usePostDistances(userId, post ? [post.id] : []).get(post?.id ?? "");
 
   const back = (
@@ -99,7 +97,6 @@ function PostPage() {
         post={post}
         slots={slots[post.id]}
         distance={distance}
-        interested={interest.get(post.id) ?? 0}
         full
       />
       <PostActions post={post} />

@@ -511,6 +511,12 @@ export type Database = {
           },
         ];
       };
+      post_waitlist: {
+        Row: { created_at: string; post_id: string; user_id: string };
+        Insert: never;
+        Update: never;
+        Relationships: [];
+      };
       conversation_prefs: {
         Row: {
           archived: boolean;
@@ -998,6 +1004,10 @@ export type Database = {
       };
       choose_provider: {
         Args: { _conversation: string; _post?: string };
+        Returns: string;
+      };
+      join_waitlist: {
+        Args: { _post: string };
         Returns: string;
       };
       my_hold_until: {

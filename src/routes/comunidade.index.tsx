@@ -10,12 +10,11 @@ import {
   groupsSummary,
   useCommunityFeed,
   useCommunityOverview,
-  useInterestCounts,
   useMyCommunities,
 } from "@/lib/community";
 import { openConversation } from "@/lib/data";
 import { usePostDistances } from "@/lib/geo";
-import { limitMessage } from "@/lib/plans";
+import { showInterestError } from "@/lib/interest";
 import { usePostStats } from "@/lib/services-hooks";
 import { profileParam } from "@/lib/urls";
 
@@ -54,7 +53,6 @@ function Community() {
   const postIds = posts?.map((p) => p.id) ?? [];
   const slots = usePostStats(postIds);
   const distances = usePostDistances(userId, postIds);
-  const interest = useInterestCounts(postIds);
 
   if (!ready) return <p className="text-muted-foreground">Carregando…</p>;
 
@@ -86,7 +84,7 @@ function Community() {
         params: { slug: profileParam({ id: postUser, slug }) },
       });
     } catch (e) {
-      toast.error(limitMessage(e) ?? "Não foi possível abrir a conversa");
+      showInterestError(e);
     } finally {
       setApplying(null);
     }
@@ -178,7 +176,6 @@ function Community() {
               post={p}
               slots={slots[p.id]}
               distance={distances.get(p.id)}
-              interested={interest.get(p.id) ?? 0}
               mine={p.user_id === userId}
               busy={applying === p.id}
               onApply={() => void apply(p.user_id, p.id, p.profiles?.slug)}

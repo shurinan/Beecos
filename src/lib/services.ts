@@ -81,6 +81,7 @@ const ERRORS: Record<string, string> = {
   CONVERSA_INVALIDA: "Conversa inválida.",
   SERVICO_INVALIDO: "Você não pode fazer isso neste serviço.",
   STATUS_INVALIDO: "O serviço já mudou de situação. Atualize a tela.",
+  SO_PREMIUM_TROCA: "Trocar quem negocia é um recurso do plano Premium.",
   NEGOCIACAO_INVALIDA: "Você não pode fazer isso nesta negociação.",
   NEGOCIACOES_CHEIAS: "Já são 5 negociações abertas. Encerre uma para abrir outra.",
   NEGOCIACAO_ENCERRADA: "A negociação com essa pessoa está encerrada. Reabra antes de escolher.",

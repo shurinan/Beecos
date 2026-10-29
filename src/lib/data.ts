@@ -45,6 +45,14 @@ export async function openConversation(me: string, other: string, postId: string
     _other: other,
     ...(postId ? { _post: postId } : {}),
   });
-  if (error) throw error; // pode ser LIMITE_CHATS, do plano grátis
+  if (error) {
+    // vaga cheia: dono Premium tem fila de espera; dono Grátis não troca ninguém ("preenchida")
+    if (postId && error.message?.includes("NEGOCIACOES_CHEIAS")) {
+      const q = await supabase.rpc("join_waitlist", { _post: postId });
+      if (!q.error) throw new Error(q.data === "waiting" ? "FILA_ESPERA" : "VAGA_PREENCHIDA");
+      if (!q.error?.message?.includes("VAGA_ABERTA")) throw q.error;
+    }
+    throw error; // pode ser LIMITE_CHATS, do plano grátis
+  }
   return data;
 }
