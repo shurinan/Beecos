@@ -32,8 +32,9 @@ function Privacy() {
           preencher.
         </li>
         <li>
-          <b>Contato:</b> telefone e endereço, se você cadastrar. Ficam guardados com proteção e só
-          são mostrados a outra pessoa se você os compartilhar.
+          <b>Contato:</b> telefone, endereço e data de nascimento, se você cadastrar. Ficam
+          guardados com proteção e só são mostrados a outra pessoa se você os compartilhar. A data
+          de nascimento é opcional e fica visível só para você.
         </li>
         <li>
           <b>Localização aproximada:</b> o CEP do lugar onde você atua e o CEP das vagas que você
@@ -41,8 +42,9 @@ function Privacy() {
           endereço da vaga <b>nunca é mostrado</b> a outras pessoas; elas veem apenas a distância.
         </li>
         <li>
-          <b>Uso:</b> vagas, conversas e mensagens, avaliações, avisos recebidos, preferências,
-          plano e o horário em que você esteve online pela última vez.
+          <b>Uso:</b> vagas e as fotos delas, conversas e mensagens, arquivos enviados no chat,
+          avaliações, avisos recebidos, preferências, plano e o horário em que você esteve online
+          pela última vez.
         </li>
         <li>
           <b>Denúncias:</b> as que você enviar e as que forem feitas sobre você, com a decisão da
@@ -72,8 +74,10 @@ function Privacy() {
           que você decidir compartilhar numa conversa.
         </li>
         <li>
-          <b>Empresas que nos prestam serviço:</b> hospedagem e banco de dados (Supabase e Lovable);
-          login com Google, se você usar; e, quando forem ativados, pagamento (Asaas) e e-mail
+          <b>Empresas que nos prestam serviço:</b> hospedagem, banco de dados e relatório de erros
+          do app (Supabase e Lovable); login com Google, se você usar; as fontes de letra do site
+          (Google Fonts, que recebe o seu endereço IP ao carregar a página); a busca do CEP e da
+          cidade (BrasilAPI e OpenStreetMap, que recebem o CEP digitado); pagamento (Asaas) e e-mail
           (Resend). Elas só tratam os dados para nos prestar o serviço.
         </li>
         <li>
@@ -81,6 +85,10 @@ function Privacy() {
         </li>
       </ul>
       <p>Não vendemos os seus dados. Os anúncios exibidos são do próprio Beecos.</p>
+      <p>
+        Alguns desses serviços guardam dados em servidores fora do Brasil. Nesses casos, usamos
+        empresas que oferecem proteção adequada aos dados, como pede a LGPD (art. 33).
+      </p>
 
       <h2>Cookies e armazenamento</h2>
       <p>
@@ -89,15 +97,22 @@ function Privacy() {
       </p>
 
       <h2>Por quanto tempo</h2>
-      <p>
-        Guardamos os dados enquanto a sua conta existir. Ao excluir a conta, o seu perfil, as suas
-        vagas, conversas e demais dados deixam de aparecer no app e de ser acessíveis a outras
-        pessoas. Por segurança, <b>guardamos uma cópia protegida</b> do que foi apagado
-        (publicações, mensagens, conversas, avaliações e dados básicos da conta), acessível apenas à
-        moderação, para apurar denúncias, prevenir fraudes, cumprir obrigações legais e exercer
-        direitos em caso de disputa. Essa cópia é mantida pelo tempo necessário a essas finalidades.
-        Cópias de segurança podem demorar um pouco mais para sumir.
-      </p>
+      <ul>
+        <li>Guardamos os dados enquanto a sua conta existir.</li>
+        <li>
+          Fotos e PDFs enviados no chat ficam 48 horas e depois são apagados. O texto das mensagens
+          continua na conversa.
+        </li>
+        <li>
+          Ao excluir a conta, ou algo que você publicou, tudo é apagado de vez, inclusive as fotos.
+        </li>
+        <li>
+          <b>Exceção, só quando há denúncia:</b> se a sua conta fez ou recebeu uma denúncia, o que
+          for apagado fica guardado de forma protegida por 7 dias, acessível apenas à moderação,
+          para auditar o caso. Depois disso, é apagado.
+        </li>
+        <li>Cópias de segurança do banco de dados podem demorar um pouco mais para sumir.</li>
+      </ul>
 
       <h2>Os seus direitos</h2>
       <p>Você pode, a qualquer momento:</p>
@@ -133,7 +148,7 @@ function Privacy() {
             .
           </>
         ) : (
-          "O e-mail do nosso canal de privacidade será divulgado aqui. Enquanto isso, os pedidos de acesso, correção e exclusão podem ser feitos direto no seu perfil."
+          "Os pedidos de acesso, correção e exclusão podem ser feitos direto no seu perfil."
         )}{" "}
         Você também pode reclamar à Autoridade Nacional de Proteção de Dados (ANPD).
       </p>

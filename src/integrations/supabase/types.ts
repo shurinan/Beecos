@@ -955,6 +955,7 @@ export type Database = {
       subscriptions: {
         Row: {
           active_until: string | null;
+          cancel_requested_at: string | null;
           created_at: string;
           plan: string;
           user_id: string;
@@ -1038,6 +1039,10 @@ export type Database = {
       reporter_bad_faith: {
         Args: { _report: string };
         Returns: number;
+      };
+      request_subscription_cancel: {
+        Args: Record<PropertyKey, never>;
+        Returns: string;
       };
       report_content: {
         Args: { _type: string; _target: string; _reason: string; _details?: string };

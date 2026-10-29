@@ -29,7 +29,7 @@ export async function getPlanUsage(userId: string) {
   monthStart.setHours(0, 0, 0, 0);
   const since = monthStart.toISOString();
   const [sub, jobs, chats] = await Promise.all([
-    supabase.from("subscriptions").select("plan, active_until").eq("user_id", userId).maybeSingle(),
+    supabase.from("subscriptions").select("plan, active_until, cancel_requested_at").eq("user_id", userId).maybeSingle(),
     supabase
       .from("posts")
       .select("id", { count: "exact", head: true })
@@ -45,5 +45,11 @@ export async function getPlanUsage(userId: string) {
   const s = sub.data;
   const premium =
     !!s && s.plan === "premium" && (!s.active_until || new Date(s.active_until) > new Date());
-  return { premium, jobs: jobs.count ?? 0, chats: chats.count ?? 0 };
+  return {
+    premium,
+    activeUntil: s?.active_until ?? null,
+    cancelRequestedAt: s?.cancel_requested_at ?? null,
+    jobs: jobs.count ?? 0,
+    chats: chats.count ?? 0,
+  };
 }

@@ -88,7 +88,12 @@ export function InstallPrompt() {
           </Button>
         )}
       </div>
-      <button type="button" aria-label="Fechar" onClick={dismiss}>
+      <button
+        type="button"
+        aria-label="Fechar"
+        onClick={dismiss}
+        className="-m-1.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-full hover:bg-foreground/[0.07]"
+      >
         <X className="h-4 w-4" />
       </button>
     </div>

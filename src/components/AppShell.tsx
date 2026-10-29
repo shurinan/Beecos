@@ -9,6 +9,7 @@ import { useAlerts } from "@/lib/alerts";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { SuggestionButton } from "@/components/SuggestionButton";
 import { BackButton } from "@/components/BackButton";
+import { PRIVACY_CONTACT_EMAIL } from "@/lib/legal";
 import { HoldBanner } from "@/components/HoldBanner";
 import { AssistedHelp } from "@/components/AssistedHelp";
 import { InstallPrompt } from "@/components/InstallPrompt";
@@ -43,6 +44,12 @@ export function AppShell({ children }: { children: ReactNode }) {
   const active = { className: "text-foreground" };
   return (
     <div className="mx-auto flex min-h-screen max-w-2xl flex-col">
+      <a
+        href="#conteudo"
+        className="sr-only z-50 rounded-md bg-foreground px-3 py-2 font-bold text-background focus:not-sr-only focus:fixed focus:left-2 focus:top-2"
+      >
+        Pular para o conteúdo
+      </a>
       <header className="sticky top-0 z-20 border-b-2 border-foreground bg-primary">
         <div className="flex h-14 items-center justify-between px-4">
           <div className="flex items-center">
@@ -89,7 +96,7 @@ export function AppShell({ children }: { children: ReactNode }) {
       <AssistedHelp />
       {userId && <ChatBackground userId={userId} />}
       {userId && <AfterLogin userId={userId} />}
-      <main className="flex-1 px-4 pb-28 pt-4">
+      <main id="conteudo" tabIndex={-1} className="flex-1 px-4 pb-28 pt-4 outline-none">
         <HoldBanner />
         <InstallPrompt />
         {children}
@@ -109,6 +116,9 @@ export function AppShell({ children }: { children: ReactNode }) {
           <Link to="/privacidade" className="underline">
             Privacidade
           </Link>
+          <span className="mt-1 block">
+            Contato: <span className="selectable">{PRIVACY_CONTACT_EMAIL}</span>
+          </span>
         </p>
       </main>
       <nav className="fixed inset-x-0 bottom-0 z-20 border-t-2 border-foreground bg-background">

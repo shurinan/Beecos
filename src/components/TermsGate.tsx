@@ -64,7 +64,11 @@ export function TermsGate({ userId }: { userId: string }) {
           do Beecos.
         </p>
         <div className="flex items-start gap-2">
-          <Checkbox id="terms-agree" checked={agree} onCheckedChange={(v) => setAgree(v === true)} />
+          <Checkbox
+            id="terms-agree"
+            checked={agree}
+            onCheckedChange={(v) => setAgree(v === true)}
+          />
           <Label htmlFor="terms-agree" className="leading-snug">
             Li e aceito os Termos de uso e a Política de privacidade.
           </Label>

@@ -104,7 +104,12 @@ export function CommunityPostCard({
           </Button>
         )}
         {params ? (
-          <Button type="button" variant="outline" onClick={() => setOpen(true)}>
+          <Button
+            type="button"
+            variant="outline"
+            aria-label={`Saiba mais: ${post.title}`}
+            onClick={() => setOpen(true)}
+          >
             Saiba mais
           </Button>
         ) : null}
