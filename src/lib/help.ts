@@ -62,9 +62,9 @@ const HELP: Record<string, HelpEntry> = {
     title: "Sair do grupo",
     text: "Você deixa de ver as vagas desse grupo no feed. Dá para entrar de novo quando quiser.",
   },
-  "inscrever-se": {
-    title: "Inscrever-se",
-    text: "Abre uma conversa com quem publicou a vaga, para combinar os detalhes. O endereço só aparece no chat.",
+  "tenho interesse": {
+    title: "Tenho interesse",
+    text: "Abre uma conversa com quem publicou a vaga, para combinar os detalhes. Se a vaga estiver cheia, avisamos se foi preenchida ou se você entrou na fila de espera.",
   },
   "saiba mais": {
     title: "Saiba mais",
@@ -76,7 +76,7 @@ const HELP: Record<string, HelpEntry> = {
   },
   encerrada: {
     title: "Vaga encerrada",
-    text: "Todas as vagas já foram preenchidas. Não dá mais para se inscrever.",
+    text: "Todas as vagas já foram preenchidas. Não dá mais para mostrar interesse.",
   },
   denunciar: {
     title: "Denunciar",

@@ -3,6 +3,7 @@ import {
   attachmentPath,
   cleanFileName,
   formatFileSize,
+  attachmentExpired,
   formatLastSeen,
   hasLink,
   isBlockedTextError,
@@ -137,5 +138,19 @@ describe("links no chat", () => {
       "Rua das Flores, 123 - apto 4",
     ])
       expect(hasLink(t)).toBe(false);
+  });
+});
+
+describe("anexos por 48 horas", () => {
+  const now = Date.parse("2026-10-29T12:00:00Z");
+  it("vence depois de 48 horas ou quando o arquivo já foi apagado", () => {
+    expect(attachmentExpired({ created_at: "2026-10-28T12:00:00Z" }, now)).toBe(false);
+    expect(attachmentExpired({ created_at: "2026-10-27T11:00:00Z" }, now)).toBe(true);
+    expect(
+      attachmentExpired(
+        { created_at: "2026-10-29T11:00:00Z", attachment_expired_at: "2026-10-29T11:30:00Z" },
+        now,
+      ),
+    ).toBe(true);
   });
 });

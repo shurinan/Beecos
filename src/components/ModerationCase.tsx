@@ -1,6 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { FileText } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { attachmentExpired } from "@/lib/chat";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -74,6 +75,15 @@ export function ModerationCase({
       return data as unknown as CaseData;
     },
   });
+  const { data: badFaith } = useQuery({
+    queryKey: ["reporter-bad-faith", reportId],
+    enabled: open,
+    queryFn: async () => {
+      const { data, error } = await supabase.rpc("reporter_bad_faith", { _report: reportId });
+      if (error) throw error;
+      return data ?? 0;
+    },
+  });
   const name = (id: string) =>
     id === data?.reporter?.id ? "Quem denunciou" : id === data?.reported?.id ? "Denunciado" : "?";
   return (
@@ -103,6 +113,10 @@ export function ModerationCase({
               </p>
               <p>
                 Denúncias já feitas contra o denunciado: <b>{data.reports_against}</b>
+              </p>
+              <p>
+                Denúncias de quem denunciou já descartadas por má-fé: <b>{badFaith ?? 0}</b>
+                {(badFaith ?? 0) >= 2 && " · perdeu o direito de denunciar por 90 dias"}
               </p>
               {data.holds.map((h, i) => (
                 <p key={i} className="text-muted-foreground">
@@ -165,7 +179,14 @@ export function ModerationCase({
                     {name(m.sender_id)} · {fmt(m.created_at)}
                   </p>
                   {m.content && <p className="whitespace-pre-wrap break-words">{m.content}</p>}
-                  {m.attachment_path && <CaseFile msg={m} />}
+                  {m.attachment_path &&
+                    (attachmentExpired(m) ? (
+                      <p className="mt-1 text-xs text-muted-foreground">
+                        {m.attachment_name ?? "Arquivo"}: expirado (os anexos ficam 48 horas)
+                      </p>
+                    ) : (
+                      <CaseFile msg={m} />
+                    ))}
                 </div>
               ))}
               {data.deleted_messages.length > 0 && (

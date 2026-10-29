@@ -15,8 +15,12 @@ export function reportErrorMessage(err: unknown): string | null {
   const msg = (err as { message?: string } | null)?.message ?? "";
   if (msg.includes("DENUNCIA_REPETIDA")) return "Você já denunciou isso. Um moderador vai avaliar.";
   if (msg.includes("DENUNCIA_PROPRIA")) return "Você não pode denunciar o seu próprio conteúdo.";
-  if (msg.includes("DENUNCIAS_DEMAIS")) return "Você já enviou muitas denúncias hoje. Tente amanhã.";
-  if (msg.includes("DENUNCIA_INVALIDA")) return "Não foi possível denunciar. Esse conteúdo pode ter sido removido.";
+  if (msg.includes("DENUNCIAS_SUSPENSAS"))
+    return "Suas últimas denúncias foram descartadas por má-fé. Você não pode denunciar por enquanto.";
+  if (msg.includes("DENUNCIAS_DEMAIS"))
+    return "Você já enviou muitas denúncias hoje. Tente amanhã.";
+  if (msg.includes("DENUNCIA_INVALIDA"))
+    return "Não foi possível denunciar. Esse conteúdo pode ter sido removido.";
   return null;
 }
 
@@ -37,7 +41,7 @@ export async function sendReport(
 
 export async function resolveReport(
   id: string,
-  action: "dismiss" | "hide_post" | "restore_post" | "done",
+  action: "dismiss" | "dismiss_bad_faith" | "hide_post" | "restore_post" | "done",
   note: string,
 ) {
   const { error } = await supabase.rpc("resolve_report", { _id: id, _action: action, _note: note });

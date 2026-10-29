@@ -2,16 +2,12 @@ import { supabase } from "@/integrations/supabase/client";
 
 export type PostKind = "job" | "available";
 
-export const KIND_LABEL: Record<PostKind, string> = {
-  job: "Vaga",
-  available: "Disponível",
-};
-
-/** O nome de cada tipo do ponto de vista de quem publica (tela inicial, publicar e abas). */
+/** O nome de cada tipo, do ponto de vista de quem publica: o mesmo na tela inicial, ao publicar, nas abas e nos cards. */
 export const KIND_ACTION: Record<PostKind, string> = {
   job: "Quero contratar",
   available: "Quero trabalhar",
 };
+export const KIND_LABEL = KIND_ACTION;
 
 export function timeAgo(iso: string) {
   const diff = (Date.now() - new Date(iso).getTime()) / 1000;

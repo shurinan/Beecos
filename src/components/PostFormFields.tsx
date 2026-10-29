@@ -2,6 +2,7 @@ import { toast } from "sonner";
 import { Crown, Lock } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 import { PostCard } from "@/components/PostCard";
+import { URGENT_PRICE } from "@/lib/plans";
 import { COVER_BG, COVER_COLORS, coverVars, LOOK_ICONS, resolveCover } from "@/lib/post-look";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -241,8 +242,10 @@ export function PostFormFields({
             <>
               <LookToggle
                 label="Urgente"
-                hint="Grátis"
-                checked={look.urgent}
+                hint={premium ? "Incluído no Premium" : `${URGENT_PRICE} por vaga`}
+                {...(premium ? {} : { icon: <Lock className="h-4 w-4" aria-hidden="true" /> })}
+                checked={premium && look.urgent}
+                disabled={!premium}
                 onChange={(v) => setLook({ urgent: v })}
               />
               <LookToggle
@@ -269,7 +272,8 @@ export function PostFormFields({
           />
           {!premium && (
             <p className="text-xs text-muted-foreground">
-              O destaque é do plano Premium.{" "}
+              O destaque é do plano Premium. O selo Urgente custa {URGENT_PRICE} por vaga, e o
+              pagamento avulso abre em breve; no Premium ele já vem incluído.{" "}
               <Link to="/plano" className="font-bold underline">
                 Conhecer o Premium
               </Link>

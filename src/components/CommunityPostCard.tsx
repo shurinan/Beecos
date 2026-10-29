@@ -83,7 +83,7 @@ export function CommunityPostCard({
           </Button>
         ) : (
           <Button type="button" disabled={busy} onClick={onApply}>
-            Inscrever-se
+            Tenho interesse
           </Button>
         )}
         {params ? (

@@ -101,7 +101,7 @@ export function PostCard({
           <span className={tag + " bg-[#1B1D23] text-[#F9C80E]"}>
             {post.professions?.name ?? KIND_LABEL[kind]}
           </span>
-          {post.professions && kind !== "job" && (
+          {post.professions && (
             <span className={tag + " border border-[#1B1D23] bg-white/70"}>{KIND_LABEL[kind]}</span>
           )}
           {post.premium && (
