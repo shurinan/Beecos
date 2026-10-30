@@ -24,16 +24,17 @@ export const Route = createFileRoute("/")({
   staticData: { sitemap: true },
   head: () => ({
     meta: [
-      { title: "Beecos — Vagas e trabalhadores na sua cidade" },
+      { title: "Beecos: serviços e profissionais perto de você" },
       {
         name: "description",
         content:
-          "Veja vagas de trabalho braçal e profissionais disponíveis na sua cidade. Negocie direto pelo chat.",
+          "Encontre pedreiro, encanador, diarista e mais perto de você. Converse direto pelo chat, sem intermediário. Comece grátis.",
       },
-      { property: "og:title", content: "Beecos — Vagas e trabalhadores na sua cidade" },
+      { property: "og:title", content: "Beecos: serviços e profissionais perto de você" },
       {
         property: "og:description",
-        content: "Veja vagas de trabalho braçal e profissionais disponíveis na sua cidade.",
+        content:
+          "Encontre pedreiro, encanador, diarista e mais perto de você. Converse direto pelo chat, sem intermediário. Comece grátis.",
       },
     ],
   }),
