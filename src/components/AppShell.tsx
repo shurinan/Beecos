@@ -54,10 +54,16 @@ export function AppShell({ children }: { children: ReactNode }) {
         <div className="flex h-14 items-center justify-between px-4">
           <div className="flex items-center">
             <BackButton />
-            <Link to="/" className="font-display text-2xl text-primary-foreground">
-              Beecos
-              <span className="text-[oklch(0.99_0.004_95)] [-webkit-text-stroke:1px_var(--primary-foreground)]">
-                .
+            <Link
+              to="/"
+              className="flex items-center gap-2 font-display text-2xl text-primary-foreground"
+            >
+              <img src="/logo.svg" alt="" width={28} height={28} className="size-7" />
+              <span>
+                Beecos
+                <span className="text-[oklch(0.99_0.004_95)] [-webkit-text-stroke:1px_var(--primary-foreground)]">
+                  .
+                </span>
               </span>
             </Link>
           </div>
