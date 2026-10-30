@@ -107,10 +107,14 @@ export function AppShell({ children }: { children: ReactNode }) {
         <InstallPrompt />
         {children}
         <p className="mt-8 text-center text-xs text-muted-foreground">
-          <Link to="/plano" className="underline">
-            Planos
-          </Link>{" "}
-          ·{" "}
+          {userId && (
+            <>
+              <Link to="/plano" className="underline">
+                Planos
+              </Link>{" "}
+              ·{" "}
+            </>
+          )}
           <Link to="/ajuda" className="underline">
             Ajuda
           </Link>{" "}
@@ -127,71 +131,84 @@ export function AppShell({ children }: { children: ReactNode }) {
           </span>
         </p>
       </main>
-      <nav className="fixed inset-x-0 bottom-0 z-20 border-t-2 border-foreground bg-background">
-        <div className="mx-auto flex max-w-2xl">
-          <Link to="/" className={item} activeProps={active} activeOptions={{ exact: true }}>
-            <span className={bub}>
-              <Home className="h-5 w-5" />
-            </span>{" "}
-            Início
-          </Link>
-          <Link
-            to="/vagas"
-            search={{ q: undefined, tipo: undefined }}
-            className={item}
-            activeProps={active}
-          >
-            <span className={bub}>
-              <Briefcase className="h-5 w-5" />
-            </span>{" "}
-            Vagas
-          </Link>
-          <Link
-            to="/comunidade"
-            search={{ grupo: undefined }}
-            aria-label="Comunidade"
-            className="group relative -mt-7 flex flex-1 flex-col items-center gap-0.5 text-xs font-bold text-foreground"
-          >
-            <span className="flex h-16 w-16 items-center justify-center rounded-full border-2 border-foreground bg-primary text-primary-foreground shadow-md transition-shadow duration-150 group-hover:shadow-lg group-active:scale-95">
-              <Users className="h-8 w-8" />
-            </span>
-            Comunidade
-          </Link>
-          {userId ? (
-            <>
-              <Link to="/conversas" className={item} activeProps={active}>
-                <span className={bub + " relative"}>
-                  <MessageCircle className="h-5 w-5" />
-                  {unread > 0 && (
-                    <span
-                      key={unread}
-                      aria-label={`${unread} mensagens não lidas`}
-                      className="badge-pop absolute -right-2.5 -top-2 flex h-4 min-w-4 items-center justify-center rounded-full border border-foreground bg-destructive px-1 text-[10px] font-bold leading-none text-destructive-foreground"
-                    >
-                      {unread > 99 ? "99+" : unread}
-                    </span>
-                  )}
-                </span>
-                Conversas
-              </Link>
-              <Link to="/perfil" className={item} activeProps={active}>
-                <span className={bub}>
-                  <UserRound className="h-5 w-5" />
-                </span>{" "}
-                Meu perfil
-              </Link>
-            </>
-          ) : (
-            <Link to="/auth" className={item} activeProps={active}>
+      {userId ? (
+        <nav className="fixed inset-x-0 bottom-0 z-20 border-t-2 border-foreground bg-background">
+          <div className="mx-auto flex max-w-2xl">
+            <Link to="/" className={item} activeProps={active} activeOptions={{ exact: true }}>
               <span className={bub}>
-                <LogIn className="h-5 w-5" />
+                <Home className="h-5 w-5" />
               </span>{" "}
-              Entrar
+              Início
             </Link>
-          )}
-          {!userId && <div className="flex-1" aria-hidden="true" />}
-        </div>
-      </nav>
+            <Link
+              to="/vagas"
+              search={{ q: undefined, tipo: undefined }}
+              className={item}
+              activeProps={active}
+            >
+              <span className={bub}>
+                <Briefcase className="h-5 w-5" />
+              </span>{" "}
+              Vagas
+            </Link>
+            <Link
+              to="/comunidade"
+              search={{ grupo: undefined }}
+              aria-label="Comunidade"
+              className="group relative -mt-7 flex flex-1 flex-col items-center gap-0.5 text-xs font-bold text-foreground"
+            >
+              <span className="flex h-16 w-16 items-center justify-center rounded-full border-2 border-foreground bg-primary text-primary-foreground shadow-md transition-shadow duration-150 group-hover:shadow-lg group-active:scale-95">
+                <Users className="h-8 w-8" />
+              </span>
+              Comunidade
+            </Link>
+            {userId ? (
+              <>
+                <Link to="/conversas" className={item} activeProps={active}>
+                  <span className={bub + " relative"}>
+                    <MessageCircle className="h-5 w-5" />
+                    {unread > 0 && (
+                      <span
+                        key={unread}
+                        aria-label={`${unread} mensagens não lidas`}
+                        className="badge-pop absolute -right-2.5 -top-2 flex h-4 min-w-4 items-center justify-center rounded-full border border-foreground bg-destructive px-1 text-[10px] font-bold leading-none text-destructive-foreground"
+                      >
+                        {unread > 99 ? "99+" : unread}
+                      </span>
+                    )}
+                  </span>
+                  Conversas
+                </Link>
+                <Link to="/perfil" className={item} activeProps={active}>
+                  <span className={bub}>
+                    <UserRound className="h-5 w-5" />
+                  </span>{" "}
+                  Meu perfil
+                </Link>
+              </>
+            ) : (
+              <Link to="/auth" className={item} activeProps={active}>
+                <span className={bub}>
+                  <LogIn className="h-5 w-5" />
+                </span>{" "}
+                Entrar
+              </Link>
+            )}
+          </div>
+        </nav>
+      ) : (
+        <nav className="fixed inset-x-0 bottom-0 z-20 border-t-2 border-foreground bg-background">
+          <div className="mx-auto max-w-2xl p-3">
+            <Link
+              to="/auth"
+              className="flex h-12 w-full items-center justify-center gap-2 rounded-xl border-2 border-foreground bg-primary font-bold text-primary-foreground shadow-block"
+            >
+              <LogIn className="h-5 w-5" />
+              Entrar ou criar conta
+            </Link>
+          </div>
+        </nav>
+      )}
     </div>
   );
 }

@@ -13,7 +13,6 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as AjudaRouteImport } from './routes/ajuda'
 import { Route as AuthRouteImport } from './routes/auth'
-import { Route as PlanoRouteImport } from './routes/plano'
 import { Route as PrivacidadeRouteImport } from './routes/privacidade'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as TermosRouteImport } from './routes/termos'
@@ -21,17 +20,18 @@ import { Route as AuthenticatedAvisosRouteImport } from './routes/_authenticated
 import { Route as AuthenticatedCheckoutRouteImport } from './routes/_authenticated/checkout'
 import { Route as AuthenticatedModeracaoRouteImport } from './routes/_authenticated/moderacao'
 import { Route as AuthenticatedPagamentoRouteImport } from './routes/_authenticated/pagamento'
+import { Route as AuthenticatedPlanoRouteImport } from './routes/_authenticated/plano'
 import { Route as AuthenticatedPublicarRouteImport } from './routes/_authenticated/publicar'
 import { Route as AuthenticatedSugestoesRouteImport } from './routes/_authenticated/sugestoes'
-import { Route as ComunidadeIndexRouteImport } from './routes/comunidade.index'
-import { Route as ComunidadeGruposRouteImport } from './routes/comunidade.grupos'
-import { Route as PerfilSlugRouteImport } from './routes/perfil.$slug'
-import { Route as VagasIndexRouteImport } from './routes/vagas.index'
+import { Route as AuthenticatedComunidadeIndexRouteImport } from './routes/_authenticated/comunidade.index'
+import { Route as AuthenticatedComunidadeGruposRouteImport } from './routes/_authenticated/comunidade.grupos'
 import { Route as AuthenticatedConversasIndexRouteImport } from './routes/_authenticated/conversas.index'
 import { Route as AuthenticatedConversasSlugRouteImport } from './routes/_authenticated/conversas.$slug'
 import { Route as AuthenticatedPerfilIndexRouteImport } from './routes/_authenticated/perfil.index'
+import { Route as AuthenticatedPerfilSlugRouteImport } from './routes/_authenticated/perfil.$slug'
 import { Route as AuthenticatedPerfilContatoRouteImport } from './routes/_authenticated/perfil.contato'
-import { Route as VagasProfissaoCodigoIndexRouteImport } from './routes/vagas.$profissao.$codigo.index'
+import { Route as AuthenticatedVagasIndexRouteImport } from './routes/_authenticated/vagas.index'
+import { Route as AuthenticatedVagasProfissaoCodigoIndexRouteImport } from './routes/_authenticated/vagas.$profissao.$codigo.index'
 import { Route as AuthenticatedVagasProfissaoCodigoInteressadosRouteImport } from './routes/_authenticated/vagas.$profissao.$codigo.interessados'
 
 const IndexRoute = IndexRouteImport.update({
@@ -51,11 +51,6 @@ const AjudaRoute = AjudaRouteImport.update({
 const AuthRoute = AuthRouteImport.update({
   id: '/auth',
   path: '/auth',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const PlanoRoute = PlanoRouteImport.update({
-  id: '/plano',
-  path: '/plano',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PrivacidadeRoute = PrivacidadeRouteImport.update({
@@ -93,6 +88,11 @@ const AuthenticatedPagamentoRoute = AuthenticatedPagamentoRouteImport.update({
   path: '/pagamento',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedPlanoRoute = AuthenticatedPlanoRouteImport.update({
+  id: '/plano',
+  path: '/plano',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedPublicarRoute = AuthenticatedPublicarRouteImport.update({
   id: '/publicar',
   path: '/publicar',
@@ -103,26 +103,18 @@ const AuthenticatedSugestoesRoute = AuthenticatedSugestoesRouteImport.update({
   path: '/sugestoes',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
-const ComunidadeIndexRoute = ComunidadeIndexRouteImport.update({
-  id: '/comunidade/',
-  path: '/comunidade/',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ComunidadeGruposRoute = ComunidadeGruposRouteImport.update({
-  id: '/comunidade/grupos',
-  path: '/comunidade/grupos',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const PerfilSlugRoute = PerfilSlugRouteImport.update({
-  id: '/perfil/$slug',
-  path: '/perfil/$slug',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const VagasIndexRoute = VagasIndexRouteImport.update({
-  id: '/vagas/',
-  path: '/vagas/',
-  getParentRoute: () => rootRouteImport,
-} as any)
+const AuthenticatedComunidadeIndexRoute =
+  AuthenticatedComunidadeIndexRouteImport.update({
+    id: '/comunidade/',
+    path: '/comunidade/',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedComunidadeGruposRoute =
+  AuthenticatedComunidadeGruposRouteImport.update({
+    id: '/comunidade/grupos',
+    path: '/comunidade/grupos',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedConversasIndexRoute =
   AuthenticatedConversasIndexRouteImport.update({
     id: '/conversas/',
@@ -141,17 +133,27 @@ const AuthenticatedPerfilIndexRoute =
     path: '/perfil/',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedPerfilSlugRoute = AuthenticatedPerfilSlugRouteImport.update({
+  id: '/perfil/$slug',
+  path: '/perfil/$slug',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedPerfilContatoRoute =
   AuthenticatedPerfilContatoRouteImport.update({
     id: '/perfil/contato',
     path: '/perfil/contato',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
-const VagasProfissaoCodigoIndexRoute =
-  VagasProfissaoCodigoIndexRouteImport.update({
+const AuthenticatedVagasIndexRoute = AuthenticatedVagasIndexRouteImport.update({
+  id: '/vagas/',
+  path: '/vagas/',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedVagasProfissaoCodigoIndexRoute =
+  AuthenticatedVagasProfissaoCodigoIndexRouteImport.update({
     id: '/vagas/$profissao/$codigo/',
     path: '/vagas/$profissao/$codigo/',
-    getParentRoute: () => rootRouteImport,
+    getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
 const AuthenticatedVagasProfissaoCodigoInteressadosRoute =
   AuthenticatedVagasProfissaoCodigoInteressadosRouteImport.update({
@@ -164,7 +166,6 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/ajuda': typeof AjudaRoute
   '/auth': typeof AuthRoute
-  '/plano': typeof PlanoRoute
   '/privacidade': typeof PrivacidadeRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/termos': typeof TermosRoute
@@ -172,24 +173,24 @@ export interface FileRoutesByFullPath {
   '/checkout': typeof AuthenticatedCheckoutRoute
   '/moderacao': typeof AuthenticatedModeracaoRoute
   '/pagamento': typeof AuthenticatedPagamentoRoute
+  '/plano': typeof AuthenticatedPlanoRoute
   '/publicar': typeof AuthenticatedPublicarRoute
   '/sugestoes': typeof AuthenticatedSugestoesRoute
-  '/comunidade/grupos': typeof ComunidadeGruposRoute
-  '/perfil/$slug': typeof PerfilSlugRoute
-  '/comunidade/': typeof ComunidadeIndexRoute
-  '/vagas/': typeof VagasIndexRoute
+  '/comunidade/grupos': typeof AuthenticatedComunidadeGruposRoute
   '/conversas/$slug': typeof AuthenticatedConversasSlugRoute
+  '/perfil/$slug': typeof AuthenticatedPerfilSlugRoute
   '/perfil/contato': typeof AuthenticatedPerfilContatoRoute
+  '/comunidade/': typeof AuthenticatedComunidadeIndexRoute
   '/conversas/': typeof AuthenticatedConversasIndexRoute
   '/perfil/': typeof AuthenticatedPerfilIndexRoute
-  '/vagas/$profissao/$codigo/': typeof VagasProfissaoCodigoIndexRoute
+  '/vagas/': typeof AuthenticatedVagasIndexRoute
   '/vagas/$profissao/$codigo/interessados': typeof AuthenticatedVagasProfissaoCodigoInteressadosRoute
+  '/vagas/$profissao/$codigo/': typeof AuthenticatedVagasProfissaoCodigoIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/ajuda': typeof AjudaRoute
   '/auth': typeof AuthRoute
-  '/plano': typeof PlanoRoute
   '/privacidade': typeof PrivacidadeRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/termos': typeof TermosRoute
@@ -197,18 +198,19 @@ export interface FileRoutesByTo {
   '/checkout': typeof AuthenticatedCheckoutRoute
   '/moderacao': typeof AuthenticatedModeracaoRoute
   '/pagamento': typeof AuthenticatedPagamentoRoute
+  '/plano': typeof AuthenticatedPlanoRoute
   '/publicar': typeof AuthenticatedPublicarRoute
   '/sugestoes': typeof AuthenticatedSugestoesRoute
-  '/comunidade/grupos': typeof ComunidadeGruposRoute
-  '/perfil/$slug': typeof PerfilSlugRoute
-  '/comunidade': typeof ComunidadeIndexRoute
-  '/vagas': typeof VagasIndexRoute
+  '/comunidade/grupos': typeof AuthenticatedComunidadeGruposRoute
   '/conversas/$slug': typeof AuthenticatedConversasSlugRoute
+  '/perfil/$slug': typeof AuthenticatedPerfilSlugRoute
   '/perfil/contato': typeof AuthenticatedPerfilContatoRoute
+  '/comunidade': typeof AuthenticatedComunidadeIndexRoute
   '/conversas': typeof AuthenticatedConversasIndexRoute
   '/perfil': typeof AuthenticatedPerfilIndexRoute
-  '/vagas/$profissao/$codigo': typeof VagasProfissaoCodigoIndexRoute
+  '/vagas': typeof AuthenticatedVagasIndexRoute
   '/vagas/$profissao/$codigo/interessados': typeof AuthenticatedVagasProfissaoCodigoInteressadosRoute
+  '/vagas/$profissao/$codigo': typeof AuthenticatedVagasProfissaoCodigoIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -216,7 +218,6 @@ export interface FileRoutesById {
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/ajuda': typeof AjudaRoute
   '/auth': typeof AuthRoute
-  '/plano': typeof PlanoRoute
   '/privacidade': typeof PrivacidadeRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/termos': typeof TermosRoute
@@ -224,18 +225,19 @@ export interface FileRoutesById {
   '/_authenticated/checkout': typeof AuthenticatedCheckoutRoute
   '/_authenticated/moderacao': typeof AuthenticatedModeracaoRoute
   '/_authenticated/pagamento': typeof AuthenticatedPagamentoRoute
+  '/_authenticated/plano': typeof AuthenticatedPlanoRoute
   '/_authenticated/publicar': typeof AuthenticatedPublicarRoute
   '/_authenticated/sugestoes': typeof AuthenticatedSugestoesRoute
-  '/comunidade/grupos': typeof ComunidadeGruposRoute
-  '/perfil/$slug': typeof PerfilSlugRoute
-  '/comunidade/': typeof ComunidadeIndexRoute
-  '/vagas/': typeof VagasIndexRoute
+  '/_authenticated/comunidade/grupos': typeof AuthenticatedComunidadeGruposRoute
   '/_authenticated/conversas/$slug': typeof AuthenticatedConversasSlugRoute
+  '/_authenticated/perfil/$slug': typeof AuthenticatedPerfilSlugRoute
   '/_authenticated/perfil/contato': typeof AuthenticatedPerfilContatoRoute
+  '/_authenticated/comunidade/': typeof AuthenticatedComunidadeIndexRoute
   '/_authenticated/conversas/': typeof AuthenticatedConversasIndexRoute
   '/_authenticated/perfil/': typeof AuthenticatedPerfilIndexRoute
-  '/vagas/$profissao/$codigo/': typeof VagasProfissaoCodigoIndexRoute
+  '/_authenticated/vagas/': typeof AuthenticatedVagasIndexRoute
   '/_authenticated/vagas/$profissao/$codigo/interessados': typeof AuthenticatedVagasProfissaoCodigoInteressadosRoute
+  '/_authenticated/vagas/$profissao/$codigo/': typeof AuthenticatedVagasProfissaoCodigoIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -243,7 +245,6 @@ export interface FileRouteTypes {
     | '/'
     | '/ajuda'
     | '/auth'
-    | '/plano'
     | '/privacidade'
     | '/sitemap.xml'
     | '/termos'
@@ -251,24 +252,24 @@ export interface FileRouteTypes {
     | '/checkout'
     | '/moderacao'
     | '/pagamento'
+    | '/plano'
     | '/publicar'
     | '/sugestoes'
     | '/comunidade/grupos'
-    | '/perfil/$slug'
-    | '/comunidade/'
-    | '/vagas/'
     | '/conversas/$slug'
+    | '/perfil/$slug'
     | '/perfil/contato'
+    | '/comunidade/'
     | '/conversas/'
     | '/perfil/'
-    | '/vagas/$profissao/$codigo/'
+    | '/vagas/'
     | '/vagas/$profissao/$codigo/interessados'
+    | '/vagas/$profissao/$codigo/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/ajuda'
     | '/auth'
-    | '/plano'
     | '/privacidade'
     | '/sitemap.xml'
     | '/termos'
@@ -276,25 +277,25 @@ export interface FileRouteTypes {
     | '/checkout'
     | '/moderacao'
     | '/pagamento'
+    | '/plano'
     | '/publicar'
     | '/sugestoes'
     | '/comunidade/grupos'
-    | '/perfil/$slug'
-    | '/comunidade'
-    | '/vagas'
     | '/conversas/$slug'
+    | '/perfil/$slug'
     | '/perfil/contato'
+    | '/comunidade'
     | '/conversas'
     | '/perfil'
-    | '/vagas/$profissao/$codigo'
+    | '/vagas'
     | '/vagas/$profissao/$codigo/interessados'
+    | '/vagas/$profissao/$codigo'
   id:
     | '__root__'
     | '/'
     | '/_authenticated'
     | '/ajuda'
     | '/auth'
-    | '/plano'
     | '/privacidade'
     | '/sitemap.xml'
     | '/termos'
@@ -302,18 +303,19 @@ export interface FileRouteTypes {
     | '/_authenticated/checkout'
     | '/_authenticated/moderacao'
     | '/_authenticated/pagamento'
+    | '/_authenticated/plano'
     | '/_authenticated/publicar'
     | '/_authenticated/sugestoes'
-    | '/comunidade/grupos'
-    | '/perfil/$slug'
-    | '/comunidade/'
-    | '/vagas/'
+    | '/_authenticated/comunidade/grupos'
     | '/_authenticated/conversas/$slug'
+    | '/_authenticated/perfil/$slug'
     | '/_authenticated/perfil/contato'
+    | '/_authenticated/comunidade/'
     | '/_authenticated/conversas/'
     | '/_authenticated/perfil/'
-    | '/vagas/$profissao/$codigo/'
+    | '/_authenticated/vagas/'
     | '/_authenticated/vagas/$profissao/$codigo/interessados'
+    | '/_authenticated/vagas/$profissao/$codigo/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -321,15 +323,9 @@ export interface RootRouteChildren {
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AjudaRoute: typeof AjudaRoute
   AuthRoute: typeof AuthRoute
-  PlanoRoute: typeof PlanoRoute
   PrivacidadeRoute: typeof PrivacidadeRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   TermosRoute: typeof TermosRoute
-  ComunidadeGruposRoute: typeof ComunidadeGruposRoute
-  PerfilSlugRoute: typeof PerfilSlugRoute
-  ComunidadeIndexRoute: typeof ComunidadeIndexRoute
-  VagasIndexRoute: typeof VagasIndexRoute
-  VagasProfissaoCodigoIndexRoute: typeof VagasProfissaoCodigoIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -360,13 +356,6 @@ declare module '@tanstack/react-router' {
       path: '/auth'
       fullPath: '/auth'
       preLoaderRoute: typeof AuthRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/plano': {
-      id: '/plano'
-      path: '/plano'
-      fullPath: '/plano'
-      preLoaderRoute: typeof PlanoRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/privacidade': {
@@ -418,6 +407,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedPagamentoRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/plano': {
+      id: '/_authenticated/plano'
+      path: '/plano'
+      fullPath: '/plano'
+      preLoaderRoute: typeof AuthenticatedPlanoRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/publicar': {
       id: '/_authenticated/publicar'
       path: '/publicar'
@@ -432,33 +428,19 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedSugestoesRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
-    '/comunidade/': {
-      id: '/comunidade/'
+    '/_authenticated/comunidade/': {
+      id: '/_authenticated/comunidade/'
       path: '/comunidade'
       fullPath: '/comunidade/'
-      preLoaderRoute: typeof ComunidadeIndexRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof AuthenticatedComunidadeIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
     }
-    '/comunidade/grupos': {
-      id: '/comunidade/grupos'
+    '/_authenticated/comunidade/grupos': {
+      id: '/_authenticated/comunidade/grupos'
       path: '/comunidade/grupos'
       fullPath: '/comunidade/grupos'
-      preLoaderRoute: typeof ComunidadeGruposRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/perfil/$slug': {
-      id: '/perfil/$slug'
-      path: '/perfil/$slug'
-      fullPath: '/perfil/$slug'
-      preLoaderRoute: typeof PerfilSlugRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/vagas/': {
-      id: '/vagas/'
-      path: '/vagas'
-      fullPath: '/vagas/'
-      preLoaderRoute: typeof VagasIndexRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof AuthenticatedComunidadeGruposRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/conversas/': {
       id: '/_authenticated/conversas/'
@@ -481,6 +463,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedPerfilIndexRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/perfil/$slug': {
+      id: '/_authenticated/perfil/$slug'
+      path: '/perfil/$slug'
+      fullPath: '/perfil/$slug'
+      preLoaderRoute: typeof AuthenticatedPerfilSlugRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/perfil/contato': {
       id: '/_authenticated/perfil/contato'
       path: '/perfil/contato'
@@ -488,12 +477,19 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedPerfilContatoRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
-    '/vagas/$profissao/$codigo/': {
-      id: '/vagas/$profissao/$codigo/'
+    '/_authenticated/vagas/': {
+      id: '/_authenticated/vagas/'
+      path: '/vagas'
+      fullPath: '/vagas/'
+      preLoaderRoute: typeof AuthenticatedVagasIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/vagas/$profissao/$codigo/': {
+      id: '/_authenticated/vagas/$profissao/$codigo/'
       path: '/vagas/$profissao/$codigo'
       fullPath: '/vagas/$profissao/$codigo/'
-      preLoaderRoute: typeof VagasProfissaoCodigoIndexRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof AuthenticatedVagasProfissaoCodigoIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/vagas/$profissao/$codigo/interessados': {
       id: '/_authenticated/vagas/$profissao/$codigo/interessados'
@@ -510,13 +506,19 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedCheckoutRoute: typeof AuthenticatedCheckoutRoute
   AuthenticatedModeracaoRoute: typeof AuthenticatedModeracaoRoute
   AuthenticatedPagamentoRoute: typeof AuthenticatedPagamentoRoute
+  AuthenticatedPlanoRoute: typeof AuthenticatedPlanoRoute
   AuthenticatedPublicarRoute: typeof AuthenticatedPublicarRoute
   AuthenticatedSugestoesRoute: typeof AuthenticatedSugestoesRoute
+  AuthenticatedComunidadeGruposRoute: typeof AuthenticatedComunidadeGruposRoute
   AuthenticatedConversasSlugRoute: typeof AuthenticatedConversasSlugRoute
+  AuthenticatedPerfilSlugRoute: typeof AuthenticatedPerfilSlugRoute
   AuthenticatedPerfilContatoRoute: typeof AuthenticatedPerfilContatoRoute
+  AuthenticatedComunidadeIndexRoute: typeof AuthenticatedComunidadeIndexRoute
   AuthenticatedConversasIndexRoute: typeof AuthenticatedConversasIndexRoute
   AuthenticatedPerfilIndexRoute: typeof AuthenticatedPerfilIndexRoute
+  AuthenticatedVagasIndexRoute: typeof AuthenticatedVagasIndexRoute
   AuthenticatedVagasProfissaoCodigoInteressadosRoute: typeof AuthenticatedVagasProfissaoCodigoInteressadosRoute
+  AuthenticatedVagasProfissaoCodigoIndexRoute: typeof AuthenticatedVagasProfissaoCodigoIndexRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
@@ -524,14 +526,21 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedCheckoutRoute: AuthenticatedCheckoutRoute,
   AuthenticatedModeracaoRoute: AuthenticatedModeracaoRoute,
   AuthenticatedPagamentoRoute: AuthenticatedPagamentoRoute,
+  AuthenticatedPlanoRoute: AuthenticatedPlanoRoute,
   AuthenticatedPublicarRoute: AuthenticatedPublicarRoute,
   AuthenticatedSugestoesRoute: AuthenticatedSugestoesRoute,
+  AuthenticatedComunidadeGruposRoute: AuthenticatedComunidadeGruposRoute,
   AuthenticatedConversasSlugRoute: AuthenticatedConversasSlugRoute,
+  AuthenticatedPerfilSlugRoute: AuthenticatedPerfilSlugRoute,
   AuthenticatedPerfilContatoRoute: AuthenticatedPerfilContatoRoute,
+  AuthenticatedComunidadeIndexRoute: AuthenticatedComunidadeIndexRoute,
   AuthenticatedConversasIndexRoute: AuthenticatedConversasIndexRoute,
   AuthenticatedPerfilIndexRoute: AuthenticatedPerfilIndexRoute,
+  AuthenticatedVagasIndexRoute: AuthenticatedVagasIndexRoute,
   AuthenticatedVagasProfissaoCodigoInteressadosRoute:
     AuthenticatedVagasProfissaoCodigoInteressadosRoute,
+  AuthenticatedVagasProfissaoCodigoIndexRoute:
+    AuthenticatedVagasProfissaoCodigoIndexRoute,
 }
 
 const AuthenticatedRouteRouteWithChildren =
@@ -542,15 +551,9 @@ const rootRouteChildren: RootRouteChildren = {
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AjudaRoute: AjudaRoute,
   AuthRoute: AuthRoute,
-  PlanoRoute: PlanoRoute,
   PrivacidadeRoute: PrivacidadeRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   TermosRoute: TermosRoute,
-  ComunidadeGruposRoute: ComunidadeGruposRoute,
-  PerfilSlugRoute: PerfilSlugRoute,
-  ComunidadeIndexRoute: ComunidadeIndexRoute,
-  VagasIndexRoute: VagasIndexRoute,
-  VagasProfissaoCodigoIndexRoute: VagasProfissaoCodigoIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

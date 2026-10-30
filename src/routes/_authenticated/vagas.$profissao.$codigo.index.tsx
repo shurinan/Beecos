@@ -11,7 +11,7 @@ import { usePostDistances } from "@/lib/geo";
 import { usePostStats } from "@/lib/services-hooks";
 import { postParams } from "@/lib/urls";
 
-export const Route = createFileRoute("/vagas/$profissao/$codigo/")({
+export const Route = createFileRoute("/_authenticated/vagas/$profissao/$codigo/")({
   staticData: { sitemap: false },
   head: () => ({
     meta: [

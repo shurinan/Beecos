@@ -41,7 +41,7 @@ import {
   type FeedFilters,
 } from "@/lib/discovery";
 
-export const Route = createFileRoute("/vagas/")({
+export const Route = createFileRoute("/_authenticated/vagas/")({
   staticData: { sitemap: true },
   validateSearch: (q: Record<string, unknown>) => ({
     q: typeof q["q"] === "string" ? (q["q"] as string) : undefined,
