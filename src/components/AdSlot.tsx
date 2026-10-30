@@ -45,25 +45,31 @@ export function AdSlot({ placement }: { placement: AdPlacement }) {
         href={href}
         target="_blank"
         rel="sponsored noopener noreferrer"
-        className="flex items-center gap-3 rounded-lg border border-dashed border-foreground/30 bg-muted/40 p-3"
+        className="relative block overflow-hidden rounded-xl border border-foreground/25 bg-card"
       >
+        <span className="absolute right-0 top-0 z-10 rounded-bl-md bg-muted px-1.5 py-0.5 text-[10px] text-muted-foreground">
+          Anúncio
+        </span>
         {image && (
           <img
             src={image}
             alt=""
             loading="lazy"
             referrerPolicy="no-referrer"
-            className="h-12 w-12 shrink-0 rounded-md border border-foreground/20 object-cover"
+            className="aspect-[2/1] w-full object-cover"
           />
         )}
-        <span className="min-w-0 flex-1">
-          <span className="block text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
-            Patrocinado · {ad.sponsor}
+        <span className="flex items-center gap-3 p-3">
+          <span className="min-w-0 flex-1">
+            <span className="block text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
+              Patrocinado · {ad.sponsor}
+            </span>
+            <span className="block text-base font-bold leading-tight">{ad.title}</span>
+            {ad.body && <span className="block text-sm text-muted-foreground">{ad.body}</span>}
           </span>
-          <span className="block truncate text-sm font-semibold">{ad.title}</span>
-          {ad.body && (
-            <span className="block truncate text-xs text-muted-foreground">{ad.body}</span>
-          )}
+          <span className="shrink-0 rounded-md border-2 border-foreground bg-primary px-3 py-1.5 text-sm font-bold text-primary-foreground">
+            Ver mais
+          </span>
         </span>
       </a>
     </aside>
