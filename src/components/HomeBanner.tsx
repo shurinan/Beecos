@@ -2,28 +2,30 @@ import { useEffect, useState } from "react";
 import { Link } from "@tanstack/react-router";
 
 /**
- * Banner da home com gente. As imagens ficam em public/banners/banner-N.svg (800x300, pessoa à
- * direita e espaço livre à esquerda para o texto). Para usar fotos, troque a imagem de cada slide
- * por um .jpg/.webp da mesma proporção.
+ * Banner da home. As fotos ficam em public/banners/banner-N.jpg (1200x600, proporção 2:1).
+ * Para trocar, substitua o arquivo mantendo o nome e a proporção.
  */
 const SLIDES = [
   {
-    image: "/banners/banner-1.svg",
+    image: "/banners/banner-1.jpg",
+    alt: "Pedreiro, pintor e eletricista sorrindo dentro de uma obra",
     kicker: "Quem constrói",
     title: "Gente de confiança para a sua obra",
-    text: "Pedreiros, pintores e ajudantes perto de você.",
+    text: "Pedreiros, pintores, eletricistas e ajudantes perto de você.",
   },
   {
-    image: "/banners/banner-2.svg",
-    kicker: "Dentro de casa",
-    title: "Diaristas e cuidadores que você conhece pelo nome",
-    text: "Veja perfil, fotos e avaliações antes de chamar.",
-  },
-  {
-    image: "/banners/banner-3.svg",
+    image: "/banners/banner-2.jpg",
+    alt: "Encanador consertando o sifão de uma pia de cozinha",
     kicker: "Serviço feito",
-    title: "Eletricista, encanador, montador: é só chamar",
+    title: "Encanador, eletricista, montador: é só chamar",
     text: "Fale direto pelo chat, sem intermediário.",
+  },
+  {
+    image: "/banners/banner-3.jpg",
+    alt: "Cuidadora e senhora sorrindo uma para a outra, de braços dados",
+    kicker: "Dentro de casa",
+    title: "Cuidadores e diaristas que você conhece pelo nome",
+    text: "Veja perfil, fotos e avaliações antes de chamar.",
   },
 ] as const;
 
@@ -52,26 +54,28 @@ export function HomeBanner() {
       <img
         key={slide.image}
         src={slide.image}
-        alt=""
-        width={800}
-        height={300}
-        className="block h-auto min-h-36 w-full object-cover object-right"
+        alt={slide.alt}
+        width={1200}
+        height={600}
+        className="block aspect-[2/1] w-full object-cover"
       />
-      <div className="absolute inset-y-0 left-0 flex w-[62%] flex-col justify-center gap-1 bg-gradient-to-r from-white/90 via-white/90 to-transparent p-4 text-[oklch(0.16_0.01_260)] sm:w-1/2 sm:p-6">
-        <p className="text-[11px] font-bold uppercase tracking-wider text-[oklch(0.45_0.1_85)]">
-          {slide.kicker}
-        </p>
-        <h2 className="font-display text-base leading-tight sm:text-2xl">{slide.title}</h2>
-        <p className="hidden text-sm text-[oklch(0.42_0.02_260)] sm:block">{slide.text}</p>
+      <div className="flex items-center justify-between gap-3 border-t-2 border-foreground bg-card p-3 sm:p-4">
+        <div className="min-w-0">
+          <p className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">
+            {slide.kicker}
+          </p>
+          <h2 className="font-display text-base leading-tight sm:text-xl">{slide.title}</h2>
+          <p className="hidden text-sm text-muted-foreground sm:block">{slide.text}</p>
+        </div>
         <Link
           to="/vagas"
           search={{ q: undefined, tipo: undefined }}
-          className="mt-1 inline-flex w-fit items-center rounded-full bg-primary px-4 py-1.5 text-sm font-bold text-primary-foreground"
+          className="inline-flex shrink-0 items-center rounded-full border-2 border-foreground bg-primary px-4 py-1.5 text-sm font-bold text-primary-foreground"
         >
           Ver vagas
         </Link>
       </div>
-      <div className="absolute bottom-2 right-3 flex gap-1.5">
+      <div className="absolute right-3 top-3 flex gap-1.5">
         {SLIDES.map((s, n) => (
           <button
             key={s.image}
