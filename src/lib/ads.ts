@@ -1,4 +1,4 @@
-export type AdPlacement = "feed" | "profile";
+export type AdPlacement = "home" | "feed" | "profile";
 
 export type Ad = {
   id: string;

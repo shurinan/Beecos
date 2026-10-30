@@ -1,3 +1,4 @@
+import { AdSlot } from "@/components/AdSlot";
 import { HomeBanner } from "@/components/HomeBanner";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import {
@@ -88,6 +89,7 @@ function Index() {
   return (
     <div className="space-y-8">
       <HomeBanner />
+      <AdSlot placement="home" />
       <section className="block-card overflow-hidden">
         <div className="p-5">
           <p className="mb-2 inline-block rounded border-2 border-foreground bg-accent px-2 py-0.5 text-xs font-bold uppercase">
