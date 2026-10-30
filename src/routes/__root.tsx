@@ -81,18 +81,31 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Beecos — Trabalho braçal perto de você" },
+      { title: "Beecos: serviços e profissionais perto de você" },
       {
         name: "description",
-        content: "Encontre bicos e trabalhadores na sua cidade e negocie direto pelo chat.",
+        content:
+          "Encontre pedreiro, encanador, diarista e mais perto de você. Converse direto pelo chat, sem intermediário. Comece grátis.",
       },
-      { property: "og:title", content: "Beecos — Trabalho braçal perto de você" },
+      { property: "og:title", content: "Beecos: serviços e profissionais perto de você" },
       {
         property: "og:description",
-        content: "Encontre bicos e trabalhadores na sua cidade e negocie direto pelo chat.",
+        content:
+          "Encontre pedreiro, encanador, diarista e mais perto de você. Converse direto pelo chat, sem intermediário. Comece grátis.",
       },
       { property: "og:type", content: "website" },
+      { property: "og:site_name", content: "Beecos" },
+      { property: "og:locale", content: "pt_BR" },
+      { property: "og:image", content: "https://beecos.com.br/og-image.jpg" },
+      { property: "og:image:width", content: "1200" },
+      { property: "og:image:height", content: "630" },
+      {
+        property: "og:image:alt",
+        content:
+          "Beecos: Precisou? Achou. Combinou? Fechou. Profissionais de obra, encanador e cuidadora.",
+      },
       { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:image", content: "https://beecos.com.br/og-image.jpg" },
       { name: "theme-color", content: "#facc15" },
       { name: "mobile-web-app-capable", content: "yes" },
       { name: "apple-mobile-web-app-capable", content: "yes" },
