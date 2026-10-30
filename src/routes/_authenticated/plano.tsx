@@ -16,7 +16,7 @@ import {
   getPlanUsage,
 } from "@/lib/plans";
 
-export const Route = createFileRoute("/plano")({
+export const Route = createFileRoute("/_authenticated/plano")({
   staticData: { sitemap: true },
   head: () => ({
     meta: [

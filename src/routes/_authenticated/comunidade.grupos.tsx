@@ -6,7 +6,7 @@ import { useAuth } from "@/lib/auth";
 import { useCatalog } from "@/lib/catalog";
 import { communityErrorMessage, useCommunityOverview, useMyCommunities } from "@/lib/community";
 
-export const Route = createFileRoute("/comunidade/grupos")({
+export const Route = createFileRoute("/_authenticated/comunidade/grupos")({
   staticData: { sitemap: true },
   head: () => ({
     meta: [
