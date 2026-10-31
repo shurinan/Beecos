@@ -60,7 +60,10 @@ export function AppShell({ children }: { children: ReactNode }) {
   const active = { className: "text-foreground" };
   const path = useRouterState({ select: (st) => st.location.pathname });
   // início e lista de vagas usam a largura toda no computador; o resto fica numa coluna
-  const wide = path === "/" || path === "/vagas" || path === "/vagas/";
+  const wide =
+    path === "/" || path === "/vagas" || path === "/vagas/" || path.startsWith("/conversas");
+  // no celular, a conversa aberta ocupa a tela toda (sem menu inferior), como no WhatsApp
+  const inChat = /^\/conversas\/[^/]+/.test(path);
   return (
     <div className="flex min-h-screen flex-col">
       <a
@@ -93,7 +96,7 @@ export function AppShell({ children }: { children: ReactNode }) {
                   key={l.to}
                   {...l.props}
                   className="relative rounded-lg px-3 py-1.5 text-sm font-bold text-primary-foreground hover:bg-foreground/10"
-                  activeProps={{ className: "bg-foreground text-primary hover:bg-foreground" }}
+                  activeProps={{ className: "bg-foreground! text-primary!" }}
                   activeOptions={{ exact: l.to === "/" }}
                 >
                   {l.label}
@@ -147,12 +150,16 @@ export function AppShell({ children }: { children: ReactNode }) {
       <main
         id="conteudo"
         tabIndex={-1}
-        className={`mx-auto w-full max-w-2xl flex-1 px-4 pb-28 pt-4 outline-none lg:pb-12 lg:pt-8 ${wide ? "lg:max-w-[1120px]" : ""}`}
+        className={`mx-auto w-full max-w-2xl flex-1 px-4 outline-none lg:pb-12 lg:pt-8 ${inChat ? "pb-0 pt-0" : "pb-28 pt-4"} ${wide ? "lg:max-w-[1120px]" : ""}`}
       >
-        <HoldBanner />
-        <InstallPrompt />
+        <div className={inChat ? "max-lg:hidden" : ""}>
+          <HoldBanner />
+          <InstallPrompt />
+        </div>
         {children}
-        <p className="mt-8 text-center text-xs text-muted-foreground">
+        <p
+          className={`mt-8 text-center text-xs text-muted-foreground ${inChat ? "max-lg:hidden" : ""}`}
+        >
           {userId && (
             <>
               <Link to="/plano" className="underline">
@@ -186,7 +193,9 @@ export function AppShell({ children }: { children: ReactNode }) {
         </p>
       </main>
       {userId ? (
-        <nav className="fixed inset-x-0 bottom-0 z-20 border-t-2 border-foreground bg-background lg:hidden">
+        <nav
+          className={`fixed inset-x-0 bottom-0 z-20 border-t-2 border-foreground bg-background lg:hidden ${inChat ? "hidden" : ""}`}
+        >
           <div className="mx-auto flex max-w-2xl">
             <Link to="/" className={item} activeProps={active} activeOptions={{ exact: true }}>
               <span className={bub}>

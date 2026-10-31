@@ -18,6 +18,7 @@ import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as TermosRouteImport } from './routes/termos'
 import { Route as AuthenticatedAvisosRouteImport } from './routes/_authenticated/avisos'
 import { Route as AuthenticatedCheckoutRouteImport } from './routes/_authenticated/checkout'
+import { Route as AuthenticatedConversasRouteImport } from './routes/_authenticated/conversas'
 import { Route as AuthenticatedModeracaoRouteImport } from './routes/_authenticated/moderacao'
 import { Route as AuthenticatedPagamentoRouteImport } from './routes/_authenticated/pagamento'
 import { Route as AuthenticatedPlanoRouteImport } from './routes/_authenticated/plano'
@@ -79,6 +80,11 @@ const AuthenticatedCheckoutRoute = AuthenticatedCheckoutRouteImport.update({
   path: '/checkout',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedConversasRoute = AuthenticatedConversasRouteImport.update({
+  id: '/conversas',
+  path: '/conversas',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedModeracaoRoute = AuthenticatedModeracaoRouteImport.update({
   id: '/moderacao',
   path: '/moderacao',
@@ -123,15 +129,15 @@ const AuthenticatedComunidadeGruposRoute =
   } as any)
 const AuthenticatedConversasIndexRoute =
   AuthenticatedConversasIndexRouteImport.update({
-    id: '/conversas/',
-    path: '/conversas/',
-    getParentRoute: () => AuthenticatedRouteRoute,
+    id: '/',
+    path: '/',
+    getParentRoute: () => AuthenticatedConversasRoute,
   } as any)
 const AuthenticatedConversasSlugRoute =
   AuthenticatedConversasSlugRouteImport.update({
-    id: '/conversas/$slug',
-    path: '/conversas/$slug',
-    getParentRoute: () => AuthenticatedRouteRoute,
+    id: '/$slug',
+    path: '/$slug',
+    getParentRoute: () => AuthenticatedConversasRoute,
   } as any)
 const AuthenticatedPerfilIndexRoute =
   AuthenticatedPerfilIndexRouteImport.update({
@@ -177,6 +183,7 @@ export interface FileRoutesByFullPath {
   '/termos': typeof TermosRoute
   '/avisos': typeof AuthenticatedAvisosRoute
   '/checkout': typeof AuthenticatedCheckoutRoute
+  '/conversas': typeof AuthenticatedConversasRouteWithChildren
   '/moderacao': typeof AuthenticatedModeracaoRoute
   '/pagamento': typeof AuthenticatedPagamentoRoute
   '/plano': typeof AuthenticatedPlanoRoute
@@ -231,6 +238,7 @@ export interface FileRoutesById {
   '/termos': typeof TermosRoute
   '/_authenticated/avisos': typeof AuthenticatedAvisosRoute
   '/_authenticated/checkout': typeof AuthenticatedCheckoutRoute
+  '/_authenticated/conversas': typeof AuthenticatedConversasRouteWithChildren
   '/_authenticated/moderacao': typeof AuthenticatedModeracaoRoute
   '/_authenticated/pagamento': typeof AuthenticatedPagamentoRoute
   '/_authenticated/plano': typeof AuthenticatedPlanoRoute
@@ -259,6 +267,7 @@ export interface FileRouteTypes {
     | '/termos'
     | '/avisos'
     | '/checkout'
+    | '/conversas'
     | '/moderacao'
     | '/pagamento'
     | '/plano'
@@ -312,6 +321,7 @@ export interface FileRouteTypes {
     | '/termos'
     | '/_authenticated/avisos'
     | '/_authenticated/checkout'
+    | '/_authenticated/conversas'
     | '/_authenticated/moderacao'
     | '/_authenticated/pagamento'
     | '/_authenticated/plano'
@@ -406,6 +416,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedCheckoutRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/conversas': {
+      id: '/_authenticated/conversas'
+      path: '/conversas'
+      fullPath: '/conversas'
+      preLoaderRoute: typeof AuthenticatedConversasRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/moderacao': {
       id: '/_authenticated/moderacao'
       path: '/moderacao'
@@ -464,17 +481,17 @@ declare module '@tanstack/react-router' {
     }
     '/_authenticated/conversas/': {
       id: '/_authenticated/conversas/'
-      path: '/conversas'
+      path: '/'
       fullPath: '/conversas/'
       preLoaderRoute: typeof AuthenticatedConversasIndexRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
+      parentRoute: typeof AuthenticatedConversasRoute
     }
     '/_authenticated/conversas/$slug': {
       id: '/_authenticated/conversas/$slug'
-      path: '/conversas/$slug'
+      path: '/$slug'
       fullPath: '/conversas/$slug'
       preLoaderRoute: typeof AuthenticatedConversasSlugRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
+      parentRoute: typeof AuthenticatedConversasRoute
     }
     '/_authenticated/perfil/': {
       id: '/_authenticated/perfil/'
@@ -521,20 +538,35 @@ declare module '@tanstack/react-router' {
   }
 }
 
+interface AuthenticatedConversasRouteChildren {
+  AuthenticatedConversasSlugRoute: typeof AuthenticatedConversasSlugRoute
+  AuthenticatedConversasIndexRoute: typeof AuthenticatedConversasIndexRoute
+}
+
+const AuthenticatedConversasRouteChildren: AuthenticatedConversasRouteChildren =
+  {
+    AuthenticatedConversasSlugRoute: AuthenticatedConversasSlugRoute,
+    AuthenticatedConversasIndexRoute: AuthenticatedConversasIndexRoute,
+  }
+
+const AuthenticatedConversasRouteWithChildren =
+  AuthenticatedConversasRoute._addFileChildren(
+    AuthenticatedConversasRouteChildren,
+  )
+
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedAvisosRoute: typeof AuthenticatedAvisosRoute
   AuthenticatedCheckoutRoute: typeof AuthenticatedCheckoutRoute
+  AuthenticatedConversasRoute: typeof AuthenticatedConversasRouteWithChildren
   AuthenticatedModeracaoRoute: typeof AuthenticatedModeracaoRoute
   AuthenticatedPagamentoRoute: typeof AuthenticatedPagamentoRoute
   AuthenticatedPlanoRoute: typeof AuthenticatedPlanoRoute
   AuthenticatedPublicarRoute: typeof AuthenticatedPublicarRoute
   AuthenticatedSugestoesRoute: typeof AuthenticatedSugestoesRoute
   AuthenticatedComunidadeGruposRoute: typeof AuthenticatedComunidadeGruposRoute
-  AuthenticatedConversasSlugRoute: typeof AuthenticatedConversasSlugRoute
   AuthenticatedPerfilSlugRoute: typeof AuthenticatedPerfilSlugRoute
   AuthenticatedPerfilContatoRoute: typeof AuthenticatedPerfilContatoRoute
   AuthenticatedComunidadeIndexRoute: typeof AuthenticatedComunidadeIndexRoute
-  AuthenticatedConversasIndexRoute: typeof AuthenticatedConversasIndexRoute
   AuthenticatedPerfilIndexRoute: typeof AuthenticatedPerfilIndexRoute
   AuthenticatedVagasIndexRoute: typeof AuthenticatedVagasIndexRoute
   AuthenticatedVagasProfissaoCodigoInteressadosRoute: typeof AuthenticatedVagasProfissaoCodigoInteressadosRoute
@@ -544,17 +576,16 @@ interface AuthenticatedRouteRouteChildren {
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAvisosRoute: AuthenticatedAvisosRoute,
   AuthenticatedCheckoutRoute: AuthenticatedCheckoutRoute,
+  AuthenticatedConversasRoute: AuthenticatedConversasRouteWithChildren,
   AuthenticatedModeracaoRoute: AuthenticatedModeracaoRoute,
   AuthenticatedPagamentoRoute: AuthenticatedPagamentoRoute,
   AuthenticatedPlanoRoute: AuthenticatedPlanoRoute,
   AuthenticatedPublicarRoute: AuthenticatedPublicarRoute,
   AuthenticatedSugestoesRoute: AuthenticatedSugestoesRoute,
   AuthenticatedComunidadeGruposRoute: AuthenticatedComunidadeGruposRoute,
-  AuthenticatedConversasSlugRoute: AuthenticatedConversasSlugRoute,
   AuthenticatedPerfilSlugRoute: AuthenticatedPerfilSlugRoute,
   AuthenticatedPerfilContatoRoute: AuthenticatedPerfilContatoRoute,
   AuthenticatedComunidadeIndexRoute: AuthenticatedComunidadeIndexRoute,
-  AuthenticatedConversasIndexRoute: AuthenticatedConversasIndexRoute,
   AuthenticatedPerfilIndexRoute: AuthenticatedPerfilIndexRoute,
   AuthenticatedVagasIndexRoute: AuthenticatedVagasIndexRoute,
   AuthenticatedVagasProfissaoCodigoInteressadosRoute:
