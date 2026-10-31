@@ -33,6 +33,22 @@ function AfterLogin({ userId }: { userId: string }) {
   return null;
 }
 
+const DESKTOP_LINKS = [
+  { to: "/", label: "Início", props: { to: "/" } },
+  {
+    to: "/vagas",
+    label: "Vagas",
+    props: { to: "/vagas", search: { q: undefined, tipo: undefined } },
+  },
+  {
+    to: "/comunidade",
+    label: "Comunidade",
+    props: { to: "/comunidade", search: { grupo: undefined } },
+  },
+  { to: "/conversas", label: "Conversas", props: { to: "/conversas" } },
+  { to: "/perfil", label: "Meu perfil", props: { to: "/perfil" } },
+] as const;
+
 export function AppShell({ children }: { children: ReactNode }) {
   const { userId } = useAuth();
   const { total: unread } = useUnread(userId);
@@ -42,8 +58,11 @@ export function AppShell({ children }: { children: ReactNode }) {
   const item =
     "group flex flex-1 flex-col items-center gap-0.5 py-1 text-xs font-semibold text-muted-foreground";
   const active = { className: "text-foreground" };
+  const path = useRouterState({ select: (st) => st.location.pathname });
+  // início e lista de vagas usam a largura toda no computador; o resto fica numa coluna
+  const wide = path === "/" || path === "/vagas" || path === "/vagas/";
   return (
-    <div className="mx-auto flex min-h-screen max-w-2xl flex-col">
+    <div className="flex min-h-screen flex-col">
       <a
         href="#conteudo"
         className="sr-only z-50 rounded-md bg-foreground px-3 py-2 font-bold text-background focus:not-sr-only focus:fixed focus:left-2 focus:top-2"
@@ -51,7 +70,7 @@ export function AppShell({ children }: { children: ReactNode }) {
         Pular para o conteúdo
       </a>
       <header className="sticky top-0 z-20 border-b-2 border-foreground bg-primary">
-        <div className="flex h-14 items-center justify-between px-4">
+        <div className="mx-auto flex h-14 w-full max-w-2xl items-center justify-between px-4 lg:max-w-[1120px]">
           <div className="flex items-center">
             <BackButton />
             <Link
@@ -67,6 +86,29 @@ export function AppShell({ children }: { children: ReactNode }) {
               </span>
             </Link>
           </div>
+          {userId && (
+            <nav aria-label="Principal" className="mr-auto ml-6 hidden items-center gap-1 lg:flex">
+              {DESKTOP_LINKS.map((l) => (
+                <Link
+                  key={l.to}
+                  {...l.props}
+                  className="relative rounded-lg px-3 py-1.5 text-sm font-bold text-primary-foreground hover:bg-foreground/10"
+                  activeProps={{ className: "bg-foreground text-primary hover:bg-foreground" }}
+                  activeOptions={{ exact: l.to === "/" }}
+                >
+                  {l.label}
+                  {l.to === "/conversas" && unread > 0 && (
+                    <span
+                      aria-label={`${unread} mensagens não lidas`}
+                      className="absolute -right-1 -top-1 flex h-4 min-w-4 items-center justify-center rounded-full border border-foreground bg-destructive px-1 text-[10px] leading-none text-destructive-foreground"
+                    >
+                      {unread > 99 ? "99+" : unread}
+                    </span>
+                  )}
+                </Link>
+              ))}
+            </nav>
+          )}
           <div className="flex items-center gap-1">
             <ThemeToggle />
             {userId && <SuggestionButton />}
@@ -102,7 +144,11 @@ export function AppShell({ children }: { children: ReactNode }) {
       <AssistedHelp />
       {userId && <ChatBackground userId={userId} />}
       {userId && <AfterLogin userId={userId} />}
-      <main id="conteudo" tabIndex={-1} className="flex-1 px-4 pb-28 pt-4 outline-none">
+      <main
+        id="conteudo"
+        tabIndex={-1}
+        className={`mx-auto w-full max-w-2xl flex-1 px-4 pb-28 pt-4 outline-none lg:pb-12 lg:pt-8 ${wide ? "lg:max-w-[1120px]" : ""}`}
+      >
         <HoldBanner />
         <InstallPrompt />
         {children}
@@ -132,7 +178,7 @@ export function AppShell({ children }: { children: ReactNode }) {
         </p>
       </main>
       {userId ? (
-        <nav className="fixed inset-x-0 bottom-0 z-20 border-t-2 border-foreground bg-background">
+        <nav className="fixed inset-x-0 bottom-0 z-20 border-t-2 border-foreground bg-background lg:hidden">
           <div className="mx-auto flex max-w-2xl">
             <Link to="/" className={item} activeProps={active} activeOptions={{ exact: true }}>
               <span className={bub}>
@@ -197,7 +243,7 @@ export function AppShell({ children }: { children: ReactNode }) {
           </div>
         </nav>
       ) : (
-        <nav className="fixed inset-x-0 bottom-0 z-20 border-t-2 border-foreground bg-background">
+        <nav className="fixed inset-x-0 bottom-0 z-20 border-t-2 border-foreground bg-background lg:hidden">
           <div className="mx-auto max-w-2xl p-3">
             <Link
               to="/auth"
