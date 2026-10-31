@@ -26,6 +26,9 @@ import { Route as AuthenticatedPublicarRouteImport } from './routes/_authenticat
 import { Route as AuthenticatedSugestoesRouteImport } from './routes/_authenticated/sugestoes'
 import { Route as AuthenticatedVerificacoesRouteImport } from './routes/_authenticated/verificacoes'
 import { Route as ServicosIndexRouteImport } from './routes/servicos.index'
+import { Route as AuthenticatedCanaisIndexRouteImport } from './routes/_authenticated/canais.index'
+import { Route as AuthenticatedCanaisSlugRouteImport } from './routes/_authenticated/canais.$slug'
+import { Route as AuthenticatedCanaisNovoRouteImport } from './routes/_authenticated/canais.novo'
 import { Route as AuthenticatedComunidadeIndexRouteImport } from './routes/_authenticated/comunidade.index'
 import { Route as AuthenticatedComunidadeGruposRouteImport } from './routes/_authenticated/comunidade.grupos'
 import { Route as AuthenticatedConversasIndexRouteImport } from './routes/_authenticated/conversas.index'
@@ -123,6 +126,22 @@ const ServicosIndexRoute = ServicosIndexRouteImport.update({
   path: '/servicos/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedCanaisIndexRoute =
+  AuthenticatedCanaisIndexRouteImport.update({
+    id: '/canais/',
+    path: '/canais/',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedCanaisSlugRoute = AuthenticatedCanaisSlugRouteImport.update({
+  id: '/canais/$slug',
+  path: '/canais/$slug',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedCanaisNovoRoute = AuthenticatedCanaisNovoRouteImport.update({
+  id: '/canais/novo',
+  path: '/canais/novo',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedComunidadeIndexRoute =
   AuthenticatedComunidadeIndexRouteImport.update({
     id: '/comunidade/',
@@ -205,11 +224,14 @@ export interface FileRoutesByFullPath {
   '/sugestoes': typeof AuthenticatedSugestoesRoute
   '/verificacoes': typeof AuthenticatedVerificacoesRoute
   '/servicos/': typeof ServicosIndexRoute
+  '/canais/$slug': typeof AuthenticatedCanaisSlugRoute
+  '/canais/novo': typeof AuthenticatedCanaisNovoRoute
   '/comunidade/grupos': typeof AuthenticatedComunidadeGruposRoute
   '/conversas/$slug': typeof AuthenticatedConversasSlugRoute
   '/perfil/$slug': typeof AuthenticatedPerfilSlugRoute
   '/perfil/contato': typeof AuthenticatedPerfilContatoRoute
   '/perfil/verificacao': typeof AuthenticatedPerfilVerificacaoRoute
+  '/canais/': typeof AuthenticatedCanaisIndexRoute
   '/comunidade/': typeof AuthenticatedComunidadeIndexRoute
   '/conversas/': typeof AuthenticatedConversasIndexRoute
   '/perfil/': typeof AuthenticatedPerfilIndexRoute
@@ -233,11 +255,14 @@ export interface FileRoutesByTo {
   '/sugestoes': typeof AuthenticatedSugestoesRoute
   '/verificacoes': typeof AuthenticatedVerificacoesRoute
   '/servicos': typeof ServicosIndexRoute
+  '/canais/$slug': typeof AuthenticatedCanaisSlugRoute
+  '/canais/novo': typeof AuthenticatedCanaisNovoRoute
   '/comunidade/grupos': typeof AuthenticatedComunidadeGruposRoute
   '/conversas/$slug': typeof AuthenticatedConversasSlugRoute
   '/perfil/$slug': typeof AuthenticatedPerfilSlugRoute
   '/perfil/contato': typeof AuthenticatedPerfilContatoRoute
   '/perfil/verificacao': typeof AuthenticatedPerfilVerificacaoRoute
+  '/canais': typeof AuthenticatedCanaisIndexRoute
   '/comunidade': typeof AuthenticatedComunidadeIndexRoute
   '/conversas': typeof AuthenticatedConversasIndexRoute
   '/perfil': typeof AuthenticatedPerfilIndexRoute
@@ -264,11 +289,14 @@ export interface FileRoutesById {
   '/_authenticated/sugestoes': typeof AuthenticatedSugestoesRoute
   '/_authenticated/verificacoes': typeof AuthenticatedVerificacoesRoute
   '/servicos/': typeof ServicosIndexRoute
+  '/_authenticated/canais/$slug': typeof AuthenticatedCanaisSlugRoute
+  '/_authenticated/canais/novo': typeof AuthenticatedCanaisNovoRoute
   '/_authenticated/comunidade/grupos': typeof AuthenticatedComunidadeGruposRoute
   '/_authenticated/conversas/$slug': typeof AuthenticatedConversasSlugRoute
   '/_authenticated/perfil/$slug': typeof AuthenticatedPerfilSlugRoute
   '/_authenticated/perfil/contato': typeof AuthenticatedPerfilContatoRoute
   '/_authenticated/perfil/verificacao': typeof AuthenticatedPerfilVerificacaoRoute
+  '/_authenticated/canais/': typeof AuthenticatedCanaisIndexRoute
   '/_authenticated/comunidade/': typeof AuthenticatedComunidadeIndexRoute
   '/_authenticated/conversas/': typeof AuthenticatedConversasIndexRoute
   '/_authenticated/perfil/': typeof AuthenticatedPerfilIndexRoute
@@ -295,11 +323,14 @@ export interface FileRouteTypes {
     | '/sugestoes'
     | '/verificacoes'
     | '/servicos/'
+    | '/canais/$slug'
+    | '/canais/novo'
     | '/comunidade/grupos'
     | '/conversas/$slug'
     | '/perfil/$slug'
     | '/perfil/contato'
     | '/perfil/verificacao'
+    | '/canais/'
     | '/comunidade/'
     | '/conversas/'
     | '/perfil/'
@@ -323,11 +354,14 @@ export interface FileRouteTypes {
     | '/sugestoes'
     | '/verificacoes'
     | '/servicos'
+    | '/canais/$slug'
+    | '/canais/novo'
     | '/comunidade/grupos'
     | '/conversas/$slug'
     | '/perfil/$slug'
     | '/perfil/contato'
     | '/perfil/verificacao'
+    | '/canais'
     | '/comunidade'
     | '/conversas'
     | '/perfil'
@@ -353,11 +387,14 @@ export interface FileRouteTypes {
     | '/_authenticated/sugestoes'
     | '/_authenticated/verificacoes'
     | '/servicos/'
+    | '/_authenticated/canais/$slug'
+    | '/_authenticated/canais/novo'
     | '/_authenticated/comunidade/grupos'
     | '/_authenticated/conversas/$slug'
     | '/_authenticated/perfil/$slug'
     | '/_authenticated/perfil/contato'
     | '/_authenticated/perfil/verificacao'
+    | '/_authenticated/canais/'
     | '/_authenticated/comunidade/'
     | '/_authenticated/conversas/'
     | '/_authenticated/perfil/'
@@ -498,6 +535,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ServicosIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated/canais/': {
+      id: '/_authenticated/canais/'
+      path: '/canais'
+      fullPath: '/canais/'
+      preLoaderRoute: typeof AuthenticatedCanaisIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/canais/$slug': {
+      id: '/_authenticated/canais/$slug'
+      path: '/canais/$slug'
+      fullPath: '/canais/$slug'
+      preLoaderRoute: typeof AuthenticatedCanaisSlugRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/canais/novo': {
+      id: '/_authenticated/canais/novo'
+      path: '/canais/novo'
+      fullPath: '/canais/novo'
+      preLoaderRoute: typeof AuthenticatedCanaisNovoRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/comunidade/': {
       id: '/_authenticated/comunidade/'
       path: '/comunidade'
@@ -604,10 +662,13 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedPublicarRoute: typeof AuthenticatedPublicarRoute
   AuthenticatedSugestoesRoute: typeof AuthenticatedSugestoesRoute
   AuthenticatedVerificacoesRoute: typeof AuthenticatedVerificacoesRoute
+  AuthenticatedCanaisSlugRoute: typeof AuthenticatedCanaisSlugRoute
+  AuthenticatedCanaisNovoRoute: typeof AuthenticatedCanaisNovoRoute
   AuthenticatedComunidadeGruposRoute: typeof AuthenticatedComunidadeGruposRoute
   AuthenticatedPerfilSlugRoute: typeof AuthenticatedPerfilSlugRoute
   AuthenticatedPerfilContatoRoute: typeof AuthenticatedPerfilContatoRoute
   AuthenticatedPerfilVerificacaoRoute: typeof AuthenticatedPerfilVerificacaoRoute
+  AuthenticatedCanaisIndexRoute: typeof AuthenticatedCanaisIndexRoute
   AuthenticatedComunidadeIndexRoute: typeof AuthenticatedComunidadeIndexRoute
   AuthenticatedPerfilIndexRoute: typeof AuthenticatedPerfilIndexRoute
   AuthenticatedVagasIndexRoute: typeof AuthenticatedVagasIndexRoute
@@ -625,10 +686,13 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedPublicarRoute: AuthenticatedPublicarRoute,
   AuthenticatedSugestoesRoute: AuthenticatedSugestoesRoute,
   AuthenticatedVerificacoesRoute: AuthenticatedVerificacoesRoute,
+  AuthenticatedCanaisSlugRoute: AuthenticatedCanaisSlugRoute,
+  AuthenticatedCanaisNovoRoute: AuthenticatedCanaisNovoRoute,
   AuthenticatedComunidadeGruposRoute: AuthenticatedComunidadeGruposRoute,
   AuthenticatedPerfilSlugRoute: AuthenticatedPerfilSlugRoute,
   AuthenticatedPerfilContatoRoute: AuthenticatedPerfilContatoRoute,
   AuthenticatedPerfilVerificacaoRoute: AuthenticatedPerfilVerificacaoRoute,
+  AuthenticatedCanaisIndexRoute: AuthenticatedCanaisIndexRoute,
   AuthenticatedComunidadeIndexRoute: AuthenticatedComunidadeIndexRoute,
   AuthenticatedPerfilIndexRoute: AuthenticatedPerfilIndexRoute,
   AuthenticatedVagasIndexRoute: AuthenticatedVagasIndexRoute,

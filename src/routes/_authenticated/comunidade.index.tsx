@@ -238,10 +238,13 @@ function Community() {
 
 function Header() {
   return (
-    <header className="space-y-1">
+    <header className="flex items-center justify-between gap-2">
       <h1 className="flex items-center gap-2 text-2xl">
         <Users className="h-6 w-6" aria-hidden="true" /> Comunidade
       </h1>
+      <Link to="/canais" className="text-sm font-bold underline">
+        Ver canais das empresas →
+      </Link>
     </header>
   );
 }
