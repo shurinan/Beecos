@@ -368,10 +368,12 @@ function Vagas() {
           </Link>
         )}
 
-        <div className="space-y-4">
-          {isLoading && <p className="text-center text-muted-foreground">Carregando…</p>}
+        <div className="space-y-4 lg:grid lg:grid-cols-2 lg:items-start lg:gap-4 lg:space-y-0">
+          {isLoading && (
+            <p className="text-center text-muted-foreground lg:col-span-2">Carregando…</p>
+          )}
           {shown?.length === 0 && (
-            <div className="rounded-lg border-2 border-dashed border-foreground/40 p-8 text-center text-muted-foreground">
+            <div className="rounded-lg border-2 border-dashed border-foreground/40 p-8 text-center text-muted-foreground lg:col-span-2">
               {hasSearch
                 ? "Nada encontrado com esses filtros. Tente tirar algum."
                 : "Nada por aqui ainda. Seja o primeiro a publicar!"}
