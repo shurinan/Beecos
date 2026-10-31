@@ -23,6 +23,7 @@ import { Route as AuthenticatedPagamentoRouteImport } from './routes/_authentica
 import { Route as AuthenticatedPlanoRouteImport } from './routes/_authenticated/plano'
 import { Route as AuthenticatedPublicarRouteImport } from './routes/_authenticated/publicar'
 import { Route as AuthenticatedSugestoesRouteImport } from './routes/_authenticated/sugestoes'
+import { Route as ServicosIndexRouteImport } from './routes/servicos.index'
 import { Route as AuthenticatedComunidadeIndexRouteImport } from './routes/_authenticated/comunidade.index'
 import { Route as AuthenticatedComunidadeGruposRouteImport } from './routes/_authenticated/comunidade.grupos'
 import { Route as AuthenticatedConversasIndexRouteImport } from './routes/_authenticated/conversas.index'
@@ -103,6 +104,11 @@ const AuthenticatedSugestoesRoute = AuthenticatedSugestoesRouteImport.update({
   path: '/sugestoes',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const ServicosIndexRoute = ServicosIndexRouteImport.update({
+  id: '/servicos/',
+  path: '/servicos/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthenticatedComunidadeIndexRoute =
   AuthenticatedComunidadeIndexRouteImport.update({
     id: '/comunidade/',
@@ -176,6 +182,7 @@ export interface FileRoutesByFullPath {
   '/plano': typeof AuthenticatedPlanoRoute
   '/publicar': typeof AuthenticatedPublicarRoute
   '/sugestoes': typeof AuthenticatedSugestoesRoute
+  '/servicos/': typeof ServicosIndexRoute
   '/comunidade/grupos': typeof AuthenticatedComunidadeGruposRoute
   '/conversas/$slug': typeof AuthenticatedConversasSlugRoute
   '/perfil/$slug': typeof AuthenticatedPerfilSlugRoute
@@ -201,6 +208,7 @@ export interface FileRoutesByTo {
   '/plano': typeof AuthenticatedPlanoRoute
   '/publicar': typeof AuthenticatedPublicarRoute
   '/sugestoes': typeof AuthenticatedSugestoesRoute
+  '/servicos': typeof ServicosIndexRoute
   '/comunidade/grupos': typeof AuthenticatedComunidadeGruposRoute
   '/conversas/$slug': typeof AuthenticatedConversasSlugRoute
   '/perfil/$slug': typeof AuthenticatedPerfilSlugRoute
@@ -228,6 +236,7 @@ export interface FileRoutesById {
   '/_authenticated/plano': typeof AuthenticatedPlanoRoute
   '/_authenticated/publicar': typeof AuthenticatedPublicarRoute
   '/_authenticated/sugestoes': typeof AuthenticatedSugestoesRoute
+  '/servicos/': typeof ServicosIndexRoute
   '/_authenticated/comunidade/grupos': typeof AuthenticatedComunidadeGruposRoute
   '/_authenticated/conversas/$slug': typeof AuthenticatedConversasSlugRoute
   '/_authenticated/perfil/$slug': typeof AuthenticatedPerfilSlugRoute
@@ -255,6 +264,7 @@ export interface FileRouteTypes {
     | '/plano'
     | '/publicar'
     | '/sugestoes'
+    | '/servicos/'
     | '/comunidade/grupos'
     | '/conversas/$slug'
     | '/perfil/$slug'
@@ -280,6 +290,7 @@ export interface FileRouteTypes {
     | '/plano'
     | '/publicar'
     | '/sugestoes'
+    | '/servicos'
     | '/comunidade/grupos'
     | '/conversas/$slug'
     | '/perfil/$slug'
@@ -306,6 +317,7 @@ export interface FileRouteTypes {
     | '/_authenticated/plano'
     | '/_authenticated/publicar'
     | '/_authenticated/sugestoes'
+    | '/servicos/'
     | '/_authenticated/comunidade/grupos'
     | '/_authenticated/conversas/$slug'
     | '/_authenticated/perfil/$slug'
@@ -326,6 +338,7 @@ export interface RootRouteChildren {
   PrivacidadeRoute: typeof PrivacidadeRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   TermosRoute: typeof TermosRoute
+  ServicosIndexRoute: typeof ServicosIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -427,6 +440,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/sugestoes'
       preLoaderRoute: typeof AuthenticatedSugestoesRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/servicos/': {
+      id: '/servicos/'
+      path: '/servicos'
+      fullPath: '/servicos/'
+      preLoaderRoute: typeof ServicosIndexRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/_authenticated/comunidade/': {
       id: '/_authenticated/comunidade/'
@@ -554,6 +574,7 @@ const rootRouteChildren: RootRouteChildren = {
   PrivacidadeRoute: PrivacidadeRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   TermosRoute: TermosRoute,
+  ServicosIndexRoute: ServicosIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
