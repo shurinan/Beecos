@@ -61,7 +61,11 @@ export function AppShell({ children }: { children: ReactNode }) {
   const path = useRouterState({ select: (st) => st.location.pathname });
   // início e lista de vagas usam a largura toda no computador; o resto fica numa coluna
   const wide =
-    path === "/" || path === "/vagas" || path === "/vagas/" || path.startsWith("/conversas");
+    path === "/" ||
+    path === "/perfil" ||
+    path === "/vagas" ||
+    path === "/vagas/" ||
+    path.startsWith("/conversas");
   // no celular, a conversa aberta ocupa a tela toda (sem menu inferior), como no WhatsApp
   const inChat = /^\/conversas\/[^/]+/.test(path);
   return (
