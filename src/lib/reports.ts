@@ -8,7 +8,7 @@ export const REPORT_REASONS = [
   { value: "outro", label: "Outro motivo" },
 ] as const;
 export type ReportReason = (typeof REPORT_REASONS)[number]["value"];
-export type ReportTarget = "post" | "profile";
+export type ReportTarget = "post" | "profile" | "channel";
 
 /** Frase simples para o erro do banco; null se não for um erro de denúncia. */
 export function reportErrorMessage(err: unknown): string | null {
@@ -41,7 +41,14 @@ export async function sendReport(
 
 export async function resolveReport(
   id: string,
-  action: "dismiss" | "dismiss_bad_faith" | "hide_post" | "restore_post" | "done",
+  action:
+    | "dismiss"
+    | "dismiss_bad_faith"
+    | "hide_post"
+    | "restore_post"
+    | "hide_channel"
+    | "restore_channel"
+    | "done",
   note: string,
 ) {
   const { error } = await supabase.rpc("resolve_report", { _id: id, _action: action, _note: note });

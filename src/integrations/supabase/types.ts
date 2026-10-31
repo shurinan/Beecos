@@ -744,6 +744,54 @@ export type Database = {
         }
         Relationships: []
       }
+      channels: {
+        Row: {
+          created_at: string
+          default_days: number
+          description: string
+          hidden_at: string | null
+          hidden_reason: string | null
+          id: string
+          name: string
+          owner_id: string
+          slug: string
+        }
+        Insert: {
+          created_at?: string
+          default_days?: number
+          description?: string
+          hidden_at?: string | null
+          hidden_reason?: string | null
+          id?: string
+          name: string
+          owner_id: string
+          slug?: string
+        }
+        Update: {
+          created_at?: string
+          default_days?: number
+          description?: string
+          hidden_at?: string | null
+          hidden_reason?: string | null
+          id?: string
+          name?: string
+          owner_id?: string
+          slug?: string
+        }
+        Relationships: []
+      }
+      channel_professions: {
+        Row: { channel_id: string; profession_id: string }
+        Insert: { channel_id: string; profession_id: string }
+        Update: { channel_id?: string; profession_id?: string }
+        Relationships: []
+      }
+      channel_follows: {
+        Row: { channel_id: string; created_at: string; user_id: string }
+        Insert: { channel_id: string; created_at?: string; user_id: string }
+        Update: { channel_id?: string; created_at?: string; user_id?: string }
+        Relationships: []
+      }
       moderators: {
         Row: {
           created_at: string
@@ -1036,6 +1084,9 @@ export type Database = {
       }
       posts: {
         Row: {
+          channel_id: string | null
+          closed_at: string | null
+          expires_at: string | null
           city: string
           cover_color: string | null
           cover_icon: string | null
@@ -1058,6 +1109,9 @@ export type Database = {
           vacancies: number
         }
         Insert: {
+          channel_id?: string | null
+          closed_at?: string | null
+          expires_at?: string | null
           city?: string
           cover_color?: string | null
           cover_icon?: string | null
@@ -1080,6 +1134,9 @@ export type Database = {
           vacancies?: number
         }
         Update: {
+          channel_id?: string | null
+          closed_at?: string | null
+          expires_at?: string | null
           city?: string
           cover_color?: string | null
           cover_icon?: string | null
@@ -1768,6 +1825,20 @@ export type Database = {
       }
       mark_verification_files_deleted: { Args: { _id: string }; Returns: undefined }
       pending_verifications_count: { Args: never; Returns: number }
+      channel_overview: {
+        Args: { _ids: string[] }
+        Returns: { channel_id: string; followers: number; open_jobs: number; following: boolean }[]
+      }
+      closed_offers: {
+        Args: { _user: string }
+        Returns: {
+          title: string
+          profession: string | null
+          ended_at: string
+          concluded: boolean
+          total: number
+        }[]
+      }
       is_moderator: { Args: never; Returns: boolean }
       is_on_hold: { Args: { _u: string }; Returns: boolean }
       is_premium: { Args: { _user_id: string }; Returns: boolean }

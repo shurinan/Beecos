@@ -18,6 +18,7 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { PostCard, type PostWithAuthor } from "@/components/PostCard";
 import { AdSlot } from "@/components/AdSlot";
+import { ClosedOffers } from "@/components/ClosedOffers";
 import { UserSeal } from "@/components/Seal";
 import { Avatar, SelfDeclared, SkillCard, StarInput, Stars } from "@/components/profile-bits";
 import { useAuth } from "@/lib/auth";
@@ -313,6 +314,7 @@ function ProfilePage({ id }: { id: string }) {
       {data.posts.map((p) => (
         <PostCard key={p.id} post={p} slots={slots[p.id]} />
       ))}
+      <ClosedOffers userId={id} />
 
       <AdSlot placement="profile" />
     </div>

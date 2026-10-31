@@ -14,13 +14,21 @@ import { getPlanUsage, limitMessage } from "@/lib/plans";
 import { postParams } from "@/lib/urls";
 import { syncPhotos } from "@/lib/post-photos";
 import { KIND_ACTION } from "@/lib/data";
+import {
+  DEADLINES,
+  channelErrorMessage,
+  expiresAt,
+  useMyChannels,
+  type Deadline,
+} from "@/lib/channels";
 
 type Tipo = "contratar" | "trabalhar";
 
 export const Route = createFileRoute("/_authenticated/publicar")({
   staticData: { sitemap: false },
-  validateSearch: (q: Record<string, unknown>): { tipo: Tipo } => ({
+  validateSearch: (q: Record<string, unknown>): { tipo: Tipo; canal?: string | undefined } => ({
     tipo: q["tipo"] === "trabalhar" ? "trabalhar" : "contratar",
+    canal: typeof q["canal"] === "string" ? q["canal"] : undefined,
   }),
   head: () => ({
     meta: [
@@ -52,7 +60,7 @@ const OPTIONS = [
 /** Tela só para publicar: a pessoa escolhe se quer contratar ou trabalhar e preenche. */
 function Publicar() {
   const { userId } = Route.useRouteContext();
-  const { tipo } = Route.useSearch();
+  const { tipo, canal } = Route.useSearch();
   const navigate = useNavigate();
   const qc = useQueryClient();
   const { data: catalog } = useCatalog();
@@ -73,6 +81,17 @@ function Publicar() {
     },
   });
   const kind = tipo === "trabalhar" ? "available" : "job";
+  const { data: myChannels } = useMyChannels(userId);
+  const [channelId, setChannelId] = useState<string>(canal ?? "");
+  const [days, setDays] = useState<Deadline>(30);
+  const [daysTouched, setDaysTouched] = useState(false);
+  const chosenChannel = myChannels?.find((c) => c.id === channelId);
+  // o prazo padrão do canal vale até a pessoa escolher outro
+  const effectiveDays: Deadline = (
+    !daysTouched && chosenChannel
+      ? (DEADLINES.find((d) => d.days === chosenChannel.default_days)?.days ?? 30)
+      : days
+  ) as Deadline;
   const [draft, setDraft] = useState<PostDraft>({ ...EMPTY_DRAFT, kind });
   const [busy, setBusy] = useState(false);
 
@@ -104,7 +123,15 @@ function Publicar() {
     const { data: created, error } = await supabase
       .from("posts")
       // slug é gerado pelo trigger posts_slug no banco; o valor vazio é substituído
-      .insert({ ...draftColumns(draft), kind: draft.kind, user_id: userId, slug: "" })
+      .insert({
+        ...draftColumns(draft),
+        kind: draft.kind,
+        user_id: userId,
+        slug: "",
+        ...(draft.kind === "job"
+          ? { expires_at: expiresAt(effectiveDays), channel_id: channelId || null }
+          : {}),
+      })
       .select("id, slug, professions(slug)")
       .single();
     if (error || !created) {
@@ -112,7 +139,8 @@ function Publicar() {
       return void toast.error(
         error && isBlockedTextError(error)
           ? BLOCKED_TEXT_MESSAGE
-          : ((error && limitMessage(error)) ?? "Não foi possível publicar. Tente de novo."),
+          : ((error && (limitMessage(error) ?? channelErrorMessage(error))) ??
+              "Não foi possível publicar. Tente de novo."),
       );
     }
     if (place) {
@@ -183,6 +211,58 @@ function Publicar() {
           premium={!!usage?.premium}
         />
       </div>
+      {kind === "job" && (
+        <div className="block-card space-y-4 p-5">
+          <fieldset className="space-y-2">
+            <legend className="font-bold">Por quanto tempo a vaga fica aberta?</legend>
+            <div className="flex flex-wrap gap-1.5">
+              {DEADLINES.map((d) => (
+                <button
+                  key={d.days}
+                  type="button"
+                  aria-pressed={effectiveDays === d.days}
+                  onClick={() => {
+                    setDays(d.days);
+                    setDaysTouched(true);
+                  }}
+                  className={
+                    "rounded-full border-2 border-foreground px-3 py-1 text-sm font-semibold " +
+                    (effectiveDays === d.days ? "bg-foreground text-background" : "")
+                  }
+                >
+                  {d.label}
+                </button>
+              ))}
+            </div>
+            <p className="text-xs text-muted-foreground">
+              Depois desse prazo a vaga sai das listas e vai para as suas ofertas concluídas.
+            </p>
+          </fieldset>
+          {myChannels && myChannels.length > 0 && (
+            <div className="space-y-1">
+              <label htmlFor="pub-canal" className="font-bold">
+                Publicar também em um canal
+              </label>
+              <select
+                id="pub-canal"
+                value={channelId}
+                onChange={(e) => setChannelId(e.target.value)}
+                className="w-full rounded-lg border-2 border-foreground bg-card p-2"
+              >
+                <option value="">Nenhum (só nas listas e na comunidade)</option>
+                {myChannels.map((c) => (
+                  <option key={c.id} value={c.id}>
+                    {c.name}
+                  </option>
+                ))}
+              </select>
+              <p className="text-xs text-muted-foreground">
+                Quem segue o canal recebe aviso. A vaga também aparece na comunidade do ofício.
+              </p>
+            </div>
+          )}
+        </div>
+      )}
       <Button type="submit" className="w-full" size="lg" loading={busy}>
         Publicar
       </Button>

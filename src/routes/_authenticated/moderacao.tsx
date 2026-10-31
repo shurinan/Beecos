@@ -49,7 +49,8 @@ function Moderation() {
       const reports = (rows ?? []) as Row[];
       const postIds = reports.filter((r) => r.target_type === "post").map((r) => r.target_id);
       const profIds = reports.filter((r) => r.target_type === "profile").map((r) => r.target_id);
-      const [posts, profs] = await Promise.all([
+      const chanIds = reports.filter((r) => r.target_type === "channel").map((r) => r.target_id);
+      const [posts, profs, chans] = await Promise.all([
         postIds.length
           ? supabase
               .from("posts")
@@ -59,10 +60,14 @@ function Moderation() {
         profIds.length
           ? supabase.from("profiles").select("id, slug").in("id", profIds)
           : Promise.resolve({ data: [], error: null }),
+        chanIds.length
+          ? supabase.from("channels").select("id, slug, hidden_at").in("id", chanIds)
+          : Promise.resolve({ data: [], error: null }),
       ]);
+      if (chans.error) throw chans.error;
       if (posts.error) throw posts.error;
       if (profs.error) throw profs.error;
-      return { reports, posts: posts.data ?? [], profs: profs.data ?? [] };
+      return { reports, posts: posts.data ?? [], profs: profs.data ?? [], chans: chans.data ?? [] };
     },
   });
 
@@ -81,11 +86,12 @@ function Moderation() {
       {data?.reports.map((r) => {
         const post = data.posts.find((p) => p.id === r.target_id);
         const prof = data.profs.find((p) => p.id === r.target_id);
+        const chan = data.chans.find((p) => p.id === r.target_id);
         return (
           <ReportCard
             key={r.id}
             report={r}
-            hidden={!!post?.hidden_at}
+            hidden={!!(post?.hidden_at ?? chan?.hidden_at)}
             link={
               post ? (
                 <Link
@@ -94,6 +100,15 @@ function Moderation() {
                   className="font-bold underline"
                 >
                   Abrir a vaga
+                </Link>
+              ) : chan ? (
+                <Link
+                  to="/canais/$slug"
+                  params={{ slug: chan.slug }}
+                  search={{ ordem: undefined }}
+                  className="font-bold underline"
+                >
+                  Abrir o canal
                 </Link>
               ) : prof ? (
                 <Link
@@ -133,9 +148,7 @@ function ReportCard({
   const [busy, setBusy] = useState(false);
   const [caseOpen, setCaseOpen] = useState(false);
   const reason = REPORT_REASONS.find((x) => x.value === report.reason)?.label ?? report.reason;
-  async function act(
-    action: "dismiss" | "dismiss_bad_faith" | "hide_post" | "restore_post" | "done",
-  ) {
+  async function act(action: Parameters<typeof resolveReport>[1]) {
     setBusy(true);
     try {
       await resolveReport(report.id, action, note);
@@ -150,7 +163,12 @@ function ReportCard({
   return (
     <article className="block-card space-y-2 p-4">
       <p className="text-xs font-bold uppercase text-muted-foreground">
-        {report.target_type === "post" ? "Publicação" : "Perfil"} · {timeAgo(report.created_at)}
+        {report.target_type === "post"
+          ? "Publicação"
+          : report.target_type === "channel"
+            ? "Canal"
+            : "Perfil"}{" "}
+        · {timeAgo(report.created_at)}
         {hidden && " · oculta"}
       </p>
       <p className="font-semibold">{report.target_label || "(sem título)"}</p>
@@ -212,6 +230,28 @@ function ReportCard({
               onClick={() => act("hide_post")}
             >
               Ocultar vaga
+            </Button>
+          ))}
+        {report.target_type === "channel" &&
+          (hidden ? (
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              disabled={busy}
+              onClick={() => act("restore_channel")}
+            >
+              Reexibir canal
+            </Button>
+          ) : (
+            <Button
+              type="button"
+              variant="destructive"
+              size="sm"
+              disabled={busy}
+              onClick={() => act("hide_channel")}
+            >
+              Ocultar canal
             </Button>
           ))}
         <Button

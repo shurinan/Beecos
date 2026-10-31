@@ -1,6 +1,8 @@
 import { usernameErrorMessage } from "@/lib/username";
 import { postGaps } from "@/lib/post-gaps";
 import { PrivacyCard } from "@/components/PrivacyCard";
+import { timeLeftLabel } from "@/lib/channels";
+import { ClosedOffers } from "@/components/ClosedOffers";
 import { UserSeal } from "@/components/Seal";
 import { VerificationCard } from "@/components/VerificationCard";
 import { SECTIONS, SettingsMenu, type Section } from "@/components/SettingsMenu";
@@ -9,7 +11,7 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { toast } from "sonner";
-import { Mail, MapPin, Pencil, Plus, Smartphone, Trash2, Users } from "lucide-react";
+import { CheckCircle2, Mail, MapPin, Pencil, Plus, Smartphone, Trash2, Users } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -311,6 +313,19 @@ function Painel() {
     toast.success("Publicação atualizada");
     qc.invalidateQueries();
     return true;
+  }
+
+  async function closePost(id: string) {
+    const { error } = await supabase
+      .from("posts")
+      .update({ closed_at: new Date().toISOString() })
+      .eq("id", id);
+    if (error) {
+      toast.error("Não consegui marcar como concluída. Tente de novo.");
+      return;
+    }
+    toast.success("Marcada como concluída.");
+    qc.invalidateQueries();
   }
 
   async function deletePost(id: string) {
@@ -715,6 +730,11 @@ function Painel() {
                     <span className="min-w-0 flex-1 basis-40 truncate font-semibold">
                       {p.title}
                     </span>
+                    {p.kind === "job" && (
+                      <span className="text-xs font-semibold">
+                        {p.closed_at ? "Concluída" : timeLeftLabel(p.expires_at)}
+                      </span>
+                    )}
                     {p.kind === "job" && st && (
                       <span className="text-xs text-muted-foreground">
                         {st.taken} de {st.vacancies} {st.vacancies === 1 ? "vaga" : "vagas"}
@@ -737,6 +757,19 @@ function Painel() {
                         <Users /> Interessados
                       </Link>
                     </Button>
+                    {p.kind === "job" &&
+                      !p.closed_at &&
+                      (!p.expires_at || new Date(p.expires_at) > new Date()) && (
+                        <Button
+                          type="button"
+                          size="sm"
+                          variant="outline"
+                          aria-label={`Marcar ${p.title} como concluída`}
+                          onClick={() => void closePost(p.id)}
+                        >
+                          <CheckCircle2 /> Concluir
+                        </Button>
+                      )}
                     <Button
                       type="button"
                       size="sm"
@@ -757,6 +790,7 @@ function Painel() {
                 );
               })}
             </section>
+            <ClosedOffers userId={userId} />
           </>
         )}
         {section === "privacidade" && (
