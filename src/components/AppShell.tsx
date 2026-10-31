@@ -161,6 +161,10 @@ export function AppShell({ children }: { children: ReactNode }) {
               ·{" "}
             </>
           )}
+          <Link to="/servicos" className="underline">
+            Serviços
+          </Link>{" "}
+          ·{" "}
           <Link to="/ajuda" className="underline">
             Ajuda
           </Link>{" "}
@@ -172,6 +176,10 @@ export function AppShell({ children }: { children: ReactNode }) {
           <Link to="/privacidade" className="underline">
             Privacidade
           </Link>
+          <span className="mx-auto mt-2 block max-w-md">
+            O Beecos conecta pessoas. Não emprega ninguém, não garante clientes nem serviços e não
+            recebe o pagamento do serviço: vocês combinam tudo direto.
+          </span>
           <span className="mt-1 block">
             Contato: <span className="selectable">{PRIVACY_CONTACT_EMAIL}</span>
           </span>
