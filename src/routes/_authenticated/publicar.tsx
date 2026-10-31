@@ -81,7 +81,9 @@ function Publicar() {
     },
   });
   const kind = tipo === "trabalhar" ? "available" : "job";
-  const { data: myChannels } = useMyChannels(userId);
+  const { data: allMyChannels } = useMyChannels(userId);
+  // canal de quem perdeu o Premium fica inativo e não recebe vagas
+  const myChannels = usage?.premium ? allMyChannels : [];
   const [channelId, setChannelId] = useState<string>(canal ?? "");
   const [days, setDays] = useState<Deadline>(30);
   const [daysTouched, setDaysTouched] = useState(false);

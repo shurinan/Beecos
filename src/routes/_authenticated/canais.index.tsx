@@ -28,14 +28,17 @@ function ChannelRow({
   professions,
   onFollow,
   busy,
+  mine,
 }: {
   channel: Channel;
   numbers: ChannelNumbers | undefined;
   professions: string[];
   onFollow: () => void;
   busy: boolean;
+  mine: boolean;
 }) {
-  const { tier } = useBadge(channel.owner_id);
+  const { tier, info } = useBadge(channel.owner_id);
+  const inactive = mine && !!info && !info.premium;
   return (
     <li className="block-card flex items-center gap-3 p-3">
       <Link
@@ -53,6 +56,11 @@ function ChannelRow({
           <span className="flex items-center gap-1.5 font-bold">
             <span className="truncate">{channel.name}</span>
             {tier && <Seal tier={tier} size={16} />}
+            {inactive && (
+              <span className="rounded border-[1.5px] border-foreground px-1.5 text-[10px] font-bold uppercase">
+                Inativo
+              </span>
+            )}
           </span>
           <span className="block truncate text-xs text-muted-foreground">
             {professions.length ? professions.join(" · ") : "Vários trabalhos"}
@@ -131,6 +139,7 @@ function Channels() {
       professions={profNames(c)}
       onFollow={() => void toggle(c)}
       busy={busy === c.id}
+      mine={c.owner_id === userId}
     />
   );
 

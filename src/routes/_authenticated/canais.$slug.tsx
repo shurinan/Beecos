@@ -1,14 +1,32 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { toast } from "sonner";
 import { CommunityPostCard } from "@/components/CommunityPostCard";
 import { ReportButton } from "@/components/ReportButton";
 import { Seal } from "@/components/Seal";
+import { ChannelForm, type ChannelValues } from "@/components/ChannelForm";
+import { ConfirmButton } from "@/components/ConfirmButton";
 import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth";
 import { useBadge } from "@/lib/badges";
 import { useCatalog } from "@/lib/catalog";
-import { deadlineLabel, useChannel, useChannelFeed, useFollow } from "@/lib/channels";
+import {
+  channelErrorMessage,
+  deadlineLabel,
+  useChannel,
+  useChannelFeed,
+  useFollow,
+  type Deadline,
+} from "@/lib/channels";
 import { FEED_ORDERS, FEED_ORDER_LABEL, type FeedOrder } from "@/lib/community";
 import { initials, openConversation } from "@/lib/data";
 import { usePostDistances } from "@/lib/geo";
@@ -35,7 +53,10 @@ function ChannelPage() {
   const { data, isLoading } = useChannel(slug);
   const { follow, unfollow } = useFollow(userId);
   const { data: posts, isLoading: loadingFeed } = useChannelFeed(data?.channel.id, order);
-  const { tier } = useBadge(data?.channel.owner_id);
+  const { tier, info: ownerInfo } = useBadge(data?.channel.owner_id);
+  const qc = useQueryClient();
+  const [editing, setEditing] = useState(false);
+  const [saving, setSaving] = useState(false);
   const [applying, setApplying] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
 
@@ -72,6 +93,51 @@ function ChannelPage() {
     }
   }
 
+  const inactive = mine && !!ownerInfo && !ownerInfo.premium;
+
+  async function save(v: ChannelValues) {
+    setSaving(true);
+    try {
+      const { error } = await supabase
+        .from("channels")
+        .update({ name: v.name, description: v.description, default_days: v.days })
+        .eq("id", channel.id);
+      if (error) throw error;
+      const del = await supabase.from("channel_professions").delete().eq("channel_id", channel.id);
+      if (del.error) throw del.error;
+      if (v.professionIds.length) {
+        const ins = await supabase
+          .from("channel_professions")
+          .insert(
+            v.professionIds.map((profession_id) => ({ channel_id: channel.id, profession_id })),
+          );
+        if (ins.error) throw ins.error;
+      }
+      await Promise.all([
+        qc.invalidateQueries({ queryKey: ["channel", slug] }),
+        qc.invalidateQueries({ queryKey: ["channels"] }),
+        qc.invalidateQueries({ queryKey: ["my-channels"] }),
+      ]);
+      toast.success("Canal atualizado.");
+      setEditing(false);
+    } catch (err) {
+      toast.error(channelErrorMessage(err) ?? "Não consegui salvar. Tente de novo.");
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  async function removeChannel() {
+    const { error } = await supabase.from("channels").delete().eq("id", channel.id);
+    if (error) return void toast.error("Não consegui excluir o canal. Tente de novo.");
+    await Promise.all([
+      qc.invalidateQueries({ queryKey: ["channels"] }),
+      qc.invalidateQueries({ queryKey: ["my-channels"] }),
+    ]);
+    toast.success("Canal excluído. As vagas continuam publicadas.");
+    navigate({ to: "/canais" });
+  }
+
   async function apply(postUser: string, postId: string, pslug: string | null | undefined) {
     setApplying(postId);
     try {
@@ -89,6 +155,15 @@ function ChannelPage() {
 
   return (
     <div className="space-y-4">
+      {inactive && (
+        <p role="note" className="block-card bg-accent p-4 text-sm">
+          <b>Canal inativo.</b> O seu Premium acabou, então ninguém mais vê este canal e você não
+          pode publicar nele. Ao renovar, ele volta sozinho, com os seguidores.{" "}
+          <Link to="/plano" className="font-bold underline">
+            Renovar o Premium
+          </Link>
+        </p>
+      )}
       <header className="block-card space-y-3 p-5 text-center">
         <span
           aria-hidden="true"
@@ -121,11 +196,28 @@ function ChannelPage() {
         </p>
         <div className="flex flex-wrap justify-center gap-2">
           {mine ? (
-            <Button asChild>
-              <Link to="/publicar" search={{ tipo: "contratar", canal: channel.id }}>
-                Publicar vaga neste canal
-              </Link>
-            </Button>
+            <>
+              {!inactive && (
+                <Button asChild>
+                  <Link to="/publicar" search={{ tipo: "contratar", canal: channel.id }}>
+                    Publicar vaga neste canal
+                  </Link>
+                </Button>
+              )}
+              <Button type="button" variant="outline" onClick={() => setEditing(true)}>
+                Editar canal
+              </Button>
+              <ConfirmButton
+                title="Excluir este canal?"
+                description="Os seguidores deixam de seguir. As vagas já publicadas continuam nas listas e na comunidade."
+                confirmLabel="Excluir canal"
+                variant="outline"
+                size="default"
+                onConfirm={removeChannel}
+              >
+                Excluir
+              </ConfirmButton>
+            </>
           ) : (
             <Button
               variant={numbers.following ? "outline" : "default"}
@@ -143,6 +235,30 @@ function ChannelPage() {
           </p>
         )}
       </header>
+
+      <Dialog open={editing} onOpenChange={setEditing}>
+        <DialogContent className="max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Editar canal</DialogTitle>
+            <DialogDescription>
+              O endereço do canal não muda. As vagas já publicadas continuam como estão.
+            </DialogDescription>
+          </DialogHeader>
+          <ChannelForm
+            initial={{
+              name: channel.name,
+              description: channel.description,
+              professionIds: channel.channel_professions.map((p) => p.profession_id),
+              days: ([1, 3, 7, 30].includes(channel.default_days)
+                ? channel.default_days
+                : 7) as Deadline,
+            }}
+            submitLabel="Salvar"
+            busy={saving}
+            onSubmit={(v) => void save(v)}
+          />
+        </DialogContent>
+      </Dialog>
 
       <div role="group" aria-label="Ordenar vagas" className="flex flex-wrap gap-2">
         {FEED_ORDERS.map((o) => (
