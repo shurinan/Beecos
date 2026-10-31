@@ -1,7 +1,7 @@
 {
   "name": "Beecos",
   "short_name": "Beecos",
-  "description": "Encontre bicos e trabalhadores na sua cidade e negocie direto pelo chat.",
+  "description": "Encontre serviços e profissionais perto de você. Converse direto pelo chat.",
   "lang": "pt-BR",
   "start_url": "/?source=pwa",
   "scope": "/",

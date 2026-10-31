@@ -155,7 +155,7 @@ export function joinFullName(p: {
 
 /** Erro do banco ao passar do limite de telefones. */
 export function phoneLimitMessage(error: { message?: string } | null): string | null {
-  return error?.message?.includes("LIMITE_TELEFONES") ? `Máximo de ${MAX_PHONES} telefones` : null;
+  return error?.message?.includes("LIMITE_TELEFONES") ? `Máximo de ${MAX_PHONES} telefones.` : null;
 }
 
 // Autorização de uso dos dados. O texto fica aqui, em um só lugar; a versão muda
@@ -175,8 +175,8 @@ const AVATAR_EXT: Record<string, string> = {
 
 export function validateAvatarFile(file: { type: string; size: number }): string | null {
   if (!(AVATAR_TYPES as readonly string[]).includes(file.type))
-    return "Use uma foto JPG, PNG ou WebP";
-  if (file.size > AVATAR_MAX_BYTES) return "A foto precisa ter até 2 MB";
+    return "Use uma foto JPG, PNG ou WebP.";
+  if (file.size > AVATAR_MAX_BYTES) return "A foto precisa ter até 2 MB.";
   return null;
 }
 

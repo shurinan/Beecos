@@ -26,8 +26,7 @@ export function HoldBanner() {
       <ShieldAlert className="mt-0.5 h-5 w-5 shrink-0" aria-hidden="true" />
       <p>
         <b>Conta em vigilância até as {hour}.</b> Há uma denúncia em análise envolvendo a sua conta.
-        Até lá você não pode negociar, publicar vagas nem receber propostas. Você continua podendo
-        navegar. A moderação avalia o caso.
+        Até lá, você não pode negociar, publicar vagas nem receber propostas.
       </p>
     </div>
   );

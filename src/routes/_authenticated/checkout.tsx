@@ -11,7 +11,13 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { hasBillingProfile, startCheckout, type Charge, type PayMethod } from "@/lib/billing";
 import { PayPanel } from "@/components/PayPanel";
 import { formatCpf, isValidCpf } from "@/lib/cpf";
-import { ANNUAL_PER_MONTH, ANNUAL_SAVING, getPlanUsage, PREMIUM_PRICE } from "@/lib/plans";
+import {
+  ANNUAL_PER_MONTH,
+  ANNUAL_SAVING,
+  getPlanUsage,
+  PREMIUM_MONTHLY,
+  PREMIUM_PRICE,
+} from "@/lib/plans";
 
 type Tipo = "premium" | "anual" | "urgente";
 
@@ -74,7 +80,7 @@ function Checkout() {
     },
   });
 
-  const price = urgent ? "R$ 2,00" : annual ? "R$ 149,00" : "R$ 14,90";
+  const price = urgent ? "R$ 2,00" : annual ? "R$ 149,00" : `${PREMIUM_MONTHLY}`;
   const alreadyPremium =
     !urgent &&
     !!usage?.premium &&
@@ -144,7 +150,7 @@ function Checkout() {
         <div className="grid grid-cols-2 gap-2" role="radiogroup" aria-label="Escolha o plano">
           {(
             [
-              { t: "premium", name: "Mensal", price: "R$ 14,90", per: "por mês" },
+              { t: "premium", name: "Mensal", price: PREMIUM_MONTHLY, per: "por mês" },
               { t: "anual", name: "Anual", price: "R$ 149", per: `≈ ${ANNUAL_PER_MONTH} por mês` },
             ] as const
           ).map((o) => {

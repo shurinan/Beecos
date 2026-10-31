@@ -41,7 +41,7 @@ export function isUuid(value: unknown): value is string {
 export async function openConversation(me: string, other: string, postId: string | null) {
   // Os ids vêm da URL: só uuid de verdade segue adiante.
   if (!isUuid(me) || !isUuid(other) || (postId !== null && !isUuid(postId))) {
-    throw new Error("Identificador inválido");
+    throw new Error("Link inválido.");
   }
   const { data, error } = await supabase.rpc("open_conversation", {
     _other: other,

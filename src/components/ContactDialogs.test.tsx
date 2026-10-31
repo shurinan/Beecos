@@ -16,8 +16,8 @@ describe("PhoneDialog", () => {
     fireEvent.change(screen.getByLabelText("Número"), { target: { value: "123" } });
     fireEvent.click(screen.getByLabelText("Ligação")); // desmarca o padrão
     fireEvent.click(screen.getByRole("button", { name: "Salvar" }));
-    expect(await screen.findByText("Digite um telefone válido, com DDD")).toBeTruthy();
-    expect(screen.getByText("Marque pelo menos uma forma de contato")).toBeTruthy();
+    expect(await screen.findByText("Digite um telefone válido, com DDD.")).toBeTruthy();
+    expect(screen.getByText("Marque pelo menos uma forma de contato.")).toBeTruthy();
     expect(onSave).not.toHaveBeenCalled();
   });
   it("saves kind, number and methods", async () => {
@@ -53,9 +53,9 @@ describe("AddressDialog", () => {
       <AddressDialog open onOpenChange={() => {}} kind="physical" initial={null} onSave={onSave} />,
     );
     fireEvent.click(screen.getByRole("button", { name: "Salvar" }));
-    expect(await screen.findByText("Escreva o destinatário")).toBeTruthy();
-    expect(screen.getByText("Escolha o estado")).toBeTruthy();
-    expect(screen.getByText("O CEP tem 8 números")).toBeTruthy();
+    expect(await screen.findByText("Escreva o destinatário.")).toBeTruthy();
+    expect(screen.getByText("Escolha o estado.")).toBeTruthy();
+    expect(screen.getByText("O CEP tem 8 números.")).toBeTruthy();
     expect(onSave).not.toHaveBeenCalled();
 
     fireEvent.change(screen.getByLabelText("Destinatário"), { target: { value: "Bruno" } });
@@ -97,8 +97,8 @@ describe("PersonalDialog", () => {
       target: { value: "2999-01-01" },
     });
     fireEvent.click(screen.getByRole("button", { name: "Salvar" }));
-    expect(await screen.findByText("Escreva como quer ser chamado")).toBeTruthy();
-    expect(screen.getByText("Data de nascimento inválida")).toBeTruthy();
+    expect(await screen.findByText("Escreva como quer ser chamado.")).toBeTruthy();
+    expect(screen.getByText("Data de nascimento inválida.")).toBeTruthy();
     expect(onSave).not.toHaveBeenCalled();
   });
   it("saves trimmed values", async () => {
@@ -126,10 +126,10 @@ describe("EmailDialog", () => {
     render(<EmailDialog open onOpenChange={() => {}} current="a@b.com" onSave={onSave} />);
     fireEvent.change(screen.getByLabelText("Novo e-mail"), { target: { value: "xx" } });
     fireEvent.click(screen.getByRole("button", { name: "Enviar confirmação" }));
-    expect(await screen.findByText("Digite um e-mail válido")).toBeTruthy();
+    expect(await screen.findByText("Digite um e-mail válido.")).toBeTruthy();
     fireEvent.change(screen.getByLabelText("Novo e-mail"), { target: { value: "A@B.com" } });
     fireEvent.click(screen.getByRole("button", { name: "Enviar confirmação" }));
-    expect(await screen.findByText("Esse já é o e-mail da conta")).toBeTruthy();
+    expect(await screen.findByText("Esse já é o e-mail da conta.")).toBeTruthy();
     expect(onSave).not.toHaveBeenCalled();
   });
   it("sends a new e-mail", async () => {

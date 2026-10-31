@@ -32,7 +32,7 @@ describe("phones and CEP", () => {
     expect(formatMethods(["whatsapp", "call"])).toBe("Ligação, WhatsApp");
   });
   it("recognises the phone limit error", () => {
-    expect(phoneLimitMessage({ message: "LIMITE_TELEFONES" })).toBe("Máximo de 10 telefones");
+    expect(phoneLimitMessage({ message: "LIMITE_TELEFONES" })).toBe("Máximo de 10 telefones.");
     expect(phoneLimitMessage({ message: "outro" })).toBeNull();
     expect(phoneLimitMessage(null)).toBeNull();
   });

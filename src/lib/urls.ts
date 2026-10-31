@@ -2,6 +2,10 @@ import { isUuid } from "@/lib/data";
 
 /** Endereços do app. Perfil e vaga usam um nome legível; o id (uuid) segue funcionando como reserva. */
 
+/** Endereço público do site (sitemap, links e textos que mostram o endereço). */
+export const SITE_URL = "https://beecos.com.br";
+export const SITE_HOST = "beecos.com.br";
+
 /** Vaga sem profissão do catálogo ("Outro") fica sob este nome. */
 export const NO_PROFESSION = "outros";
 

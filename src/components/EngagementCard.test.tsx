@@ -112,7 +112,7 @@ describe("EngagementCard", () => {
       cancelled_by: null,
     };
     renderCard("other");
-    expect(await screen.findByText(/Você foi escolhido/)).toBeTruthy();
+    expect(await screen.findByText(/Você foi a pessoa escolhida/)).toBeTruthy();
     fireEvent.click(screen.getByRole("button", { name: "Aceitar" }));
     await waitFor(() =>
       expect(state.rpc).toHaveBeenCalledWith("respond_engagement", { _id: "e1", _accept: true }),

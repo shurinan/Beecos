@@ -7,6 +7,7 @@ import { removeAllMyPhotoFiles } from "@/lib/post-photos";
 import { Button } from "@/components/ui/button";
 import { ConfirmButton } from "@/components/ConfirmButton";
 import { accountErrorMessage } from "@/lib/legal";
+import { cancelSubscription, hasRenewingSubscription } from "@/lib/billing";
 
 /** "Privacidade e dados": baixar tudo o que o app guarda e excluir a conta (LGPD). */
 export function PrivacyCard({
@@ -35,7 +36,7 @@ export function PrivacyCard({
       a.remove();
       URL.revokeObjectURL(url);
     } catch {
-      toast.error("Não consegui gerar o arquivo. Tente de novo.");
+      toast.error("Não foi possível gerar o arquivo. Tente de novo.");
     } finally {
       setBusy(false);
     }
@@ -51,6 +52,14 @@ export function PrivacyCard({
         .or(`client_id.eq.${userId},provider_id.eq.${userId}`)
         .in("status", ["proposed", "accepted"]);
       if ((active.count ?? 0) > 0) throw new Error("CONTA_COM_SERVICO_ATIVO");
+      // Premium mensal: cancela no Asaas antes, para não continuar cobrando uma conta que não existe mais
+      if (await hasRenewingSubscription(userId)) {
+        const r = await cancelSubscription();
+        if ("error" in r) {
+          toast.error(`${r.error} A conta não foi excluída.`);
+          return;
+        }
+      }
       // as fotos ficam num armazenamento à parte: saem antes de a conta sumir
       if (avatarPath) await supabase.storage.from("avatars").remove([avatarPath]);
       await removeAllMyPhotoFiles(userId).catch(() => undefined);
@@ -59,7 +68,7 @@ export function PrivacyCard({
       toast.success("Conta excluída. Sentiremos a sua falta.");
       onDeleted();
     } catch (e) {
-      toast.error(accountErrorMessage(e) ?? "Não consegui excluir a conta. Tente de novo.");
+      toast.error(accountErrorMessage(e) ?? "Não foi possível excluir a conta. Tente de novo.");
     } finally {
       setBusy(false);
     }
@@ -89,7 +98,7 @@ export function PrivacyCard({
         </Button>
         <ConfirmButton
           title="Excluir a sua conta?"
-          description="Isso apaga o seu perfil, as suas vagas, conversas, avaliações e avisos, e não dá para desfazer. As conversas também somem para a outra pessoa."
+          description="Isso apaga o seu perfil, as suas vagas, conversas, avaliações e avisos, e não dá para desfazer. As conversas também somem para a outra pessoa. Se você tem o Premium mensal, a assinatura é cancelada."
           confirmLabel="Excluir para sempre"
           variant="destructive"
           disabled={busy}

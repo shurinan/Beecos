@@ -42,7 +42,7 @@ export function PostFormFields({
       const place = await lookup(draft.cep);
       onChange({ ...draft, place, city: `${place.city} - ${place.state}` });
     } catch (err) {
-      toast.error(err instanceof GeoError ? err.message : "Não foi possível buscar o CEP");
+      toast.error(err instanceof GeoError ? err.message : "Não foi possível buscar o CEP.");
     }
   }
 
@@ -302,8 +302,8 @@ export function PostFormFields({
           />
           {!premium && (
             <p className="text-xs text-muted-foreground">
-              O destaque é do plano Premium. O selo Urgente custa {URGENT_PRICE} por vaga: publique
-              e toque em “Colocar selo Urgente” na vaga. No Premium ele já vem incluído.{" "}
+              Destaque é do Premium. O selo Urgente custa {URGENT_PRICE} por vaga (no Premium vem
+              incluído): publique e toque em “Colocar selo Urgente”.{" "}
               <Link to="/plano" className="font-bold underline">
                 Conhecer o Premium
               </Link>

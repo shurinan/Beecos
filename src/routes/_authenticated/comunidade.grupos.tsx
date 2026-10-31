@@ -30,7 +30,7 @@ function Groups() {
       await (isIn ? leave(id) : join(id));
       toast.success(isIn ? "Você saiu do grupo." : "Você entrou no grupo.");
     } catch (e) {
-      toast.error(communityErrorMessage(e) ?? "Não consegui salvar. Tente de novo.");
+      toast.error(communityErrorMessage(e) ?? "Não foi possível salvar. Tente de novo.");
     } finally {
       setBusy(null);
     }

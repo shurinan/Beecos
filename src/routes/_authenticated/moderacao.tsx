@@ -72,7 +72,7 @@ function Moderation() {
   });
 
   if (checking) return <p className="text-muted-foreground">Carregando…</p>;
-  if (!isMod) return <p className="font-semibold">Página não encontrada.</p>;
+  if (!isMod) return <p className="font-semibold">Esta página é só para a moderação.</p>;
 
   return (
     <div className="space-y-4">
@@ -155,7 +155,7 @@ function ReportCard({
       toast.success("Decisão registrada.");
       onDone();
     } catch {
-      toast.error("Não consegui registrar. Tente de novo.");
+      toast.error("Não foi possível registrar. Tente de novo.");
     } finally {
       setBusy(false);
     }

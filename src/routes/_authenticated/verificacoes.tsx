@@ -84,7 +84,7 @@ function Case({ row, onDone }: { row: Row; onDone: () => void }) {
       await purgeVerificationFiles(row.id, paths ?? []).catch(() => undefined);
       onDone();
     } catch (e) {
-      toast.error(verificationErrorMessage(e) ?? "Não consegui registrar. Tente de novo.");
+      toast.error(verificationErrorMessage(e) ?? "Não foi possível registrar. Tente de novo.");
     } finally {
       setBusy(false);
     }

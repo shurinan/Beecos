@@ -87,7 +87,7 @@ function ChannelPage() {
       if (numbers.following) await unfollow(channel.id);
       else await follow(channel.id);
     } catch {
-      toast.error("Não consegui atualizar. Tente de novo.");
+      toast.error("Não foi possível atualizar. Tente de novo.");
     } finally {
       setBusy(false);
     }
@@ -121,7 +121,7 @@ function ChannelPage() {
       toast.success("Canal atualizado.");
       setEditing(false);
     } catch (err) {
-      toast.error(channelErrorMessage(err) ?? "Não consegui salvar. Tente de novo.");
+      toast.error(channelErrorMessage(err) ?? "Não foi possível salvar. Tente de novo.");
     } finally {
       setSaving(false);
     }
@@ -129,7 +129,7 @@ function ChannelPage() {
 
   async function removeChannel() {
     const { error } = await supabase.from("channels").delete().eq("id", channel.id);
-    if (error) return void toast.error("Não consegui excluir o canal. Tente de novo.");
+    if (error) return void toast.error("Não foi possível excluir o canal. Tente de novo.");
     await Promise.all([
       qc.invalidateQueries({ queryKey: ["channels"] }),
       qc.invalidateQueries({ queryKey: ["my-channels"] }),

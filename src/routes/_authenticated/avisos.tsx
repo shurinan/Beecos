@@ -30,7 +30,8 @@ function Alerts() {
     queryFn: () => getPlanUsage(userId),
   });
   const markRead = useMarkAlertsRead(userId);
-  const quiet = (p: Promise<void>) => p.catch(() => toast.error("Não consegui marcar como lido."));
+  const quiet = (p: Promise<void>) =>
+    p.catch(() => toast.error("Não foi possível marcar como lido."));
 
   return (
     <div className="space-y-4">
@@ -46,7 +47,7 @@ function Alerts() {
       {isLoading && <p className="text-muted-foreground">Carregando…</p>}
       {isError && (
         <p role="alert">
-          Não consegui carregar os avisos.{" "}
+          Não foi possível carregar os avisos.{" "}
           <button className="font-bold underline" onClick={() => refetch()}>
             Tentar de novo
           </button>
@@ -56,9 +57,7 @@ function Alerts() {
         <div className="block-card flex items-center gap-3 p-4">
           <BellOff className="h-5 w-5 shrink-0" aria-hidden="true" />
           <p className="text-sm">
-            Nenhum aviso ainda. Quando alguém publicar uma vaga da sua profissão perto de você, ela
-            aparece aqui. Confira se você cadastrou suas habilidades e o lugar onde atua no seu
-            perfil.
+            Nenhum aviso ainda. Para receber, cadastre suas habilidades e onde você atua no perfil.
           </p>
         </div>
       )}

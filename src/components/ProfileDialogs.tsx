@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
+import { SITE_HOST } from "@/lib/urls";
 import {
   Dialog,
   DialogContent,
@@ -96,7 +97,7 @@ export function EditProfileDialog({
   async function submit(e: React.FormEvent) {
     e.preventDefault();
     if (!form.full_name.trim()) {
-      setError("Escreva o seu nome");
+      setError("Escreva o seu nome.");
       return;
     }
     if (changed && form.username !== "" && (userStatus === "bad" || userStatus === "taken")) {
@@ -169,7 +170,7 @@ export function EditProfileDialog({
                     ? "Disponível ✓"
                     : userStatus === "checking"
                       ? "Verificando…"
-                      : "Ele aparece no endereço do seu perfil: beecos.lovable.app/perfil/" +
+                      : `Ele aparece no endereço do seu perfil: ${SITE_HOST}/perfil/` +
                         (form.username || "seunome")}
             </p>
           </div>

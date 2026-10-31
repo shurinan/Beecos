@@ -13,7 +13,7 @@ async function failure(error: unknown): Promise<string> {
       // cai na mensagem genérica
     }
   }
-  return "Não foi possível falar com o pagamento agora. Tente de novo em instantes.";
+  return "O sistema de pagamento não respondeu. Tente de novo em instantes.";
 }
 
 export type PayMethod = "pix" | "boleto" | "card";
@@ -44,7 +44,7 @@ export async function startCheckout(input: {
   });
   if (error) return { error: await failure(error) };
   if (!data?.paymentId || !data.method)
-    return { error: data?.error ?? "O pagamento não devolveu a cobrança." };
+    return { error: data?.error ?? "Não foi possível gerar a cobrança. Tente de novo." };
   return data as Charge;
 }
 
@@ -63,6 +63,26 @@ export async function cancelSubscription(): Promise<{ refunded: boolean } | { er
   const { data, error } = await supabase.functions.invoke<Reply>("asaas-cancel", { body: {} });
   if (error) return { error: await failure(error) };
   return { refunded: !!data?.refunded };
+}
+
+/**
+ * Assinatura mensal que o Asaas ainda vai cobrar: precisa ser cancelada antes de excluir a conta,
+ * senão a cobrança continua sem conta no Beecos. O plano anual não renova, então não entra aqui.
+ */
+export async function hasRenewingSubscription(userId: string): Promise<boolean> {
+  const { data, error } = await supabase
+    .from("subscriptions")
+    .select("plan, plan_term, asaas_subscription_id, cancel_requested_at")
+    .eq("user_id", userId)
+    .maybeSingle();
+  if (error) throw error;
+  return (
+    !!data &&
+    data.plan === "premium" &&
+    data.plan_term !== "annual" &&
+    !!data.asaas_subscription_id &&
+    !data.cancel_requested_at
+  );
 }
 
 /** A pessoa já tem cadastro no Asaas (então não precisa informar o CPF de novo)? */

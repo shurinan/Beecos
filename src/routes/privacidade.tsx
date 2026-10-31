@@ -68,7 +68,7 @@ function Privacy() {
         <li>Fazer o app funcionar: criar sua conta, mostrar vagas e perfis, permitir o chat.</li>
         <li>Calcular a distância e avisar sobre vagas da sua profissão perto de você.</li>
         <li>Cuidar da segurança, prevenir golpes e avaliar denúncias.</li>
-        <li>Cobrar o plano Premium, quando o pagamento estiver disponível.</li>
+        <li>Cobrar o plano Premium e o selo Urgente.</li>
       </ul>
       <p>
         As bases legais são a execução do contrato (o uso do app), o seu consentimento (por exemplo,

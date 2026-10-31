@@ -47,7 +47,7 @@ function Suggestions() {
 
   async function mark(id: string, status: Row["status"]) {
     const { error } = await supabase.from("suggestions").update({ status }).eq("id", id);
-    if (error) toast.error("Não consegui salvar.");
+    if (error) toast.error("Não foi possível salvar.");
     else await qc.invalidateQueries({ queryKey: ["suggestions"] });
   }
 

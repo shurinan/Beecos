@@ -118,7 +118,7 @@ function Publicar() {
       } catch (err) {
         setBusy(false);
         return void toast.error(
-          err instanceof GeoError ? err.message : "Não foi possível buscar o CEP",
+          err instanceof GeoError ? err.message : "Não foi possível buscar o CEP.",
         );
       }
     }
@@ -259,7 +259,7 @@ function Publicar() {
                 ))}
               </select>
               <p className="text-xs text-muted-foreground">
-                Quem segue o canal recebe aviso. A vaga também aparece na comunidade do ofício.
+                Quem segue o canal recebe aviso. A vaga também aparece na comunidade da profissão.
               </p>
             </div>
           )}

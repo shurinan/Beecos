@@ -22,10 +22,7 @@ function Empty() {
         <MessageCircle className="h-8 w-8" aria-hidden="true" />
       </span>
       <h2 className="text-2xl">Suas conversas</h2>
-      <p className="max-w-sm text-muted-foreground">
-        Escolha uma conversa na lista para continuar a negociação. Arquivos enviados ficam
-        disponíveis por 48 horas.
-      </p>
+      <p className="max-w-sm text-muted-foreground">Escolha uma conversa na lista.</p>
     </div>
   );
 }

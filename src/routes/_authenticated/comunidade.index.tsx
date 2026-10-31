@@ -150,7 +150,7 @@ function Community() {
                       toast.success(`Você saiu do grupo ${selected.name}.`);
                       navigate({ to: "/comunidade", search: { grupo: undefined } });
                     })
-                    .catch(() => toast.error("Não consegui sair. Tente de novo."));
+                    .catch(() => toast.error("Não foi possível sair do grupo. Tente de novo."));
                 }}
               >
                 Sair do grupo
@@ -172,7 +172,7 @@ function Community() {
             onClick={() => {
               join(visiting.id)
                 .then(() => toast.success(`Você entrou no grupo ${visiting.name}.`))
-                .catch(() => toast.error("Não consegui entrar. Tente de novo."));
+                .catch(() => toast.error("Não foi possível entrar no grupo. Tente de novo."));
             }}
           >
             Entrar no grupo
@@ -203,7 +203,7 @@ function Community() {
         <div className="block-card space-y-3 p-5 text-center">
           <p className="font-semibold">Você ainda não está em nenhum grupo.</p>
           <p className="text-sm text-muted-foreground">
-            Entre nos grupos da sua área para ver as vagas dela aqui, como num feed.
+            Entre nos grupos da sua área para ver as vagas aqui.
           </p>
           <Button asChild>
             <Link to="/comunidade/grupos">Escolher grupos</Link>

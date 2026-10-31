@@ -201,8 +201,8 @@ export function ConversationMenu({
           <AlertDialogHeader>
             <AlertDialogTitle>Excluir esta conversa?</AlertDialogTitle>
             <AlertDialogDescription>
-              Ela some só para você. A outra pessoa continua vendo, e se ela escrever de novo a
-              conversa volta, só com as mensagens novas.
+              Ela some só para você. Se a outra pessoa escrever de novo, a conversa volta com as
+              mensagens novas.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>

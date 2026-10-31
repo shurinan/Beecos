@@ -26,7 +26,7 @@ export function verificationErrorMessage(err: unknown): string | null {
 /** Valida o arquivo antes de enviar; devolve a mensagem de erro ou null. */
 export function checkImageFile(file: { type: string; size: number }): string | null {
   if (!ACCEPTED_TYPES.includes(file.type)) return "Envie uma foto em JPG, PNG ou WebP.";
-  if (file.size > MAX_UPLOAD_BYTES) return "A foto passou de 5 MB. Tire outra com menos zoom.";
+  if (file.size > MAX_UPLOAD_BYTES) return "A foto passou de 5 MB. Envie uma foto menor.";
   return null;
 }
 

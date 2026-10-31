@@ -76,7 +76,9 @@ export function useEngagementActions(userId: string) {
             _post: post,
             _release: release,
           }),
-        release ? "Negociação encerrada. A vaga recebe um novo contato." : "Negociação encerrada",
+        release
+          ? "Negociação encerrada. O lugar ficou livre para outra pessoa."
+          : "Negociação encerrada",
       ),
     reopenNegotiation: (conversation: string, post: string) =>
       run(
@@ -177,7 +179,7 @@ export function EngagementCard({
                 title={`${chooseLabel(post.kind)}: ${name}?`}
                 description={`${name} vai receber o aviso e precisa aceitar. Você poderá cancelar a escolha enquanto o serviço não for concluído.`}
                 confirmLabel={post.kind === "available" ? "Contratar" : "Escolher"}
-                onConfirm={() => act.choose(conversationId, `${name} foi escolhido(a)`)}
+                onConfirm={() => act.choose(conversationId, `${name} foi a pessoa escolhida`)}
               >
                 <CheckCircle2 /> {chooseLabel(post.kind)}
               </ConfirmButton>
@@ -201,7 +203,7 @@ export function EngagementCard({
           {engagement.status === "proposed" && (
             <p className="text-sm">
               {a.accept
-                ? "Você foi escolhido(a) para este serviço. Aceita?"
+                ? "Você foi a pessoa escolhida para este serviço. Aceita?"
                 : `Aguardando ${name} aceitar o serviço.`}
             </p>
           )}

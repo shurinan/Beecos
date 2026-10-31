@@ -139,21 +139,21 @@ export function SkillDialog({
     const chosen = pick.professionId ? catalog?.professions.get(pick.professionId) : undefined;
     const trimmed = pick.other ? name.trim() : (chosen?.name ?? "");
     const next: Errors = {};
-    if (!pick.other && !chosen) next.skill = "Escolha a profissão";
-    else if (!trimmed) next.skill = "Escreva o nome da habilidade";
+    if (!pick.other && !chosen) next.skill = "Escolha a profissão.";
+    else if (!trimmed) next.skill = "Escreva o nome da habilidade.";
     else if (!editing && existing.some((n) => normalizeSkill(n) === normalizeSkill(trimmed)))
-      next.skill = "Você já adicionou essa habilidade";
-    if (level < 1) next.level = "Escolha o seu nível";
-    if (experience === null) next.has_experience = "Responda sim ou não";
+      next.skill = "Você já adicionou essa habilidade.";
+    if (level < 1) next.level = "Escolha o seu nível.";
+    if (experience === null) next.has_experience = "Responda sim ou não.";
     const yearsNumber = years.trim() === "" ? null : Number(years);
     if (
       experience === true &&
       yearsNumber !== null &&
       (!Number.isInteger(yearsNumber) || yearsNumber < 0 || yearsNumber > MAX_YEARS)
     )
-      next.years = `Use um número inteiro de 0 a ${MAX_YEARS}`;
-    if (training === null) next.had_training = "Responda sim ou não";
-    if (certified === null) next.certified = "Responda sim ou não";
+      next.years = `Use um número inteiro de 0 a ${MAX_YEARS}.`;
+    if (training === null) next.had_training = "Responda sim ou não.";
+    if (certified === null) next.certified = "Responda sim ou não.";
     setErrors(next);
     if (Object.keys(next).length > 0) return;
 
@@ -178,10 +178,7 @@ export function SkillDialog({
       <DialogContent className="max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>{editing ? "Editar habilidade" : "Adicionar habilidade"}</DialogTitle>
-          <DialogDescription>
-            Tudo aqui é informado por você e aparece no seu perfil. Seja honesto: quem contrata pode
-            avaliar o seu trabalho.
-          </DialogDescription>
+          <DialogDescription>Aparece no seu perfil como informado por você.</DialogDescription>
         </DialogHeader>
 
         <form onSubmit={submit} className="space-y-5" noValidate>
@@ -282,9 +279,7 @@ export function SkillDialog({
               Outras informações
             </label>
             <p className="text-sm text-muted-foreground">
-              Inclua qualquer detalhe que possa ajudar outros a entender sua experiência: como você
-              aprendeu essa habilidade e onde você a usou (trabalho, serviço voluntário, projetos
-              pessoais).
+              Como você aprendeu e onde já usou essa habilidade.
             </p>
             <Textarea
               id="skill-notes"

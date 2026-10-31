@@ -28,7 +28,7 @@ describe("EditProfileDialog", () => {
       />,
     );
     fireEvent.click(screen.getByRole("button", { name: "Salvar" }));
-    expect(await screen.findByText("Escreva o seu nome")).toBeTruthy();
+    expect(await screen.findByText("Escreva o seu nome.")).toBeTruthy();
     expect(onSave).not.toHaveBeenCalled();
   });
 

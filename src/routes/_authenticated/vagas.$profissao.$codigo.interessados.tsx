@@ -243,8 +243,7 @@ function Interested({ id }: { id: string }) {
 
       {data.people.length === 0 && (
         <p className="rounded-lg border-2 border-dashed border-foreground/40 p-6 text-center text-muted-foreground">
-          Ninguém entrou em contato ainda. Quando alguém tocar em "Conversar" na sua publicação,
-          aparece aqui.
+          Ninguém entrou em contato ainda. Quem tocar em “Tenho interesse” aparece aqui.
         </p>
       )}
       {!isJob && data.people.length > 0 && (
@@ -333,7 +332,7 @@ function Interested({ id }: { id: string }) {
                   variant="outline"
                   loading={act.busy}
                   title={`Encerrar a negociação com ${name}?`}
-                  description={`${name} é avisado(a) no chat e a conversa continua. O lugar dele(a) continua ocupado: ninguém novo entra por causa disso. Você pode reabrir depois.`}
+                  description={`${name} recebe um aviso no chat. O lugar continua ocupado e você pode reabrir depois.`}
                   confirmLabel="Encerrar"
                   onConfirm={() => act.closeNegotiation(c.conversationId, id)}
                 >
@@ -349,7 +348,7 @@ function Interested({ id }: { id: string }) {
                     variant="outline"
                     loading={act.busy}
                     title={`Encerrar com ${name} e receber novo contato?`}
-                    description={`${name} é avisado(a) no chat e a conversa continua. O lugar fica livre: entra o primeiro da fila de espera ou, se não houver fila, a vaga volta a aceitar um novo interessado.`}
+                    description={`${name} recebe um aviso no chat. O lugar fica livre: entra o primeiro da fila de espera ou, se não houver fila, a vaga volta a aceitar um novo interessado.`}
                     confirmLabel="Encerrar e liberar"
                     onConfirm={() => act.closeNegotiation(c.conversationId, id, true)}
                   >

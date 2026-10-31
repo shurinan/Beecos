@@ -283,7 +283,7 @@ export function PostDialog({
                 onClick={() => {
                   navigator.clipboard?.writeText(code).then(
                     () => toast.success("Código copiado"),
-                    () => toast.error("Não foi possível copiar"),
+                    () => toast.error("Não foi possível copiar."),
                   );
                 }}
               >

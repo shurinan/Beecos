@@ -109,7 +109,7 @@ function Verify() {
       toast.success("Enviado! Vamos analisar em até 2 dias úteis.");
       navigate({ to: "/perfil", search: { secao: undefined } });
     } catch (e) {
-      toast.error(verificationErrorMessage(e) ?? "Não consegui enviar. Tente de novo.");
+      toast.error(verificationErrorMessage(e) ?? "Não foi possível enviar. Tente de novo.");
     } finally {
       setBusy(false);
     }

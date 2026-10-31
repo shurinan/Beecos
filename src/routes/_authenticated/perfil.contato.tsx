@@ -145,7 +145,7 @@ function Contato() {
   const showSeen = presence?.share ?? true;
   async function toggleShowSeen(next: boolean) {
     const { error } = await supabase.rpc("set_show_last_seen", { _show: next });
-    if (error) return void toast.error("Não foi possível salvar a opção");
+    if (error) return void toast.error("Não foi possível salvar a opção.");
     qc.invalidateQueries({ queryKey: ["presence-self", userId] });
   }
 
@@ -176,7 +176,7 @@ function Contato() {
       }),
     ]);
     if (a.error || b.error) {
-      toast.error("Não foi possível salvar as informações pessoais");
+      toast.error("Não foi possível salvar as informações pessoais.");
       return false;
     }
     toast.success("Informações salvas");
@@ -192,7 +192,7 @@ function Contato() {
       updated_at: new Date().toISOString(),
     });
     if (error) {
-      toast.error("Não foi possível atualizar a autorização");
+      toast.error("Não foi possível atualizar a autorização.");
       return;
     }
     toast.success(on ? "Autorização registrada" : "Autorização retirada");
@@ -202,7 +202,7 @@ function Contato() {
   async function saveEmail(next: string): Promise<boolean> {
     const { error } = await supabase.auth.updateUser({ email: next });
     if (error) {
-      toast.error("Não foi possível trocar o e-mail");
+      toast.error("Não foi possível trocar o e-mail.");
       return false;
     }
     toast.success("Enviamos um link de confirmação para o novo e-mail");
@@ -218,8 +218,8 @@ function Contato() {
       toast.error(
         phoneLimitMessage(error) ??
           (error.code === "23505"
-            ? "Você já cadastrou esse número"
-            : "Não foi possível salvar o telefone"),
+            ? "Você já cadastrou esse número."
+            : "Não foi possível salvar o telefone."),
       );
       return false;
     }
@@ -230,7 +230,7 @@ function Contato() {
 
   async function deletePhone(id: string) {
     const { error } = await supabase.from("contact_phones").delete().eq("id", id);
-    if (error) return void toast.error("Não foi possível excluir o telefone");
+    if (error) return void toast.error("Não foi possível excluir o telefone.");
     refresh();
   }
 
@@ -239,7 +239,7 @@ function Contato() {
       .from("contact_addresses")
       .upsert({ ...v, user_id: userId }, { onConflict: "user_id,kind" });
     if (error) {
-      toast.error("Não foi possível salvar o endereço");
+      toast.error("Não foi possível salvar o endereço.");
       return false;
     }
     toast.success("Endereço salvo");
@@ -249,7 +249,7 @@ function Contato() {
 
   async function deleteAddress(id: string) {
     const { error } = await supabase.from("contact_addresses").delete().eq("id", id);
-    if (error) return void toast.error("Não foi possível excluir o endereço");
+    if (error) return void toast.error("Não foi possível excluir o endereço.");
     refresh();
   }
 
@@ -264,7 +264,7 @@ function Contato() {
       .upload(path, file, { contentType: file.type });
     if (up.error) {
       setUploading(false);
-      return void toast.error("Não foi possível enviar a foto");
+      return void toast.error("Não foi possível enviar a foto.");
     }
     const { error } = await supabase
       .from("profiles")
@@ -273,7 +273,7 @@ function Contato() {
     if (error) {
       await supabase.storage.from("avatars").remove([path]);
       setUploading(false);
-      return void toast.error("Não foi possível salvar a foto");
+      return void toast.error("Não foi possível salvar a foto.");
     }
     if (old) await supabase.storage.from("avatars").remove([old]);
     setUploading(false);
@@ -288,7 +288,7 @@ function Contato() {
       .from("profiles")
       .update({ avatar_path: null })
       .eq("id", userId);
-    if (error) return void toast.error("Não foi possível remover a foto");
+    if (error) return void toast.error("Não foi possível remover a foto.");
     await supabase.storage.from("avatars").remove([old]);
     refresh();
   }
@@ -331,8 +331,7 @@ function Contato() {
           conversou com você.
         </p>
         <p className="mt-1 text-sm text-muted-foreground">
-          Para que serve: facilitar o contato com quem você negocia, só quando você quiser
-          compartilhar. Tudo é opcional.{" "}
+          Tudo é opcional.{" "}
           <Link to="/privacidade" className="font-bold underline">
             Política de privacidade
           </Link>
