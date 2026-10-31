@@ -87,7 +87,13 @@ function Groups() {
                   className="flex items-center justify-between gap-3 rounded-lg border-2 border-foreground p-3"
                 >
                   <div className="min-w-0">
-                    <p className="truncate font-semibold">{p.name}</p>
+                    <Link
+                      to="/comunidade"
+                      search={{ grupo: p.id, ordem: undefined }}
+                      className="block truncate font-semibold underline-offset-2 hover:underline"
+                    >
+                      {p.name}
+                    </Link>
                     <p className="text-xs text-muted-foreground">
                       {n
                         ? `${n.members} ${n.members === 1 ? "participante" : "participantes"} · ${n.open_jobs} ${n.open_jobs === 1 ? "vaga aberta" : "vagas abertas"}`

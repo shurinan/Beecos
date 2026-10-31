@@ -70,11 +70,24 @@ export function useCommunityOverview() {
   });
 }
 
-/** Vagas de um ou mais grupos, das mais novas para as mais antigas. */
-export function useCommunityFeed(professionIds: string[], signedIn: boolean) {
+export const FEED_ORDERS = ["novo", "antigo", "maior", "menor"] as const;
+export type FeedOrder = (typeof FEED_ORDERS)[number];
+export const FEED_ORDER_LABEL: Record<FeedOrder, string> = {
+  novo: "Mais novas",
+  antigo: "Mais antigas",
+  maior: "Maior valor",
+  menor: "Menor valor",
+};
+
+/** Vagas de um ou mais grupos; por padrão, das mais novas para as mais antigas. */
+export function useCommunityFeed(
+  professionIds: string[],
+  signedIn: boolean,
+  order: FeedOrder = "novo",
+) {
   const key = [...professionIds].sort().join(",");
   return useQuery({
-    queryKey: ["community-feed", key, signedIn],
+    queryKey: ["community-feed", key, signedIn, order],
     enabled: professionIds.length > 0,
     queryFn: async () => {
       const { data, error } = await supabase
@@ -86,6 +99,12 @@ export function useCommunityFeed(professionIds: string[], signedIn: boolean) {
         )
         .eq("kind", "job")
         .in("profession_id", professionIds)
+        .order(
+          order === "maior" || order === "menor" ? "price_value" : "created_at",
+          order === "antigo"
+            ? { ascending: true }
+            : { ascending: order === "menor", nullsFirst: false },
+        )
         .order("created_at", { ascending: false })
         .limit(40);
       if (error) throw error;
