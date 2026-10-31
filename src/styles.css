@@ -269,3 +269,13 @@
 .dark .text-destructive {
   color: oklch(0.74 0.16 27);
 }
+
+/* Fundo da conversa: pontinhos leves, como no WhatsApp */
+.chat-bg {
+  background-color: color-mix(in oklab, var(--background) 94%, var(--foreground));
+  background-image: radial-gradient(
+    color-mix(in oklab, var(--foreground) 9%, transparent) 1.4px,
+    transparent 1.6px
+  );
+  background-size: 24px 24px;
+}

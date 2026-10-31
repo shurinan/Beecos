@@ -199,6 +199,11 @@ function Chat({ id }: { id: string }) {
     setPendingState(next);
   }
   const [showJump, setShowJump] = useState(false);
+  const scroller = useRef<HTMLDivElement>(null);
+  const atChatBottom = () => {
+    const el = scroller.current;
+    return !el || el.scrollHeight - el.scrollTop - el.clientHeight < 220;
+  };
   const [firstNewId, setFirstNewId] = useState<string | null>(null);
   const bottom = useRef<HTMLDivElement>(null);
   const fileInput = useRef<HTMLInputElement>(null);
@@ -393,17 +398,18 @@ function Chat({ id }: { id: string }) {
     lastCount.current = total;
     if (!grew) return undefined;
     const last = msgs[msgs.length - 1];
-    const nearBottom = window.innerHeight + window.scrollY >= document.body.scrollHeight - 220;
+    const nearBottom = atChatBottom();
     if (first || pending.length > 0 || last?.sender_id === userId || nearBottom) {
       bottom.current?.scrollIntoView({ behavior: first ? "auto" : "smooth", block: "end" });
       setShowJump(false);
       if (first) {
         // Fotos, anexos e o cartão do serviço terminam de carregar depois e empurram o fim para
         // baixo: confirma a posição mais algumas vezes, parando se a pessoa rolar sozinha.
-        const startY = window.scrollY;
+        const startY = scroller.current?.scrollTop ?? 0;
         const timers = [60, 250, 600, 1200].map((ms) =>
           setTimeout(() => {
-            if (Math.abs(window.scrollY - startY) > 400 && window.scrollY < startY) return;
+            const y = scroller.current?.scrollTop ?? 0;
+            if (Math.abs(y - startY) > 400 && y < startY) return;
             bottom.current?.scrollIntoView({ behavior: "auto", block: "end" });
           }, ms),
         );
@@ -415,14 +421,9 @@ function Chat({ id }: { id: string }) {
     return undefined;
   }, [msgs, pending.length, userId]);
 
-  useEffect(() => {
-    const onScroll = () => {
-      if (window.innerHeight + window.scrollY >= document.body.scrollHeight - 220)
-        setShowJump(false);
-    };
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
+  function onChatScroll() {
+    if (atChatBottom()) setShowJump(false);
+  }
 
   function pickFile(f: File | undefined) {
     if (!f) return;
@@ -579,11 +580,11 @@ function Chat({ id }: { id: string }) {
   const status = otherTyping ? "digitando…" : otherOnline ? "online" : formatLastSeen(otherSeen);
 
   return (
-    <div className="flex flex-col">
-      {/* nome fixo no topo: abaixo do cabeçalho do app (64px) */}
-      <div className="sticky top-16 z-10 -mx-4 mb-3 bg-background px-4 pb-2 pt-1">
-        <div className="block-card flex items-center gap-3 p-3">
-          <Link to="/conversas" aria-label="Voltar">
+    <div className="relative flex h-full min-h-0 flex-1 flex-col">
+      {/* cabeçalho fixo da conversa: foto, nome e situação, como no WhatsApp */}
+      <div className="z-10 shrink-0 border-b border-foreground/20 bg-background px-3 py-2">
+        <div className="flex items-center gap-3">
+          <Link to="/conversas" aria-label="Voltar" className="lg:hidden">
             <ArrowLeft className="h-5 w-5" />
           </Link>
           {otherId ? (
@@ -596,9 +597,7 @@ function Chat({ id }: { id: string }) {
             >
               <Avatar name={other?.full_name ?? ""} path={other?.avatar_path} size={44} />
               <span className="min-w-0 flex-1">
-                <span className="block truncate font-bold underline">
-                  {other?.full_name || "Usuário"}
-                </span>
+                <span className="block truncate font-bold">{other?.full_name || "Usuário"}</span>
                 <span
                   className="flex flex-wrap items-center gap-x-2 text-xs text-muted-foreground"
                   aria-live="polite"
@@ -645,116 +644,124 @@ function Chat({ id }: { id: string }) {
         )}
       </div>
 
-      {conv?.posts && otherId && (
-        <EngagementCard
-          conversationId={id}
-          userId={userId}
-          otherId={otherId}
-          otherSlug={other?.slug}
-          otherName={other?.full_name ?? ""}
-          post={conv.posts}
-          participants={[conv.user_a, conv.user_b]}
-          providerReplied={providerReplied}
-        />
-      )}
+      <div
+        ref={scroller}
+        onScroll={onChatScroll}
+        className="chat-bg min-h-0 flex-1 space-y-3 overflow-y-auto overscroll-contain px-3 py-3"
+      >
+        {conv?.posts && otherId && (
+          <EngagementCard
+            conversationId={id}
+            userId={userId}
+            otherId={otherId}
+            otherSlug={other?.slug}
+            otherName={other?.full_name ?? ""}
+            post={conv.posts}
+            participants={[conv.user_a, conv.user_b]}
+            providerReplied={providerReplied}
+          />
+        )}
 
-      <div className="space-y-2 pb-28">
-        {msgsError && (
-          <div className="space-y-2 py-8 text-center text-sm">
-            <p>Não foi possível carregar as mensagens.</p>
-            <Button variant="outline" onClick={() => refetchMsgs()}>
-              Tentar de novo
-            </Button>
-          </div>
-        )}
-        {!msgsError && msgs.length === 0 && (
-          <p className="py-8 text-center text-sm text-muted-foreground">
-            Diga olá e combine o serviço e o valor.
-          </p>
-        )}
-        {msgs.map((m) => {
-          if (m.kind === "system") {
-            return (
-              <div key={m.id} className="flex justify-center py-1">
-                <p
-                  className={
-                    "max-w-[90%] rounded-full border-2 border-dashed border-foreground/50 bg-muted px-3 py-1 text-center text-xs font-semibold " +
-                    (seen.current !== null && !seen.current.has(m.id) ? "msg-in" : "")
-                  }
-                >
-                  {m.content}
-                </p>
-              </div>
-            );
-          }
-          const mine = m.sender_id === userId;
-          const isNew = seen.current !== null && !seen.current.has(m.id);
-          return (
-            <div key={m.id}>
-              {m.id === firstNewId && (
-                <div className="my-3 flex items-center gap-2 text-xs font-bold uppercase text-muted-foreground">
-                  <span className="h-px flex-1 bg-foreground/30" /> Novas mensagens{" "}
-                  <span className="h-px flex-1 bg-foreground/30" />
+        <div className="space-y-2">
+          {msgsError && (
+            <div className="space-y-2 py-8 text-center text-sm">
+              <p>Não foi possível carregar as mensagens.</p>
+              <Button variant="outline" onClick={() => refetchMsgs()}>
+                Tentar de novo
+              </Button>
+            </div>
+          )}
+          {!msgsError && msgs.length === 0 && (
+            <p className="py-8 text-center text-sm text-muted-foreground">
+              Diga olá e combine o serviço e o valor.
+            </p>
+          )}
+          {msgs.map((m) => {
+            if (m.kind === "system") {
+              return (
+                <div key={m.id} className="flex justify-center py-1">
+                  <p
+                    className={
+                      "max-w-[90%] rounded-full border-2 border-dashed border-foreground/50 bg-muted px-3 py-1 text-center text-xs font-semibold " +
+                      (seen.current !== null && !seen.current.has(m.id) ? "msg-in" : "")
+                    }
+                  >
+                    {m.content}
+                  </p>
                 </div>
-              )}
-              <div className={"flex " + (mine ? "justify-end" : "justify-start")}>
-                <div
-                  className={
-                    "selectable max-w-[80%] whitespace-pre-wrap break-words rounded-2xl border-2 border-foreground px-3 py-2 text-sm " +
-                    (mine ? "rounded-br-sm bg-primary " : "rounded-bl-sm bg-card ") +
-                    (isNew ? "msg-in " + (mine ? "msg-in-mine" : "msg-in-theirs") : "")
-                  }
-                >
-                  <Attachment msg={m} />
-                  {m.content}
-                  <div className="mt-0.5 flex items-center justify-end gap-1 text-[10px]">
-                    <span className="opacity-60">
-                      {new Date(m.created_at).toLocaleTimeString("pt-BR", {
-                        hour: "2-digit",
-                        minute: "2-digit",
-                      })}
-                    </span>
-                    {mine && (
-                      <MessageStatus
-                        state={receiptState(m.created_at, otherReadAt, otherSeen, otherOnline)}
-                      />
-                    )}
+              );
+            }
+            const mine = m.sender_id === userId;
+            const isNew = seen.current !== null && !seen.current.has(m.id);
+            return (
+              <div key={m.id}>
+                {m.id === firstNewId && (
+                  <div className="my-3 flex items-center gap-2 text-xs font-bold uppercase text-muted-foreground">
+                    <span className="h-px flex-1 bg-foreground/30" /> Novas mensagens{" "}
+                    <span className="h-px flex-1 bg-foreground/30" />
+                  </div>
+                )}
+                <div className={"flex " + (mine ? "justify-end" : "justify-start")}>
+                  <div
+                    className={
+                      "selectable max-w-[80%] whitespace-pre-wrap break-words rounded-2xl border border-foreground/10 px-3 py-2 text-sm shadow-sm " +
+                      (mine
+                        ? "rounded-br-sm bg-primary text-primary-foreground "
+                        : "rounded-bl-sm bg-card ") +
+                      (isNew ? "msg-in " + (mine ? "msg-in-mine" : "msg-in-theirs") : "")
+                    }
+                  >
+                    <Attachment msg={m} />
+                    {m.content}
+                    <div className="mt-0.5 flex items-center justify-end gap-1 text-[10px]">
+                      <span className="opacity-60">
+                        {new Date(m.created_at).toLocaleTimeString("pt-BR", {
+                          hour: "2-digit",
+                          minute: "2-digit",
+                        })}
+                      </span>
+                      {mine && (
+                        <MessageStatus
+                          state={receiptState(m.created_at, otherReadAt, otherSeen, otherOnline)}
+                        />
+                      )}
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
-          );
-        })}
-        {pending.map((p) => (
-          <div key={p.id} className="flex justify-end">
-            <div className="selectable max-w-[80%] whitespace-pre-wrap break-words rounded-2xl rounded-br-sm border-2 border-foreground bg-primary px-3 py-2 text-sm">
-              {p.content}
-              <div className="mt-0.5 flex items-center justify-end gap-1 text-[10px]">
-                <span className="opacity-60">
-                  {new Date(p.created_at).toLocaleTimeString("pt-BR", {
-                    hour: "2-digit",
-                    minute: "2-digit",
-                  })}
-                </span>
-                <MessageStatus state="waiting" />
+            );
+          })}
+          {pending.map((p) => (
+            <div key={p.id} className="flex justify-end">
+              <div className="selectable max-w-[80%] whitespace-pre-wrap break-words rounded-2xl rounded-br-sm border border-foreground/10 bg-primary px-3 py-2 text-sm text-primary-foreground shadow-sm">
+                {p.content}
+                <div className="mt-0.5 flex items-center justify-end gap-1 text-[10px]">
+                  <span className="opacity-60">
+                    {new Date(p.created_at).toLocaleTimeString("pt-BR", {
+                      hour: "2-digit",
+                      minute: "2-digit",
+                    })}
+                  </span>
+                  <MessageStatus state="waiting" />
+                </div>
               </div>
             </div>
-          </div>
-        ))}
-        {otherTyping && (
-          <div className="flex justify-start" aria-hidden="true">
-            <div className="msg-in msg-in-theirs flex gap-1 rounded-2xl rounded-bl-sm border-2 border-foreground bg-card px-3 py-3">
-              {[0, 1, 2].map((i) => (
-                <span
-                  key={i}
-                  className="typing-dot h-2 w-2 rounded-full bg-foreground"
-                  style={{ animationDelay: `${i * 0.15}s` }}
-                />
-              ))}
+          ))}
+          {otherTyping && (
+            <div className="flex justify-start" aria-hidden="true">
+              <div className="msg-in msg-in-theirs flex gap-1 rounded-2xl rounded-bl-sm border border-foreground/10 bg-card px-3 py-3 shadow-sm">
+                {[0, 1, 2].map((i) => (
+                  <span
+                    key={i}
+                    className="typing-dot h-2 w-2 rounded-full bg-foreground"
+                    style={{ animationDelay: `${i * 0.15}s` }}
+                  />
+                ))}
+              </div>
             </div>
-          </div>
-        )}
-        <div ref={bottom} />
+          )}
+          <div ref={bottom} />
+        </div>
       </div>
 
       {showJump && (
@@ -764,16 +771,13 @@ function Chat({ id }: { id: string }) {
             bottom.current?.scrollIntoView({ behavior: "smooth", block: "end" });
             setShowJump(false);
           }}
-          className="badge-pop fixed bottom-[148px] left-1/2 z-20 flex -translate-x-1/2 items-center gap-1 rounded-full border-2 border-foreground bg-primary px-3 py-1.5 text-sm font-bold"
+          className="badge-pop absolute bottom-24 left-1/2 z-20 flex -translate-x-1/2 items-center gap-1 rounded-full border border-foreground/30 bg-primary px-3 py-1.5 text-sm font-bold text-primary-foreground shadow-md"
         >
           <ArrowDown className="h-4 w-4" /> Nova mensagem
         </button>
       )}
 
-      <form
-        onSubmit={send}
-        className="fixed inset-x-0 bottom-[60px] z-10 mx-auto max-w-2xl border-t-2 border-foreground bg-background p-3"
-      >
+      <form onSubmit={send} className="shrink-0 border-t border-foreground/20 bg-background p-3">
         {file && (
           <div className="mb-2 flex flex-wrap items-center gap-2 rounded-lg border-2 border-foreground p-2 text-sm">
             <FileText className="h-5 w-5 shrink-0" />
@@ -811,9 +815,9 @@ function Chat({ id }: { id: string }) {
           />
           <Button
             type="button"
-            variant="outline"
+            variant="ghost"
             size="icon"
-            className="h-11 w-11 shrink-0 border-2"
+            className="h-11 w-11 shrink-0 rounded-full border-0 shadow-none"
             aria-label="Anexar arquivo (até 2 MB)"
             onClick={() => fileInput.current?.click()}
           >
@@ -828,12 +832,12 @@ function Chat({ id }: { id: string }) {
             onBlur={() => notifyTyping(false)}
             placeholder="Escreva uma mensagem…"
             maxLength={MAX_MESSAGE_LENGTH}
-            className="h-11 border-2"
+            className="h-11 rounded-full border border-foreground/25 bg-muted px-4"
           />
           <Button
             type="submit"
             size="icon"
-            className="h-11 w-11 shrink-0"
+            className="h-11 w-11 shrink-0 rounded-full border-0 shadow-none"
             aria-label="Enviar"
             disabled={sending}
           >
