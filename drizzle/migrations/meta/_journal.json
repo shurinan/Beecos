@@ -288,6 +288,13 @@
       "when": 1796496000000,
       "tag": "0040_ads_home",
       "breakpoints": true
+    },
+    {
+      "idx": 41,
+      "version": "7",
+      "when": 1796582400000,
+      "tag": "0041_verification",
+      "breakpoints": true
     }
   ]
 }

@@ -13,6 +13,7 @@ import {
 import { supabase } from "@/integrations/supabase/client";
 import { timeAgo } from "@/lib/data";
 import { Avatar } from "@/components/profile-bits";
+import { UserSeal } from "@/components/Seal";
 import { profileParam } from "@/lib/urls";
 import { useUnread } from "@/lib/chat-hooks";
 import { NotificationCard } from "@/components/InstallPrompt";
@@ -154,7 +155,12 @@ export function InboxList({ userId }: { userId: string }) {
                   (selected ? "bg-foreground/[0.09]" : "")
                 }
               >
-                <Avatar name={other?.full_name ?? ""} path={other?.avatar_path} size={52} />
+                <Avatar
+                  name={other?.full_name ?? ""}
+                  path={other?.avatar_path}
+                  size={52}
+                  userId={c.user_a === userId ? c.user_b : c.user_a}
+                />
                 <div className="min-w-0 flex-1">
                   <div className="flex items-baseline justify-between gap-2">
                     <p
@@ -164,6 +170,7 @@ export function InboxList({ userId }: { userId: string }) {
                       }
                     >
                       <span className="truncate">{other?.full_name || "Usuário"}</span>
+                      <UserSeal userId={c.user_a === userId ? c.user_b : c.user_a} size={15} />
                       {pref?.pinned_at && (
                         <Pin className="h-3.5 w-3.5 shrink-0" aria-label="Fixada" />
                       )}

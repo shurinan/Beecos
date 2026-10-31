@@ -18,6 +18,7 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { PostCard, type PostWithAuthor } from "@/components/PostCard";
 import { AdSlot } from "@/components/AdSlot";
+import { UserSeal } from "@/components/Seal";
 import { Avatar, SelfDeclared, SkillCard, StarInput, Stars } from "@/components/profile-bits";
 import { useAuth } from "@/lib/auth";
 import { isUuid, openConversation, timeAgo } from "@/lib/data";
@@ -204,12 +205,17 @@ function ProfilePage({ id }: { id: string }) {
     <div className="space-y-5">
       <section className="block-card p-5">
         <div className="flex items-center gap-4">
-          <Avatar name={pr.full_name} path={pr.avatar_path} size={64} />
+          <Avatar name={pr.full_name} path={pr.avatar_path} size={64} userId={pr.id} />
           <div className="min-w-0">
             <h1 className="truncate text-2xl leading-tight">
               {pr.slug ? `@${pr.slug}` : pr.full_name || "Usuário"}
             </h1>
-            {pr.slug && <p className="truncate font-semibold">{pr.full_name}</p>}
+            {pr.slug && (
+              <p className="flex items-center gap-1.5 font-semibold">
+                <span className="truncate">{pr.full_name}</span>
+                <UserSeal userId={pr.id} size={20} />
+              </p>
+            )}
             {premium && (
               <p className="mt-1 inline-flex items-center gap-1 rounded bg-foreground px-2 py-0.5 text-xs font-bold uppercase text-background">
                 <Crown className="h-3 w-3" aria-hidden="true" /> Premium

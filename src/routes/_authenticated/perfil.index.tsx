@@ -1,6 +1,8 @@
 import { usernameErrorMessage } from "@/lib/username";
 import { postGaps } from "@/lib/post-gaps";
 import { PrivacyCard } from "@/components/PrivacyCard";
+import { UserSeal } from "@/components/Seal";
+import { VerificationCard } from "@/components/VerificationCard";
 import { SECTIONS, SettingsMenu, type Section } from "@/components/SettingsMenu";
 import { postParams, profileParam } from "@/lib/urls";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
@@ -373,6 +375,7 @@ function Painel() {
 
         {section === "perfil" && (
           <>
+            <VerificationCard userId={userId} />
             <section className="block-card p-5">
               <div className="flex items-start gap-4">
                 <div className="flex shrink-0 flex-col items-center gap-1">
@@ -380,6 +383,7 @@ function Painel() {
                     name={profileFields.full_name}
                     path={data?.profile?.avatar_path}
                     size={80}
+                    userId={userId}
                   />
                   <Link to="/perfil/contato" className="text-xs font-bold underline">
                     {data?.profile?.avatar_path ? "Trocar foto" : "Adicionar foto"}
@@ -389,7 +393,10 @@ function Painel() {
                   <h2 className="truncate text-2xl leading-tight">
                     {profileFields.username ? `@${profileFields.username}` : "Escolha seu @usuário"}
                   </h2>
-                  <p className="truncate font-semibold">{profileFields.full_name || "Sem nome"}</p>
+                  <p className="flex items-center gap-1.5 font-semibold">
+                    <span className="truncate">{profileFields.full_name || "Sem nome"}</span>
+                    <UserSeal userId={userId} size={20} />
+                  </p>
                   {profileFields.headline && (
                     <p className="font-semibold">{profileFields.headline}</p>
                   )}

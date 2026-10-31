@@ -11,6 +11,7 @@ import { useAuth } from "@/lib/auth";
 import { MapPin, Banknote, Crown } from "lucide-react";
 import { COVER_BG, coverVars, FILLED_COVER, resolveCover, resolveIcon } from "@/lib/post-look";
 import { Avatar } from "@/components/profile-bits";
+import { UserSeal } from "@/components/Seal";
 import { KIND_LABEL, timeAgo, type PostKind } from "@/lib/data";
 import { levelLabel, topSkill, type SkillBase } from "@/lib/skills";
 import { catalogLabel } from "@/lib/catalog";
@@ -202,9 +203,10 @@ export function PostCard({
                 name={post.profiles?.full_name ?? ""}
                 path={post.profiles?.avatar_path}
                 size={32}
+                userId={post.user_id}
               />
               <span className="min-w-0 text-sm font-semibold leading-tight">
-                {post.profiles?.full_name || "Usuário"}
+                {post.profiles?.full_name || "Usuário"} <UserSeal userId={post.user_id} size={15} />
                 {top && (
                   <span className="block truncate text-xs font-normal text-muted-foreground">
                     {top.skill} · {levelLabel(top.level)}
