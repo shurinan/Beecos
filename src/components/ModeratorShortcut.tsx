@@ -1,6 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { Flag, Lightbulb, ShieldCheck } from "lucide-react";
+import { Flag, Lightbulb, ShieldCheck, UserCheck } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 
 /** Atalho do perfil só para moderadores: denúncias e sugestões, com a contagem do que espera. */
@@ -18,14 +18,19 @@ export function ModeratorShortcut() {
     enabled: isMod === true,
     refetchInterval: 60_000,
     queryFn: async () => {
-      const [reports, suggestions] = await Promise.all([
+      const [reports, suggestions, verifs] = await Promise.all([
         supabase.from("reports").select("id", { count: "exact", head: true }).eq("status", "open"),
         supabase
           .from("suggestions")
           .select("id", { count: "exact", head: true })
           .eq("status", "new"),
+        supabase.rpc("pending_verifications_count"),
       ]);
-      return { reports: reports.count ?? 0, suggestions: suggestions.count ?? 0 };
+      return {
+        reports: reports.count ?? 0,
+        suggestions: suggestions.count ?? 0,
+        verifs: typeof verifs.data === "number" ? verifs.data : 0,
+      };
     },
   });
   if (!isMod) return null;
@@ -49,6 +54,10 @@ export function ModeratorShortcut() {
         <Link to="/sugestoes" className={item}>
           <Lightbulb className="h-4 w-4" aria-hidden="true" /> Sugestões{" "}
           {badge(counts?.suggestions ?? 0)}
+        </Link>
+        <Link to="/verificacoes" className={item}>
+          <UserCheck className="h-4 w-4" aria-hidden="true" /> Verificações{" "}
+          {badge(counts?.verifs ?? 0)}
         </Link>
       </div>
     </section>

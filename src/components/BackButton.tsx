@@ -42,7 +42,7 @@ export function BackButton() {
           router.history.push(parentPath(pathname));
         }
       }}
-      className="-ml-2 mr-1 flex h-10 w-10 items-center justify-center rounded-md text-primary-foreground active:bg-foreground/10"
+      className="-ml-2 mr-1 flex h-10 w-10 items-center lg:hidden justify-center rounded-md text-primary-foreground active:bg-foreground/10"
     >
       <ArrowLeft className="h-6 w-6" aria-hidden="true" />
     </button>

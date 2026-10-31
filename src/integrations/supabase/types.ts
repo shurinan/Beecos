@@ -675,6 +675,75 @@ export type Database = {
           },
         ]
       }
+      identity_verifications: {
+        Row: {
+          address_proof_path: string | null
+          consent_at: string
+          created_at: string
+          doc_back_path: string | null
+          doc_front_path: string
+          files_deleted_at: string | null
+          id: string
+          reason: string
+          reviewed_at: string | null
+          reviewed_by: string | null
+          selfie_path: string
+          status: string
+          user_id: string
+        }
+        Insert: {
+          address_proof_path?: string | null
+          consent_at?: string
+          created_at?: string
+          doc_back_path?: string | null
+          doc_front_path: string
+          files_deleted_at?: string | null
+          id?: string
+          reason?: string
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          selfie_path: string
+          status?: string
+          user_id: string
+        }
+        Update: {
+          address_proof_path?: string | null
+          consent_at?: string
+          created_at?: string
+          doc_back_path?: string | null
+          doc_front_path?: string
+          files_deleted_at?: string | null
+          id?: string
+          reason?: string
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          selfie_path?: string
+          status?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      user_checks: {
+        Row: {
+          address_at: string | null
+          document_at: string | null
+          phone_at: string | null
+          user_id: string
+        }
+        Insert: {
+          address_at?: string | null
+          document_at?: string | null
+          phone_at?: string | null
+          user_id: string
+        }
+        Update: {
+          address_at?: string | null
+          document_at?: string | null
+          phone_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       moderators: {
         Row: {
           created_at: string
@@ -1683,6 +1752,23 @@ export type Database = {
         Args: { _a: string; _b: string }
         Returns: boolean
       }
+      badge_info: {
+        Args: { _user_ids: string[] }
+        Returns: {
+          user_id: string
+          premium: boolean
+          doc: boolean
+          email: boolean
+          address: boolean
+          phone: boolean
+        }[]
+      }
+      review_verification: {
+        Args: { _id: string; _approve: boolean; _reason?: string; _address?: boolean }
+        Returns: string[]
+      }
+      mark_verification_files_deleted: { Args: { _id: string }; Returns: undefined }
+      pending_verifications_count: { Args: never; Returns: number }
       is_moderator: { Args: never; Returns: boolean }
       is_on_hold: { Args: { _u: string }; Returns: boolean }
       is_premium: { Args: { _user_id: string }; Returns: boolean }

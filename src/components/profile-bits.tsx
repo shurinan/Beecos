@@ -1,6 +1,8 @@
 import type { ReactNode } from "react";
 import { Award, GraduationCap, Star } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { ringStyle } from "@/components/Seal";
+import { useBadge } from "@/lib/badges";
 import { initials } from "@/lib/data";
 import {
   MAX_LEVEL,
@@ -152,13 +154,17 @@ export function Avatar({
   name,
   path,
   size = 80,
+  userId,
 }: {
   name: string;
   path?: string | null | undefined;
   size?: number;
+  /** Quando informado, mostra o contorno de Premium (prata) ou de Premium e Verificado (dourado). */
+  userId?: string | null | undefined;
 }) {
+  const { tier } = useBadge(userId);
   const url = path ? supabase.storage.from("avatars").getPublicUrl(path).data.publicUrl : null;
-  const style = { width: size, height: size, fontSize: size * 0.3 };
+  const style = { width: size, height: size, fontSize: size * 0.3, ...ringStyle(tier) };
   return url ? (
     <img
       src={url}

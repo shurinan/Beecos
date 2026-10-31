@@ -9,6 +9,7 @@ import { ConversationMenu } from "@/components/ConversationMenu";
 import { reminderDue, useConvPrefs } from "@/lib/conversation-prefs";
 import { MessageStatus } from "@/components/MessageStatus";
 import { Avatar } from "@/components/profile-bits";
+import { UserSeal } from "@/components/Seal";
 import { EngagementCard, clientOf } from "@/components/EngagementCard";
 import { Input } from "@/components/ui/input";
 import { isUuid } from "@/lib/data";
@@ -595,9 +596,17 @@ function Chat({ id }: { id: string }) {
               className="flex min-w-0 flex-1 items-center gap-3"
               aria-label={`Ver perfil de ${other?.full_name || "Usuário"}`}
             >
-              <Avatar name={other?.full_name ?? ""} path={other?.avatar_path} size={44} />
+              <Avatar
+                name={other?.full_name ?? ""}
+                path={other?.avatar_path}
+                size={44}
+                userId={otherId}
+              />
               <span className="min-w-0 flex-1">
-                <span className="block truncate font-bold">{other?.full_name || "Usuário"}</span>
+                <span className="flex items-center gap-1.5 font-bold">
+                  <span className="truncate">{other?.full_name || "Usuário"}</span>
+                  <UserSeal userId={otherId} size={16} />
+                </span>
                 <span
                   className="flex flex-wrap items-center gap-x-2 text-xs text-muted-foreground"
                   aria-live="polite"

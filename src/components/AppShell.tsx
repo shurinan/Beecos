@@ -100,7 +100,7 @@ export function AppShell({ children }: { children: ReactNode }) {
                   key={l.to}
                   {...l.props}
                   className="relative rounded-lg px-3 py-1.5 text-sm font-bold text-primary-foreground hover:bg-foreground/10"
-                  activeProps={{ className: "bg-foreground! text-primary!" }}
+                  activeProps={{ className: "bg-foreground! text-primary! dark:text-background!" }}
                   activeOptions={{ exact: l.to === "/" }}
                 >
                   {l.label}
