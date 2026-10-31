@@ -8,7 +8,6 @@ export type BadgeInfo = {
   premium: boolean;
   doc: boolean;
   email: boolean;
-  address: boolean;
   phone: boolean;
 };
 
@@ -27,11 +26,11 @@ export const TIER_TITLE: Record<Tier, string> = {
   both: "Verificado e Premium",
 };
 
-export const CHECKS: { key: "doc" | "email" | "address" | "phone"; label: string }[] = [
-  { key: "doc", label: "Documento" },
+/** Como na OLX: só o que é necessário para a conversa. Endereço e outros dados não são conferidos. */
+export const CHECKS: { key: "email" | "phone" | "doc"; label: string }[] = [
   { key: "email", label: "E-mail" },
-  { key: "address", label: "Endereço" },
   { key: "phone", label: "Telefone" },
+  { key: "doc", label: "Identidade" },
 ];
 
 type Waiter = { resolve: (v: BadgeInfo | null) => void; reject: (e: unknown) => void };
@@ -50,7 +49,7 @@ async function flush() {
     for (const [id, waiters] of current) {
       const r = byId.get(id);
       const info: BadgeInfo | null = r
-        ? { premium: r.premium, doc: r.doc, email: r.email, address: r.address, phone: r.phone }
+        ? { premium: r.premium, doc: r.doc, email: r.email, phone: r.phone }
         : null;
       waiters.forEach((w) => w.resolve(info));
     }
