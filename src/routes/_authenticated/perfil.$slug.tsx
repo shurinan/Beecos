@@ -422,7 +422,7 @@ function Reviews({
   async function save(e: React.FormEvent) {
     e.preventDefault();
     if (rating < 1) {
-      toast.error("Escolha uma nota de 1 a 5");
+      toast.error("Escolha uma nota de 1 a 5.");
       return;
     }
     const text = comment.trim();
@@ -433,7 +433,7 @@ function Reviews({
           .insert({ reviewer_id: viewerId!, reviewee_id: profileId, rating, comment: text });
     if (error) {
       toast.error(
-        isBlockedTextError(error) ? BLOCKED_TEXT_MESSAGE : "Não foi possível salvar a avaliação",
+        isBlockedTextError(error) ? BLOCKED_TEXT_MESSAGE : "Não foi possível salvar a avaliação.",
       );
       return;
     }
@@ -446,7 +446,7 @@ function Reviews({
     if (!mine) return;
     const { error } = await supabase.from("reviews").delete().eq("id", mine.id);
     if (error) {
-      toast.error("Não foi possível apagar a avaliação");
+      toast.error("Não foi possível apagar a avaliação.");
       return;
     }
     qc.invalidateQueries({ queryKey: ["profile", profileId] });
@@ -491,7 +491,7 @@ function Reviews({
       )}
 
       {data.reviews.length === 0 && isOther && canReview && !editing && (
-        <p className="text-sm text-muted-foreground">Ainda sem avaliações. Seja o primeiro.</p>
+        <p className="text-sm text-muted-foreground">Ainda sem avaliações.</p>
       )}
 
       {data.reviews.map((r) => (

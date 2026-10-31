@@ -63,7 +63,7 @@ function ChannelRow({
             )}
           </span>
           <span className="block truncate text-xs text-muted-foreground">
-            {professions.length ? professions.join(" · ") : "Vários trabalhos"}
+            {professions.length ? professions.join(" · ") : "Várias profissões"}
           </span>
           <span className="block text-xs text-muted-foreground">
             {numbers
@@ -125,7 +125,7 @@ function Channels() {
       if (numbers?.get(c.id)?.following) await unfollow(c.id);
       else await follow(c.id);
     } catch {
-      toast.error("Não consegui atualizar. Tente de novo.");
+      toast.error("Não foi possível atualizar. Tente de novo.");
     } finally {
       setBusy(null);
     }
@@ -155,7 +155,7 @@ function Channels() {
       </header>
       <p className="text-sm text-muted-foreground">
         Empresas e contratantes que reúnem as vagas delas num lugar só. Siga para receber avisos.
-        Quer ver as vagas por ofício?{" "}
+        Quer ver as vagas por profissão?{" "}
         <Link
           to="/comunidade"
           search={{ grupo: undefined, ordem: undefined }}
@@ -181,7 +181,7 @@ function Channels() {
       </div>
 
       {usedProfessions.length > 0 && (
-        <nav aria-label="Filtrar por trabalho" className="-mx-4 overflow-x-auto px-4">
+        <nav aria-label="Filtrar por profissão" className="-mx-4 overflow-x-auto px-4">
           <ul className="flex gap-2 pb-1">
             {[{ id: null as string | null, name: "Todos" }, ...usedProfessions].map((p) => (
               <li key={p.id ?? "all"}>

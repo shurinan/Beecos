@@ -35,7 +35,7 @@ export function TermsGate({ userId }: { userId: string }) {
     const { error } = await supabase.rpc("accept_terms", { _version: TERMS_VERSION });
     setBusy(false);
     if (error) {
-      toast.error(termsErrorMessage(error) ?? "Não consegui registrar. Tente de novo.");
+      toast.error(termsErrorMessage(error) ?? "Não foi possível registrar. Tente de novo.");
       return;
     }
     await qc.invalidateQueries({ queryKey: ["terms", userId] });

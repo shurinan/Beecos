@@ -160,8 +160,8 @@ function Painel() {
     if (error) {
       toast.error(
         error.message.includes("RAIO_PREMIUM")
-          ? "O raio expandido é um recurso Premium"
-          : "Não foi possível salvar onde você atua",
+          ? "O raio expandido é um recurso Premium."
+          : "Não foi possível salvar onde você atua.",
       );
       return false;
     }
@@ -195,7 +195,7 @@ function Painel() {
     if (error) {
       toast.error(
         usernameErrorMessage(error) ??
-          (isBlockedTextError(error) ? BLOCKED_TEXT_MESSAGE : "Não foi possível salvar o perfil"),
+          (isBlockedTextError(error) ? BLOCKED_TEXT_MESSAGE : "Não foi possível salvar o perfil."),
       );
       return false;
     }
@@ -207,7 +207,7 @@ function Painel() {
   async function saveSkill(skill: SkillInput): Promise<boolean> {
     const isNew = !(data?.skills ?? []).some((x) => x.skill === skill.skill);
     if (isNew && (data?.skills.length ?? 0) >= MAX_SKILLS) {
-      toast.error(`Máximo de ${MAX_SKILLS} habilidades`);
+      toast.error(`Máximo de ${MAX_SKILLS} habilidades.`);
       return false;
     }
     const { error } = await supabase
@@ -215,7 +215,7 @@ function Painel() {
       .upsert({ user_id: userId, ...skill }, { onConflict: "user_id,skill" });
     if (error) {
       toast.error(
-        isBlockedTextError(error) ? BLOCKED_TEXT_MESSAGE : "Não foi possível salvar a habilidade",
+        isBlockedTextError(error) ? BLOCKED_TEXT_MESSAGE : "Não foi possível salvar a habilidade.",
       );
       return false;
     }
@@ -231,7 +231,7 @@ function Painel() {
       .eq("user_id", userId)
       .eq("skill", name);
     if (error) {
-      toast.error("Não foi possível remover a habilidade");
+      toast.error("Não foi possível remover a habilidade.");
       return;
     }
     qc.invalidateQueries();
@@ -281,8 +281,8 @@ function Painel() {
         isBlockedTextError(error)
           ? BLOCKED_TEXT_MESSAGE
           : error.message.includes("VAGAS_OCUPADAS")
-            ? "Já há mais vagas ocupadas do que esse número"
-            : "Não foi possível salvar as mudanças",
+            ? "Já há mais vagas ocupadas do que esse número."
+            : "Não foi possível salvar as mudanças.",
       );
       return false;
     }
@@ -294,7 +294,7 @@ function Painel() {
         lng: next.place.lng,
       });
       if (loc.error) {
-        toast.error("Salvo, mas não foi possível guardar o CEP");
+        toast.error("Salvo, mas não foi possível guardar o CEP.");
         return true;
       }
     } else if (next.cep.trim() === "") {
@@ -321,7 +321,7 @@ function Painel() {
       .update({ closed_at: new Date().toISOString() })
       .eq("id", id);
     if (error) {
-      toast.error("Não consegui marcar como concluída. Tente de novo.");
+      toast.error("Não foi possível marcar como concluída. Tente de novo.");
       return;
     }
     toast.success("Marcada como concluída.");
@@ -333,7 +333,7 @@ function Painel() {
     const { error } = await supabase.from("posts").delete().eq("id", id);
     if (!error) await removePostPhotoFiles(photoPaths);
     if (error) {
-      toast.error("Não foi possível excluir a publicação");
+      toast.error("Não foi possível excluir a publicação.");
       return;
     }
     qc.invalidateQueries();
@@ -483,8 +483,8 @@ function Painel() {
                 </p>
               ) : (
                 <p className="text-sm text-muted-foreground">
-                  Informe o seu CEP para ver a distância das vagas e, em breve, receber aviso das
-                  que surgirem perto de você.
+                  Informe o seu CEP para ver a distância das vagas e receber aviso das que surgirem
+                  perto de você.
                 </p>
               )}
               <button

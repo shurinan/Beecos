@@ -35,7 +35,7 @@ export function SuggestionButton() {
       setText("");
       setOpen(false);
     } catch (e) {
-      toast.error(suggestionErrorMessage(e) ?? "Não consegui enviar. Tente de novo.");
+      toast.error(suggestionErrorMessage(e) ?? "Não foi possível enviar. Tente de novo.");
     } finally {
       setBusy(false);
     }

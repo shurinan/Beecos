@@ -61,7 +61,8 @@ function NewChannel() {
         const { error: e2 } = await supabase
           .from("channel_professions")
           .insert(v.professionIds.map((profession_id) => ({ channel_id: data.id, profession_id })));
-        if (e2) toast.error("Canal criado, mas não consegui salvar os trabalhos. Edite depois.");
+        if (e2)
+          toast.error("Canal criado, mas não foi possível salvar as profissões. Edite depois.");
       }
       await Promise.all([
         qc.invalidateQueries({ queryKey: ["channels"] }),

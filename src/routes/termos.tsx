@@ -52,9 +52,9 @@ function Terms() {
 
       <h2>Denúncias e moderação</h2>
       <p>
-        Qualquer pessoa pode denunciar uma vaga ou um perfil. Uma pessoa da moderação avalia cada
-        caso e pode ocultar uma publicação que descumpra estas regras. Contas com abuso repetido
-        podem ser suspensas.
+        Qualquer pessoa pode denunciar uma vaga ou um perfil. A moderação avalia cada caso e pode
+        ocultar uma publicação que descumpra estas regras. Contas com abuso repetido podem ser
+        suspensas.
       </p>
       <ul>
         <li>
@@ -104,9 +104,9 @@ function Terms() {
           art. 49).
         </li>
         <li>
-          <b>Cancelamento:</b> use “Cancelar assinatura” em Meu perfil › Seu plano, quando quiser. O
-          Premium continua até o fim do período já pago e não é cobrado de novo. O plano anual não
-          renova sozinho; dentro dos 7 dias, a desistência é feita no mesmo lugar.
+          <b>Cancelamento:</b> use “Cancelar assinatura” em Meu perfil › Plano e pagamento, quando
+          quiser. O Premium continua até o fim do período já pago e não é cobrado de novo. O plano
+          anual não renova sozinho; dentro dos 7 dias, a desistência é feita no mesmo lugar.
         </li>
       </ul>
 

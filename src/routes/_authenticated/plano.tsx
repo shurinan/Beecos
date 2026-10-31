@@ -8,6 +8,7 @@ import { rememberDestination } from "@/lib/after-login";
 import {
   FREE_CHATS_PER_MONTH,
   FREE_JOBS_PER_MONTH,
+  PREMIUM_MONTHLY,
   PREMIUM_PRICE,
   ANNUAL_PRICE,
   ANNUAL_PER_MONTH,
@@ -121,7 +122,7 @@ function PlanPage() {
         <div className="grid grid-cols-2 gap-2 text-center">
           <div className="rounded-lg border-2 border-foreground bg-card p-3">
             <p className="text-sm font-bold">Mensal</p>
-            <p className="font-display text-xl leading-tight">R$ 14,90</p>
+            <p className="font-display text-xl leading-tight">{PREMIUM_MONTHLY}</p>
             <p className="text-xs text-muted-foreground">por mês</p>
           </div>
           <div className="relative rounded-lg border-2 border-foreground bg-accent p-3">
@@ -134,10 +135,9 @@ function PlanPage() {
           </div>
         </div>
         <p className="text-sm text-muted-foreground">
-          O anual é um pagamento único e vale 12 meses: você paga 10 e leva 12. Não renova sozinho.
-          O pagamento é feito pelo Asaas (Pix, boleto ou cartão). Você pode desistir em até 7 dias
-          depois de pagar e receber o valor de volta. No mensal, cancele quando quiser em Meu
-          perfil: o Premium vai até o fim do período pago e não é cobrado de novo.
+          O anual é um pagamento único que vale 12 meses e não renova sozinho. Pague com Pix, boleto
+          ou cartão. Você pode desistir em até 7 dias e receber o valor de volta. No mensal, cancele
+          quando quiser em Meu perfil.
         </p>
         {usage?.premium ? (
           <p
@@ -156,7 +156,7 @@ function PlanPage() {
               Quero o plano anual · {ANNUAL_PRICE}
             </CheckoutButton>
             <CheckoutButton kind="premium" variant="outline" className="w-full">
-              Prefiro pagar por mês · R$ 14,90
+              Prefiro pagar por mês · {PREMIUM_MONTHLY}
             </CheckoutButton>
           </div>
         ) : (

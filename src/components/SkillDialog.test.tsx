@@ -97,9 +97,9 @@ describe("SkillDialog", () => {
   it("asks for every required answer before saving", async () => {
     const { onSave } = setup();
     submit();
-    expect(await screen.findByText("Escolha a profissão")).toBeTruthy();
-    expect(screen.getByText("Escolha o seu nível")).toBeTruthy();
-    expect(screen.getAllByText("Responda sim ou não")).toHaveLength(3);
+    expect(await screen.findByText("Escolha a profissão.")).toBeTruthy();
+    expect(screen.getByText("Escolha o seu nível.")).toBeTruthy();
+    expect(screen.getAllByText("Responda sim ou não.")).toHaveLength(3);
     expect(onSave).not.toHaveBeenCalled();
   });
 
@@ -153,7 +153,7 @@ describe("SkillDialog", () => {
     choose("Outro", "xyz");
     expect(screen.queryByText("Quais serviços você faz?")).toBeNull();
     submit();
-    expect(await screen.findByText("Escreva o nome da habilidade")).toBeTruthy();
+    expect(await screen.findByText("Escreva o nome da habilidade.")).toBeTruthy();
     fireEvent.change(screen.getByLabelText("Qual é a habilidade?"), {
       target: { value: "  Instalador de toldos " },
     });
@@ -172,7 +172,7 @@ describe("SkillDialog", () => {
     const { onSave } = setup({ existing: ["ELETRICISTA"] });
     choose("Eletricista");
     submit();
-    expect(await screen.findByText("Você já adicionou essa habilidade")).toBeTruthy();
+    expect(await screen.findByText("Você já adicionou essa habilidade.")).toBeTruthy();
     expect(onSave).not.toHaveBeenCalled();
   });
 
@@ -225,7 +225,7 @@ describe("SkillDialog", () => {
     fireEvent.click(screen.getAllByLabelText("Não")[1]!);
     fireEvent.click(screen.getAllByLabelText("Não")[2]!);
     submit();
-    expect(await screen.findByText("Use um número inteiro de 0 a 60")).toBeTruthy();
+    expect(await screen.findByText("Use um número inteiro de 0 a 60.")).toBeTruthy();
     expect(onSave).not.toHaveBeenCalled();
     fireEvent.click(screen.getAllByLabelText("Não")[0]!);
     submit();

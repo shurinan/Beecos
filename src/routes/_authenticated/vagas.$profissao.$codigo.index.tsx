@@ -99,7 +99,7 @@ function PostPage() {
       {mine && (post as { hidden_at?: string | null }).hidden_at && (
         <p role="note" className="rounded border-2 border-destructive p-3 text-sm">
           <b>Esta vaga está oculta.</b> A moderação a tirou das listas e das buscas. Se achar que
-          foi um engano, fale com o suporte.
+          foi um engano, escreva para contato@beecos.com.br.
         </p>
       )}
     </div>

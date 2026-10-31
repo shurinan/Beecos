@@ -1,8 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { getRouterInstance } from "@tanstack/react-start";
+import { SITE_URL } from "@/lib/urls";
 import { sitemapStaticPaths, sitemapXML, type SitemapEntry } from "@/lib/sitemap";
-
-const BASE_URL = "https://beecos.com.br";
 
 export const Route = createFileRoute("/sitemap.xml")({
   staticData: { sitemap: false },
@@ -17,7 +16,7 @@ export const Route = createFileRoute("/sitemap.xml")({
             headers: { "Cache-Control": "no-store" },
           });
         }
-        return new Response(sitemapXML(BASE_URL, entries), {
+        return new Response(sitemapXML(SITE_URL, entries), {
           headers: { "Content-Type": "application/xml", "Cache-Control": "public, max-age=3600" },
         });
       },

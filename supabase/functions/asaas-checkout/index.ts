@@ -14,7 +14,10 @@ const CORS = {
   "Access-Control-Allow-Methods": "POST, OPTIONS",
 };
 const json = (body: unknown, status = 200) =>
-  new Response(JSON.stringify(body), { status, headers: { ...CORS, "Content-Type": "application/json" } });
+  new Response(JSON.stringify(body), {
+    status,
+    headers: { ...CORS, "Content-Type": "application/json" },
+  });
 
 function validCpf(raw: string): boolean {
   const d = raw.replace(/\D/g, "");
@@ -56,7 +59,12 @@ async function asaas(path: string, init: { method?: string; body?: unknown } = {
 function callback(tipo: "premium" | "anual" | "urgente") {
   const base = Deno.env.get("ASAAS_SUCCESS_URL");
   if (!base) return {};
-  return { callback: { successUrl: `${base.replace(/\/$/, "")}/pagamento?tipo=${tipo}`, autoRedirect: true } };
+  return {
+    callback: {
+      successUrl: `${base.replace(/\/$/, "")}/pagamento?tipo=${tipo}`,
+      autoRedirect: true,
+    },
+  };
 }
 
 const today = () => new Date().toISOString().slice(0, 10);
@@ -70,19 +78,35 @@ const BILLING: Record<Method, string> = { pix: "PIX", boleto: "BOLETO", card: "C
 async function deliver(id: string, invoiceUrl: string, method: Method | undefined) {
   if (method === "pix") {
     const q = await asaas(`/payments/${id}/pixQrCode`);
-    return { method, paymentId: id, pix: { image: q.encodedImage as string, code: q.payload as string, expires: q.expirationDate as string | null } };
+    return {
+      method,
+      paymentId: id,
+      pix: {
+        image: q.encodedImage as string,
+        code: q.payload as string,
+        expires: q.expirationDate as string | null,
+      },
+    };
   }
   if (method === "boleto") {
     const f = await asaas(`/payments/${id}/identificationField`);
     const p = await asaas(`/payments/${id}`);
-    return { method, paymentId: id, boleto: { line: f.identificationField as string, url: (p.bankSlipUrl as string | null) ?? invoiceUrl } };
+    return {
+      method,
+      paymentId: id,
+      boleto: {
+        line: f.identificationField as string,
+        url: (p.bankSlipUrl as string | null) ?? invoiceUrl,
+      },
+    };
   }
   return { method: "card" as const, paymentId: id, url: invoiceUrl };
 }
 
 // já existe uma cobrança aberta: troca a forma de pagamento nela, se preciso
 async function switchMethod(id: string, method: Method | undefined) {
-  if (method) await asaas(`/payments/${id}`, { method: "PUT", body: { billingType: BILLING[method] } });
+  if (method)
+    await asaas(`/payments/${id}`, { method: "PUT", body: { billingType: BILLING[method] } });
 }
 
 Deno.serve(async (req) => {
@@ -91,7 +115,8 @@ Deno.serve(async (req) => {
 
   const url = Deno.env.get("SUPABASE_URL");
   const key = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
-  if (!url || !key || !Deno.env.get("ASAAS_API_KEY")) return json({ error: "pagamento não configurado" }, 500);
+  if (!url || !key || !Deno.env.get("ASAAS_API_KEY"))
+    return json({ error: "pagamento não configurado" }, 500);
   const db = createClient(url, key, { auth: { persistSession: false } });
 
   const token = (req.headers.get("Authorization") ?? "").replace(/^Bearer\s+/i, "");
@@ -107,17 +132,32 @@ Deno.serve(async (req) => {
   }
   const kind = body.kind;
   const method: Method | undefined =
-    body.method === "pix" || body.method === "boleto" || body.method === "card" ? body.method : undefined;
-  if (kind !== "premium" && kind !== "annual" && kind !== "urgent") return json({ error: "pedido inválido" }, 400);
+    body.method === "pix" || body.method === "boleto" || body.method === "card"
+      ? body.method
+      : undefined;
+  if (kind !== "premium" && kind !== "annual" && kind !== "urgent")
+    return json({ error: "pedido inválido" }, 400);
 
   try {
     if (kind === "urgent" && method === "boleto")
-      return json({ error: "O boleto não está disponível para o selo Urgente. Use Pix ou cartão." }, 400);
+      return json(
+        { error: "O boleto não está disponível para o selo Urgente. Use Pix ou cartão." },
+        400,
+      );
     // 1) cliente no Asaas (reaproveita o que já existe)
-    let { data: cust } = await db.from("asaas_customers").select("customer_id").eq("user_id", user.id).maybeSingle();
+    let { data: cust } = await db
+      .from("asaas_customers")
+      .select("customer_id")
+      .eq("user_id", user.id)
+      .maybeSingle();
     if (!cust) {
-      if (!body.cpf || !validCpf(body.cpf)) return json({ error: "CPF inválido. Confira os números." }, 400);
-      const { data: prof } = await db.from("profiles").select("full_name").eq("id", user.id).maybeSingle();
+      if (!body.cpf || !validCpf(body.cpf))
+        return json({ error: "CPF inválido. Confira os números." }, 400);
+      const { data: prof } = await db
+        .from("profiles")
+        .select("full_name")
+        .eq("id", user.id)
+        .maybeSingle();
       const created = await asaas("/customers", {
         method: "POST",
         body: {
@@ -128,7 +168,9 @@ Deno.serve(async (req) => {
           notificationDisabled: false,
         },
       });
-      const ins = await db.from("asaas_customers").insert({ user_id: user.id, customer_id: created.id });
+      const ins = await db
+        .from("asaas_customers")
+        .insert({ user_id: user.id, customer_id: created.id });
       if (ins.error) throw new Error("não foi possível guardar o cliente");
       cust = { customer_id: created.id };
     }
@@ -140,7 +182,8 @@ Deno.serve(async (req) => {
         .select("plan, active_until, cancel_requested_at")
         .eq("user_id", user.id)
         .maybeSingle();
-      const active = sub?.plan === "premium" && (!sub.active_until || new Date(sub.active_until) > new Date());
+      const active =
+        sub?.plan === "premium" && (!sub.active_until || new Date(sub.active_until) > new Date());
       if (active && !sub?.cancel_requested_at) return json({ error: "Você já é Premium." }, 409);
 
       // já existe uma cobrança aberta? devolve o mesmo link
@@ -156,7 +199,9 @@ Deno.serve(async (req) => {
         .maybeSingle();
       if (open?.invoice_url) {
         await switchMethod(open.asaas_payment_id as string, method);
-        return json(await deliver(open.asaas_payment_id as string, open.invoice_url as string, method));
+        return json(
+          await deliver(open.asaas_payment_id as string, open.invoice_url as string, method),
+        );
       }
 
       const s = await asaas("/subscriptions", {
@@ -174,7 +219,7 @@ Deno.serve(async (req) => {
       });
       const list = await asaas(`/subscriptions/${s.id}/payments`);
       const first = list?.data?.[0];
-      if (!first?.invoiceUrl) throw new Error("O Asaas não devolveu o link de pagamento.");
+      if (!first?.invoiceUrl) throw new Error("Não foi possível gerar a cobrança. Tente de novo.");
       await db.rpc("asaas_apply_payment", {
         _payment_id: first.id,
         _customer: customer,
@@ -193,14 +238,30 @@ Deno.serve(async (req) => {
         .select("plan, active_until, cancel_requested_at, asaas_subscription_id, plan_term")
         .eq("user_id", user.id)
         .maybeSingle();
-      const active = sub?.plan === "premium" && (!sub.active_until || new Date(sub.active_until) > new Date());
+      const active =
+        sub?.plan === "premium" && (!sub.active_until || new Date(sub.active_until) > new Date());
       if (active && !sub?.active_until) return json({ error: "Você já é Premium." }, 409);
       // assinatura mensal ativa seguiria cobrando: cancelar antes
-      if (active && sub?.plan_term === "monthly" && sub.asaas_subscription_id && !sub.cancel_requested_at)
-        return json({ error: "Cancele a assinatura mensal em Meu perfil antes de assinar o plano anual." }, 409);
+      if (
+        active &&
+        sub?.plan_term === "monthly" &&
+        sub.asaas_subscription_id &&
+        !sub.cancel_requested_at
+      )
+        return json(
+          { error: "Cancele a assinatura mensal em Meu perfil antes de assinar o plano anual." },
+          409,
+        );
       // anual com mais de 30 dias pela frente: ainda não precisa renovar
-      if (active && sub?.plan_term === "annual" && new Date(sub.active_until!).getTime() - Date.now() > 30 * 86400_000)
-        return json({ error: "Seu plano anual ainda tem mais de 30 dias. Renove perto do fim." }, 409);
+      if (
+        active &&
+        sub?.plan_term === "annual" &&
+        new Date(sub.active_until!).getTime() - Date.now() > 30 * 86400_000
+      )
+        return json(
+          { error: "Seu plano anual ainda tem mais de 30 dias. Renove perto do fim." },
+          409,
+        );
 
       const { data: open } = await db
         .from("payments")
@@ -214,7 +275,9 @@ Deno.serve(async (req) => {
         .maybeSingle();
       if (open?.invoice_url) {
         await switchMethod(open.asaas_payment_id as string, method);
-        return json(await deliver(open.asaas_payment_id as string, open.invoice_url as string, method));
+        return json(
+          await deliver(open.asaas_payment_id as string, open.invoice_url as string, method),
+        );
       }
 
       const due = new Date(Date.now() + 3 * 86400_000).toISOString().slice(0, 10);
@@ -250,7 +313,8 @@ Deno.serve(async (req) => {
       .select("id, user_id, kind, urgent, title")
       .eq("id", postId)
       .maybeSingle();
-    if (!post || post.user_id !== user.id || post.kind !== "job") return json({ error: "Vaga não encontrada." }, 404);
+    if (!post || post.user_id !== user.id || post.kind !== "job")
+      return json({ error: "Vaga não encontrada." }, 404);
     if (post.urgent) return json({ error: "Esta vaga já tem o selo Urgente." }, 409);
 
     const { data: open } = await db
@@ -264,9 +328,11 @@ Deno.serve(async (req) => {
       .limit(1)
       .maybeSingle();
     if (open?.invoice_url) {
-        await switchMethod(open.asaas_payment_id as string, method);
-        return json(await deliver(open.asaas_payment_id as string, open.invoice_url as string, method));
-      }
+      await switchMethod(open.asaas_payment_id as string, method);
+      return json(
+        await deliver(open.asaas_payment_id as string, open.invoice_url as string, method),
+      );
+    }
 
     const due = new Date(Date.now() + 3 * 86400_000).toISOString().slice(0, 10);
     const p = await asaas("/payments", {
@@ -292,6 +358,9 @@ Deno.serve(async (req) => {
     });
     return json(await deliver(p.id, p.invoiceUrl, method));
   } catch (e) {
-    return json({ error: e instanceof Error ? e.message : "Não foi possível criar a cobrança." }, 502);
+    return json(
+      { error: e instanceof Error ? e.message : "Não foi possível criar a cobrança." },
+      502,
+    );
   }
 });

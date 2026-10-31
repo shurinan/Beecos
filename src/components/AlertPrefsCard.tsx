@@ -23,7 +23,7 @@ export function AlertPrefsCard({
 }) {
   const paused = pausedNow(prefs);
   const run = (patch: Partial<AlertPrefs>) =>
-    onSave(patch).catch(() => toast.error("Não consegui salvar. Tente de novo."));
+    onSave(patch).catch(() => toast.error("Não foi possível salvar. Tente de novo."));
   return (
     <section className="block-card space-y-3 p-4" aria-label="Preferências de avisos">
       <h2 className="text-lg">Como quero ser avisado</h2>
@@ -115,7 +115,6 @@ export function AlertPrefsCard({
         </div>
       )}
       <div className="space-y-1 border-t border-dashed border-foreground/30 pt-3 text-sm text-muted-foreground">
-        <p>E-mail e aviso no celular com o app fechado: em breve.</p>
         <p>
           Quer ser avisado de vagas mais longe? Aumente o raio em “Onde você atua” (plano Premium).
         </p>

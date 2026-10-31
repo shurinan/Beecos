@@ -98,7 +98,7 @@ export async function lookupCep(raw: string, fetcher: Fetcher = (u) => fetch(u))
     location?: { coordinates?: { latitude?: string | number; longitude?: string | number } };
   } | null;
   if (status >= 400 || !d?.city) {
-    throw new GeoError("Não consegui consultar o CEP agora. Tente de novo em instantes.");
+    throw new GeoError("Não foi possível consultar o CEP agora. Tente de novo em instantes.");
   }
   const city = d.city;
   const state = (d.state ?? "").toUpperCase().slice(0, 2);
@@ -115,7 +115,9 @@ export async function lookupCep(raw: string, fetcher: Fetcher = (u) => fetch(u))
   }
   if (!point) point = await nominatim(fetcher, `${city}, ${state}, Brasil`);
   if (!point) {
-    throw new GeoError("Não consegui localizar esse CEP no mapa. Tente o CEP de uma rua próxima.");
+    throw new GeoError(
+      "Não foi possível localizar esse CEP no mapa. Tente o CEP de uma rua próxima.",
+    );
   }
   return { cep, city, state, lat: point.lat, lng: point.lng };
 }

@@ -20,10 +20,10 @@ const EXT: Record<AttachmentType, string> = {
 
 export function validateAttachment(file: { type: string; size: number }): string | null {
   if (!(ATTACHMENT_TYPES as readonly string[]).includes(file.type)) {
-    return "Envie uma imagem (JPG, PNG ou WebP) ou um PDF";
+    return "Envie uma imagem (JPG, PNG ou WebP) ou um PDF.";
   }
-  if (file.size <= 0) return "Esse arquivo está vazio";
-  if (file.size > ATTACHMENT_MAX_BYTES) return "O arquivo precisa ter até 2 MB";
+  if (file.size <= 0) return "Esse arquivo está vazio.";
+  if (file.size > ATTACHMENT_MAX_BYTES) return "O arquivo precisa ter até 2 MB.";
   return null;
 }
 

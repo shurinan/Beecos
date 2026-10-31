@@ -69,7 +69,7 @@ describe("lookupCep", () => {
       "CEP não encontrado",
     );
     await expect(lookupCep("06010000", async () => json(500, null))).rejects.toThrow(
-      "Não consegui consultar",
+      "Não foi possível consultar",
     );
     await expect(
       lookupCep("06010000", async () => {

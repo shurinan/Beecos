@@ -1,6 +1,6 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { ArrowDown, ArrowLeft, FileText, Paperclip, Send, StickyNote, X, Zap } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
@@ -62,6 +62,8 @@ type Msg = {
   attachment_size: number | null;
   attachment_expired_at?: string | null;
 };
+/** Quantas mensagens o chat busca de cada vez. */
+const MSG_PAGE = 100;
 const MSG_COLUMNS =
   "id, sender_id, content, kind, created_at, attachment_path, attachment_name, attachment_type, attachment_size, attachment_expired_at";
 
@@ -210,6 +212,14 @@ function Chat({ id }: { id: string }) {
   const fileInput = useRef<HTMLInputElement>(null);
   const seen = useRef<Set<string> | null>(null); // mensagens que já estavam na tela: não animam
   const lastCount = useRef(0);
+  // Mensagens antigas chegam aos poucos (MSG_PAGE por vez), ao rolar até o topo.
+  const [older, setOlder] = useState<{ id: string; more: boolean }>({ id: "", more: false });
+  const hasOlder = older.id === id && older.more;
+  const setHasOlder = (more: boolean) => setOlder({ id, more });
+  const [loadingOlder, setLoadingOlder] = useState(false);
+  const keepScroll = useRef<{ height: number; top: number } | null>(null);
+  const prepended = useRef(false);
+  const openedAt = useRef(Date.now());
 
   const {
     data: conv,
@@ -239,15 +249,63 @@ function Chat({ id }: { id: string }) {
   } = useQuery({
     queryKey: ["msgs", id],
     queryFn: async () => {
+      // só as últimas MSG_PAGE; as antigas já carregadas continuam na tela
       const { data, error } = await supabase
         .from("messages")
         .select(MSG_COLUMNS)
         .eq("conversation_id", id)
-        .order("created_at");
+        .order("created_at", { ascending: false })
+        .limit(MSG_PAGE);
       if (error) throw error;
-      return (data ?? []) as Msg[];
+      const fresh = ((data ?? []) as Msg[]).reverse();
+      const prev = qc.getQueryData<Msg[]>(["msgs", id]) ?? [];
+      if (prev.length <= fresh.length) setHasOlder(fresh.length === MSG_PAGE);
+      const oldest = fresh[0]?.created_at;
+      const older =
+        oldest && fresh.length === MSG_PAGE ? prev.filter((m) => m.created_at < oldest) : [];
+      return [...older, ...fresh];
     },
   });
+
+  async function loadOlder() {
+    const oldest = allMsgs[0]?.created_at;
+    if (!hasOlder || loadingOlder || !oldest) return;
+    setLoadingOlder(true);
+    try {
+      const { data, error } = await supabase
+        .from("messages")
+        .select(MSG_COLUMNS)
+        .eq("conversation_id", id)
+        .lt("created_at", oldest)
+        .order("created_at", { ascending: false })
+        .limit(MSG_PAGE);
+      if (error) throw error;
+      const rows = ((data ?? []) as Msg[]).reverse();
+      setHasOlder(rows.length === MSG_PAGE);
+      if (rows.length === 0) return;
+      const el = scroller.current;
+      if (el) keepScroll.current = { height: el.scrollHeight, top: el.scrollTop };
+      prepended.current = true;
+      for (const m of rows) seen.current?.add(m.id);
+      qc.setQueryData<Msg[]>(["msgs", id], (old = []) => {
+        const have = new Set(old.map((m) => m.id));
+        return [...rows.filter((m) => !have.has(m.id)), ...old];
+      });
+    } catch {
+      toast.error("Não foi possível carregar as mensagens anteriores.");
+    } finally {
+      setLoadingOlder(false);
+    }
+  }
+
+  // ao colocar mensagens antigas em cima, a tela fica onde a pessoa estava
+  useLayoutEffect(() => {
+    const el = scroller.current;
+    const k = keepScroll.current;
+    if (!el || !k) return;
+    keepScroll.current = null;
+    el.scrollTop = el.scrollHeight - k.height + k.top;
+  }, [allMsgs]);
 
   // "excluir conversa" esconde o que veio antes da exclusão (só para mim)
   const prefs = useConvPrefs(userId);
@@ -394,6 +452,12 @@ function Chat({ id }: { id: string }) {
   // Desce até a última mensagem se eu enviei ou se já estava no fim; senão avisa que tem novidade.
   useEffect(() => {
     const total = msgs.length + pending.length;
+    if (prepended.current) {
+      // vieram mensagens antigas no topo: não desce para o fim
+      prepended.current = false;
+      lastCount.current = total;
+      return undefined;
+    }
     const grew = total > lastCount.current;
     const first = lastCount.current === 0;
     lastCount.current = total;
@@ -424,6 +488,9 @@ function Chat({ id }: { id: string }) {
 
   function onChatScroll() {
     if (atChatBottom()) setShowJump(false);
+    // só depois que a conversa já abriu no fim (o próprio posicionamento inicial também rola a tela)
+    if (Date.now() - openedAt.current > 1500 && (scroller.current?.scrollTop ?? 1) < 80)
+      void loadOlder();
   }
 
   function pickFile(f: File | undefined) {
@@ -459,7 +526,7 @@ function Chat({ id }: { id: string }) {
           ? LINK_MESSAGE
           : isBlockedTextError(error)
             ? BLOCKED_TEXT_MESSAGE
-            : "Mensagem não enviada",
+            : "Mensagem não enviada.",
     );
     return "fail";
   }
@@ -524,7 +591,7 @@ function Chat({ id }: { id: string }) {
         .upload(path, file, { contentType: file.type });
       if (up.error) {
         setSending(false);
-        return void toast.error("Não foi possível enviar o arquivo");
+        return void toast.error("Não foi possível enviar o arquivo.");
       }
       attachment = {
         attachment_path: path,
@@ -547,7 +614,7 @@ function Chat({ id }: { id: string }) {
             ? LINK_MESSAGE
             : isBlockedTextError(error)
               ? BLOCKED_TEXT_MESSAGE
-              : "Mensagem não enviada",
+              : "Mensagem não enviada.",
       );
       return; // o texto e o anexo continuam no campo para a pessoa corrigir
     }
@@ -672,6 +739,18 @@ function Chat({ id }: { id: string }) {
         )}
 
         <div className="space-y-2">
+          {hasOlder && !msgsError && (
+            <div className="flex justify-center">
+              <Button
+                variant="outline"
+                size="sm"
+                disabled={loadingOlder}
+                onClick={() => loadOlder()}
+              >
+                {loadingOlder ? "Carregando…" : "Ver mensagens anteriores"}
+              </Button>
+            </div>
+          )}
           {msgsError && (
             <div className="space-y-2 py-8 text-center text-sm">
               <p>Não foi possível carregar as mensagens.</p>

@@ -218,8 +218,7 @@ function Vagas() {
               Comunidades por profissão
             </p>
             <p className="text-sm text-muted-foreground">
-              Grupos de optometristas, enfermeiros, eletricistas e outros, com vagas rápidas para
-              quem é da área.
+              Grupos de pedreiros, eletricistas, diaristas e outros, com as vagas de cada área.
             </p>
           </div>
         </Link>

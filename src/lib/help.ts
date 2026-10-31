@@ -9,7 +9,7 @@ const HELP: Record<string, HelpEntry> = {
   voltar: { title: "Voltar", text: "Volta para a tela em que você estava antes." },
   "tema do app": {
     title: "Tema",
-    text: "Troca entre modo claro, escuro ou o do seu celular. Escolha o que cansa menos a vista.",
+    text: "Troca entre modo claro, escuro ou o do seu celular.",
   },
   "caixa de sugestões": {
     title: "Caixa de sugestões",
@@ -17,7 +17,7 @@ const HELP: Record<string, HelpEntry> = {
   },
   avisos: {
     title: "Avisos",
-    text: "Mostra vagas novas da sua área e outros avisos. O número vermelho são os que você ainda não viu.",
+    text: "Mostra vagas novas da sua área e outros avisos. O número vermelho mostra quantos você ainda não viu.",
   },
   entrar: { title: "Entrar", text: "Entre na sua conta ou crie uma. É rápido e grátis." },
   início: {
@@ -39,11 +39,11 @@ const HELP: Record<string, HelpEntry> = {
   vagas: { title: "Vagas", text: "Procure vagas e serviços por profissão, cidade ou palavra." },
   comunidade: {
     title: "Comunidade",
-    text: "Grupos por profissão, com as vagas rápidas da sua área em um feed, como numa rede social.",
+    text: "Grupos por profissão, com as vagas da sua área.",
   },
   conversas: {
     title: "Conversas",
-    text: "Suas conversas com quem se interessou pela vaga, ou pelas que você procurou.",
+    text: "Suas conversas sobre as vagas que você publicou e as que te interessaram.",
   },
   "meu perfil": {
     title: "Meu perfil",
@@ -80,7 +80,7 @@ const HELP: Record<string, HelpEntry> = {
   },
   denunciar: {
     title: "Denunciar",
-    text: "Avise a moderação sobre golpe ou abuso. As duas contas ficam 2 horas em vigilância, sem negociar, enquanto uma pessoa da moderação avalia.",
+    text: "Avise a moderação sobre golpe ou abuso. As duas contas ficam 2 horas em vigilância, sem negociar, enquanto a moderação avalia.",
   },
   planos: { title: "Planos", text: "Compare o plano Grátis com o Premium." },
   termos: { title: "Termos de uso", text: "As regras de uso do Beecos." },
@@ -127,7 +127,7 @@ export const FAQ: { q: string; a: string; id?: string }[] = [
   },
   {
     q: "Como denuncio algo?",
-    a: "Use o botão Denunciar na vaga ou no perfil. Quem denunciou e quem foi denunciado ficam 2 horas sem negociar, publicar vagas nem receber propostas, e um moderador avalia o caso. Se a denúncia for descartada, a vigilância acaba na hora.",
+    a: "Use o botão Denunciar na vaga ou no perfil. Quem denunciou e quem foi denunciado ficam 2 horas sem negociar, publicar vagas nem receber propostas, e a moderação avalia o caso. Se a denúncia for descartada, a vigilância acaba na hora.",
   },
   {
     q: "Como apago a minha conta e os meus dados?",

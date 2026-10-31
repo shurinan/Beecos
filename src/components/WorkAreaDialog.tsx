@@ -197,8 +197,8 @@ export function WorkAreaDialog({
               </select>
               {premium ? (
                 <p className="text-xs text-muted-foreground">
-                  Você recebe aviso de vagas até {total} km. As mais longe aparecem no feed com
-                  "pode ser longe".
+                  Você recebe aviso de vagas até {total} km. As mais longe aparecem com o selo “Pode
+                  ser longe”.
                 </p>
               ) : (
                 <p className="text-xs text-muted-foreground">

@@ -1,4 +1,4 @@
-// Apaga as fotos e PDFs do chat com mais de 48 horas. O texto da mensagem fica; a mensagem é marcada
+// Apaga as fotos e PDFs do chat com mais de 48 horas, e os documentos da verificação de quem excluiu a conta. O texto da mensagem fica; a mensagem é marcada
 // com attachment_expired_at para o app mostrar "arquivo expirado". Chamada de hora em hora pelo banco
 // (pg_cron). Não recebe nada de quem chama: só apaga o que já venceu, então pode ser chamada sem login.
 import { createClient } from "jsr:@supabase/supabase-js@2";
@@ -30,10 +30,27 @@ Deno.serve(async () => {
     const upd = await db
       .from("messages")
       .update({ attachment_expired_at: new Date().toISOString() })
-      .in("id", rows.map((r) => r.id));
+      .in(
+        "id",
+        rows.map((r) => r.id),
+      );
     if (upd.error) return new Response(`erro ao marcar: ${upd.error.message}`, { status: 500 });
     removed += rows.length;
     if (rows.length < BATCH) break;
   }
-  return Response.json({ removed });
+
+  // Documentos da verificação de contas excluídas (fora da guarda por denúncia): apaga de vez.
+  let identity = 0;
+  for (let round = 0; round < 5; round++) {
+    const { data: names, error } = await db.rpc("orphan_identity_files", { _limit: BATCH });
+    if (error) return new Response(`erro ao listar documentos: ${error.message}`, { status: 500 });
+    const list = (names ?? []) as string[];
+    if (list.length === 0) break;
+    const del = await db.storage.from("identity-docs").remove(list);
+    if (del.error)
+      return new Response(`erro ao apagar documentos: ${del.error.message}`, { status: 500 });
+    identity += list.length;
+    if (list.length < BATCH) break;
+  }
+  return Response.json({ removed, identity });
 });

@@ -42,12 +42,12 @@ export function ReportButton({
     setBusy(true);
     try {
       await sendReport(type, targetId, reason, details);
-      toast.success("Denúncia enviada. Um moderador vai avaliar.");
+      toast.success("Denúncia enviada. A moderação vai avaliar.");
       setOpen(false);
       setReason("");
       setDetails("");
     } catch (e) {
-      toast.error(reportErrorMessage(e) ?? "Não consegui enviar. Tente de novo.");
+      toast.error(reportErrorMessage(e) ?? "Não foi possível enviar. Tente de novo.");
     } finally {
       setBusy(false);
     }
@@ -67,8 +67,8 @@ export function ReportButton({
           <DialogHeader>
             <DialogTitle>Denunciar {what}</DialogTitle>
             <DialogDescription>
-              Uma pessoa da moderação vai avaliar. Nada é removido antes disso, e quem você denuncia
-              não é avisado de que foi você.
+              A moderação vai avaliar. Nada é removido antes disso, e quem você denuncia não é
+              avisado de que foi você.
             </DialogDescription>
           </DialogHeader>
           <RadioGroup value={reason} onValueChange={(v) => setReason(v as ReportReason)}>

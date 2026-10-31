@@ -42,7 +42,7 @@ export function channelErrorMessage(err: unknown): string | null {
   if (msg.includes("CANAL_SO_PREMIUM")) return "Criar canal é um recurso Premium.";
   if (msg.includes("LIMITE_CANAIS")) return `Você já tem ${MAX_CHANNELS} canais.`;
   if (msg.includes("LIMITE_OFICIOS_CANAL"))
-    return `Escolha no máximo ${MAX_CHANNEL_PROFESSIONS} trabalhos.`;
+    return `Escolha no máximo ${MAX_CHANNEL_PROFESSIONS} profissões.`;
   if (msg.includes("CANAL_INVALIDO")) return "Esse canal não está disponível para publicar.";
   return null;
 }

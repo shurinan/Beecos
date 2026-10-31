@@ -13,7 +13,7 @@ export type ReportTarget = "post" | "profile" | "channel";
 /** Frase simples para o erro do banco; null se não for um erro de denúncia. */
 export function reportErrorMessage(err: unknown): string | null {
   const msg = (err as { message?: string } | null)?.message ?? "";
-  if (msg.includes("DENUNCIA_REPETIDA")) return "Você já denunciou isso. Um moderador vai avaliar.";
+  if (msg.includes("DENUNCIA_REPETIDA")) return "Você já denunciou isso. A moderação vai avaliar.";
   if (msg.includes("DENUNCIA_PROPRIA")) return "Você não pode denunciar o seu próprio conteúdo.";
   if (msg.includes("DENUNCIAS_SUSPENSAS"))
     return "Suas últimas denúncias foram descartadas por má-fé. Você não pode denunciar por enquanto.";

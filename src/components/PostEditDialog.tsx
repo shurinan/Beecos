@@ -60,7 +60,7 @@ export function PostEditDialog({
       } catch (err) {
         setBusy(false);
         return void toast.error(
-          err instanceof GeoError ? err.message : "Não foi possível buscar o CEP",
+          err instanceof GeoError ? err.message : "Não foi possível buscar o CEP.",
         );
       }
     }

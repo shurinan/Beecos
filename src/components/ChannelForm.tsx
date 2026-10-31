@@ -43,7 +43,7 @@ export function ChannelForm({
     setPicked((cur) => {
       if (cur.includes(id)) return cur.filter((x) => x !== id);
       if (cur.length >= MAX_CHANNEL_PROFESSIONS) {
-        toast.error(`Escolha no máximo ${MAX_CHANNEL_PROFESSIONS} trabalhos.`);
+        toast.error(`Escolha no máximo ${MAX_CHANNEL_PROFESSIONS} profissões.`);
         return cur;
       }
       return [...cur, id];
@@ -77,7 +77,7 @@ export function ChannelForm({
         />
       </div>
       <fieldset className="space-y-2">
-        <legend className="font-bold">Quais trabalhos você procura?</legend>
+        <legend className="font-bold">Quais profissões você procura?</legend>
         <p className="text-xs text-muted-foreground">
           Ajuda as pessoas a encontrarem seu canal. Até {MAX_CHANNEL_PROFESSIONS}.
         </p>
@@ -122,8 +122,8 @@ export function ChannelForm({
           ))}
         </div>
         <p className="text-xs text-muted-foreground">
-          A vaga só vai ao canal se você escolher publicar nele, e também aparece na comunidade do
-          ofício. Você escolhe o prazo em cada vaga.
+          A vaga só vai ao canal se você escolher publicar nele, e também aparece na comunidade da
+          profissão. Você escolhe o prazo em cada vaga.
         </p>
       </fieldset>
       <Button type="submit" className="w-full" size="lg" loading={busy}>

@@ -1,3 +1,4 @@
+import { authErrorMessage } from "@/lib/auth-errors";
 import { createFileRoute, useNavigate, useRouter } from "@tanstack/react-router";
 import { takeDestination } from "@/lib/after-login";
 import { useEffect, useState } from "react";
@@ -106,7 +107,7 @@ function AuthPage() {
         if (error) throw error;
       }
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Algo deu errado");
+      toast.error(authErrorMessage(err, mode));
     } finally {
       setLoading(false);
     }
@@ -116,7 +117,7 @@ function AuthPage() {
     const r = await lovable.auth.signInWithOAuth("google", {
       redirect_uri: window.location.origin,
     });
-    if (r.error) toast.error("Não foi possível entrar com Google");
+    if (r.error) toast.error("Não foi possível entrar com Google.");
   }
 
   return (

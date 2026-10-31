@@ -62,16 +62,16 @@ export const MAX_DESCRIPTION = 600;
 
 /** Primeiro problema que impede de publicar, em palavras simples; nulo se está tudo certo. */
 export function draftError(d: PostDraft, minVacancies = 1): string | null {
-  if (!d.title.trim()) return "Escreva o título";
+  if (!d.title.trim()) return "Escreva o título.";
   if (!d.pick.professionId && !d.pick.other) {
-    return 'Escolha a profissão, ou "Outro" se ela não estiver na lista';
+    return 'Escolha a profissão, ou "Outro" se ela não estiver na lista.';
   }
   if (d.kind === "job" && !d.place && !isValidCep(d.cep)) {
-    return "Informe o CEP de onde o serviço será feito";
+    return "Informe o CEP de onde o serviço será feito.";
   }
-  if (d.cep.trim() !== "" && !isValidCep(d.cep)) return "O CEP tem 8 números";
+  if (d.cep.trim() !== "" && !isValidCep(d.cep)) return "O CEP tem 8 números.";
   if (d.kind === "job" && d.vacancies < Math.max(1, minVacancies)) {
-    return `Já há ${minVacancies} ${minVacancies === 1 ? "vaga ocupada" : "vagas ocupadas"}: não dá para ter menos`;
+    return `Já há ${minVacancies} ${minVacancies === 1 ? "vaga ocupada" : "vagas ocupadas"}: não dá para ter menos.`;
   }
   return null;
 }

@@ -7,7 +7,7 @@ const GUIDES: Guide[] = [
   {
     id: "obras-e-reformas",
     title: "Obras e reformas",
-    text: "Pedreiro, pintor, azulejista, gesseiro e ajudante. Serviços de obra variam muito de tamanho, então combinar bem o que será feito evita discussão depois.",
+    text: "Pedreiro, pintor, azulejista, gesseiro e ajudante. ",
     tips: [
       "Descreva o serviço com medidas aproximadas e peça fotos de trabalhos anteriores.",
       "Combine o que está incluso: material, limpeza final e prazo.",
@@ -17,7 +17,7 @@ const GUIDES: Guide[] = [
   {
     id: "eletrica",
     title: "Elétrica",
-    text: "Instalação de tomadas, chuveiros, ventiladores e luminárias, troca de disjuntor e reparos. Mexer na parte elétrica exige cuidado e conhecimento.",
+    text: "Instalação de tomadas, chuveiros, ventiladores e luminárias, troca de disjuntor e reparos. ",
     tips: [
       "Pergunte se o profissional tem experiência com o tipo de instalação que você precisa.",
       "Desligue o disjuntor geral antes de qualquer visita e não improvise com fios expostos.",
@@ -27,7 +27,7 @@ const GUIDES: Guide[] = [
   {
     id: "encanamento",
     title: "Encanamento",
-    text: "Vazamentos, desentupimento, troca de torneiras, sifões e registros, caixa d'água. Problema de água costuma ser urgente.",
+    text: "Vazamentos, desentupimento, troca de torneiras, sifões e registros, caixa d'água. ",
     tips: [
       "Feche o registro geral enquanto espera o profissional, se houver vazamento.",
       "Peça para ver o defeito antes de aprovar a troca de peças.",

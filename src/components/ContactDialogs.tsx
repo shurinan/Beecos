@@ -107,8 +107,8 @@ export function PhoneDialog({
   async function submit(e: React.FormEvent) {
     e.preventDefault();
     const errs: Partial<Record<"number" | "methods", string>> = {};
-    if (!isValidPhone(form.number)) errs.number = "Digite um telefone válido, com DDD";
-    if (form.methods.length === 0) errs.methods = "Marque pelo menos uma forma de contato";
+    if (!isValidPhone(form.number)) errs.number = "Digite um telefone válido, com DDD.";
+    if (form.methods.length === 0) errs.methods = "Marque pelo menos uma forma de contato.";
     setErrors(errs);
     if (Object.keys(errs).length) return;
     setSaving(true);
@@ -232,11 +232,11 @@ export function AddressDialog({
     e.preventDefault();
     const errs: Partial<Record<"recipient" | "street" | "city" | "state" | "postal_code", string>> =
       {};
-    if (!form.recipient.trim()) errs.recipient = "Escreva o destinatário";
-    if (!form.street.trim()) errs.street = "Escreva a rua e o número";
-    if (!form.city.trim()) errs.city = "Escreva a cidade";
-    if (!form.state) errs.state = "Escolha o estado";
-    if (!isValidCep(form.postal_code)) errs.postal_code = "O CEP tem 8 números";
+    if (!form.recipient.trim()) errs.recipient = "Escreva o destinatário.";
+    if (!form.street.trim()) errs.street = "Escreva a rua e o número.";
+    if (!form.city.trim()) errs.city = "Escreva a cidade.";
+    if (!form.state) errs.state = "Escolha o estado.";
+    if (!isValidCep(form.postal_code)) errs.postal_code = "O CEP tem 8 números.";
     setErrors(errs);
     if (Object.keys(errs).length) return;
     setSaving(true);
@@ -365,9 +365,9 @@ export function PersonalDialog({
   async function submit(e: React.FormEvent) {
     e.preventDefault();
     const errs: Partial<Record<"preferred_name" | "birth_date", string>> = {};
-    if (!form.preferred_name.trim()) errs.preferred_name = "Escreva como quer ser chamado";
+    if (!form.preferred_name.trim()) errs.preferred_name = "Escreva como quer ser chamado.";
     if (form.birth_date && !isValidBirthDate(form.birth_date))
-      errs.birth_date = "Data de nascimento inválida";
+      errs.birth_date = "Data de nascimento inválida.";
     setErrors(errs);
     if (Object.keys(errs).length) return;
     setSaving(true);
@@ -395,10 +395,6 @@ export function PersonalDialog({
         </DialogHeader>
         <form onSubmit={submit} className="space-y-3" noValidate>
           <div>
-            <Label htmlFor="pe-last">Último sobrenome</Label>
-            <Input id="pe-last" maxLength={60} value={form.last_name} onChange={set("last_name")} />
-          </div>
-          <div>
             <Label htmlFor="pe-first">Primeiro nome</Label>
             <Input
               id="pe-first"
@@ -415,6 +411,10 @@ export function PersonalDialog({
               value={form.other_names}
               onChange={set("other_names")}
             />
+          </div>
+          <div>
+            <Label htmlFor="pe-last">Último sobrenome</Label>
+            <Input id="pe-last" maxLength={60} value={form.last_name} onChange={set("last_name")} />
           </div>
           <div>
             <Label htmlFor="pe-suffix">Sufixo</Label>
@@ -464,9 +464,9 @@ export function EmailDialog({
     e.preventDefault();
     const email = form.email.trim();
     const errs: Partial<Record<"email", string>> = {};
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) errs.email = "Digite um e-mail válido";
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) errs.email = "Digite um e-mail válido.";
     else if (email.toLowerCase() === current.toLowerCase())
-      errs.email = "Esse já é o e-mail da conta";
+      errs.email = "Esse já é o e-mail da conta.";
     setErrors(errs);
     if (Object.keys(errs).length) return;
     setSaving(true);
