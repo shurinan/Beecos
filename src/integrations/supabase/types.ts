@@ -1768,6 +1768,7 @@ export type Database = {
         Returns: string[]
       }
       mark_verification_files_deleted: { Args: { _id: string }; Returns: undefined }
+      verification_address: { Args: { _id: string }; Returns: Json }
       pending_verifications_count: { Args: never; Returns: number }
       is_moderator: { Args: never; Returns: boolean }
       is_on_hold: { Args: { _u: string }; Returns: boolean }

@@ -66,6 +66,43 @@ function Shot({ path, label }: { path: string; label: string }) {
   );
 }
 
+type Addr = {
+  street: string;
+  neighborhood: string;
+  city: string;
+  state: string;
+  postal_code: string;
+};
+
+/** Endereço cadastrado, para comparar com o comprovante. Cada consulta fica registrada. */
+function RegisteredAddress({ id }: { id: string }) {
+  const { data, isLoading } = useQuery({
+    queryKey: ["verif-address", id],
+    staleTime: Infinity,
+    queryFn: async () => {
+      const { data, error } = await supabase.rpc("verification_address", { _id: id });
+      if (error) throw error;
+      return (data as Addr | null) ?? null;
+    },
+  });
+  if (isLoading)
+    return <p className="text-xs text-muted-foreground">Buscando endereço cadastrado…</p>;
+  if (!data)
+    return (
+      <p className="text-sm font-semibold">
+        A pessoa não cadastrou endereço: não dá para marcar o Endereço como conferido.
+      </p>
+    );
+  const cep = `${data.postal_code.slice(0, 5)}-${data.postal_code.slice(5)}`;
+  return (
+    <p className="rounded-lg border-2 border-foreground bg-accent p-2 text-sm">
+      <span className="block text-xs font-bold uppercase">Endereço cadastrado</span>
+      {data.street}
+      {data.neighborhood ? `, ${data.neighborhood}` : ""} · {data.city}-{data.state} · CEP {cep}
+    </p>
+  );
+}
+
 function Case({ row, onDone }: { row: Row; onDone: () => void }) {
   const [reason, setReason] = useState("");
   const [addressOk, setAddressOk] = useState(false);
@@ -107,6 +144,7 @@ function Case({ row, onDone }: { row: Row; onDone: () => void }) {
           <Shot path={row.address_proof_path} label="Comprovante de endereço" />
         )}
       </div>
+      {row.address_proof_path && <RegisteredAddress id={row.id} />}
       {row.address_proof_path && (
         <div className="flex items-center gap-2">
           <Checkbox
