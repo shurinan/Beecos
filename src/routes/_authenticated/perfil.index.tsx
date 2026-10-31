@@ -1,6 +1,7 @@
 import { usernameErrorMessage } from "@/lib/username";
 import { postGaps } from "@/lib/post-gaps";
 import { PrivacyCard } from "@/components/PrivacyCard";
+import { SECTIONS, SettingsMenu, type Section } from "@/components/SettingsMenu";
 import { postParams, profileParam } from "@/lib/urls";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
@@ -46,6 +47,9 @@ import {
 
 export const Route = createFileRoute("/_authenticated/perfil/")({
   staticData: { sitemap: false },
+  validateSearch: (q: Record<string, unknown>): { secao?: Section | undefined } => ({
+    secao: SECTIONS.find((s) => s === q["secao"]),
+  }),
   head: () => ({
     meta: [
       { title: "Meu perfil — Beecos" },
@@ -59,6 +63,7 @@ export const Route = createFileRoute("/_authenticated/perfil/")({
 
 function Painel() {
   const { userId } = Route.useRouteContext();
+  const { secao } = Route.useSearch();
   const qc = useQueryClient();
   const navigate = useNavigate();
 
@@ -333,379 +338,436 @@ function Painel() {
     );
   }
 
+  const section: Section = secao ?? "perfil";
+  const titles: Record<Section, string> = {
+    perfil: "Perfil",
+    habilidades: "Habilidades e experiência",
+    publicacoes: "Minhas publicações",
+    plano: "Plano e pagamento",
+    privacidade: "Privacidade e dados",
+  };
+
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <h1 className="text-3xl">Visão geral</h1>
-        <Link
-          to="/perfil/$slug"
-          params={{ slug: profileParam({ id: userId, slug: data?.profile?.slug }) }}
-          search={{ post: undefined }}
-          className="text-sm font-semibold underline"
-        >
-          Ver como os outros veem
-        </Link>
-      </div>
-
-      <ModeratorShortcut />
-
-      <section className="block-card space-y-3 p-5">
+    <div className="lg:grid lg:grid-cols-[320px_minmax(0,1fr)] lg:gap-10">
+      <SettingsMenu
+        current={section}
+        name={profileFields.full_name}
+        headline={profileFields.headline}
+        avatarPath={data?.profile?.avatar_path}
+        onSignOut={signOut}
+      />
+      <div className="min-w-0 space-y-6 lg:max-w-2xl">
         <div className="flex items-center justify-between">
-          <h2 className="text-xl">Seu plano</h2>
-          <span
-            className={
-              "rounded px-2 py-1 text-xs font-bold uppercase " +
-              (usage?.premium ? "bg-primary text-primary-foreground" : "bg-muted")
-            }
+          <h1 className="text-3xl">{titles[section]}</h1>
+          <Link
+            to="/perfil/$slug"
+            params={{ slug: profileParam({ id: userId, slug: data?.profile?.slug }) }}
+            search={{ post: undefined }}
+            className="text-sm font-semibold underline"
           >
-            {usage?.premium ? "Premium" : "Grátis"}
-          </span>
+            Ver como os outros veem
+          </Link>
         </div>
-        {usage?.premium ? (
-          <div className="space-y-2">
-            <p>Vagas e conversas ilimitadas.</p>
-            <p className="text-sm text-muted-foreground">
-              {usage.activeUntil
-                ? `Premium até ${new Date(usage.activeUntil).toLocaleDateString("pt-BR")}.`
-                : "Premium sem data para terminar."}
-            </p>
-            {usage.annual ? (
-              <div className="space-y-2">
-                <p role="status" className="rounded border-2 border-foreground/30 p-2 text-sm">
-                  Plano anual: não renova sozinho, então nada é cobrado de novo.
-                </p>
-                {usage.firstPaidAt &&
-                Date.now() - new Date(usage.firstPaidAt).getTime() <= 7 * 86400_000 ? (
-                  <ConfirmButton
-                    variant="outline"
-                    size="sm"
-                    title="Desistir do plano anual?"
-                    description="Você está dentro dos 7 dias: o valor pago é devolvido e o Premium termina agora."
-                    confirmLabel="Desistir e receber de volta"
-                    onConfirm={async () => {
-                      const r = await cancelSubscription();
-                      if ("error" in r) return void toast.error(r.error);
-                      toast.success("Pronto. O valor será devolvido pelo Asaas.");
-                      void qc.invalidateQueries({ queryKey: ["plan", userId] });
-                    }}
-                  >
-                    Desistir da compra (7 dias)
-                  </ConfirmButton>
-                ) : usage.activeUntil &&
-                  new Date(usage.activeUntil).getTime() - Date.now() <= 30 * 86400_000 ? (
-                  <CheckoutButton kind="annual" size="sm" variant="outline">
-                    Renovar plano anual
-                  </CheckoutButton>
-                ) : null}
-              </div>
-            ) : usage.cancelRequestedAt ? (
-              <p role="status" className="rounded border-2 border-foreground/30 p-2 text-sm">
-                Cancelamento pedido em{" "}
-                {new Date(usage.cancelRequestedAt).toLocaleDateString("pt-BR")}. O Premium continua
-                até o fim do período pago e não renova.
-              </p>
-            ) : (
-              <ConfirmButton
-                variant="outline"
-                size="sm"
-                title="Cancelar a assinatura Premium?"
-                description="O Premium continua até o fim do período já pago e não renova. Se você assinou há menos de 7 dias, o valor pago é devolvido."
-                confirmLabel="Cancelar assinatura"
-                onConfirm={async () => {
-                  const r = await cancelSubscription();
-                  if ("error" in r) return void toast.error(r.error);
-                  toast.success(
-                    r.refunded
-                      ? "Assinatura cancelada. O valor será devolvido pelo Asaas."
-                      : "Cancelamento pedido.",
-                  );
-                  void qc.invalidateQueries({ queryKey: ["plan", userId] });
-                }}
-              >
-                Cancelar assinatura
-              </ConfirmButton>
-            )}
-          </div>
-        ) : (
+
+        <ModeratorShortcut />
+
+        {section === "perfil" && (
           <>
-            <p className="text-sm">
-              Vagas este mês:{" "}
-              <b>
-                {usage?.jobs ?? 0}/{FREE_JOBS_PER_MONTH}
-              </b>{" "}
-              · Novas conversas:{" "}
-              <b>
-                {usage?.chats ?? 0}/{FREE_CHATS_PER_MONTH}
-              </b>
-            </p>
-            <div className="rounded-lg border-2 border-foreground bg-accent p-3">
-              <p className="font-display">Premium — {PREMIUM_PRICE}</p>
-              <p className="text-sm">Publique vagas sem limite e converse com quem quiser.</p>
-              <CheckoutButton kind="premium" className="mt-2 w-full">
-                Quero ser Premium
-              </CheckoutButton>
-              <Link to="/plano" className="mt-2 block text-center text-sm font-bold underline">
-                Comparar Grátis × Premium
-              </Link>
-            </div>
+            <section className="block-card p-5">
+              <div className="flex items-start gap-4">
+                <div className="flex shrink-0 flex-col items-center gap-1">
+                  <Avatar
+                    name={profileFields.full_name}
+                    path={data?.profile?.avatar_path}
+                    size={80}
+                  />
+                  <Link to="/perfil/contato" className="text-xs font-bold underline">
+                    {data?.profile?.avatar_path ? "Trocar foto" : "Adicionar foto"}
+                  </Link>
+                </div>
+                <div className="min-w-0 flex-1">
+                  <h2 className="truncate text-2xl leading-tight">
+                    {profileFields.username ? `@${profileFields.username}` : "Escolha seu @usuário"}
+                  </h2>
+                  <p className="truncate font-semibold">{profileFields.full_name || "Sem nome"}</p>
+                  {profileFields.headline && (
+                    <p className="font-semibold">{profileFields.headline}</p>
+                  )}
+                  {profileFields.city && (
+                    <p className="text-sm text-muted-foreground">{profileFields.city}</p>
+                  )}
+                  {profileFields.available && (
+                    <p className="mt-2 inline-block rounded bg-secondary px-2 py-1 text-xs font-bold uppercase text-secondary-foreground">
+                      ● Disponível para trabalhar
+                    </p>
+                  )}
+                </div>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setDialog("profile")}
+                >
+                  <Pencil /> Editar
+                </Button>
+              </div>
+            </section>
+
+            <section className="block-card space-y-3 p-5">
+              <div className="flex items-center justify-between gap-2">
+                <h2 className="text-xl">Informações de contato</h2>
+                <Button asChild variant="outline" size="sm">
+                  <Link to="/perfil/contato">
+                    <Pencil /> Editar
+                  </Link>
+                </Button>
+              </div>
+              <p className="text-xs text-muted-foreground">Privadas: só você vê.</p>
+              <dl className="grid gap-3 sm:grid-cols-2">
+                <div>
+                  <dt className="flex items-center gap-1.5 text-sm text-muted-foreground">
+                    <Mail className="h-4 w-4" /> E-mail
+                  </dt>
+                  <dd className="break-all font-semibold">{email || "—"}</dd>
+                </div>
+                <div>
+                  <dt className="flex items-center gap-1.5 text-sm text-muted-foreground">
+                    <Smartphone className="h-4 w-4" /> Telefone
+                  </dt>
+                  <dd className="font-semibold">{data?.phone || "Não informado"}</dd>
+                </div>
+                <div className="sm:col-span-2">
+                  <dt className="flex items-center gap-1.5 text-sm text-muted-foreground">
+                    <MapPin className="h-4 w-4" /> Endereço
+                  </dt>
+                  <dd className="font-semibold">
+                    {data?.address
+                      ? addressLines(data.address).slice(1).join(", ")
+                      : "Não informado"}
+                  </dd>
+                </div>
+              </dl>
+            </section>
+
+            <section className="block-card space-y-2 p-5">
+              <h2 className="text-xl">Onde você atua</h2>
+              {workArea ? (
+                <p className="text-sm">
+                  <span className="font-semibold">
+                    {workArea.city} - {workArea.state}
+                  </span>{" "}
+                  (CEP {formatCep(workArea.postal_code)}). Aviso de vagas até{" "}
+                  {20 + (usage?.premium ? workArea.expanded_km : 0)} km.
+                </p>
+              ) : (
+                <p className="text-sm text-muted-foreground">
+                  Informe o seu CEP para ver a distância das vagas e, em breve, receber aviso das
+                  que surgirem perto de você.
+                </p>
+              )}
+              <button
+                type="button"
+                className="text-sm font-bold underline"
+                onClick={() => setAreaOpen(true)}
+              >
+                {workArea ? "Alterar" : "Informar o CEP"}
+              </button>
+            </section>
           </>
         )}
-      </section>
-
-      <section className="block-card p-5">
-        <div className="flex items-start gap-4">
-          <div className="flex shrink-0 flex-col items-center gap-1">
-            <Avatar name={profileFields.full_name} path={data?.profile?.avatar_path} size={80} />
-            <Link to="/perfil/contato" className="text-xs font-bold underline">
-              {data?.profile?.avatar_path ? "Trocar foto" : "Adicionar foto"}
-            </Link>
-          </div>
-          <div className="min-w-0 flex-1">
-            <h2 className="truncate text-2xl leading-tight">
-              {profileFields.username ? `@${profileFields.username}` : "Escolha seu @usuário"}
-            </h2>
-            <p className="truncate font-semibold">{profileFields.full_name || "Sem nome"}</p>
-            {profileFields.headline && <p className="font-semibold">{profileFields.headline}</p>}
-            {profileFields.city && (
-              <p className="text-sm text-muted-foreground">{profileFields.city}</p>
-            )}
-            {profileFields.available && (
-              <p className="mt-2 inline-block rounded bg-secondary px-2 py-1 text-xs font-bold uppercase text-secondary-foreground">
-                ● Disponível para trabalhar
-              </p>
-            )}
-          </div>
-          <Button type="button" variant="outline" size="sm" onClick={() => setDialog("profile")}>
-            <Pencil /> Editar
-          </Button>
-        </div>
-      </section>
-
-      <section className="block-card space-y-3 p-5">
-        <div className="flex items-center justify-between gap-2">
-          <h2 className="text-xl">Informações de contato</h2>
-          <Button asChild variant="outline" size="sm">
-            <Link to="/perfil/contato">
-              <Pencil /> Editar
-            </Link>
-          </Button>
-        </div>
-        <p className="text-xs text-muted-foreground">Privadas: só você vê.</p>
-        <dl className="grid gap-3 sm:grid-cols-2">
-          <div>
-            <dt className="flex items-center gap-1.5 text-sm text-muted-foreground">
-              <Mail className="h-4 w-4" /> E-mail
-            </dt>
-            <dd className="break-all font-semibold">{email || "—"}</dd>
-          </div>
-          <div>
-            <dt className="flex items-center gap-1.5 text-sm text-muted-foreground">
-              <Smartphone className="h-4 w-4" /> Telefone
-            </dt>
-            <dd className="font-semibold">{data?.phone || "Não informado"}</dd>
-          </div>
-          <div className="sm:col-span-2">
-            <dt className="flex items-center gap-1.5 text-sm text-muted-foreground">
-              <MapPin className="h-4 w-4" /> Endereço
-            </dt>
-            <dd className="font-semibold">
-              {data?.address ? addressLines(data.address).slice(1).join(", ") : "Não informado"}
-            </dd>
-          </div>
-        </dl>
-      </section>
-
-      <section className="block-card space-y-2 p-5">
-        <h2 className="text-xl">Onde você atua</h2>
-        {workArea ? (
-          <p className="text-sm">
-            <span className="font-semibold">
-              {workArea.city} - {workArea.state}
-            </span>{" "}
-            (CEP {formatCep(workArea.postal_code)}). Aviso de vagas até{" "}
-            {20 + (usage?.premium ? workArea.expanded_km : 0)} km.
-          </p>
-        ) : (
-          <p className="text-sm text-muted-foreground">
-            Informe o seu CEP para ver a distância das vagas e, em breve, receber aviso das que
-            surgirem perto de você.
-          </p>
-        )}
-        <button
-          type="button"
-          className="text-sm font-bold underline"
-          onClick={() => setAreaOpen(true)}
-        >
-          {workArea ? "Alterar" : "Informar o CEP"}
-        </button>
-      </section>
-
-      <section className="block-card space-y-3 p-5">
-        <h2 className="text-xl">Habilidades e experiência</h2>
-        <SelfDeclared />
-        {data?.skills.length === 0 && (
-          <p className="text-sm text-muted-foreground">
-            Você ainda não adicionou habilidades. Elas aparecem no seu perfil e ajudam quem contrata
-            a te encontrar.
-          </p>
-        )}
-        <div className="space-y-2">
-          {data?.skills.map((sk) => (
-            <SkillCard
-              key={sk.skill}
-              skill={sk}
-              services={(sk.service_ids ?? []).flatMap(
-                (id) => catalog?.services.get(id)?.name ?? [],
-              )}
-              actions={
-                <span className="flex shrink-0 gap-1">
-                  <button
-                    type="button"
-                    aria-label={`Editar ${sk.skill}`}
-                    className="p-1"
-                    onClick={() => setSkillDialog({ open: true, initial: sk })}
-                  >
-                    <Pencil className="h-4 w-4" />
-                  </button>
-                  <button
-                    type="button"
-                    aria-label={`Remover ${sk.skill}`}
-                    className="p-1"
-                    onClick={() => deleteSkill(sk.skill)}
-                  >
-                    <Trash2 className="h-4 w-4" />
-                  </button>
-                </span>
-              }
-            />
-          ))}
-        </div>
-        <button
-          type="button"
-          className="text-sm font-bold underline"
-          onClick={() => setSkillDialog({ open: true, initial: null })}
-        >
-          {data?.skills.length ? "Adicionar outra habilidade" : "Adicionar habilidade"}
-        </button>
-      </section>
-
-      <EditProfileDialog
-        open={dialog === "profile"}
-        onOpenChange={(open) => setDialog(open ? "profile" : null)}
-        initial={profileFields}
-        onSave={saveProfile}
-        checkUsername={checkUsername}
-      />
-      <PostEditDialog
-        open={editOpen}
-        onOpenChange={setEditOpen}
-        initial={editing?.draft ?? null}
-        catalog={catalog}
-        minVacancies={editing?.minVacancies ?? 0}
-        onSave={saveEdit}
-        premium={!!usage?.premium}
-      />
-      <WorkAreaDialog
-        open={areaOpen}
-        onOpenChange={setAreaOpen}
-        initial={workArea ?? null}
-        premium={!!usage?.premium}
-        suggestedCep={data?.address?.postal_code}
-        onSave={saveWorkArea}
-        onUpgrade={() => void navigate({ to: "/plano" })}
-      />
-      <SkillDialog
-        open={skillDialog.open}
-        onOpenChange={(open) => setSkillDialog((d) => ({ ...d, open }))}
-        initial={skillDialog.initial}
-        catalog={catalog}
-        existing={(data?.skills ?? []).map((x) => x.skill)}
-        onSave={saveSkill}
-      />
-
-      <section className="space-y-2">
-        <div className="flex items-center justify-between gap-2">
-          <h2 className="text-xl">Minhas publicações</h2>
-          <Button asChild size="sm">
-            <Link to="/publicar" search={{ tipo: "contratar" }}>
-              <Plus /> Nova publicação
-            </Link>
-          </Button>
-        </div>
-        {data?.posts.length === 0 && (
-          <p className="text-muted-foreground">Você ainda não publicou nada.</p>
-        )}
-        {data?.posts.map((p) => {
-          const st = slots[p.id];
-          const gaps = located
-            ? postGaps({
-                kind: p.kind,
-                profession_id: p.profession_id,
-                description: p.description,
-                hasLocation: located.has(p.id),
-              })
-            : [];
-          return (
-            <div
-              key={p.id}
-              className="flex flex-wrap items-center gap-x-3 gap-y-2 rounded-lg border-2 border-foreground p-3"
-            >
-              <span className="text-xs font-bold uppercase">{KIND_LABEL[p.kind as PostKind]}</span>
-              <span className="min-w-0 flex-1 basis-40 truncate font-semibold">{p.title}</span>
-              {p.kind === "job" && st && (
-                <span className="text-xs text-muted-foreground">
-                  {st.taken} de {st.vacancies} {st.vacancies === 1 ? "vaga" : "vagas"}
-                </span>
-              )}
-              {gaps.length > 0 && (
-                <p
-                  role="note"
-                  className="basis-full rounded border border-destructive/60 bg-destructive/10 px-2 py-1 text-xs"
+        {section === "plano" && (
+          <>
+            <section className="block-card space-y-3 p-5">
+              <div className="flex items-center justify-between">
+                <h2 className="text-xl">Seu plano</h2>
+                <span
+                  className={
+                    "rounded px-2 py-1 text-xs font-bold uppercase " +
+                    (usage?.premium ? "bg-primary text-primary-foreground" : "bg-muted")
+                  }
                 >
-                  <b>Faltam informações:</b> {gaps.join("; ")}. Toque em Editar para completar.
+                  {usage?.premium ? "Premium" : "Grátis"}
+                </span>
+              </div>
+              {usage?.premium ? (
+                <div className="space-y-2">
+                  <p>Vagas e conversas ilimitadas.</p>
+                  <p className="text-sm text-muted-foreground">
+                    {usage.activeUntil
+                      ? `Premium até ${new Date(usage.activeUntil).toLocaleDateString("pt-BR")}.`
+                      : "Premium sem data para terminar."}
+                  </p>
+                  {usage.annual ? (
+                    <div className="space-y-2">
+                      <p
+                        role="status"
+                        className="rounded border-2 border-foreground/30 p-2 text-sm"
+                      >
+                        Plano anual: não renova sozinho, então nada é cobrado de novo.
+                      </p>
+                      {usage.firstPaidAt &&
+                      Date.now() - new Date(usage.firstPaidAt).getTime() <= 7 * 86400_000 ? (
+                        <ConfirmButton
+                          variant="outline"
+                          size="sm"
+                          title="Desistir do plano anual?"
+                          description="Você está dentro dos 7 dias: o valor pago é devolvido e o Premium termina agora."
+                          confirmLabel="Desistir e receber de volta"
+                          onConfirm={async () => {
+                            const r = await cancelSubscription();
+                            if ("error" in r) return void toast.error(r.error);
+                            toast.success("Pronto. O valor será devolvido pelo Asaas.");
+                            void qc.invalidateQueries({ queryKey: ["plan", userId] });
+                          }}
+                        >
+                          Desistir da compra (7 dias)
+                        </ConfirmButton>
+                      ) : usage.activeUntil &&
+                        new Date(usage.activeUntil).getTime() - Date.now() <= 30 * 86400_000 ? (
+                        <CheckoutButton kind="annual" size="sm" variant="outline">
+                          Renovar plano anual
+                        </CheckoutButton>
+                      ) : null}
+                    </div>
+                  ) : usage.cancelRequestedAt ? (
+                    <p role="status" className="rounded border-2 border-foreground/30 p-2 text-sm">
+                      Cancelamento pedido em{" "}
+                      {new Date(usage.cancelRequestedAt).toLocaleDateString("pt-BR")}. O Premium
+                      continua até o fim do período pago e não renova.
+                    </p>
+                  ) : (
+                    <ConfirmButton
+                      variant="outline"
+                      size="sm"
+                      title="Cancelar a assinatura Premium?"
+                      description="O Premium continua até o fim do período já pago e não renova. Se você assinou há menos de 7 dias, o valor pago é devolvido."
+                      confirmLabel="Cancelar assinatura"
+                      onConfirm={async () => {
+                        const r = await cancelSubscription();
+                        if ("error" in r) return void toast.error(r.error);
+                        toast.success(
+                          r.refunded
+                            ? "Assinatura cancelada. O valor será devolvido pelo Asaas."
+                            : "Cancelamento pedido.",
+                        );
+                        void qc.invalidateQueries({ queryKey: ["plan", userId] });
+                      }}
+                    >
+                      Cancelar assinatura
+                    </ConfirmButton>
+                  )}
+                </div>
+              ) : (
+                <>
+                  <p className="text-sm">
+                    Vagas este mês:{" "}
+                    <b>
+                      {usage?.jobs ?? 0}/{FREE_JOBS_PER_MONTH}
+                    </b>{" "}
+                    · Novas conversas:{" "}
+                    <b>
+                      {usage?.chats ?? 0}/{FREE_CHATS_PER_MONTH}
+                    </b>
+                  </p>
+                  <div className="rounded-lg border-2 border-foreground bg-accent p-3">
+                    <p className="font-display">Premium — {PREMIUM_PRICE}</p>
+                    <p className="text-sm">Publique vagas sem limite e converse com quem quiser.</p>
+                    <CheckoutButton kind="premium" className="mt-2 w-full">
+                      Quero ser Premium
+                    </CheckoutButton>
+                    <Link
+                      to="/plano"
+                      className="mt-2 block text-center text-sm font-bold underline"
+                    >
+                      Comparar Grátis × Premium
+                    </Link>
+                  </div>
+                </>
+              )}
+            </section>
+          </>
+        )}
+        {section === "habilidades" && (
+          <>
+            <section className="block-card space-y-3 p-5">
+              <h2 className="text-xl">Habilidades e experiência</h2>
+              <SelfDeclared />
+              {data?.skills.length === 0 && (
+                <p className="text-sm text-muted-foreground">
+                  Você ainda não adicionou habilidades. Elas aparecem no seu perfil e ajudam quem
+                  contrata a te encontrar.
                 </p>
               )}
-              <Button asChild size="sm" variant="outline">
-                <Link
-                  to="/vagas/$profissao/$codigo/interessados"
-                  params={postParams({ slug: p.slug, professions: p.professions })}
-                >
-                  <Users /> Interessados
-                </Link>
-              </Button>
-              <Button
-                type="button"
-                size="sm"
-                variant="outline"
-                aria-label={`Editar ${p.title}`}
-                onClick={() => startEdit(p)}
-              >
-                <Pencil /> Editar
-              </Button>
+              <div className="space-y-2">
+                {data?.skills.map((sk) => (
+                  <SkillCard
+                    key={sk.skill}
+                    skill={sk}
+                    services={(sk.service_ids ?? []).flatMap(
+                      (id) => catalog?.services.get(id)?.name ?? [],
+                    )}
+                    actions={
+                      <span className="flex shrink-0 gap-1">
+                        <button
+                          type="button"
+                          aria-label={`Editar ${sk.skill}`}
+                          className="p-1"
+                          onClick={() => setSkillDialog({ open: true, initial: sk })}
+                        >
+                          <Pencil className="h-4 w-4" />
+                        </button>
+                        <button
+                          type="button"
+                          aria-label={`Remover ${sk.skill}`}
+                          className="p-1"
+                          onClick={() => deleteSkill(sk.skill)}
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </button>
+                      </span>
+                    }
+                  />
+                ))}
+              </div>
               <button
-                aria-label={`Excluir ${p.title}`}
-                className="-m-2 p-2"
-                onClick={() => deletePost(p.id)}
+                type="button"
+                className="text-sm font-bold underline"
+                onClick={() => setSkillDialog({ open: true, initial: null })}
               >
-                <Trash2 className="h-4 w-4" />
+                {data?.skills.length ? "Adicionar outra habilidade" : "Adicionar habilidade"}
               </button>
-            </div>
-          );
-        })}
-      </section>
+            </section>
+          </>
+        )}
+        <EditProfileDialog
+          open={dialog === "profile"}
+          onOpenChange={(open) => setDialog(open ? "profile" : null)}
+          initial={profileFields}
+          onSave={saveProfile}
+          checkUsername={checkUsername}
+        />
+        <PostEditDialog
+          open={editOpen}
+          onOpenChange={setEditOpen}
+          initial={editing?.draft ?? null}
+          catalog={catalog}
+          minVacancies={editing?.minVacancies ?? 0}
+          onSave={saveEdit}
+          premium={!!usage?.premium}
+        />
+        <WorkAreaDialog
+          open={areaOpen}
+          onOpenChange={setAreaOpen}
+          initial={workArea ?? null}
+          premium={!!usage?.premium}
+          suggestedCep={data?.address?.postal_code}
+          onSave={saveWorkArea}
+          onUpgrade={() => void navigate({ to: "/plano" })}
+        />
+        <SkillDialog
+          open={skillDialog.open}
+          onOpenChange={(open) => setSkillDialog((d) => ({ ...d, open }))}
+          initial={skillDialog.initial}
+          catalog={catalog}
+          existing={(data?.skills ?? []).map((x) => x.skill)}
+          onSave={saveSkill}
+        />
 
-      <PrivacyCard
-        userId={userId}
-        avatarPath={data?.profile?.avatar_path}
-        onDeleted={() => {
-          qc.clear();
-          navigate({ to: "/auth", replace: true });
-        }}
-      />
-
-      <Button variant="outline" className="w-full" onClick={signOut}>
-        Sair
-      </Button>
+        {section === "publicacoes" && (
+          <>
+            <section className="space-y-2">
+              <div className="flex items-center justify-between gap-2">
+                <h2 className="text-xl">Minhas publicações</h2>
+                <Button asChild size="sm">
+                  <Link to="/publicar" search={{ tipo: "contratar" }}>
+                    <Plus /> Nova publicação
+                  </Link>
+                </Button>
+              </div>
+              {data?.posts.length === 0 && (
+                <p className="text-muted-foreground">Você ainda não publicou nada.</p>
+              )}
+              {data?.posts.map((p) => {
+                const st = slots[p.id];
+                const gaps = located
+                  ? postGaps({
+                      kind: p.kind,
+                      profession_id: p.profession_id,
+                      description: p.description,
+                      hasLocation: located.has(p.id),
+                    })
+                  : [];
+                return (
+                  <div
+                    key={p.id}
+                    className="flex flex-wrap items-center gap-x-3 gap-y-2 rounded-lg border-2 border-foreground p-3"
+                  >
+                    <span className="text-xs font-bold uppercase">
+                      {KIND_LABEL[p.kind as PostKind]}
+                    </span>
+                    <span className="min-w-0 flex-1 basis-40 truncate font-semibold">
+                      {p.title}
+                    </span>
+                    {p.kind === "job" && st && (
+                      <span className="text-xs text-muted-foreground">
+                        {st.taken} de {st.vacancies} {st.vacancies === 1 ? "vaga" : "vagas"}
+                      </span>
+                    )}
+                    {gaps.length > 0 && (
+                      <p
+                        role="note"
+                        className="basis-full rounded border border-destructive/60 bg-destructive/10 px-2 py-1 text-xs"
+                      >
+                        <b>Faltam informações:</b> {gaps.join("; ")}. Toque em Editar para
+                        completar.
+                      </p>
+                    )}
+                    <Button asChild size="sm" variant="outline">
+                      <Link
+                        to="/vagas/$profissao/$codigo/interessados"
+                        params={postParams({ slug: p.slug, professions: p.professions })}
+                      >
+                        <Users /> Interessados
+                      </Link>
+                    </Button>
+                    <Button
+                      type="button"
+                      size="sm"
+                      variant="outline"
+                      aria-label={`Editar ${p.title}`}
+                      onClick={() => startEdit(p)}
+                    >
+                      <Pencil /> Editar
+                    </Button>
+                    <button
+                      aria-label={`Excluir ${p.title}`}
+                      className="-m-2 p-2"
+                      onClick={() => deletePost(p.id)}
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </button>
+                  </div>
+                );
+              })}
+            </section>
+          </>
+        )}
+        {section === "privacidade" && (
+          <>
+            <PrivacyCard
+              userId={userId}
+              avatarPath={data?.profile?.avatar_path}
+              onDeleted={() => {
+                qc.clear();
+                navigate({ to: "/auth", replace: true });
+              }}
+            />
+          </>
+        )}
+        <Button variant="outline" className="w-full lg:hidden" onClick={signOut}>
+          Sair
+        </Button>
+      </div>
     </div>
   );
 }
