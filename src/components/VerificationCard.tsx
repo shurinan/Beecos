@@ -17,7 +17,7 @@ export function VerificationCard({ userId }: { userId: string }) {
         <Seal tier={info.premium ? "both" : "verified"} size={36} />
         <div>
           <h2 className="text-lg">Conta verificada</h2>
-          <p className="text-sm text-muted-foreground">Seu documento foi conferido pela equipe.</p>
+          <p className="text-sm text-muted-foreground">Sua identidade foi conferida pela equipe.</p>
         </div>
       </section>
     );

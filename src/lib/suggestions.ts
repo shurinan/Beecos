@@ -15,6 +15,8 @@ export function suggestionValid(text: string): boolean {
 }
 
 export async function sendSuggestion(userId: string, text: string) {
-  const { error } = await supabase.from("suggestions").insert({ user_id: userId, body: text.trim() });
+  const { error } = await supabase
+    .from("suggestions")
+    .insert({ user_id: userId, body: text.trim() });
   if (error) throw error;
 }

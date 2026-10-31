@@ -27,15 +27,14 @@ describe("ringStyle", () => {
 });
 
 describe("SealDetails", () => {
-  it("lista os quatro itens e marca o que não foi conferido", () => {
+  it("lista os três itens e marca o que não foi conferido", () => {
     const { getByText, getAllByText } = render(
       <SealDetails
         tier="verified"
-        info={{ premium: false, doc: true, email: true, address: false, phone: false }}
+        info={{ premium: false, doc: true, email: true, phone: false }}
       />,
     );
-    for (const l of ["Documento", "E-mail", "Endereço", "Telefone"])
-      expect(getByText(l)).toBeTruthy();
-    expect(getAllByText("não conferido")).toHaveLength(2);
+    for (const l of ["Identidade", "E-mail", "Telefone"]) expect(getByText(l)).toBeTruthy();
+    expect(getAllByText("não conferido")).toHaveLength(1);
   });
 });

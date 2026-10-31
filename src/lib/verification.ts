@@ -70,7 +70,6 @@ export type SubmitFiles = {
   front: File;
   back: File | null;
   selfie: File;
-  address: File | null;
 };
 
 export async function submitVerification(userId: string, f: SubmitFiles) {
@@ -82,14 +81,11 @@ export async function submitVerification(userId: string, f: SubmitFiles) {
     if (back) uploaded.push(back);
     const selfie = await uploadIdentityFile(userId, f.selfie);
     uploaded.push(selfie);
-    const address = f.address ? await uploadIdentityFile(userId, f.address) : null;
-    if (address) uploaded.push(address);
     const { error } = await supabase.from("identity_verifications").insert({
       user_id: userId,
       doc_front_path: front,
       doc_back_path: back,
       selfie_path: selfie,
-      address_proof_path: address,
     });
     if (error) throw error;
   } catch (e) {

@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { tierOf, type BadgeInfo } from "./badges";
 import { checkImageFile, verificationErrorMessage } from "./verification";
 
-const base: BadgeInfo = { premium: false, doc: false, email: true, address: false, phone: false };
+const base: BadgeInfo = { premium: false, doc: false, email: true, phone: false };
 
 describe("tierOf", () => {
   it("sem documento nem plano: sem selo", () => expect(tierOf(base)).toBeNull());

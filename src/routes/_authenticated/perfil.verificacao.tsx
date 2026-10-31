@@ -78,7 +78,6 @@ function Verify() {
   const [front, setFront] = useState<File | null>(null);
   const [back, setBack] = useState<File | null>(null);
   const [selfie, setSelfie] = useState<File | null>(null);
-  const [address, setAddress] = useState<File | null>(null);
   const [agree, setAgree] = useState(false);
   const [busy, setBusy] = useState(false);
 
@@ -90,7 +89,7 @@ function Verify() {
         <h1 className="text-2xl">{info?.doc ? "Conta verificada" : "Em análise"}</h1>
         <p className="text-muted-foreground">
           {info?.doc
-            ? "Seu documento já foi conferido."
+            ? "Sua identidade já foi conferida."
             : "Recebemos seus documentos. Avisamos quando terminar, em até 2 dias úteis."}
         </p>
         <Button asChild>
@@ -105,7 +104,7 @@ function Verify() {
     if (!front || !selfie) return;
     setBusy(true);
     try {
-      await submitVerification(userId, { front, back, selfie, address });
+      await submitVerification(userId, { front, back, selfie });
       await qc.invalidateQueries({ queryKey: ["my-verification"] });
       toast.success("Enviado! Vamos analisar em até 2 dias úteis.");
       navigate({ to: "/perfil", search: { secao: undefined } });
@@ -137,7 +136,7 @@ function Verify() {
 
       {step === 0 && (
         <section className="block-card space-y-4 p-5">
-          <h2 className="text-lg">1. Documento</h2>
+          <h2 className="text-lg">1. Documento de identidade</h2>
           <p className="text-sm text-muted-foreground">
             RG ou CNH. Boa luz, sem reflexo e com os quatro cantos visíveis.
           </p>
@@ -174,13 +173,6 @@ function Verify() {
             file={selfie}
             onPick={setSelfie}
             capture="user"
-          />
-          <FilePick
-            label="Comprovante de endereço"
-            hint="Conta de luz, água ou internet recente. Serve para marcar o Endereço como conferido."
-            file={address}
-            onPick={setAddress}
-            optional
           />
           <div className="flex gap-2">
             <Button variant="outline" onClick={() => setStep(0)}>

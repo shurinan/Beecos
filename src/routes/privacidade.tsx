@@ -55,11 +55,11 @@ function Privacy() {
         </li>
         <li>
           <b>Verificação de identidade (opcional):</b> se você pedir o selo Verificado, recebemos a
-          foto do seu documento, uma selfie e, se quiser, um comprovante de endereço. Os arquivos
-          ficam em área privada, vistos só pela equipe de verificação, e são{" "}
-          <b>apagados assim que a análise termina</b>, aprovada ou não. Guardamos apenas o resultado
-          (aprovado ou recusado), o motivo e a data. O selo mostra quais itens foram conferidos
-          (documento, e-mail, endereço, telefone), nunca os dados em si.
+          foto do seu documento de identidade e uma selfie. Os arquivos ficam em área privada,
+          vistos só pela equipe de verificação, e são <b>apagados assim que a análise termina</b>,
+          aprovada ou não. Guardamos apenas o resultado (aprovado ou recusado), o motivo e a data. O
+          selo mostra quais itens foram conferidos (e-mail, telefone e identidade), nunca os dados
+          em si.
         </li>
       </ul>
 
@@ -109,10 +109,7 @@ function Privacy() {
       <h2>Por quanto tempo</h2>
       <ul>
         <li>Guardamos os dados enquanto a sua conta existir.</li>
-        <li>
-          Documento, selfie e comprovante da verificação de identidade são apagados logo após a
-          análise.
-        </li>
+        <li>Documento e selfie da verificação de identidade são apagados logo após a análise.</li>
         <li>
           Fotos e PDFs enviados no chat ficam 48 horas e depois são apagados. O texto das mensagens
           continua na conversa.

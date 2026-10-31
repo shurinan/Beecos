@@ -24,7 +24,6 @@ type Row = {
   doc_front_path: string;
   doc_back_path: string | null;
   selfie_path: string;
-  address_proof_path: string | null;
   created_at: string;
   profiles: { full_name: string; slug: string | null } | null;
 };
@@ -66,46 +65,8 @@ function Shot({ path, label }: { path: string; label: string }) {
   );
 }
 
-type Addr = {
-  street: string;
-  neighborhood: string;
-  city: string;
-  state: string;
-  postal_code: string;
-};
-
-/** Endereço cadastrado, para comparar com o comprovante. Cada consulta fica registrada. */
-function RegisteredAddress({ id }: { id: string }) {
-  const { data, isLoading } = useQuery({
-    queryKey: ["verif-address", id],
-    staleTime: Infinity,
-    queryFn: async () => {
-      const { data, error } = await supabase.rpc("verification_address", { _id: id });
-      if (error) throw error;
-      return (data as Addr | null) ?? null;
-    },
-  });
-  if (isLoading)
-    return <p className="text-xs text-muted-foreground">Buscando endereço cadastrado…</p>;
-  if (!data)
-    return (
-      <p className="text-sm font-semibold">
-        A pessoa não cadastrou endereço: não dá para marcar o Endereço como conferido.
-      </p>
-    );
-  const cep = `${data.postal_code.slice(0, 5)}-${data.postal_code.slice(5)}`;
-  return (
-    <p className="rounded-lg border-2 border-foreground bg-accent p-2 text-sm">
-      <span className="block text-xs font-bold uppercase">Endereço cadastrado</span>
-      {data.street}
-      {data.neighborhood ? `, ${data.neighborhood}` : ""} · {data.city}-{data.state} · CEP {cep}
-    </p>
-  );
-}
-
 function Case({ row, onDone }: { row: Row; onDone: () => void }) {
   const [reason, setReason] = useState("");
-  const [addressOk, setAddressOk] = useState(false);
   const [busy, setBusy] = useState(false);
 
   async function decide(approve: boolean) {
@@ -115,7 +76,6 @@ function Case({ row, onDone }: { row: Row; onDone: () => void }) {
         _id: row.id,
         _approve: approve,
         _reason: reason,
-        _address: addressOk,
       });
       if (error) throw error;
       toast.success(approve ? "Verificação aprovada." : "Pedido recusado.");
@@ -140,21 +100,7 @@ function Case({ row, onDone }: { row: Row; onDone: () => void }) {
         <Shot path={row.doc_front_path} label="Documento (frente)" />
         {row.doc_back_path && <Shot path={row.doc_back_path} label="Documento (verso)" />}
         <Shot path={row.selfie_path} label="Selfie" />
-        {row.address_proof_path && (
-          <Shot path={row.address_proof_path} label="Comprovante de endereço" />
-        )}
       </div>
-      {row.address_proof_path && <RegisteredAddress id={row.id} />}
-      {row.address_proof_path && (
-        <div className="flex items-center gap-2">
-          <Checkbox
-            id={`a-${row.id}`}
-            checked={addressOk}
-            onCheckedChange={(v) => setAddressOk(v === true)}
-          />
-          <Label htmlFor={`a-${row.id}`}>O endereço do comprovante confere com o cadastro</Label>
-        </div>
-      )}
       <div className="space-y-2">
         <Label htmlFor={`r-${row.id}`} className="text-sm font-bold">
           Motivo (só se for recusar)
@@ -212,7 +158,7 @@ function Reviews() {
       const { data, error } = await supabase
         .from("identity_verifications")
         .select(
-          "id, user_id, doc_front_path, doc_back_path, selfie_path, address_proof_path, created_at, profiles!identity_verifications_user_id_fkey(full_name, slug)",
+          "id, user_id, doc_front_path, doc_back_path, selfie_path, created_at, profiles!identity_verifications_user_id_fkey(full_name, slug)",
         )
         .eq("status", "pending")
         .order("created_at");
@@ -256,7 +202,8 @@ function Reviews() {
     <div className="space-y-4">
       <h1 className="text-2xl">Verificações de identidade</h1>
       <p className="text-sm text-muted-foreground">
-        Compare a selfie com o documento. Os arquivos são apagados assim que você decide.
+        Compare a selfie com o documento de identidade. Os arquivos são apagados assim que você
+        decide.
       </p>
       {isLoading && <p className="text-muted-foreground">Carregando…</p>}
       {rows?.length === 0 && (
