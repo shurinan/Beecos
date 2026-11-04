@@ -157,6 +157,113 @@ export type Database = {
         }
         Relationships: []
       }
+      channel_follows: {
+        Row: {
+          channel_id: string
+          created_at: string
+          user_id: string
+        }
+        Insert: {
+          channel_id: string
+          created_at?: string
+          user_id: string
+        }
+        Update: {
+          channel_id?: string
+          created_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "channel_follows_channel_id_fkey"
+            columns: ["channel_id"]
+            isOneToOne: false
+            referencedRelation: "channels"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "channel_follows_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      channel_professions: {
+        Row: {
+          channel_id: string
+          profession_id: string
+        }
+        Insert: {
+          channel_id: string
+          profession_id: string
+        }
+        Update: {
+          channel_id?: string
+          profession_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "channel_professions_channel_id_fkey"
+            columns: ["channel_id"]
+            isOneToOne: false
+            referencedRelation: "channels"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "channel_professions_profession_id_fkey"
+            columns: ["profession_id"]
+            isOneToOne: false
+            referencedRelation: "professions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      channels: {
+        Row: {
+          created_at: string
+          default_days: number
+          description: string
+          hidden_at: string | null
+          hidden_reason: string | null
+          id: string
+          name: string
+          owner_id: string
+          slug: string
+        }
+        Insert: {
+          created_at?: string
+          default_days?: number
+          description?: string
+          hidden_at?: string | null
+          hidden_reason?: string | null
+          id?: string
+          name: string
+          owner_id: string
+          slug: string
+        }
+        Update: {
+          created_at?: string
+          default_days?: number
+          description?: string
+          hidden_at?: string | null
+          hidden_reason?: string | null
+          id?: string
+          name?: string
+          owner_id?: string
+          slug?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "channels_owner_id_fkey"
+            columns: ["owner_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       community_members: {
         Row: {
           created_at: string
@@ -586,6 +693,69 @@ export type Database = {
           },
         ]
       }
+      identity_verifications: {
+        Row: {
+          address_proof_path: string | null
+          consent_at: string
+          created_at: string
+          doc_back_path: string | null
+          doc_front_path: string
+          files_deleted_at: string | null
+          id: string
+          reason: string
+          reviewed_at: string | null
+          reviewed_by: string | null
+          selfie_path: string
+          status: string
+          user_id: string
+        }
+        Insert: {
+          address_proof_path?: string | null
+          consent_at?: string
+          created_at?: string
+          doc_back_path?: string | null
+          doc_front_path: string
+          files_deleted_at?: string | null
+          id?: string
+          reason?: string
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          selfie_path: string
+          status?: string
+          user_id: string
+        }
+        Update: {
+          address_proof_path?: string | null
+          consent_at?: string
+          created_at?: string
+          doc_back_path?: string | null
+          doc_front_path?: string
+          files_deleted_at?: string | null
+          id?: string
+          reason?: string
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          selfie_path?: string
+          status?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "identity_verifications_reviewed_by_fkey"
+            columns: ["reviewed_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "identity_verifications_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       messages: {
         Row: {
           attachment_expired_at: string | null
@@ -674,123 +844,6 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
-      }
-      identity_verifications: {
-        Row: {
-          address_proof_path: string | null
-          consent_at: string
-          created_at: string
-          doc_back_path: string | null
-          doc_front_path: string
-          files_deleted_at: string | null
-          id: string
-          reason: string
-          reviewed_at: string | null
-          reviewed_by: string | null
-          selfie_path: string
-          status: string
-          user_id: string
-        }
-        Insert: {
-          address_proof_path?: string | null
-          consent_at?: string
-          created_at?: string
-          doc_back_path?: string | null
-          doc_front_path: string
-          files_deleted_at?: string | null
-          id?: string
-          reason?: string
-          reviewed_at?: string | null
-          reviewed_by?: string | null
-          selfie_path: string
-          status?: string
-          user_id: string
-        }
-        Update: {
-          address_proof_path?: string | null
-          consent_at?: string
-          created_at?: string
-          doc_back_path?: string | null
-          doc_front_path?: string
-          files_deleted_at?: string | null
-          id?: string
-          reason?: string
-          reviewed_at?: string | null
-          reviewed_by?: string | null
-          selfie_path?: string
-          status?: string
-          user_id?: string
-        }
-        Relationships: []
-      }
-      user_checks: {
-        Row: {
-          address_at: string | null
-          document_at: string | null
-          phone_at: string | null
-          user_id: string
-        }
-        Insert: {
-          address_at?: string | null
-          document_at?: string | null
-          phone_at?: string | null
-          user_id: string
-        }
-        Update: {
-          address_at?: string | null
-          document_at?: string | null
-          phone_at?: string | null
-          user_id?: string
-        }
-        Relationships: []
-      }
-      channels: {
-        Row: {
-          created_at: string
-          default_days: number
-          description: string
-          hidden_at: string | null
-          hidden_reason: string | null
-          id: string
-          name: string
-          owner_id: string
-          slug: string
-        }
-        Insert: {
-          created_at?: string
-          default_days?: number
-          description?: string
-          hidden_at?: string | null
-          hidden_reason?: string | null
-          id?: string
-          name: string
-          owner_id: string
-          slug?: string
-        }
-        Update: {
-          created_at?: string
-          default_days?: number
-          description?: string
-          hidden_at?: string | null
-          hidden_reason?: string | null
-          id?: string
-          name?: string
-          owner_id?: string
-          slug?: string
-        }
-        Relationships: []
-      }
-      channel_professions: {
-        Row: { channel_id: string; profession_id: string }
-        Insert: { channel_id: string; profession_id: string }
-        Update: { channel_id?: string; profession_id?: string }
-        Relationships: []
-      }
-      channel_follows: {
-        Row: { channel_id: string; created_at: string; user_id: string }
-        Insert: { channel_id: string; created_at?: string; user_id: string }
-        Update: { channel_id?: string; created_at?: string; user_id?: string }
-        Relationships: []
       }
       moderators: {
         Row: {
@@ -1085,13 +1138,13 @@ export type Database = {
       posts: {
         Row: {
           channel_id: string | null
-          closed_at: string | null
-          expires_at: string | null
           city: string
+          closed_at: string | null
           cover_color: string | null
           cover_icon: string | null
           created_at: string
           description: string
+          expires_at: string | null
           hidden_at: string | null
           hidden_reason: string | null
           highlight: boolean
@@ -1110,13 +1163,13 @@ export type Database = {
         }
         Insert: {
           channel_id?: string | null
-          closed_at?: string | null
-          expires_at?: string | null
           city?: string
+          closed_at?: string | null
           cover_color?: string | null
           cover_icon?: string | null
           created_at?: string
           description?: string
+          expires_at?: string | null
           hidden_at?: string | null
           hidden_reason?: string | null
           highlight?: boolean
@@ -1135,13 +1188,13 @@ export type Database = {
         }
         Update: {
           channel_id?: string | null
-          closed_at?: string | null
-          expires_at?: string | null
           city?: string
+          closed_at?: string | null
           cover_color?: string | null
           cover_icon?: string | null
           created_at?: string
           description?: string
+          expires_at?: string | null
           hidden_at?: string | null
           hidden_reason?: string | null
           highlight?: boolean
@@ -1159,6 +1212,13 @@ export type Database = {
           vacancies?: number
         }
         Relationships: [
+          {
+            foreignKeyName: "posts_channel_id_fkey"
+            columns: ["channel_id"]
+            isOneToOne: false
+            referencedRelation: "channels"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "posts_profession_id_fkey"
             columns: ["profession_id"]
@@ -1625,6 +1685,35 @@ export type Database = {
           },
         ]
       }
+      user_checks: {
+        Row: {
+          address_at: string | null
+          document_at: string | null
+          phone_at: string | null
+          user_id: string
+        }
+        Insert: {
+          address_at?: string | null
+          document_at?: string | null
+          phone_at?: string | null
+          user_id: string
+        }
+        Update: {
+          address_at?: string | null
+          document_at?: string | null
+          phone_at?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_checks_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: true
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       user_presence: {
         Row: {
           last_seen_at: string
@@ -1765,12 +1854,31 @@ export type Database = {
         Args: { _subscription: string }
         Returns: undefined
       }
+      badge_info: {
+        Args: { _user_ids: string[] }
+        Returns: {
+          doc: boolean
+          email: boolean
+          phone: boolean
+          premium: boolean
+          user_id: string
+        }[]
+      }
       base_radius_km: { Args: never; Returns: number }
       can_review: {
         Args: { _reviewee: string; _reviewer: string }
         Returns: boolean
       }
       cancel_engagement: { Args: { _id: string }; Returns: undefined }
+      channel_overview: {
+        Args: { _ids: string[] }
+        Returns: {
+          channel_id: string
+          followers: number
+          following: boolean
+          open_jobs: number
+        }[]
+      }
       choose_provider: {
         Args: { _conversation: string; _post?: string }
         Returns: string
@@ -1778,6 +1886,16 @@ export type Database = {
       close_negotiation: {
         Args: { _conversation: string; _post: string; _release?: boolean }
         Returns: undefined
+      }
+      closed_offers: {
+        Args: { _user: string }
+        Returns: {
+          concluded: boolean
+          ended_at: string
+          profession: string
+          title: string
+          total: number
+        }[]
       }
       community_overview: {
         Args: never
@@ -1809,36 +1927,6 @@ export type Database = {
         Args: { _a: string; _b: string }
         Returns: boolean
       }
-      badge_info: {
-        Args: { _user_ids: string[] }
-        Returns: {
-          user_id: string
-          premium: boolean
-          doc: boolean
-          email: boolean
-          phone: boolean
-        }[]
-      }
-      review_verification: {
-        Args: { _id: string; _approve: boolean; _reason?: string }
-        Returns: string[]
-      }
-      mark_verification_files_deleted: { Args: { _id: string }; Returns: undefined }
-      pending_verifications_count: { Args: never; Returns: number }
-      channel_overview: {
-        Args: { _ids: string[] }
-        Returns: { channel_id: string; followers: number; open_jobs: number; following: boolean }[]
-      }
-      closed_offers: {
-        Args: { _user: string }
-        Returns: {
-          title: string
-          profession: string | null
-          ended_at: string
-          concluded: boolean
-          total: number
-        }[]
-      }
       is_moderator: { Args: never; Returns: boolean }
       is_on_hold: { Args: { _u: string }; Returns: boolean }
       is_premium: { Args: { _user_id: string }; Returns: boolean }
@@ -1846,6 +1934,10 @@ export type Database = {
       join_waitlist: { Args: { _post: string }; Returns: string }
       mark_conversation_read: {
         Args: { _conversation: string }
+        Returns: undefined
+      }
+      mark_verification_files_deleted: {
+        Args: { _id: string }
         Returns: undefined
       }
       max_open_negotiations: { Args: never; Returns: number }
@@ -1867,7 +1959,9 @@ export type Database = {
         Returns: string
       }
       open_negotiations: { Args: { _post: string }; Returns: number }
+      orphan_identity_files: { Args: { _limit?: number }; Returns: string[] }
       parse_price: { Args: { _t: string }; Returns: number }
+      pending_verifications_count: { Args: never; Returns: number }
       post_interest_counts: {
         Args: { _post_ids: string[] }
         Returns: {
@@ -1906,6 +2000,10 @@ export type Database = {
       respond_engagement: {
         Args: { _accept: boolean; _id: string }
         Returns: undefined
+      }
+      review_verification: {
+        Args: { _approve: boolean; _id: string; _reason?: string }
+        Returns: string[]
       }
       search_post_ids: {
         Args: {
