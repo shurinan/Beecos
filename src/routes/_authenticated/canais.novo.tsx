@@ -50,6 +50,7 @@ function NewChannel() {
         .from("channels")
         .insert({
           owner_id: userId,
+          slug: "", // channel_before_write generates the canonical slug on insert.
           name: v.name,
           description: v.description,
           default_days: v.days,
