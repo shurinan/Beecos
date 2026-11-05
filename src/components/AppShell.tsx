@@ -1,3 +1,4 @@
+import { unlockSoundOnFirstTouch } from "@/lib/sound";
 import { Link, useRouter, useRouterState } from "@tanstack/react-router";
 import { useEffect } from "react";
 import { takeDestination } from "@/lib/after-login";
@@ -51,6 +52,7 @@ const DESKTOP_LINKS = [
 
 export function AppShell({ children }: { children: ReactNode }) {
   const { userId } = useAuth();
+  useEffect(() => unlockSoundOnFirstTouch(), []);
   const { total: unread } = useUnread(userId);
   const { unread: alertsUnread } = useAlerts(userId);
   const bub =

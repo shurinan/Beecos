@@ -1,3 +1,4 @@
+import { playNotificationSound } from "@/lib/sound";
 import { useEffect, useRef, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useRouter, useRouterState } from "@tanstack/react-router";
@@ -124,6 +125,13 @@ export function useChatBackground(userId: string | null) {
           const url = `/conversas/${sender.slug ?? m.sender_id}`;
           const looking = !document.hidden && (pathRef.current === url || pathRef.current === tag);
           if (looking) return; // a conversa aberta marca como lida sozinha
+          // com o aviso do sistema ligado, o celular/computador já toca o som dele
+          if (
+            !document.hidden ||
+            !notificationsSupported() ||
+            Notification.permission !== "granted"
+          )
+            playNotificationSound();
           qc.invalidateQueries({ queryKey: unreadKey(userId) });
           const preview =
             m.content || (m.attachment_name ? `📎 ${m.attachment_name}` : "Nova mensagem");
