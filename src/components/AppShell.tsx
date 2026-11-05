@@ -2,7 +2,18 @@ import { unlockSoundOnFirstTouch } from "@/lib/sound";
 import { Link, useRouter, useRouterState } from "@tanstack/react-router";
 import { useEffect } from "react";
 import { takeDestination } from "@/lib/after-login";
-import { Bell, Briefcase, Home, MessageCircle, UserRound, LogIn, Users } from "lucide-react";
+import {
+  Bell,
+  Briefcase,
+  ClipboardList,
+  Home,
+  MessageCircle,
+  UserRound,
+  LogIn,
+  Users,
+} from "lucide-react";
+import { NewPostFab, NewPostHeaderButton } from "@/components/NewPostButton";
+import { useHideOnScroll } from "@/lib/hide-on-scroll";
 import type { ReactNode } from "react";
 import { useAuth } from "@/lib/auth";
 import { useChatBackground, usePresenceHeartbeat, useUnread } from "@/lib/chat-hooks";
@@ -46,6 +57,11 @@ const DESKTOP_LINKS = [
     label: "Comunidade",
     props: { to: "/comunidade", search: { grupo: undefined } },
   },
+  {
+    to: "/minhas-vagas",
+    label: "Minhas vagas",
+    props: { to: "/minhas-vagas", search: { aba: "contratei" } },
+  },
   { to: "/conversas", label: "Conversas", props: { to: "/conversas" } },
   { to: "/perfil", label: "Meu perfil", props: { to: "/perfil" } },
 ] as const;
@@ -58,7 +74,7 @@ export function AppShell({ children }: { children: ReactNode }) {
   const bub =
     "flex h-10 w-10 items-center justify-center rounded-full transition-[background-color,box-shadow,transform] duration-150 group-hover:bg-foreground/[0.07] group-hover:shadow-[inset_0_1px_3px_rgba(0,0,0,0.18)] group-active:scale-95 group-data-[status=active]:bg-foreground/15! group-data-[status=active]:shadow-[inset_0_2px_5px_rgba(0,0,0,0.3)]!";
   const item =
-    "group flex flex-1 flex-col items-center gap-0.5 py-1 text-xs font-semibold text-muted-foreground";
+    "group flex min-w-0 flex-1 flex-col items-center gap-0.5 py-1 text-[11px] font-semibold text-muted-foreground";
   const active = { className: "text-foreground" };
   const path = useRouterState({ select: (st) => st.location.pathname });
   // início e lista de vagas usam a largura toda no computador; o resto fica numa coluna
@@ -70,6 +86,8 @@ export function AppShell({ children }: { children: ReactNode }) {
     path.startsWith("/conversas");
   // no celular, a conversa aberta ocupa a tela toda (sem menu inferior), como no WhatsApp
   const inChat = /^\/conversas\/[^/]+/.test(path);
+  // o menu de baixo some ao rolar a página para baixo e volta ao puxar para cima
+  const navHidden = useHideOnScroll(!!userId && !inChat, path);
   return (
     <div className="flex min-h-screen flex-col">
       <a
@@ -103,7 +121,7 @@ export function AppShell({ children }: { children: ReactNode }) {
                   {...l.props}
                   className="relative rounded-lg px-3 py-1.5 text-sm font-bold text-primary-foreground hover:bg-foreground/10"
                   activeProps={{ className: "bg-foreground! text-primary! dark:text-background!" }}
-                  activeOptions={{ exact: l.to === "/" }}
+                  activeOptions={{ exact: l.to === "/", includeSearch: false }}
                 >
                   {l.label}
                   {l.to === "/conversas" && unread > 0 && (
@@ -116,6 +134,7 @@ export function AppShell({ children }: { children: ReactNode }) {
                   )}
                 </Link>
               ))}
+              <NewPostHeaderButton />
             </nav>
           )}
           <div className="flex items-center gap-1">
@@ -198,9 +217,10 @@ export function AppShell({ children }: { children: ReactNode }) {
           </span>
         </p>
       </main>
+      {userId && !inChat && <NewPostFab hidden={navHidden} />}
       {userId ? (
         <nav
-          className={`fixed inset-x-0 bottom-0 z-20 border-t-2 border-foreground bg-background lg:hidden ${inChat ? "hidden" : ""}`}
+          className={`fixed inset-x-0 bottom-0 z-20 border-t-2 border-foreground bg-background transition-transform duration-200 lg:hidden ${inChat ? "hidden" : ""} ${navHidden ? "translate-y-[calc(100%+2.5rem)]" : ""}`}
         >
           <div className="mx-auto flex max-w-2xl">
             <Link to="/" className={item} activeProps={active} activeOptions={{ exact: true }}>
@@ -231,6 +251,18 @@ export function AppShell({ children }: { children: ReactNode }) {
               </span>
               Comunidade
             </Link>
+            <Link
+              to="/minhas-vagas"
+              search={{ aba: "contratei" }}
+              className={item + " text-center leading-tight"}
+              activeProps={active}
+              activeOptions={{ includeSearch: false }}
+            >
+              <span className={bub}>
+                <ClipboardList className="h-5 w-5" />
+              </span>
+              Minhas vagas
+            </Link>
             {userId ? (
               <>
                 <Link to="/conversas" className={item} activeProps={active}>
@@ -252,7 +284,7 @@ export function AppShell({ children }: { children: ReactNode }) {
                   <span className={bub}>
                     <UserRound className="h-5 w-5" />
                   </span>{" "}
-                  Meu perfil
+                  Perfil
                 </Link>
               </>
             ) : (
