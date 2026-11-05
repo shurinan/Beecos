@@ -209,7 +209,8 @@ SELECT cron.schedule('beecos-emails-envio', '* * * * *', $$
   SELECT net.http_post(
     url := 'https://qfheectjquxfgmexahem.supabase.co/functions/v1/send-emails',
     headers := '{"Content-Type": "application/json"}'::jsonb,
-    body := '{}'::jsonb)
+    body := '{}'::jsonb,
+    timeout_milliseconds := 55000)
 $$);
 SELECT cron.schedule('beecos-emails-nao-lidas', '15 * * * *', $$ SELECT public.queue_unread_digests() $$);
 SELECT cron.schedule('beecos-emails-vagas', '30 21 * * *', $$ SELECT public.queue_job_digests() $$);
