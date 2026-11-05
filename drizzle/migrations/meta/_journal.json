@@ -330,6 +330,13 @@
       "when": 1797014400000,
       "tag": "0046_orphan_identity_files",
       "breakpoints": true
+    },
+    {
+      "idx": 47,
+      "version": "7",
+      "when": 1797100800000,
+      "tag": "0047_email_outbox",
+      "breakpoints": true
     }
   ]
 }

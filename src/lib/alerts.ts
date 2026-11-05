@@ -19,6 +19,8 @@ export type AlertPrefs = {
   in_app: boolean;
   email: boolean;
   push: boolean;
+  /** E-mails que dá para desligar (vagas, mensagens, lembretes). Os de conta e pagamento chegam sempre. */
+  emails_optional: boolean;
   paused_until: string | null;
   /** Profissões silenciadas (só vale no Premium). */
   muted_profession_ids: string[];
@@ -28,6 +30,7 @@ export const DEFAULT_PREFS: AlertPrefs = {
   in_app: true,
   email: false,
   push: false,
+  emails_optional: true,
   paused_until: null,
   muted_profession_ids: [],
 };
@@ -128,7 +131,7 @@ export function useAlertPrefs(userId: string | null) {
     queryFn: async (): Promise<AlertPrefs> => {
       const { data, error } = await supabase
         .from("notification_prefs")
-        .select("in_app, email, push, paused_until, muted_profession_ids")
+        .select("in_app, email, push, emails_optional, paused_until, muted_profession_ids")
         .eq("user_id", userId!)
         .maybeSingle();
       if (error) throw error;

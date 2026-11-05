@@ -115,6 +115,20 @@ export function AlertPrefsCard({
           )}
         </div>
       )}
+      <label className="flex items-center justify-between gap-3 border-t border-dashed border-foreground/30 pt-3">
+        <span>
+          <span className="block font-bold">Avisos por e-mail</span>
+          <span className="block text-sm text-muted-foreground">
+            Interessados, mensagens não lidas e vagas novas. E-mails de conta, serviço e pagamento
+            chegam sempre.
+          </span>
+        </span>
+        <Switch
+          aria-label="Avisos por e-mail"
+          checked={prefs.emails_optional}
+          onCheckedChange={(v) => void run({ emails_optional: v })}
+        />
+      </label>
       <SoundToggle />
       <div className="space-y-1 border-t border-dashed border-foreground/30 pt-3 text-sm text-muted-foreground">
         <p>
