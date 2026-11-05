@@ -608,6 +608,51 @@ export type Database = {
         }
         Relationships: []
       }
+      email_outbox: {
+        Row: {
+          attempts: number
+          created_at: string
+          dedupe_key: string | null
+          essential: boolean
+          id: string
+          kind: string
+          last_error: string | null
+          payload: Json
+          resend_id: string | null
+          sent_at: string | null
+          to_email: string
+          user_id: string
+        }
+        Insert: {
+          attempts?: number
+          created_at?: string
+          dedupe_key?: string | null
+          essential?: boolean
+          id?: string
+          kind: string
+          last_error?: string | null
+          payload?: Json
+          resend_id?: string | null
+          sent_at?: string | null
+          to_email: string
+          user_id: string
+        }
+        Update: {
+          attempts?: number
+          created_at?: string
+          dedupe_key?: string | null
+          essential?: boolean
+          id?: string
+          kind?: string
+          last_error?: string | null
+          payload?: Json
+          resend_id?: string | null
+          sent_at?: string | null
+          to_email?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       engagements: {
         Row: {
           accepted_at: string | null
@@ -1886,6 +1931,29 @@ export type Database = {
         Args: { _conversation: string; _post?: string }
         Returns: string
       }
+      claim_emails: {
+        Args: { _limit?: number }
+        Returns: {
+          attempts: number
+          created_at: string
+          dedupe_key: string | null
+          essential: boolean
+          id: string
+          kind: string
+          last_error: string | null
+          payload: Json
+          resend_id: string | null
+          sent_at: string | null
+          to_email: string
+          user_id: string
+        }[]
+        SetofOptions: {
+          from: "*"
+          to: "email_outbox"
+          isOneToOne: false
+          isSetofReturn: true
+        }
+      }
       close_negotiation: {
         Args: { _conversation: string; _post: string; _release?: boolean }
         Returns: undefined
@@ -1965,6 +2033,7 @@ export type Database = {
       orphan_identity_files: { Args: { _limit?: number }; Returns: string[] }
       parse_price: { Args: { _t: string }; Returns: number }
       pending_verifications_count: { Args: never; Returns: number }
+      person_name: { Args: { _u: string }; Returns: string }
       post_interest_counts: {
         Args: { _post_ids: string[] }
         Returns: {
@@ -1973,6 +2042,19 @@ export type Database = {
         }[]
       }
       purge_expired_records: { Args: never; Returns: undefined }
+      queue_email: {
+        Args: {
+          _dedupe?: string
+          _essential: boolean
+          _kind: string
+          _payload: Json
+          _user: string
+        }
+        Returns: undefined
+      }
+      queue_job_digests: { Args: never; Returns: undefined }
+      queue_premium_ending: { Args: never; Returns: undefined }
+      queue_unread_digests: { Args: never; Returns: undefined }
       reopen_negotiation: {
         Args: { _conversation: string; _post: string }
         Returns: undefined
