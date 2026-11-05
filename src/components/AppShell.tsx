@@ -14,6 +14,13 @@ import {
 } from "lucide-react";
 import { NewPostFab, NewPostHeaderButton } from "@/components/NewPostButton";
 import { useHideOnScroll } from "@/lib/hide-on-scroll";
+import {
+  claimInvite,
+  clearInvite,
+  inviteHandled,
+  markInviteHandled,
+  peekInvite,
+} from "@/lib/referrals";
 import type { ReactNode } from "react";
 import { useAuth } from "@/lib/auth";
 import { useChatBackground, usePresenceHeartbeat, useUnread } from "@/lib/chat-hooks";
@@ -30,6 +37,28 @@ import { InstallPrompt } from "@/components/InstallPrompt";
 function ChatBackground({ userId }: { userId: string }) {
   useChatBackground(userId);
   usePresenceHeartbeat(userId);
+  return null;
+}
+
+/** Quem chegou por um link de convite: registra quem convidou, uma vez, logo depois de entrar. */
+function InviteClaimer({ userId }: { userId: string }) {
+  const { session } = useAuth();
+  useEffect(() => {
+    const meta = session?.user.user_metadata as { convite?: unknown } | undefined;
+    const invite = peekInvite() ?? (typeof meta?.convite === "string" ? meta.convite : null);
+    if (!invite || inviteHandled(userId)) return;
+    let alive = true;
+    claimInvite(invite)
+      .then(() => {
+        if (!alive) return;
+        clearInvite();
+        markInviteHandled(userId);
+      })
+      .catch(() => undefined); // sem rede: tenta de novo na próxima vez
+    return () => {
+      alive = false;
+    };
+  }, [userId, session]);
   return null;
 }
 
@@ -172,6 +201,7 @@ export function AppShell({ children }: { children: ReactNode }) {
       <AssistedHelp />
       {userId && <ChatBackground userId={userId} />}
       {userId && <AfterLogin userId={userId} />}
+      {userId && <InviteClaimer userId={userId} />}
       <main
         id="conteudo"
         tabIndex={-1}

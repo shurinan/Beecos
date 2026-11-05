@@ -4,6 +4,7 @@ import {
   Bell,
   CreditCard,
   FileText,
+  Gift,
   Hammer,
   HelpCircle,
   Lock,
@@ -13,8 +14,16 @@ import {
 } from "lucide-react";
 import { Avatar } from "@/components/profile-bits";
 
-export type Section = "perfil" | "habilidades" | "publicacoes" | "plano" | "privacidade";
-export const SECTIONS: Section[] = ["perfil", "habilidades", "publicacoes", "plano", "privacidade"];
+export type Section =
+  "perfil" | "habilidades" | "publicacoes" | "indique" | "plano" | "privacidade";
+export const SECTIONS: Section[] = [
+  "perfil",
+  "habilidades",
+  "publicacoes",
+  "indique",
+  "plano",
+  "privacidade",
+];
 
 type Item =
   | { kind: "section"; key: Section; title: string; text: string; icon: typeof Bell }
@@ -41,6 +50,13 @@ const ITEMS: Item[] = [
     title: "Minhas publicações",
     text: "Vagas e disponibilidades",
     icon: FileText,
+  },
+  {
+    kind: "section",
+    key: "indique",
+    title: "Indique e ganhe",
+    text: "Traga 5 prestadores, ganhe 1 mês de Premium",
+    icon: Gift,
   },
   {
     kind: "section",

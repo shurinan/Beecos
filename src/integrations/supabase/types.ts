@@ -2117,6 +2117,17 @@ export type Database = {
         }[]
       }
       username_available: { Args: { _name: string }; Returns: boolean }
+      claim_referral: { Args: { _username: string }; Returns: string }
+      referral_inviter: {
+        Args: { _username: string }
+        Returns: {
+          avatar_path: string | null
+          first_name: string
+          full_name: string
+          username: string
+        }[]
+      }
+      referral_status: { Args: never; Returns: Json }
     }
     Enums: {
       [_ in never]: never

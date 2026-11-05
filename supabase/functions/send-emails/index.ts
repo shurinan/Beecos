@@ -238,6 +238,21 @@ function build(r: Row): Mail | null {
         ],
         cta: ["Renovar o Premium", "/plano"],
       };
+    case "referral_reward":
+      return {
+        subject: "Você ganhou 1 mês de Premium",
+        pre: "Obrigado por trazer prestadores para o Beecos.",
+        h: "Você ganhou 1 mês de Premium!",
+        p: [
+          "5 prestadores entraram pelo seu link e completaram o cadastro. Obrigado por ajudar o Beecos a crescer.",
+          d.tipo === "postpone"
+            ? "Sua próxima cobrança foi adiada em 30 dias. Nada a fazer: já está valendo."
+            : d.tipo === "free"
+              ? `O Premium já está valendo${d.ate ? ` até ${d.ate}` : ""}. Depois volta ao plano grátis, sem cobrança.`
+              : `Seu Premium ganhou mais 30 dias${d.ate ? `: agora vai até ${d.ate}` : ""}.`,
+        ],
+        cta: ["Ver Indique e ganhe", "/perfil?secao=indique"],
+      };
     case "verif_approved":
       return {
         subject: "Sua conta foi verificada",

@@ -84,6 +84,7 @@ function Checkout() {
   const alreadyPremium =
     !urgent &&
     !!usage?.premium &&
+    !usage.referral &&
     (annual ? !usage.activeUntil : !usage.cancelRequestedAt || usage.annual);
   const postProblem = urgent
     ? !vaga

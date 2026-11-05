@@ -26,6 +26,7 @@ import { Route as AuthenticatedPlanoRouteImport } from './routes/_authenticated/
 import { Route as AuthenticatedPublicarRouteImport } from './routes/_authenticated/publicar'
 import { Route as AuthenticatedSugestoesRouteImport } from './routes/_authenticated/sugestoes'
 import { Route as AuthenticatedVerificacoesRouteImport } from './routes/_authenticated/verificacoes'
+import { Route as CUsuarioRouteImport } from './routes/c.$usuario'
 import { Route as ServicosIndexRouteImport } from './routes/servicos.index'
 import { Route as AuthenticatedCanaisIndexRouteImport } from './routes/_authenticated/canais.index'
 import { Route as AuthenticatedCanaisSlugRouteImport } from './routes/_authenticated/canais.$slug'
@@ -128,6 +129,11 @@ const AuthenticatedVerificacoesRoute =
     path: '/verificacoes',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const CUsuarioRoute = CUsuarioRouteImport.update({
+  id: '/c/$usuario',
+  path: '/c/$usuario',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ServicosIndexRoute = ServicosIndexRouteImport.update({
   id: '/servicos/',
   path: '/servicos/',
@@ -231,6 +237,7 @@ export interface FileRoutesByFullPath {
   '/publicar': typeof AuthenticatedPublicarRoute
   '/sugestoes': typeof AuthenticatedSugestoesRoute
   '/verificacoes': typeof AuthenticatedVerificacoesRoute
+  '/c/$usuario': typeof CUsuarioRoute
   '/servicos/': typeof ServicosIndexRoute
   '/canais/$slug': typeof AuthenticatedCanaisSlugRoute
   '/canais/novo': typeof AuthenticatedCanaisNovoRoute
@@ -263,6 +270,7 @@ export interface FileRoutesByTo {
   '/publicar': typeof AuthenticatedPublicarRoute
   '/sugestoes': typeof AuthenticatedSugestoesRoute
   '/verificacoes': typeof AuthenticatedVerificacoesRoute
+  '/c/$usuario': typeof CUsuarioRoute
   '/servicos': typeof ServicosIndexRoute
   '/canais/$slug': typeof AuthenticatedCanaisSlugRoute
   '/canais/novo': typeof AuthenticatedCanaisNovoRoute
@@ -298,6 +306,7 @@ export interface FileRoutesById {
   '/_authenticated/publicar': typeof AuthenticatedPublicarRoute
   '/_authenticated/sugestoes': typeof AuthenticatedSugestoesRoute
   '/_authenticated/verificacoes': typeof AuthenticatedVerificacoesRoute
+  '/c/$usuario': typeof CUsuarioRoute
   '/servicos/': typeof ServicosIndexRoute
   '/_authenticated/canais/$slug': typeof AuthenticatedCanaisSlugRoute
   '/_authenticated/canais/novo': typeof AuthenticatedCanaisNovoRoute
@@ -333,6 +342,7 @@ export interface FileRouteTypes {
     | '/publicar'
     | '/sugestoes'
     | '/verificacoes'
+    | '/c/$usuario'
     | '/servicos/'
     | '/canais/$slug'
     | '/canais/novo'
@@ -365,6 +375,7 @@ export interface FileRouteTypes {
     | '/publicar'
     | '/sugestoes'
     | '/verificacoes'
+    | '/c/$usuario'
     | '/servicos'
     | '/canais/$slug'
     | '/canais/novo'
@@ -399,6 +410,7 @@ export interface FileRouteTypes {
     | '/_authenticated/publicar'
     | '/_authenticated/sugestoes'
     | '/_authenticated/verificacoes'
+    | '/c/$usuario'
     | '/servicos/'
     | '/_authenticated/canais/$slug'
     | '/_authenticated/canais/novo'
@@ -424,6 +436,7 @@ export interface RootRouteChildren {
   PrivacidadeRoute: typeof PrivacidadeRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   TermosRoute: typeof TermosRoute
+  CUsuarioRoute: typeof CUsuarioRoute
   ServicosIndexRoute: typeof ServicosIndexRoute
 }
 
@@ -547,6 +560,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/verificacoes'
       preLoaderRoute: typeof AuthenticatedVerificacoesRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/c/$usuario': {
+      id: '/c/$usuario'
+      path: '/c/$usuario'
+      fullPath: '/c/$usuario'
+      preLoaderRoute: typeof CUsuarioRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/servicos/': {
       id: '/servicos/'
@@ -735,6 +755,7 @@ const rootRouteChildren: RootRouteChildren = {
   PrivacidadeRoute: PrivacidadeRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   TermosRoute: TermosRoute,
+  CUsuarioRoute: CUsuarioRoute,
   ServicosIndexRoute: ServicosIndexRoute,
 }
 export const routeTree = rootRouteImport
