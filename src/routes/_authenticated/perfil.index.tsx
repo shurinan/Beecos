@@ -49,6 +49,7 @@ import {
   getPlanUsage,
 } from "@/lib/plans";
 import { confirmAction } from "@/lib/confirm";
+import { ReferralCard } from "@/components/ReferralCard";
 
 export const Route = createFileRoute("/_authenticated/perfil/")({
   staticData: { sitemap: false },
@@ -381,6 +382,7 @@ function Painel() {
     perfil: "Perfil",
     habilidades: "Habilidades e experiência",
     publicacoes: "Minhas publicações",
+    indique: "Indique e ganhe",
     plano: "Plano e pagamento",
     privacidade: "Privacidade e dados",
   };
@@ -540,7 +542,20 @@ function Painel() {
                       ? `Premium até ${new Date(usage.activeUntil).toLocaleDateString("pt-BR")}.`
                       : "Premium sem data para terminar."}
                   </p>
-                  {usage.annual ? (
+                  {usage.referral ? (
+                    <div className="space-y-2">
+                      <p
+                        role="status"
+                        className="rounded border-2 border-foreground/30 p-2 text-sm"
+                      >
+                        Premium de presente do Indique e ganhe. Quando terminar, volta ao plano
+                        grátis, sem cobrança.
+                      </p>
+                      <CheckoutButton kind="premium" size="sm" variant="outline">
+                        Assinar o Premium para continuar
+                      </CheckoutButton>
+                    </div>
+                  ) : usage.annual ? (
                     <div className="space-y-2">
                       <p
                         role="status"
@@ -814,6 +829,7 @@ function Painel() {
             <ClosedOffers userId={userId} />
           </>
         )}
+        {section === "indique" && <ReferralCard userId={userId} />}
         {section === "privacidade" && (
           <>
             <PrivacyCard

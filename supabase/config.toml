@@ -13,3 +13,6 @@ verify_jwt = false
 
 [functions.send-emails]
 verify_jwt = false
+
+[functions.referral-rewards]
+verify_jwt = false

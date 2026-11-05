@@ -12,6 +12,7 @@ import { Link } from "@tanstack/react-router";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useAuth } from "@/lib/auth";
 import { TERMS_VERSION } from "@/lib/legal";
+import { peekInvite } from "@/lib/referrals";
 import {
   USERNAME_HELP,
   USERNAME_MAX,
@@ -34,6 +35,13 @@ export const Route = createFileRoute("/auth")({
 
 function AuthPage() {
   const [mode, setMode] = useState<"in" | "up">("in");
+  // veio por um link de convite (beecos.com.br/c/usuario): abre já em "Criar conta"
+  const [invite, setInvite] = useState<string | null>(null);
+  useEffect(() => {
+    const i = peekInvite();
+    setInvite(i);
+    if (i) setMode("up");
+  }, []);
   const [name, setName] = useState("");
   const [username, setUsername] = useState("");
   const [usernameState, setUsernameState] = useState<"idle" | "checking" | "free" | "taken">(
@@ -97,7 +105,12 @@ function AuthPage() {
           password,
           options: {
             emailRedirectTo: window.location.origin,
-            data: { full_name: name, username, terms_version: TERMS_VERSION },
+            data: {
+              full_name: name,
+              username,
+              terms_version: TERMS_VERSION,
+              ...(invite ? { convite: invite } : {}),
+            },
           },
         });
         if (error) throw error;
@@ -122,6 +135,11 @@ function AuthPage() {
 
   return (
     <div className="block-card mx-auto mt-4 max-w-md p-6">
+      {invite && (
+        <p className="mb-4 rounded-lg border-2 border-foreground bg-accent p-3 text-sm">
+          Você veio pelo convite de <b>@{invite}</b>. Crie a sua conta para a indicação contar.
+        </p>
+      )}
       <h1 className="text-2xl">{mode === "in" ? "Entrar" : "Criar conta"}</h1>
       <p className="mb-5 text-sm text-muted-foreground">
         {mode === "in" ? "Bem-vindo de volta." : "Leva menos de um minuto."}
