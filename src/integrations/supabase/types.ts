@@ -2035,6 +2035,32 @@ export type Database = {
         }
       }
       claim_referral: { Args: { _username: string }; Returns: string }
+      admin_grant_premium: { Args: { _id: string; _days?: number }; Returns: string | null }
+      admin_overview: { Args: { _since: string }; Returns: Json }
+      admin_suspend: { Args: { _id: string; _days: number; _reason: string }; Returns: string }
+      admin_unsuspend: { Args: { _id: string }; Returns: undefined }
+      admin_user: { Args: { _id: string }; Returns: Json }
+      admin_users: {
+        Args: { _q?: string; _limit?: number }
+        Returns: {
+          id: string
+          full_name: string
+          username: string | null
+          email: string
+          avatar_path: string | null
+          created_at: string
+          premium: boolean
+          plan_term: string | null
+          email_ok: boolean
+          doc: boolean
+          phone: boolean
+          suspended: boolean
+        }[]
+      }
+      my_hold: {
+        Args: never
+        Returns: { until: string; suspended: boolean; reason: string | null }[]
+      }
       close_negotiation: {
         Args: { _conversation: string; _post: string; _release?: boolean }
         Returns: undefined

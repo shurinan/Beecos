@@ -548,8 +548,7 @@ function Painel() {
                         role="status"
                         className="rounded border-2 border-foreground/30 p-2 text-sm"
                       >
-                        Premium de presente do Indique e ganhe. Quando terminar, volta ao plano
-                        grátis, sem cobrança.
+                        Premium de presente. Quando terminar, volta ao plano grátis, sem cobrança.
                       </p>
                       <CheckoutButton kind="premium" size="sm" variant="outline">
                         Assinar o Premium para continuar

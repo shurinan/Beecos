@@ -80,12 +80,12 @@ export function SuggestionButton() {
         type="button"
         aria-label="Dar uma ideia para o Beecos"
         onClick={openBox}
-        className="mx-1 flex items-center gap-1.5 rounded-full border-2 border-foreground bg-card py-0.5 pl-1 pr-2.5 text-sm font-bold text-foreground shadow-[2px_2px_0_0_var(--foreground)] transition-transform active:translate-x-0.5 active:translate-y-0.5 active:shadow-none dark:border-foreground/40"
+        className="mx-0.5 flex items-center gap-1.5 rounded-full border-2 border-foreground bg-card py-0.5 pl-1 pr-2.5 text-sm font-bold text-foreground shadow-[2px_2px_0_0_var(--foreground)] transition-transform active:translate-x-0.5 active:translate-y-0.5 active:shadow-none dark:border-foreground/40"
       >
         <span className="ideia-brilho flex h-6 w-6 items-center justify-center rounded-full bg-[oklch(0.93_0.12_95)] text-[oklch(0.2_0.02_260)]">
           <Lightbulb className="h-4 w-4" strokeWidth={2.5} aria-hidden="true" />
         </span>
-        <span className="max-[359px]:hidden">Ideia?</span>
+        <span className="max-[374px]:hidden">Ideia?</span>
       </button>
 
       {nudge && !open && (
@@ -106,8 +106,8 @@ export function SuggestionButton() {
             <X className="h-4 w-4" />
           </button>
           <button type="button" onClick={openBox} className="text-left">
-            <b className="text-[#F2CE4B]">Tem uma ideia?</b> Conta pra gente o que
-            deixaria o Beecos melhor. A equipe lê tudo.
+            <b className="text-[#F2CE4B]">Tem uma ideia?</b> Conta pra gente o que deixaria o Beecos
+            melhor. A equipe lê tudo.
           </button>
         </div>
       )}

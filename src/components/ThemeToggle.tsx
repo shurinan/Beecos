@@ -21,7 +21,7 @@ export function ThemeToggle() {
     <DropdownMenu>
       <DropdownMenuTrigger
         aria-label="Tema do app"
-        className="flex h-10 w-10 items-center justify-center rounded-md text-primary-foreground active:bg-foreground/10"
+        className="flex h-9 w-8 items-center justify-center rounded-md text-primary-foreground active:bg-foreground/10 sm:h-10 sm:w-10"
       >
         <Icon className="h-5 w-5" aria-hidden="true" />
       </DropdownMenuTrigger>

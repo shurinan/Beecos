@@ -61,8 +61,8 @@ export async function getPlanUsage(userId: string) {
     activeUntil: s?.active_until ?? null,
     cancelRequestedAt: s?.cancel_requested_at ?? null,
     annual: s?.plan_term === "annual",
-    /** Premium de presente (Indique e ganhe): não renova e não tem cobrança. */
-    referral: s?.plan_term === "referral",
+    /** Premium de presente (Indique e ganhe ou cortesia da equipe): não renova e não tem cobrança. */
+    referral: s?.plan_term === "referral" || s?.plan_term === "courtesy",
     firstPaidAt: s?.first_paid_at ?? null,
     jobs: jobs.count ?? 0,
     chats: chats.count ?? 0,

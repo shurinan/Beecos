@@ -103,7 +103,7 @@ export function AppShell({ children }: { children: ReactNode }) {
   const bub =
     "flex h-10 w-10 items-center justify-center rounded-full transition-[background-color,box-shadow,transform] duration-150 group-hover:bg-foreground/[0.07] group-hover:shadow-[inset_0_1px_3px_rgba(0,0,0,0.18)] group-active:scale-95 group-data-[status=active]:bg-foreground/15! group-data-[status=active]:shadow-[inset_0_2px_5px_rgba(0,0,0,0.3)]!";
   const item =
-    "group flex min-w-0 flex-1 flex-col items-center gap-0.5 py-1 text-[11px] font-semibold text-muted-foreground";
+    "group flex min-w-0 flex-1 flex-col items-center gap-0.5 py-1 text-xs font-semibold text-muted-foreground";
   const active = { className: "text-foreground" };
   const path = useRouterState({ select: (st) => st.location.pathname });
   // início e lista de vagas usam a largura toda no computador; o resto fica numa coluna
@@ -126,7 +126,7 @@ export function AppShell({ children }: { children: ReactNode }) {
         Pular para o conteúdo
       </a>
       <header className="sticky top-0 z-20 border-b-2 border-foreground bg-primary">
-        <div className="mx-auto flex h-14 w-full max-w-2xl items-center justify-between px-4 lg:max-w-[1120px]">
+        <div className="mx-auto flex h-14 w-full max-w-2xl items-center justify-between px-3 sm:px-4 lg:max-w-[1120px]">
           <div className="flex items-center">
             <BackButton />
             <Link
@@ -166,14 +166,14 @@ export function AppShell({ children }: { children: ReactNode }) {
               <NewPostHeaderButton />
             </nav>
           )}
-          <div className="flex items-center gap-1">
+          <div className="flex items-center gap-0.5 sm:gap-1">
             <ThemeToggle />
             {userId && <SuggestionButton />}
             {userId && (
               <Link
                 to="/avisos"
                 aria-label={alertsUnread > 0 ? `Avisos, ${alertsUnread} não lidos` : "Avisos"}
-                className="relative rounded-md p-2 text-primary-foreground"
+                className="relative rounded-md p-1.5 text-primary-foreground sm:p-2"
               >
                 <Bell className="h-6 w-6" />
                 {alertsUnread > 0 && (
@@ -184,6 +184,16 @@ export function AppShell({ children }: { children: ReactNode }) {
                     {alertsUnread > 99 ? "99+" : alertsUnread}
                   </span>
                 )}
+              </Link>
+            )}
+            {userId && (
+              <Link
+                to="/perfil"
+                aria-label="Meu perfil"
+                className="rounded-full border-2 border-foreground bg-card p-1 text-foreground lg:hidden"
+                activeProps={{ className: "bg-foreground! text-primary!" }}
+              >
+                <UserRound className="h-5 w-5" />
               </Link>
             )}
             {!userId && (
@@ -281,20 +291,20 @@ export function AppShell({ children }: { children: ReactNode }) {
               </span>
               Comunidade
             </Link>
-            <Link
-              to="/minhas-vagas"
-              search={{ aba: "contratei" }}
-              className={item + " text-center leading-tight"}
-              activeProps={active}
-              activeOptions={{ includeSearch: false }}
-            >
-              <span className={bub}>
-                <ClipboardList className="h-5 w-5" />
-              </span>
-              Minhas vagas
-            </Link>
             {userId ? (
               <>
+                <Link
+                  to="/minhas-vagas"
+                  search={{ aba: "contratei" }}
+                  className={item + " text-center leading-tight"}
+                  activeProps={active}
+                  activeOptions={{ includeSearch: false }}
+                >
+                  <span className={bub}>
+                    <ClipboardList className="h-5 w-5" />
+                  </span>
+                  Minhas vagas
+                </Link>
                 <Link to="/conversas" className={item} activeProps={active}>
                   <span className={bub + " relative"}>
                     <MessageCircle className="h-5 w-5" />
@@ -309,12 +319,6 @@ export function AppShell({ children }: { children: ReactNode }) {
                     )}
                   </span>
                   Conversas
-                </Link>
-                <Link to="/perfil" className={item} activeProps={active}>
-                  <span className={bub}>
-                    <UserRound className="h-5 w-5" />
-                  </span>{" "}
-                  Perfil
                 </Link>
               </>
             ) : (
