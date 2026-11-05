@@ -871,6 +871,7 @@ export type Database = {
       notification_prefs: {
         Row: {
           email: boolean
+          emails_optional: boolean
           in_app: boolean
           muted_profession_ids: string[]
           paused_until: string | null
@@ -880,6 +881,7 @@ export type Database = {
         }
         Insert: {
           email?: boolean
+          emails_optional?: boolean
           in_app?: boolean
           muted_profession_ids?: string[]
           paused_until?: string | null
@@ -889,6 +891,7 @@ export type Database = {
         }
         Update: {
           email?: boolean
+          emails_optional?: boolean
           in_app?: boolean
           muted_profession_ids?: string[]
           paused_until?: string | null
