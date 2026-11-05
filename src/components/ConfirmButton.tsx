@@ -1,17 +1,11 @@
-import { useState, type ReactNode } from "react";
+import { type ReactNode } from "react";
 import { Button } from "@/components/ui/button";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
+import { confirmAction } from "@/lib/confirm";
 
-/** Botão que pede confirmação antes de uma ação difícil de desfazer. */
+/**
+ * Botão que pergunta "Tem certeza que deseja …?" antes da ação.
+ * A janela é a mesma do app inteiro (ConfirmHost).
+ */
 export function ConfirmButton({
   children,
   title,
@@ -22,6 +16,7 @@ export function ConfirmButton({
   size = "sm",
   disabled,
   loading,
+  danger = true,
 }: {
   children: ReactNode;
   title: string;
@@ -32,31 +27,21 @@ export function ConfirmButton({
   size?: "default" | "sm";
   disabled?: boolean;
   loading?: boolean;
+  /** Botão de confirmar em vermelho (apagar, cancelar). Use false para ações que só avançam. */
+  danger?: boolean;
 }) {
-  const [open, setOpen] = useState(false);
   return (
-    <>
-      <Button
-        type="button"
-        variant={variant}
-        size={size}
-        disabled={disabled}
-        onClick={() => setOpen(true)}
-      >
-        {children}
-      </Button>
-      <AlertDialog open={open} onOpenChange={setOpen}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>{title}</AlertDialogTitle>
-            <AlertDialogDescription>{description}</AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>Voltar</AlertDialogCancel>
-            <AlertDialogAction onClick={() => void onConfirm()}>{confirmLabel}</AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
-    </>
+    <Button
+      type="button"
+      variant={variant}
+      size={size}
+      disabled={disabled}
+      loading={loading ?? false}
+      onClick={async () => {
+        if (await confirmAction({ title, description, confirmLabel, danger })) await onConfirm();
+      }}
+    >
+      {children}
+    </Button>
   );
 }

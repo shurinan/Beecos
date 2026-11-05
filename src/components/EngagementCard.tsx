@@ -176,7 +176,8 @@ export function EngagementCard({
               <ConfirmButton
                 variant="default"
                 loading={act.busy}
-                title={`${chooseLabel(post.kind)}: ${name}?`}
+                title={`Tem certeza que deseja ${post.kind === "available" ? "contratar" : "escolher"} ${name}?`}
+                danger={false}
                 description={`${name} vai receber o aviso e precisa aceitar. Você poderá cancelar a escolha enquanto o serviço não for concluído.`}
                 confirmLabel={post.kind === "available" ? "Contratar" : "Escolher"}
                 onConfirm={() => act.choose(conversationId, `${name} foi a pessoa escolhida`)}
@@ -224,7 +225,7 @@ export function EngagementCard({
             {a.decline && (
               <ConfirmButton
                 loading={act.busy}
-                title="Recusar este serviço?"
+                title="Tem certeza que deseja recusar este serviço?"
                 description="A vaga volta a ficar disponível para outra pessoa."
                 confirmLabel="Recusar"
                 onConfirm={() => act.respond(engagement.id, false)}
@@ -236,7 +237,8 @@ export function EngagementCard({
               <ConfirmButton
                 variant="default"
                 loading={act.busy}
-                title="Marcar como concluído?"
+                title="Tem certeza que deseja marcar o serviço como concluído?"
+                danger={false}
                 description="Isso libera a avaliação entre vocês dois e não pode ser desfeito."
                 confirmLabel="Concluir"
                 onConfirm={() => act.complete(engagement.id)}
@@ -247,7 +249,7 @@ export function EngagementCard({
             {a.cancel && (
               <ConfirmButton
                 loading={act.busy}
-                title="Cancelar este serviço?"
+                title="Tem certeza que deseja cancelar este serviço?"
                 description={
                   engagement.status === "proposed" && iAmClient
                     ? "A escolha é desfeita e a vaga volta a ficar disponível."

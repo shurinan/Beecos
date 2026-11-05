@@ -50,6 +50,7 @@ vi.mock("@tanstack/react-router", () => ({
 }));
 
 import { EngagementCard } from "./EngagementCard";
+import { ConfirmHost } from "./ConfirmHost";
 
 afterEach(cleanup);
 beforeEach(() => {
@@ -74,6 +75,7 @@ function renderCard(
   render(
     <QueryClientProvider client={qc}>
       <EngagementCard {...base} userId={userId} providerReplied {...over} />
+      <ConfirmHost />
     </QueryClientProvider>,
   );
 }

@@ -33,6 +33,7 @@ import { usePostDistances } from "@/lib/geo";
 import { showInterestError } from "@/lib/interest";
 import { usePostStats } from "@/lib/services-hooks";
 import { profileParam } from "@/lib/urls";
+import { confirmAction } from "@/lib/confirm";
 
 export const Route = createFileRoute("/_authenticated/canais/$slug")({
   staticData: { sitemap: false },
@@ -82,6 +83,14 @@ function ChannelPage() {
     .filter((n): n is string => !!n);
 
   async function toggleFollow() {
+    if (numbers.following) {
+      const ok = await confirmAction({
+        title: `Tem certeza que deseja deixar de seguir o canal ${channel.name}?`,
+        description: "Você deixa de receber as novidades dele.",
+        confirmLabel: "Deixar de seguir",
+      });
+      if (!ok) return;
+    }
     setBusy(true);
     try {
       if (numbers.following) await unfollow(channel.id);
@@ -208,7 +217,7 @@ function ChannelPage() {
                 Editar canal
               </Button>
               <ConfirmButton
-                title="Excluir este canal?"
+                title="Tem certeza que deseja excluir este canal?"
                 description="Os seguidores deixam de seguir. As vagas já publicadas continuam nas listas e na comunidade."
                 confirmLabel="Excluir canal"
                 variant="outline"

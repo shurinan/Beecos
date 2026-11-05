@@ -47,6 +47,7 @@ import {
   type PhoneInput,
 } from "@/lib/contact";
 import { formatLongDate } from "@/lib/skills";
+import { confirmAction } from "@/lib/confirm";
 
 export const Route = createFileRoute("/_authenticated/perfil/contato")({
   staticData: { sitemap: false },
@@ -185,6 +186,15 @@ function Contato() {
   }
 
   async function setConsent(on: boolean) {
+    if (!on) {
+      const ok = await confirmAction({
+        title: "Tem certeza que deseja retirar a autorização?",
+        description:
+          "Sem ela, o Beecos não pode usar estes dados para a sua conta e as negociações.",
+        confirmLabel: "Retirar autorização",
+      });
+      if (!ok) return;
+    }
     const { error } = await supabase.from("profile_private").upsert({
       user_id: userId,
       consent_at: on ? new Date().toISOString() : null,
@@ -229,6 +239,11 @@ function Contato() {
   }
 
   async function deletePhone(id: string) {
+    const ok = await confirmAction({
+      title: "Tem certeza que deseja excluir este telefone?",
+      confirmLabel: "Excluir",
+    });
+    if (!ok) return;
     const { error } = await supabase.from("contact_phones").delete().eq("id", id);
     if (error) return void toast.error("Não foi possível excluir o telefone.");
     refresh();
@@ -248,6 +263,11 @@ function Contato() {
   }
 
   async function deleteAddress(id: string) {
+    const ok = await confirmAction({
+      title: "Tem certeza que deseja excluir este endereço?",
+      confirmLabel: "Excluir",
+    });
+    if (!ok) return;
     const { error } = await supabase.from("contact_addresses").delete().eq("id", id);
     if (error) return void toast.error("Não foi possível excluir o endereço.");
     refresh();
@@ -284,6 +304,12 @@ function Contato() {
   async function removeAvatar() {
     const old = data?.avatarPath;
     if (!old) return;
+    const ok = await confirmAction({
+      title: "Tem certeza que deseja remover a sua foto?",
+      description: "O seu perfil fica sem foto até você enviar outra.",
+      confirmLabel: "Remover foto",
+    });
+    if (!ok) return;
     const { error } = await supabase
       .from("profiles")
       .update({ avatar_path: null })
