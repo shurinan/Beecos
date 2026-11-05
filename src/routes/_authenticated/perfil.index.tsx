@@ -48,6 +48,7 @@ import {
   PREMIUM_PRICE,
   getPlanUsage,
 } from "@/lib/plans";
+import { confirmAction } from "@/lib/confirm";
 
 export const Route = createFileRoute("/_authenticated/perfil/")({
   staticData: { sitemap: false },
@@ -225,6 +226,12 @@ function Painel() {
   }
 
   async function deleteSkill(name: string) {
+    const ok = await confirmAction({
+      title: `Tem certeza que deseja remover a habilidade “${name}”?`,
+      description: "Ela sai do seu perfil e você deixa de receber avisos de vagas dela.",
+      confirmLabel: "Remover",
+    });
+    if (!ok) return;
     const { error } = await supabase
       .from("profile_skills")
       .delete()
@@ -316,6 +323,13 @@ function Painel() {
   }
 
   async function closePost(id: string) {
+    const ok = await confirmAction({
+      title: "Tem certeza que deseja marcar esta vaga como concluída?",
+      description: "Ela sai das buscas e ninguém mais pode demonstrar interesse.",
+      confirmLabel: "Marcar como concluída",
+      danger: false,
+    });
+    if (!ok) return;
     const { error } = await supabase
       .from("posts")
       .update({ closed_at: new Date().toISOString() })
@@ -329,6 +343,13 @@ function Painel() {
   }
 
   async function deletePost(id: string) {
+    const post = data?.posts.find((x) => x.id === id);
+    const ok = await confirmAction({
+      title: `Tem certeza que deseja excluir “${post?.title ?? "esta publicação"}”?`,
+      description: "A publicação, as fotos e os interessados somem. Não dá para desfazer.",
+      confirmLabel: "Excluir",
+    });
+    if (!ok) return;
     const photoPaths = (data?.posts.find((x) => x.id === id)?.post_photos ?? []).map((x) => x.path);
     const { error } = await supabase.from("posts").delete().eq("id", id);
     if (!error) await removePostPhotoFiles(photoPaths);
@@ -532,7 +553,7 @@ function Painel() {
                         <ConfirmButton
                           variant="outline"
                           size="sm"
-                          title="Desistir do plano anual?"
+                          title="Tem certeza que deseja desistir do plano anual?"
                           description="Você está dentro dos 7 dias: o valor pago é devolvido e o Premium termina agora."
                           confirmLabel="Desistir e receber de volta"
                           onConfirm={async () => {
@@ -561,7 +582,7 @@ function Painel() {
                     <ConfirmButton
                       variant="outline"
                       size="sm"
-                      title="Cancelar a assinatura Premium?"
+                      title="Tem certeza que deseja cancelar a assinatura Premium?"
                       description="O Premium continua até o fim do período já pago e não renova. Se você assinou há menos de 7 dias, o valor pago é devolvido."
                       confirmLabel="Cancelar assinatura"
                       onConfirm={async () => {

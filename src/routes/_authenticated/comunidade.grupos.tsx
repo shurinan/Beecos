@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { useAuth } from "@/lib/auth";
 import { useCatalog } from "@/lib/catalog";
 import { communityErrorMessage, useCommunityOverview, useMyCommunities } from "@/lib/community";
+import { confirmAction } from "@/lib/confirm";
 
 export const Route = createFileRoute("/_authenticated/comunidade/grupos")({
   staticData: { sitemap: true },
@@ -25,6 +26,15 @@ function Groups() {
   const [busy, setBusy] = useState<string | null>(null);
 
   async function toggle(id: string, isIn: boolean) {
+    if (isIn) {
+      const ok = await confirmAction({
+        title: `Tem certeza que deseja sair do grupo ${catalog?.professions.get(id)?.name ?? ""}?`,
+        description:
+          "Você deixa de ver as vagas e conversas do grupo. Pode entrar de novo quando quiser.",
+        confirmLabel: "Sair do grupo",
+      });
+      if (!ok) return;
+    }
     setBusy(id);
     try {
       await (isIn ? leave(id) : join(id));

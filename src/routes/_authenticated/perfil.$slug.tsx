@@ -33,6 +33,7 @@ import { telUrl, whatsappUrl } from "@/lib/services";
 import { usePostStats } from "@/lib/services-hooks";
 import { BLOCKED_TEXT_MESSAGE, isBlockedTextError, replySpeedLabel } from "@/lib/chat";
 import { SKILL_COLUMNS, formatRating, sortSkills, type ProfileSkill } from "@/lib/skills";
+import { confirmAction } from "@/lib/confirm";
 
 export const Route = createFileRoute("/_authenticated/perfil/$slug")({
   staticData: { sitemap: false },
@@ -426,6 +427,15 @@ function Reviews({
       return;
     }
     const text = comment.trim();
+    if (mine) {
+      const ok = await confirmAction({
+        title: "Tem certeza que deseja alterar a sua avaliação?",
+        description: "A nova nota e o comentário aparecem no perfil na hora.",
+        confirmLabel: "Salvar alterações",
+        danger: false,
+      });
+      if (!ok) return;
+    }
     const { error } = mine
       ? await supabase.from("reviews").update({ rating, comment: text }).eq("id", mine.id)
       : await supabase
@@ -444,6 +454,12 @@ function Reviews({
 
   async function remove() {
     if (!mine) return;
+    const ok = await confirmAction({
+      title: "Tem certeza que deseja apagar a sua avaliação?",
+      description: "A nota e o comentário saem do perfil. Não dá para desfazer.",
+      confirmLabel: "Apagar",
+    });
+    if (!ok) return;
     const { error } = await supabase.from("reviews").delete().eq("id", mine.id);
     if (error) {
       toast.error("Não foi possível apagar a avaliação.");

@@ -331,7 +331,7 @@ function Interested({ id }: { id: string }) {
                   size="sm"
                   variant="outline"
                   loading={act.busy}
-                  title={`Encerrar a negociação com ${name}?`}
+                  title={`Tem certeza que deseja encerrar a negociação com ${name}?`}
                   description={`${name} recebe um aviso no chat. O lugar continua ocupado e você pode reabrir depois.`}
                   confirmLabel="Encerrar"
                   onConfirm={() => act.closeNegotiation(c.conversationId, id)}
@@ -347,7 +347,7 @@ function Interested({ id }: { id: string }) {
                     size="sm"
                     variant="outline"
                     loading={act.busy}
-                    title={`Encerrar com ${name} e receber novo contato?`}
+                    title={`Tem certeza que deseja encerrar com ${name} e receber um novo contato?`}
                     description={`${name} recebe um aviso no chat. O lugar fica livre: entra o primeiro da fila de espera ou, se não houver fila, a vaga volta a aceitar um novo interessado.`}
                     confirmLabel="Encerrar e liberar"
                     onConfirm={() => act.closeNegotiation(c.conversationId, id, true)}

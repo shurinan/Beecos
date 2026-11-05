@@ -9,6 +9,7 @@ import { ModerationCase } from "@/components/ModerationCase";
 import { REPORT_REASONS, resolveReport } from "@/lib/reports";
 import { timeAgo } from "@/lib/data";
 import { postParams, profileParam } from "@/lib/urls";
+import { confirmAction } from "@/lib/confirm";
 
 export const Route = createFileRoute("/_authenticated/moderacao")({
   staticData: { sitemap: false },
@@ -149,6 +150,13 @@ function ReportCard({
   const [caseOpen, setCaseOpen] = useState(false);
   const reason = REPORT_REASONS.find((x) => x.value === report.reason)?.label ?? report.reason;
   async function act(action: Parameters<typeof resolveReport>[1]) {
+    const ask: Partial<Record<typeof action, [string, string]>> = {
+      hide_post: ["Tem certeza que deseja ocultar esta vaga?", "Ocultar vaga"],
+      hide_channel: ["Tem certeza que deseja ocultar este canal?", "Ocultar canal"],
+      dismiss_bad_faith: ["Tem certeza que deseja descartar e marcar como má-fé?", "Marcar má-fé"],
+    };
+    const q = ask[action];
+    if (q && !(await confirmAction({ title: q[0], confirmLabel: q[1] }))) return;
     setBusy(true);
     try {
       await resolveReport(report.id, action, note);

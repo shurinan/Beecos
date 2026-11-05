@@ -15,6 +15,7 @@ import { reportLovableError } from "../lib/lovable-error-reporting";
 import { AuthProvider } from "@/lib/auth";
 import { AppShell } from "@/components/AppShell";
 import { Toaster } from "@/components/ui/sonner";
+import { ConfirmHost } from "@/components/ConfirmHost";
 import { THEME_INIT_SCRIPT } from "@/lib/theme";
 
 function NotFoundComponent() {
@@ -161,6 +162,7 @@ function RootComponent() {
           <Outlet />
         </AppShell>
         <Toaster />
+        <ConfirmHost />
       </AuthProvider>
     </QueryClientProvider>
   );

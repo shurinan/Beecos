@@ -9,6 +9,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { timeAgo } from "@/lib/data";
 import { purgeVerificationFiles, verificationErrorMessage } from "@/lib/verification";
+import { confirmAction } from "@/lib/confirm";
 
 export const Route = createFileRoute("/_authenticated/verificacoes")({
   staticData: { sitemap: false },
@@ -70,6 +71,21 @@ function Case({ row, onDone }: { row: Row; onDone: () => void }) {
   const [busy, setBusy] = useState(false);
 
   async function decide(approve: boolean) {
+    const ok = await confirmAction(
+      approve
+        ? {
+            title: "Tem certeza que deseja aprovar esta verificação?",
+            description: "A pessoa recebe o selo Verificado e os documentos são apagados.",
+            confirmLabel: "Aprovar",
+            danger: false,
+          }
+        : {
+            title: "Tem certeza que deseja recusar esta verificação?",
+            description: "A pessoa recebe um e-mail com o motivo e os documentos são apagados.",
+            confirmLabel: "Recusar",
+          },
+    );
+    if (!ok) return;
     setBusy(true);
     try {
       const { data: paths, error } = await supabase.rpc("review_verification", {

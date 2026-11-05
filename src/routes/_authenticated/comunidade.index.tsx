@@ -20,6 +20,7 @@ import { usePostDistances } from "@/lib/geo";
 import { showInterestError } from "@/lib/interest";
 import { usePostStats } from "@/lib/services-hooks";
 import { profileParam } from "@/lib/urls";
+import { confirmAction } from "@/lib/confirm";
 
 export const Route = createFileRoute("/_authenticated/comunidade/")({
   staticData: { sitemap: true },
@@ -144,7 +145,14 @@ function Community() {
                 type="button"
                 size="sm"
                 variant="outline"
-                onClick={() => {
+                onClick={async () => {
+                  const ok = await confirmAction({
+                    title: `Tem certeza que deseja sair do grupo ${selected.name}?`,
+                    description:
+                      "Você deixa de ver as vagas e conversas do grupo. Pode entrar de novo quando quiser.",
+                    confirmLabel: "Sair do grupo",
+                  });
+                  if (!ok) return;
                   leave(selected.id)
                     .then(() => {
                       toast.success(`Você saiu do grupo ${selected.name}.`);

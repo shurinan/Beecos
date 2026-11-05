@@ -10,6 +10,7 @@ import { useBadge } from "@/lib/badges";
 import { useCatalog } from "@/lib/catalog";
 import { type Channel, type ChannelNumbers, useChannels, useFollow } from "@/lib/channels";
 import { initials } from "@/lib/data";
+import { confirmAction } from "@/lib/confirm";
 
 export const Route = createFileRoute("/_authenticated/canais/")({
   staticData: { sitemap: false },
@@ -120,6 +121,14 @@ function Channels() {
   const others = filtered.filter((c) => !numbers?.get(c.id)?.following);
 
   async function toggle(c: Channel) {
+    if (numbers?.get(c.id)?.following) {
+      const ok = await confirmAction({
+        title: `Tem certeza que deseja deixar de seguir o canal ${c.name}?`,
+        description: "Você deixa de receber as novidades dele.",
+        confirmLabel: "Deixar de seguir",
+      });
+      if (!ok) return;
+    }
     setBusy(c.id);
     try {
       if (numbers?.get(c.id)?.following) await unfollow(c.id);

@@ -13,6 +13,7 @@ import { PostFormFields } from "@/components/PostFormFields";
 import type { Catalog } from "@/lib/catalog";
 import { GeoError, isValidCep, lookupCep } from "@/lib/geo";
 import { draftError, type PostDraft } from "@/lib/post-form";
+import { confirmAction } from "@/lib/confirm";
 
 /** Editar uma vaga ou anúncio já publicado. O tipo (vaga ou disponível) não muda. */
 export function PostEditDialog({
@@ -52,6 +53,16 @@ export function PostEditDialog({
     if (!draft) return;
     const problem = draftError(draft, minVacancies);
     if (problem) return void toast.error(problem);
+    const ok = await confirmAction({
+      title:
+        draft.kind === "job"
+          ? "Tem certeza que deseja alterar esta vaga?"
+          : "Tem certeza que deseja alterar este anúncio?",
+      description: "As mudanças valem na hora para quem está vendo a publicação.",
+      confirmLabel: "Salvar alterações",
+      danger: false,
+    });
+    if (!ok) return;
     let next = draft;
     setBusy(true);
     if (!next.place && isValidCep(next.cep)) {

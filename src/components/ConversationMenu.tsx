@@ -16,7 +16,8 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
+import { confirmAction } from "@/lib/confirm";
 import { Textarea } from "@/components/ui/textarea";
 import {
   AlertDialog,
@@ -197,17 +198,20 @@ export function ConversationMenu({
         clearedAt={pref.cleared_at}
       />
       <AlertDialog open={deleteOpen} onOpenChange={setDeleteOpen}>
-        <AlertDialogContent>
+        <AlertDialogContent className="block-card w-[calc(100%-2rem)] max-w-md">
           <AlertDialogHeader>
-            <AlertDialogTitle>Excluir esta conversa?</AlertDialogTitle>
+            <AlertDialogTitle className="font-display text-lg leading-snug">
+              Tem certeza que deseja excluir esta conversa?
+            </AlertDialogTitle>
             <AlertDialogDescription>
               Ela some só para você. Se a outra pessoa escrever de novo, a conversa volta com as
               mensagens novas.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+            <AlertDialogCancel>Voltar</AlertDialogCancel>
             <AlertDialogAction
+              className={buttonVariants({ variant: "destructive" })}
               onClick={() => {
                 save({
                   cleared_at: new Date().toISOString(),
@@ -275,7 +279,14 @@ function NoteDialog({
         <DialogFooter className="gap-2">
           <Button
             variant="outline"
-            onClick={() => onSave({ note: null, remind_at: null })}
+            onClick={async () => {
+              const ok = await confirmAction({
+                title: "Tem certeza que deseja apagar o recado?",
+                description: "O texto e o lembrete desta conversa somem.",
+                confirmLabel: "Apagar",
+              });
+              if (ok) onSave({ note: null, remind_at: null });
+            }}
             disabled={!note && !remindAt}
           >
             Apagar

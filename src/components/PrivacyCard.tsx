@@ -97,7 +97,7 @@ export function PrivacyCard({
           <Download /> Baixar meus dados
         </Button>
         <ConfirmButton
-          title="Excluir a sua conta?"
+          title="Tem certeza que deseja excluir a sua conta?"
           description="Isso apaga o seu perfil, as suas vagas, conversas, avaliações e avisos, e não dá para desfazer. As conversas também somem para a outra pessoa. Se você tem o Premium mensal, a assinatura é cancelada."
           confirmLabel="Excluir para sempre"
           variant="destructive"
