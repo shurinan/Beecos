@@ -358,6 +358,13 @@
       "when": 1797360000000,
       "tag": "0050_suggestion_done_alert",
       "breakpoints": true
+    },
+    {
+      "idx": 51,
+      "version": "7",
+      "when": 1797446400000,
+      "tag": "0051_admin",
+      "breakpoints": true
     }
   ]
 }

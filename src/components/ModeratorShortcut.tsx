@@ -1,6 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { Flag, Lightbulb, ShieldCheck, UserCheck } from "lucide-react";
+import { Flag, LayoutDashboard, Lightbulb, ShieldCheck, UserCheck } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 
 /** Atalho do perfil só para moderadores: denúncias e sugestões, com a contagem do que espera. */
@@ -48,6 +48,13 @@ export function ModeratorShortcut() {
         <ShieldCheck className="h-5 w-5" aria-hidden="true" /> Moderação
       </h2>
       <div className="flex flex-wrap gap-2">
+        <Link
+          to="/admin"
+          search={{ aba: "geral", p: "mes" }}
+          className={item + " basis-full bg-primary"}
+        >
+          <LayoutDashboard className="h-4 w-4" aria-hidden="true" /> Gestão
+        </Link>
         <Link to="/moderacao" className={item}>
           <Flag className="h-4 w-4" aria-hidden="true" /> Denúncias {badge(counts?.reports ?? 0)}
         </Link>
