@@ -230,6 +230,26 @@
     transform: translateY(-4px);
   }
 }
+/* a lâmpada do botão "Ideia?" dá uma piscadinha de luz de vez em quando */
+@keyframes ideia-brilho {
+  0%,
+  86%,
+  100% {
+    box-shadow: 0 0 0 0 oklch(0.93 0.12 95 / 0);
+  }
+  91% {
+    box-shadow: 0 0 0 5px oklch(0.93 0.12 95 / 0.75);
+  }
+}
+.ideia-brilho {
+  animation: ideia-brilho 7s ease-in-out infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .ideia-brilho {
+    animation: none;
+  }
+}
+
 @keyframes badge-pop {
   0% {
     transform: scale(0.4);
