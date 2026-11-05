@@ -1483,6 +1483,66 @@ export type Database = {
         }
         Relationships: []
       }
+      referral_rewards: {
+        Row: {
+          asaas_attempts: number
+          asaas_done_at: string | null
+          asaas_error: string | null
+          asaas_subscription_id: string | null
+          granted_at: string
+          id: string
+          kind: string
+          until: string | null
+          user_id: string
+        }
+        Insert: {
+          asaas_attempts?: number
+          asaas_done_at?: string | null
+          asaas_error?: string | null
+          asaas_subscription_id?: string | null
+          granted_at?: string
+          id?: string
+          kind: string
+          until?: string | null
+          user_id: string
+        }
+        Update: {
+          asaas_attempts?: number
+          asaas_done_at?: string | null
+          asaas_error?: string | null
+          asaas_subscription_id?: string | null
+          granted_at?: string
+          id?: string
+          kind?: string
+          until?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      referrals: {
+        Row: {
+          counted_at: string | null
+          created_at: string
+          referred_id: string
+          referrer_id: string
+          reward_id: string | null
+        }
+        Insert: {
+          counted_at?: string | null
+          created_at?: string
+          referred_id: string
+          referrer_id: string
+          reward_id?: string | null
+        }
+        Update: {
+          counted_at?: string | null
+          created_at?: string
+          referred_id?: string
+          referrer_id?: string
+          reward_id?: string | null
+        }
+        Relationships: []
+      }
       reports: {
         Row: {
           bad_faith: boolean
@@ -1954,6 +2014,27 @@ export type Database = {
           isSetofReturn: true
         }
       }
+      claim_postpones: {
+        Args: { _limit?: number }
+        Returns: {
+          asaas_attempts: number
+          asaas_done_at: string | null
+          asaas_error: string | null
+          asaas_subscription_id: string | null
+          granted_at: string
+          id: string
+          kind: string
+          until: string | null
+          user_id: string
+        }[]
+        SetofOptions: {
+          from: "*"
+          to: "referral_rewards"
+          isOneToOne: false
+          isSetofReturn: true
+        }
+      }
+      claim_referral: { Args: { _username: string }; Returns: string }
       close_negotiation: {
         Args: { _conversation: string; _post: string; _release?: boolean }
         Returns: undefined
@@ -1986,8 +2067,14 @@ export type Database = {
       current_terms_version: { Args: never; Returns: string }
       delete_my_account: { Args: never; Returns: undefined }
       effective_radius_km: { Args: { _user_id: string }; Returns: number }
+      evaluate_all_referrals: { Args: never; Returns: undefined }
+      evaluate_referrals: { Args: { _referrer: string }; Returns: undefined }
       export_my_data: { Args: never; Returns: Json }
       fold_text: { Args: { _t: string }; Returns: string }
+      grant_referral_reward: {
+        Args: { _batch: string[]; _u: string }
+        Returns: undefined
+      }
       has_reports: { Args: { _u: string }; Returns: boolean }
       haversine_km: {
         Args: { lat1: number; lat2: number; lng1: number; lng2: number }
@@ -2055,6 +2142,17 @@ export type Database = {
       queue_job_digests: { Args: never; Returns: undefined }
       queue_premium_ending: { Args: never; Returns: undefined }
       queue_unread_digests: { Args: never; Returns: undefined }
+      referral_inviter: {
+        Args: { _username: string }
+        Returns: {
+          avatar_path: string
+          first_name: string
+          full_name: string
+          username: string
+        }[]
+      }
+      referral_ready: { Args: { _u: string }; Returns: boolean }
+      referral_status: { Args: never; Returns: Json }
       reopen_negotiation: {
         Args: { _conversation: string; _post: string }
         Returns: undefined
@@ -2117,17 +2215,6 @@ export type Database = {
         }[]
       }
       username_available: { Args: { _name: string }; Returns: boolean }
-      claim_referral: { Args: { _username: string }; Returns: string }
-      referral_inviter: {
-        Args: { _username: string }
-        Returns: {
-          avatar_path: string | null
-          first_name: string
-          full_name: string
-          username: string
-        }[]
-      }
-      referral_status: { Args: never; Returns: Json }
     }
     Enums: {
       [_ in never]: never
