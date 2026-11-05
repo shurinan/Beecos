@@ -351,6 +351,13 @@
       "when": 1797273600000,
       "tag": "0049_referrals",
       "breakpoints": true
+    },
+    {
+      "idx": 50,
+      "version": "7",
+      "when": 1797360000000,
+      "tag": "0050_suggestion_done_alert",
+      "breakpoints": true
     }
   ]
 }

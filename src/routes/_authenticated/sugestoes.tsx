@@ -4,6 +4,7 @@ import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { timeAgo } from "@/lib/data";
+import { confirmAction } from "@/lib/confirm";
 
 export const Route = createFileRoute("/_authenticated/sugestoes")({
   staticData: { sitemap: false },
@@ -82,7 +83,19 @@ function Suggestions() {
                 </Button>
               )}
               {s.status !== "done" && (
-                <Button size="sm" variant="outline" onClick={() => void mark(s.id, "done")}>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={async () => {
+                    const ok = await confirmAction({
+                      title: "Tem certeza que deseja marcar esta ideia como feita?",
+                      description: "Quem sugeriu recebe um aviso: “Sua ideia entrou no Beecos!”",
+                      confirmLabel: "Marcar como feita",
+                      danger: false,
+                    });
+                    if (ok) void mark(s.id, "done");
+                  }}
+                >
                   Feita
                 </Button>
               )}
