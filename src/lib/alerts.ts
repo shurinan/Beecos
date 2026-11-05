@@ -1,3 +1,4 @@
+import { playNotificationSound } from "@/lib/sound";
 import { useEffect } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -90,7 +91,10 @@ export function useAlerts(userId: string | null) {
           table: "notifications",
           filter: `user_id=eq.${userId}`,
         },
-        () => qc.invalidateQueries({ queryKey: listKey(userId) }),
+        () => {
+          playNotificationSound();
+          void qc.invalidateQueries({ queryKey: listKey(userId) });
+        },
       )
       .subscribe();
     return () => {

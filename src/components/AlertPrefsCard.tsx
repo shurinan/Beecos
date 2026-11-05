@@ -3,6 +3,7 @@ import { Crown } from "lucide-react";
 import { toast } from "sonner";
 import { Switch } from "@/components/ui/switch";
 import { Button } from "@/components/ui/button";
+import { useSoundPref } from "@/lib/sound";
 import { PAUSE_OPTIONS, pauseUntil, pausedNow, type AlertPrefs } from "@/lib/alerts";
 
 /**
@@ -114,11 +115,28 @@ export function AlertPrefsCard({
           )}
         </div>
       )}
+      <SoundToggle />
       <div className="space-y-1 border-t border-dashed border-foreground/30 pt-3 text-sm text-muted-foreground">
         <p>
           Quer ser avisado de vagas mais longe? Aumente o raio em “Onde você atua” (plano Premium).
         </p>
       </div>
     </section>
+  );
+}
+
+/** Som ao chegar mensagem ou aviso. Fica guardado neste aparelho. */
+function SoundToggle() {
+  const { on, choose } = useSoundPref();
+  return (
+    <label className="flex items-center justify-between gap-3 border-t border-dashed border-foreground/30 pt-3">
+      <span>
+        <span className="block font-bold">Som de notificação</span>
+        <span className="block text-sm text-muted-foreground">
+          Toca quando chega mensagem ou aviso, com o Beecos aberto. Vale para este aparelho.
+        </span>
+      </span>
+      <Switch aria-label="Som de notificação" checked={on} onCheckedChange={choose} />
+    </label>
   );
 }
