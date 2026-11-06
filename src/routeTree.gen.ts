@@ -29,6 +29,7 @@ import { Route as AuthenticatedSugestoesRouteImport } from './routes/_authentica
 import { Route as AuthenticatedVerificacoesRouteImport } from './routes/_authenticated/verificacoes'
 import { Route as CUsuarioRouteImport } from './routes/c.$usuario'
 import { Route as ServicosIndexRouteImport } from './routes/servicos.index'
+import { Route as VCodigoRouteImport } from './routes/v.$codigo'
 import { Route as AuthenticatedCanaisIndexRouteImport } from './routes/_authenticated/canais.index'
 import { Route as AuthenticatedCanaisSlugRouteImport } from './routes/_authenticated/canais.$slug'
 import { Route as AuthenticatedCanaisNovoRouteImport } from './routes/_authenticated/canais.novo'
@@ -145,6 +146,11 @@ const ServicosIndexRoute = ServicosIndexRouteImport.update({
   path: '/servicos/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const VCodigoRoute = VCodigoRouteImport.update({
+  id: '/v/$codigo',
+  path: '/v/$codigo',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthenticatedCanaisIndexRoute =
   AuthenticatedCanaisIndexRouteImport.update({
     id: '/canais/',
@@ -245,6 +251,7 @@ export interface FileRoutesByFullPath {
   '/sugestoes': typeof AuthenticatedSugestoesRoute
   '/verificacoes': typeof AuthenticatedVerificacoesRoute
   '/c/$usuario': typeof CUsuarioRoute
+  '/v/$codigo': typeof VCodigoRoute
   '/servicos/': typeof ServicosIndexRoute
   '/canais/$slug': typeof AuthenticatedCanaisSlugRoute
   '/canais/novo': typeof AuthenticatedCanaisNovoRoute
@@ -279,6 +286,7 @@ export interface FileRoutesByTo {
   '/sugestoes': typeof AuthenticatedSugestoesRoute
   '/verificacoes': typeof AuthenticatedVerificacoesRoute
   '/c/$usuario': typeof CUsuarioRoute
+  '/v/$codigo': typeof VCodigoRoute
   '/servicos': typeof ServicosIndexRoute
   '/canais/$slug': typeof AuthenticatedCanaisSlugRoute
   '/canais/novo': typeof AuthenticatedCanaisNovoRoute
@@ -316,6 +324,7 @@ export interface FileRoutesById {
   '/_authenticated/sugestoes': typeof AuthenticatedSugestoesRoute
   '/_authenticated/verificacoes': typeof AuthenticatedVerificacoesRoute
   '/c/$usuario': typeof CUsuarioRoute
+  '/v/$codigo': typeof VCodigoRoute
   '/servicos/': typeof ServicosIndexRoute
   '/_authenticated/canais/$slug': typeof AuthenticatedCanaisSlugRoute
   '/_authenticated/canais/novo': typeof AuthenticatedCanaisNovoRoute
@@ -353,6 +362,7 @@ export interface FileRouteTypes {
     | '/sugestoes'
     | '/verificacoes'
     | '/c/$usuario'
+    | '/v/$codigo'
     | '/servicos/'
     | '/canais/$slug'
     | '/canais/novo'
@@ -387,6 +397,7 @@ export interface FileRouteTypes {
     | '/sugestoes'
     | '/verificacoes'
     | '/c/$usuario'
+    | '/v/$codigo'
     | '/servicos'
     | '/canais/$slug'
     | '/canais/novo'
@@ -423,6 +434,7 @@ export interface FileRouteTypes {
     | '/_authenticated/sugestoes'
     | '/_authenticated/verificacoes'
     | '/c/$usuario'
+    | '/v/$codigo'
     | '/servicos/'
     | '/_authenticated/canais/$slug'
     | '/_authenticated/canais/novo'
@@ -449,6 +461,7 @@ export interface RootRouteChildren {
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   TermosRoute: typeof TermosRoute
   CUsuarioRoute: typeof CUsuarioRoute
+  VCodigoRoute: typeof VCodigoRoute
   ServicosIndexRoute: typeof ServicosIndexRoute
 }
 
@@ -592,6 +605,13 @@ declare module '@tanstack/react-router' {
       path: '/servicos'
       fullPath: '/servicos/'
       preLoaderRoute: typeof ServicosIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/v/$codigo': {
+      id: '/v/$codigo'
+      path: '/v/$codigo'
+      fullPath: '/v/$codigo'
+      preLoaderRoute: typeof VCodigoRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticated/canais/': {
@@ -777,6 +797,7 @@ const rootRouteChildren: RootRouteChildren = {
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   TermosRoute: TermosRoute,
   CUsuarioRoute: CUsuarioRoute,
+  VCodigoRoute: VCodigoRoute,
   ServicosIndexRoute: ServicosIndexRoute,
 }
 export const routeTree = rootRouteImport
