@@ -19,6 +19,7 @@ export type Database = {
           ends_at: string
           id: string
           lifted_at: string | null
+          reason: string | null
           report_id: string | null
           role: string
           starts_at: string
@@ -28,6 +29,7 @@ export type Database = {
           ends_at: string
           id?: string
           lifted_at?: string | null
+          reason?: string | null
           report_id?: string | null
           role: string
           starts_at?: string
@@ -37,6 +39,7 @@ export type Database = {
           ends_at?: string
           id?: string
           lifted_at?: string | null
+          reason?: string | null
           report_id?: string | null
           role?: string
           starts_at?: string
@@ -58,6 +61,33 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      admin_actions: {
+        Row: {
+          action: string
+          admin_id: string
+          created_at: string
+          details: Json
+          id: string
+          target_id: string | null
+        }
+        Insert: {
+          action: string
+          admin_id: string
+          created_at?: string
+          details?: Json
+          id?: string
+          target_id?: string | null
+        }
+        Update: {
+          action?: string
+          admin_id?: string
+          created_at?: string
+          details?: Json
+          id?: string
+          target_id?: string | null
+        }
+        Relationships: []
       }
       ads: {
         Row: {
@@ -1976,6 +2006,35 @@ export type Database = {
       }
       _promote_waitlist: { Args: { _post: string }; Returns: undefined }
       accept_terms: { Args: { _version: string }; Returns: undefined }
+      admin_grant_premium: {
+        Args: { _days?: number; _id: string }
+        Returns: string
+      }
+      admin_guard: { Args: never; Returns: undefined }
+      admin_overview: { Args: { _since: string }; Returns: Json }
+      admin_suspend: {
+        Args: { _days: number; _id: string; _reason: string }
+        Returns: string
+      }
+      admin_unsuspend: { Args: { _id: string }; Returns: undefined }
+      admin_user: { Args: { _id: string }; Returns: Json }
+      admin_users: {
+        Args: { _limit?: number; _q?: string }
+        Returns: {
+          avatar_path: string
+          created_at: string
+          doc: boolean
+          email: string
+          email_ok: boolean
+          full_name: string
+          id: string
+          phone: boolean
+          plan_term: string
+          premium: boolean
+          suspended: boolean
+          username: string
+        }[]
+      }
       asaas_apply_payment: {
         Args: {
           _customer: string
@@ -2065,34 +2124,6 @@ export type Database = {
         }
       }
       claim_referral: { Args: { _username: string }; Returns: string }
-      send_test_push: { Args: never; Returns: boolean }
-      vapid_public_key: { Args: never; Returns: string | null }
-      admin_grant_premium: { Args: { _id: string; _days?: number }; Returns: string | null }
-      admin_overview: { Args: { _since: string }; Returns: Json }
-      admin_suspend: { Args: { _id: string; _days: number; _reason: string }; Returns: string }
-      admin_unsuspend: { Args: { _id: string }; Returns: undefined }
-      admin_user: { Args: { _id: string }; Returns: Json }
-      admin_users: {
-        Args: { _q?: string; _limit?: number }
-        Returns: {
-          id: string
-          full_name: string
-          username: string | null
-          email: string
-          avatar_path: string | null
-          created_at: string
-          premium: boolean
-          plan_term: string | null
-          email_ok: boolean
-          doc: boolean
-          phone: boolean
-          suspended: boolean
-        }[]
-      }
-      my_hold: {
-        Args: never
-        Returns: { until: string; suspended: boolean; reason: string | null }[]
-      }
       close_negotiation: {
         Args: { _conversation: string; _post: string; _release?: boolean }
         Returns: undefined
@@ -2158,6 +2189,14 @@ export type Database = {
       }
       max_open_negotiations: { Args: never; Returns: number }
       moderator_case: { Args: { _report: string }; Returns: Json }
+      my_hold: {
+        Args: never
+        Returns: {
+          reason: string
+          suspended: boolean
+          until: string
+        }[]
+      }
       my_hold_until: { Args: never; Returns: string }
       my_post_distances: {
         Args: { _post_ids: string[] }
@@ -2211,6 +2250,8 @@ export type Database = {
       }
       referral_ready: { Args: { _u: string }; Returns: boolean }
       referral_status: { Args: never; Returns: Json }
+      send_test_push: { Args: never; Returns: boolean }
+      vapid_public_key: { Args: never; Returns: string | null }
       reopen_negotiation: {
         Args: { _conversation: string; _post: string }
         Returns: undefined
