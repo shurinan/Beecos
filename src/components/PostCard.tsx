@@ -19,6 +19,7 @@ import { formatKm, type PostDistance } from "@/lib/geo";
 import { isFilled, vacanciesLabel } from "@/lib/services";
 import type { PostSlots } from "@/lib/services-hooks";
 import { postParams, profileParam } from "@/lib/urls";
+import { openPostEditor } from "@/lib/post-editor";
 
 export type PostWithAuthor = {
   id: string;
@@ -68,6 +69,7 @@ export function PostCard({
 }) {
   const kind = post.kind as PostKind;
   const { userId } = useAuth();
+  const mine = !!userId && userId === post.user_id;
   const top = topSkill(post.profiles?.profile_skills);
   const filled = kind === "job" && isFilled(slots);
   const vacancy =
@@ -226,10 +228,10 @@ export function PostCard({
             {expandable && (
               <button
                 type="button"
-                onClick={() => setOpen(true)}
+                onClick={() => (mine && openPostEditor(post.id)) || setOpen(true)}
                 className="shrink-0 font-bold underline"
               >
-                {kind === "job" ? "Ver vaga" : "Ver"}
+                {mine ? "Editar" : kind === "job" ? "Ver vaga" : "Ver"}
               </button>
             )}
           </div>

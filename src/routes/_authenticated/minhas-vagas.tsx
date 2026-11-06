@@ -1,5 +1,6 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { ChevronRight, Plus } from "lucide-react";
+import { ChevronRight, Pencil, Plus } from "lucide-react";
+import { openPostEditor } from "@/lib/post-editor";
 import { Button } from "@/components/ui/button";
 import { useCatalog } from "@/lib/catalog";
 import {
@@ -57,7 +58,18 @@ function Label({ children }: { children: React.ReactNode }) {
   );
 }
 
-function CardShell({ title, meta, badges }: { title: string; meta: string; badges: Badge[] }) {
+function CardShell({
+  title,
+  meta,
+  badges,
+  edit = false,
+}: {
+  title: string;
+  meta: string;
+  badges: Badge[];
+  /** Publicação minha: tocar abre o editor (lápis no lugar da setinha). */
+  edit?: boolean;
+}) {
   return (
     <span className="block-card flex items-center gap-3 p-3 transition-transform active:translate-x-0.5 active:translate-y-0.5">
       <span className="min-w-0 flex-1">
@@ -71,7 +83,14 @@ function CardShell({ title, meta, badges }: { title: string; meta: string; badge
           </span>
         )}
       </span>
-      <ChevronRight className="h-5 w-5 flex-none" aria-hidden="true" />
+      {edit ? (
+        <span className="flex flex-none flex-col items-center text-xs font-bold">
+          <Pencil className="h-5 w-5" aria-hidden="true" />
+          Editar
+        </span>
+      ) : (
+        <ChevronRight className="h-5 w-5 flex-none" aria-hidden="true" />
+      )}
     </span>
   );
 }
@@ -82,8 +101,13 @@ function metaLine(parts: (string | null | undefined)[]) {
 
 function MyPostCard({ p, profession }: { p: MyPost; profession: string | undefined }) {
   return (
-    <li>
-      <Link to="/vagas/$profissao/$codigo/interessados" params={postParams(p)} className="block">
+    <li className="space-y-1">
+      <button
+        type="button"
+        onClick={() => openPostEditor(p.id)}
+        aria-label={`Editar ${p.title}`}
+        className="block w-full text-left"
+      >
         <CardShell
           title={p.title}
           meta={metaLine([
@@ -92,8 +116,21 @@ function MyPostCard({ p, profession }: { p: MyPost; profession: string | undefin
             p.kind === "available" ? "Disponível" : p.price || "a combinar",
           ])}
           badges={postBadges(p)}
+          edit
         />
-      </Link>
+      </button>
+      <div className="flex justify-end gap-4 px-1 text-sm font-bold">
+        <Link
+          to="/vagas/$profissao/$codigo/interessados"
+          params={postParams(p)}
+          className="underline"
+        >
+          Ver interessados{p.interested > 0 ? ` (${p.interested})` : ""}
+        </Link>
+        <Link to="/vagas/$profissao/$codigo" params={postParams(p)} className="underline">
+          Ver como os outros veem
+        </Link>
+      </div>
     </li>
   );
 }

@@ -13,6 +13,7 @@ import {
   Users,
 } from "lucide-react";
 import { NewPostFab, NewPostHeaderButton } from "@/components/NewPostButton";
+import { PostEditorHost } from "@/components/PostEditorHost";
 import { useHideOnScroll } from "@/lib/hide-on-scroll";
 import {
   claimInvite,
@@ -212,6 +213,7 @@ export function AppShell({ children }: { children: ReactNode }) {
       {userId && <ChatBackground userId={userId} />}
       {userId && <AfterLogin userId={userId} />}
       {userId && <InviteClaimer userId={userId} />}
+      {userId && <PostEditorHost userId={userId} />}
       <main
         id="conteudo"
         tabIndex={-1}
