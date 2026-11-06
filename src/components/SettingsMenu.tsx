@@ -2,6 +2,8 @@ import { Link } from "@tanstack/react-router";
 import { useState } from "react";
 import {
   Bell,
+  ChevronRight,
+  LayoutDashboard,
   CreditCard,
   FileText,
   Gift,
@@ -89,8 +91,8 @@ const ITEMS: Item[] = [
 ];
 
 /**
- * Menu lateral do perfil, no estilo das Configurações do WhatsApp.
- * No computador é uma coluna com busca; no celular vira uma faixa de abas deslizável.
+ * Menu lateral do perfil, no computador (coluna com busca). No celular, o menu é a lista do
+ * ProfileMenuList (estilo Configurações do Instagram).
  */
 export function SettingsMenu({
   current,
@@ -112,39 +114,6 @@ export function SettingsMenu({
 
   return (
     <>
-      {/* celular: abas deslizáveis */}
-      <nav
-        aria-label="Seções do perfil"
-        className="-mx-4 mb-4 flex gap-2 overflow-x-auto px-4 pb-1 lg:hidden"
-      >
-        {ITEMS.map((i) =>
-          i.kind === "section" ? (
-            <Link
-              key={i.key}
-              to="/perfil"
-              search={{ secao: i.key }}
-              aria-current={current === i.key ? "page" : undefined}
-              className={
-                "shrink-0 rounded-full border px-3.5 py-1.5 text-sm font-bold " +
-                (current === i.key
-                  ? "border-primary bg-primary text-primary-foreground"
-                  : "border-foreground/25")
-              }
-            >
-              {i.title}
-            </Link>
-          ) : (
-            <Link
-              key={i.to}
-              to={i.to}
-              className="shrink-0 rounded-full border border-foreground/25 px-3.5 py-1.5 text-sm font-bold"
-            >
-              {i.title}
-            </Link>
-          ),
-        )}
-      </nav>
-
       {/* computador: coluna lateral */}
       <aside className="hidden lg:block">
         <div className="sticky top-24 space-y-4">
@@ -221,5 +190,114 @@ export function SettingsMenu({
         </div>
       </aside>
     </>
+  );
+}
+
+const GROUPS: { title: string; keys: string[] }[] = [
+  { title: "Sua conta", keys: ["perfil", "habilidades", "publicacoes"] },
+  { title: "Plano e indicações", keys: ["plano", "indique"] },
+  { title: "Configurações", keys: ["/avisos", "privacidade", "/ajuda"] },
+];
+const itemKey = (i: Item) => (i.kind === "section" ? i.key : i.to);
+
+/** Celular: o menu do perfil em lista, agrupado. Tocar num item abre a seção (com "←"). */
+export function ProfileMenuList({
+  name,
+  username,
+  avatarPath,
+  publicSlug,
+  values,
+  moderator,
+  onSignOut,
+}: {
+  name: string;
+  username: string | null | undefined;
+  avatarPath: string | null | undefined;
+  publicSlug: string;
+  /** Texto curto à direita do item (ex.: plano: "Premium", indique: "3 de 5"). */
+  values: Partial<Record<Section, string>>;
+  moderator: boolean;
+  onSignOut: () => void;
+}) {
+  const row = "flex min-h-14 items-center gap-3 py-2.5";
+  const body = (i: Item) => {
+    const Icon = i.icon;
+    const v = i.kind === "section" ? values[i.key] : undefined;
+    return (
+      <>
+        <Icon className="h-6 w-6 shrink-0" aria-hidden="true" />
+        <span className="min-w-0 flex-1">
+          <span className="block font-semibold leading-tight">{i.title}</span>
+          <span className="block truncate text-sm text-muted-foreground">{i.text}</span>
+        </span>
+        {v && <span className="shrink-0 text-sm text-muted-foreground">{v}</span>}
+        <ChevronRight className="h-5 w-5 shrink-0 text-muted-foreground" aria-hidden="true" />
+      </>
+    );
+  };
+  return (
+    <nav aria-label="Menu do perfil" className="lg:hidden">
+      <Link
+        to="/perfil/$slug"
+        params={{ slug: publicSlug }}
+        search={{ post: undefined }}
+        className="flex items-center gap-3 border-b border-foreground/15 pb-4"
+      >
+        <Avatar name={name} path={avatarPath} size={60} />
+        <span className="min-w-0">
+          <span className="block truncate text-lg font-bold">{name || "Sem nome"}</span>
+          <span className="block truncate text-sm text-muted-foreground">
+            {username ? `@${username} · ` : ""}Ver meu perfil público
+          </span>
+        </span>
+      </Link>
+      {GROUPS.map((g, gi) => (
+        <section key={g.title} className={gi > 0 ? "-mx-4 mt-2 border-t-8 border-muted px-4" : ""}>
+          <h2 className="mt-4 font-sans text-sm font-bold text-muted-foreground">{g.title}</h2>
+          <ul>
+            {g.keys.map((k) => {
+              const i = ITEMS.find((x) => itemKey(x) === k);
+              if (!i) return null;
+              return (
+                <li key={k}>
+                  {i.kind === "section" ? (
+                    <Link to="/perfil" search={{ secao: i.key }} className={row}>
+                      {body(i)}
+                    </Link>
+                  ) : (
+                    <Link to={i.to} className={row}>
+                      {body(i)}
+                    </Link>
+                  )}
+                </li>
+              );
+            })}
+          </ul>
+        </section>
+      ))}
+      <section className="-mx-4 mt-2 border-t-8 border-muted px-4">
+        <ul className="mt-2">
+          {moderator && (
+            <li>
+              <Link to="/admin" search={{ aba: "geral", p: "mes" }} className={row}>
+                <LayoutDashboard className="h-6 w-6 shrink-0" aria-hidden="true" />
+                <span className="flex-1 font-semibold">Gestão e moderação</span>
+                <ChevronRight className="h-5 w-5 text-muted-foreground" aria-hidden="true" />
+              </Link>
+            </li>
+          )}
+          <li>
+            <button
+              type="button"
+              onClick={onSignOut}
+              className={row + " w-full font-semibold text-destructive"}
+            >
+              <LogOut className="h-6 w-6 shrink-0" aria-hidden="true" />
+              Sair
+            </button>
+          </li>
+        </ul>
+      </section>
+    </nav>
   );
 }

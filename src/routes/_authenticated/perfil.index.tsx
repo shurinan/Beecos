@@ -5,13 +5,25 @@ import { timeLeftLabel } from "@/lib/channels";
 import { ClosedOffers } from "@/components/ClosedOffers";
 import { UserSeal } from "@/components/Seal";
 import { VerificationCard } from "@/components/VerificationCard";
-import { SECTIONS, SettingsMenu, type Section } from "@/components/SettingsMenu";
+import { ProfileMenuList, SECTIONS, SettingsMenu, type Section } from "@/components/SettingsMenu";
+import { useIsModerator } from "@/lib/admin";
+import { INVITE_GOAL, useReferralStatus } from "@/lib/referrals";
 import { postParams, profileParam } from "@/lib/urls";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { toast } from "sonner";
-import { CheckCircle2, Mail, MapPin, Pencil, Plus, Smartphone, Trash2, Users } from "lucide-react";
+import {
+  ArrowLeft,
+  CheckCircle2,
+  Mail,
+  MapPin,
+  Pencil,
+  Plus,
+  Smartphone,
+  Trash2,
+  Users,
+} from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -69,6 +81,9 @@ export const Route = createFileRoute("/_authenticated/perfil/")({
 function Painel() {
   const { userId } = Route.useRouteContext();
   const { secao } = Route.useSearch();
+  const { data: isMod } = useIsModerator();
+  // só para o número “3 de 5” no menu do celular
+  const { data: referral } = useReferralStatus(userId);
   const qc = useQueryClient();
   const navigate = useNavigate();
 
@@ -311,20 +326,49 @@ function Painel() {
         avatarPath={data?.profile?.avatar_path}
         onSignOut={signOut}
       />
-      <div className="min-w-0 space-y-6 lg:max-w-2xl">
-        <div className="flex items-center justify-between">
-          <h1 className="text-3xl">{titles[section]}</h1>
+      {!secao && (
+        <ProfileMenuList
+          name={profileFields.full_name}
+          username={data?.profile?.slug}
+          avatarPath={data?.profile?.avatar_path}
+          publicSlug={profileParam({ id: userId, slug: data?.profile?.slug })}
+          values={{
+            plano: usage?.premium ? "Premium" : "Grátis",
+            ...(referral
+              ? { indique: `${Math.min(referral.counted, INVITE_GOAL)} de ${INVITE_GOAL}` }
+              : {}),
+          }}
+          moderator={!!isMod}
+          onSignOut={signOut}
+        />
+      )}
+      <div className={`min-w-0 space-y-6 lg:max-w-2xl ${secao ? "" : "max-lg:hidden"}`}>
+        <div className="flex items-center justify-between gap-3">
+          <div className="flex min-w-0 items-center gap-2">
+            <Link
+              to="/perfil"
+              search={{ secao: undefined }}
+              aria-label="Voltar ao menu do perfil"
+              className="-ml-2 flex h-10 w-10 shrink-0 items-center justify-center rounded-md lg:hidden"
+            >
+              <ArrowLeft className="h-6 w-6" aria-hidden="true" />
+            </Link>
+            <h1 className="text-2xl leading-tight sm:text-3xl">{titles[section]}</h1>
+          </div>
           <Link
             to="/perfil/$slug"
             params={{ slug: profileParam({ id: userId, slug: data?.profile?.slug }) }}
             search={{ post: undefined }}
-            className="text-sm font-semibold underline"
+            className="hidden text-sm font-semibold underline lg:inline"
           >
             Ver como os outros veem
           </Link>
         </div>
 
-        <ModeratorShortcut />
+        {/* no celular a Gestão fica no fim do menu do perfil */}
+        <div className="max-lg:hidden">
+          <ModeratorShortcut />
+        </div>
 
         {section === "perfil" && (
           <>
