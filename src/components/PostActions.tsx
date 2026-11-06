@@ -5,6 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { showInterestError } from "@/lib/interest";
 import { Button } from "@/components/ui/button";
 import { ReportButton } from "@/components/ReportButton";
+import { ShareButton } from "@/components/ShareButton";
 import type { PostWithAuthor } from "@/components/PostCard";
 import { useAuth } from "@/lib/auth";
 import { openConversation } from "@/lib/data";
@@ -100,6 +101,7 @@ export function PostActions({
               : "Conversar e negociar"}
         </Button>
       )}
+      <ShareButton post={post} mine={mine} />
       {userId && !mine && (
         <div className="text-center">
           <ReportButton type="post" targetId={post.id} what="esta publicação" />
