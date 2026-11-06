@@ -106,3 +106,28 @@ export function usePremiumIds(ids: (string | null | undefined)[]): Set<string> {
   });
   return data ?? new Set<string>();
 }
+
+/** Botões de distância da tela de Vagas (km a partir de onde a pessoa atua). */
+export const DISTANCE_OPTIONS = [5, 10, 20, 50] as const;
+
+/**
+ * Deixa só o que está até `maxKm`. Publicações sem endereço (sem CEP) saem quando há limite;
+ * devolve quantas saíram por isso, para avisar a pessoa.
+ */
+export function filterByDistance<T extends { id: string }>(
+  posts: T[],
+  distances: Map<string, { km: number }>,
+  maxKm: number | null,
+): { list: T[]; noLocation: number } {
+  if (maxKm === null) return { list: posts, noLocation: 0 };
+  let noLocation = 0;
+  const list = posts.filter((p) => {
+    const d = distances.get(p.id);
+    if (!d) {
+      noLocation++;
+      return false;
+    }
+    return d.km <= maxKm;
+  });
+  return { list, noLocation };
+}
