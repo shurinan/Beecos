@@ -99,35 +99,3 @@ export function InstallPrompt() {
     </div>
   );
 }
-
-/** Pede permissão para avisos de mensagem nova. Só pede quando a pessoa toca no botão. */
-export function NotificationCard() {
-  const [permission, setPermission] = useState<NotificationPermission | "unsupported">(
-    "unsupported",
-  );
-
-  useEffect(() => {
-    if (notificationsSupported()) setPermission(Notification.permission);
-  }, []);
-
-  if (permission === "unsupported" || permission === "granted") return null;
-  if (permission === "denied") {
-    return (
-      <p className="rounded-lg border-2 border-dashed border-foreground/40 p-3 text-sm text-muted-foreground">
-        Os avisos estão bloqueados. Para receber, libere as notificações do Beecos nas configurações
-        do navegador.
-      </p>
-    );
-  }
-  return (
-    <div className="block-card flex items-center gap-3 p-3">
-      <Bell className="h-5 w-5 shrink-0" />
-      <p className="min-w-0 flex-1 text-sm font-semibold">
-        Receba um aviso quando chegar mensagem nova.
-      </p>
-      <Button size="sm" onClick={async () => setPermission(await Notification.requestPermission())}>
-        Ativar avisos
-      </Button>
-    </div>
-  );
-}

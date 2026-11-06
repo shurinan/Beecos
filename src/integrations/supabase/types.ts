@@ -1852,6 +1852,36 @@ export type Database = {
           },
         ]
       }
+      push_subscriptions: {
+        Row: {
+          auth: string
+          created_at: string
+          endpoint: string
+          last_ok_at: string | null
+          p256dh: string
+          user_agent: string | null
+          user_id: string
+        }
+        Insert: {
+          auth: string
+          created_at?: string
+          endpoint: string
+          last_ok_at?: string | null
+          p256dh: string
+          user_agent?: string | null
+          user_id: string
+        }
+        Update: {
+          auth?: string
+          created_at?: string
+          endpoint?: string
+          last_ok_at?: string | null
+          p256dh?: string
+          user_agent?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       user_presence: {
         Row: {
           last_seen_at: string
@@ -2220,6 +2250,8 @@ export type Database = {
       }
       referral_ready: { Args: { _u: string }; Returns: boolean }
       referral_status: { Args: never; Returns: Json }
+      send_test_push: { Args: never; Returns: boolean }
+      vapid_public_key: { Args: never; Returns: string | null }
       reopen_negotiation: {
         Args: { _conversation: string; _post: string }
         Returns: undefined

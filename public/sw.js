@@ -1,6 +1,6 @@
 // Service worker do Beecos. De propósito não guarda páginas nem dados em cache:
 // assim ninguém fica preso numa versão antiga do app depois de uma publicação.
-// Faz três coisas: página de "sem internet", clique nos avisos e (futuramente) push.
+// Faz três coisas: página de "sem internet", clique nos avisos e avisos do servidor (push).
 const OFFLINE_CACHE = "beecos-offline-v1";
 
 self.addEventListener("install", (event) => {
@@ -37,7 +37,7 @@ self.addEventListener("notificationclick", (event) => {
   );
 });
 
-// Aviso enviado por um servidor (Web Push), quando esse envio for configurado.
+// Aviso enviado pelo servidor (Web Push, função send-push), mesmo com o app fechado.
 self.addEventListener("push", (event) => {
   let data = {};
   try {
@@ -46,12 +46,18 @@ self.addEventListener("push", (event) => {
     /* ignora corpo inválido */
   }
   event.waitUntil(
-    self.registration.showNotification(data.title || "Beecos", {
+    self.clients
+      .matchAll({ type: "window", includeUncontrolled: true })
+      .then((list) => {
+        // com o Beecos aberto e na frente, o aviso aparece dentro do app (sem repetir na barra)
+        if (list.some((c) => c.visibilityState === "visible" && c.focused)) return;
+        return self.registration.showNotification(data.title || "Beecos", {
       body: data.body || "Você tem uma nova mensagem",
       icon: "/icon-192.png",
       badge: "/icon-192.png",
-      tag: data.url || "beecos",
-      data: { url: data.url || "/conversas" },
-    }),
+          tag: data.tag || data.url || "beecos",
+          data: { url: data.url || "/conversas" },
+        });
+      }),
   );
 });

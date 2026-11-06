@@ -4,6 +4,7 @@ import { toast } from "sonner";
 import { Switch } from "@/components/ui/switch";
 import { Button } from "@/components/ui/button";
 import { useSoundPref } from "@/lib/sound";
+import { PushToggle } from "@/components/PushToggle";
 import { PAUSE_OPTIONS, pauseUntil, pausedNow, type AlertPrefs } from "@/lib/alerts";
 
 /**
@@ -129,6 +130,7 @@ export function AlertPrefsCard({
           onCheckedChange={(v) => void run({ emails_optional: v })}
         />
       </label>
+      <PushToggle />
       <SoundToggle />
       <div className="space-y-1 border-t border-dashed border-foreground/30 pt-3 text-sm text-muted-foreground">
         <p>

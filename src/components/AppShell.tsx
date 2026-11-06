@@ -15,6 +15,7 @@ import {
 import { NewPostFab, NewPostHeaderButton } from "@/components/NewPostButton";
 import { PostEditorHost } from "@/components/PostEditorHost";
 import { useHideOnScroll } from "@/lib/hide-on-scroll";
+import { syncPush } from "@/lib/push";
 import {
   claimInvite,
   clearInvite,
@@ -38,6 +39,10 @@ import { InstallPrompt } from "@/components/InstallPrompt";
 function ChatBackground({ userId }: { userId: string }) {
   useChatBackground(userId);
   usePresenceHeartbeat(userId);
+  // aparelho já autorizado: mantém a inscrição dos avisos do sistema em dia
+  useEffect(() => {
+    if (userId) void syncPush(userId);
+  }, [userId]);
   return null;
 }
 

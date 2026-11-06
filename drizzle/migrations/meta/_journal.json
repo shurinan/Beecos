@@ -379,6 +379,13 @@
       "when": 1797619200000,
       "tag": "0053_email_new_message",
       "breakpoints": true
+    },
+    {
+      "idx": 54,
+      "version": "7",
+      "when": 1797705600000,
+      "tag": "0054_web_push",
+      "breakpoints": true
     }
   ]
 }

@@ -16,7 +16,7 @@ import { Avatar } from "@/components/profile-bits";
 import { UserSeal } from "@/components/Seal";
 import { profileParam } from "@/lib/urls";
 import { useUnread } from "@/lib/chat-hooks";
-import { NotificationCard } from "@/components/InstallPrompt";
+import { PushToggle } from "@/components/PushToggle";
 
 type View = InboxView | "nao-lidas";
 
@@ -75,7 +75,7 @@ export function InboxList({ userId }: { userId: string }) {
     <div className="flex min-h-0 flex-col">
       <div className="space-y-3 p-4 pb-2">
         <h1 className="text-2xl">Conversas</h1>
-        <NotificationCard />
+        <PushToggle compact />
         <div className="relative">
           <Search
             className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground"
