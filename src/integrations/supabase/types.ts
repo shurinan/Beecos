@@ -1822,6 +1822,36 @@ export type Database = {
           },
         ]
       }
+      push_subscriptions: {
+        Row: {
+          auth: string
+          created_at: string
+          endpoint: string
+          last_ok_at: string | null
+          p256dh: string
+          user_agent: string | null
+          user_id: string
+        }
+        Insert: {
+          auth: string
+          created_at?: string
+          endpoint: string
+          last_ok_at?: string | null
+          p256dh: string
+          user_agent?: string | null
+          user_id: string
+        }
+        Update: {
+          auth?: string
+          created_at?: string
+          endpoint?: string
+          last_ok_at?: string | null
+          p256dh?: string
+          user_agent?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       user_presence: {
         Row: {
           last_seen_at: string
@@ -2035,6 +2065,8 @@ export type Database = {
         }
       }
       claim_referral: { Args: { _username: string }; Returns: string }
+      send_test_push: { Args: never; Returns: boolean }
+      vapid_public_key: { Args: never; Returns: string | null }
       admin_grant_premium: { Args: { _id: string; _days?: number }; Returns: string | null }
       admin_overview: { Args: { _since: string }; Returns: Json }
       admin_suspend: { Args: { _id: string; _days: number; _reason: string }; Returns: string }
