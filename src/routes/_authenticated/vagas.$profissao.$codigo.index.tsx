@@ -66,10 +66,11 @@ function PostPage() {
   const back = (
     <Link
       to="/vagas"
-      search={{ q: undefined, tipo: undefined }}
+      search={{ q: undefined, tipo: post?.kind === "available" ? "trabalhadores" : "vagas" }}
       className="mb-2 inline-flex items-center gap-1 text-sm font-semibold underline"
     >
-      <ArrowLeft className="h-4 w-4" /> Todas as vagas
+      <ArrowLeft className="h-4 w-4" />{" "}
+      {post?.kind === "available" ? "Todos os profissionais" : "Todas as vagas"}
     </Link>
   );
 

@@ -47,7 +47,12 @@ export const Route = createFileRoute("/_authenticated/vagas/")({
   staticData: { sitemap: true },
   validateSearch: (q: Record<string, unknown>) => ({
     q: typeof q["q"] === "string" ? (q["q"] as string) : undefined,
-    tipo: q["tipo"] === "trabalhadores" ? ("trabalhadores" as const) : undefined,
+    tipo:
+      q["tipo"] === "vagas"
+        ? ("vagas" as const)
+        : q["tipo"] === "trabalhadores"
+          ? ("trabalhadores" as const)
+          : undefined,
   }),
   head: () => ({
     meta: [
@@ -100,7 +105,8 @@ function Vagas() {
   const [filters, setFilters] = useState<FeedFilters>(() => ({
     ...EMPTY_FILTERS,
     q: search.q ?? "",
-    kind: search.tipo === "trabalhadores" ? "available" : EMPTY_FILTERS.kind,
+    // abre em Profissionais; os links de "ver vagas" mandam tipo=vagas
+    kind: search.tipo === "vagas" ? "job" : "available",
   }));
   const [open, setOpen] = useState(false);
   const { userId, ready } = useAuth();
