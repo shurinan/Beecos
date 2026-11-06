@@ -69,8 +69,6 @@ function choose(name: string, typed = name) {
   fireEvent.click(screen.getByRole("option", { name: new RegExp("^" + name) }));
 }
 
-const openServices = () => fireEvent.click(screen.getByRole("button", { name: /serviços/i }));
-
 /** Responde às três perguntas Sim/Não: experiência, treinamento e certificado. */
 function answer(exp: boolean, training: boolean, cert: boolean) {
   const pick = (label: "Sim" | "Não", i: number) =>
@@ -105,14 +103,15 @@ describe("SkillDialog", () => {
 
   it("lists the services of the chosen profession and saves them", async () => {
     const { onSave, onOpenChange } = setup();
-    expect(screen.queryByLabelText("Instalação de chuveiro")).toBeNull();
+    expect(screen.queryByRole("button", { name: "Instalação de chuveiro" })).toBeNull();
     choose("Eletricista");
-    expect(screen.queryByLabelText("Instalação de chuveiro")).toBeNull(); // recolhido
-    openServices();
-    fireEvent.click(screen.getByLabelText("Instalação de chuveiro"));
-    fireEvent.click(screen.getByLabelText("Troca de tomadas"));
-    fireEvent.click(screen.getByLabelText("Troca de tomadas")); // desmarca
-    expect(screen.getByRole("button", { name: /Instalação de chuveiro/ })).toBeTruthy();
+    // os serviços aparecem à vista, como botões
+    fireEvent.click(screen.getByRole("button", { name: "Instalação de chuveiro" }));
+    fireEvent.click(screen.getByRole("button", { name: "Troca de tomadas" }));
+    fireEvent.click(screen.getByRole("button", { name: "Troca de tomadas" })); // desmarca
+    expect(
+      screen.getByRole("button", { name: "Instalação de chuveiro" }).getAttribute("aria-pressed"),
+    ).toBe("true");
     fireEvent.click(screen.getByLabelText(/Profissional/));
     answer(true, false, true);
     fireEvent.change(screen.getByLabelText("Outras informações"), {
@@ -255,12 +254,10 @@ describe("SkillDialog", () => {
     expect(screen.queryByRole("combobox")).toBeNull();
     expect(screen.getByText("Eletricista")).toBeTruthy();
     expect((screen.getByLabelText(/Especialista/) as HTMLInputElement).checked).toBe(true);
-    openServices();
     expect(
-      (screen.getByRole("checkbox", { name: "Instalação de chuveiro" }) as HTMLInputElement)
-        .checked,
-    ).toBe(true);
-    fireEvent.click(screen.getByLabelText("Troca de tomadas"));
+      screen.getByRole("button", { name: "Instalação de chuveiro" }).getAttribute("aria-pressed"),
+    ).toBe("true");
+    fireEvent.click(screen.getByRole("button", { name: "Troca de tomadas" }));
     submit();
     await waitFor(() => expect(onSave).toHaveBeenCalledTimes(1));
     expect(onSave.mock.calls[0]![0]).toMatchObject({

@@ -32,8 +32,10 @@ import { useAuth } from "@/lib/auth";
 import { parsePostCode } from "@/lib/post-code";
 import type { PostKind } from "@/lib/data";
 import {
+  DISTANCE_OPTIONS,
   EMPTY_FILTERS,
   RATING_OPTIONS,
+  filterByDistance,
   TOPICS,
   activeFilterCount,
   searchArgs,
@@ -170,6 +172,10 @@ function Vagas() {
   const slots = usePostStats(shown?.map((p) => p.id));
   const distances = usePostDistances(userId, shown?.map((p) => p.id) ?? []);
   const { data: workArea, isSuccess: areaLoaded } = useWorkArea(userId);
+  // filtro de distância: só quem informou onde atua (CEP) tem distância das vagas
+  const [maxKm, setMaxKm] = useState<number | null>(null);
+  const near = filterByDistance(shown ?? [], distances, workArea ? maxKm : null);
+  const visible = shown ? near.list : shown;
 
   function pickTopic(q: string) {
     setFilters((f) => ({ ...f, q }));
@@ -226,7 +232,7 @@ function Vagas() {
 
       <section id="feed" className="scroll-mt-20 space-y-4">
         <div className="grid grid-cols-2 overflow-hidden rounded-lg border-2 border-foreground">
-          {(["job", "available"] as PostKind[]).map((k) => (
+          {(["available", "job"] as PostKind[]).map((k) => (
             <button
               key={k}
               onClick={() => set("kind", k)}
@@ -237,9 +243,9 @@ function Vagas() {
                   : "bg-background text-foreground")
               }
             >
-              <span className="block">{k === "job" ? "Quero trabalhar" : "Quero contratar"}</span>
+              <span className="block">{k === "job" ? "Vagas" : "Profissionais"}</span>
               <span className="block text-xs font-normal opacity-80">
-                {k === "job" ? "ver vagas em aberto" : "ver trabalhadores disponíveis"}
+                {k === "job" ? "quem precisa de serviço" : "disponíveis para contratar"}
               </span>
             </button>
           ))}
@@ -357,6 +363,41 @@ function Vagas() {
           </div>
         )}
 
+        {userId && workArea && (
+          <div className="space-y-1">
+            <p className="text-sm font-bold" id="distancia">
+              Até quantos km de você?
+            </p>
+            <div className="flex flex-wrap gap-2" role="radiogroup" aria-labelledby="distancia">
+              {[null, ...DISTANCE_OPTIONS].map((km) => {
+                const on = maxKm === km;
+                return (
+                  <button
+                    key={km ?? "todas"}
+                    type="button"
+                    role="radio"
+                    aria-checked={on}
+                    onClick={() => setMaxKm(km)}
+                    className={
+                      "min-h-9 rounded-full border-2 border-foreground px-2.5 text-sm font-bold transition-transform active:scale-95 " +
+                      (on ? "bg-foreground text-background" : "bg-card")
+                    }
+                  >
+                    {km === null ? "Todas" : `${km} km`}
+                  </button>
+                );
+              })}
+            </div>
+            {maxKm !== null && near.noLocation > 0 && (
+              <p className="text-xs text-muted-foreground">
+                {near.noLocation === 1
+                  ? "1 publicação sem endereço não aparece com esse filtro."
+                  : `${near.noLocation} publicações sem endereço não aparecem com esse filtro.`}
+              </p>
+            )}
+          </div>
+        )}
+
         {userId && areaLoaded && !workArea && (
           <Link
             to="/perfil"
@@ -371,17 +412,30 @@ function Vagas() {
           {isLoading && (
             <p className="text-center text-muted-foreground lg:col-span-2">Carregando…</p>
           )}
-          {shown?.length === 0 && (
+          {visible?.length === 0 && (
             <div className="rounded-lg border-2 border-dashed border-foreground/40 p-8 text-center text-muted-foreground lg:col-span-2">
-              {hasSearch
-                ? "Nada encontrado com esses filtros. Tente tirar algum."
-                : "Nada por aqui ainda. Seja o primeiro a publicar!"}
+              {maxKm !== null && (shown?.length ?? 0) > 0 ? (
+                <>
+                  Nada até {maxKm} km de você.{" "}
+                  <button
+                    type="button"
+                    className="font-bold underline"
+                    onClick={() => setMaxKm(null)}
+                  >
+                    Ver todas
+                  </button>
+                </>
+              ) : hasSearch ? (
+                "Nada encontrado com esses filtros. Tente tirar algum."
+              ) : (
+                "Nada por aqui ainda. Seja o primeiro a publicar!"
+              )}
             </div>
           )}
-          {shown?.map((p, i) => (
+          {visible?.map((p, i) => (
             <div key={p.id} className="space-y-4">
               <PostCard post={p} slots={slots[p.id]} distance={distances.get(p.id)} />
-              {i === FEED_AD_AFTER - 1 && shouldShowFeedAd(shown.length) && (
+              {i === FEED_AD_AFTER - 1 && shouldShowFeedAd(visible.length) && (
                 <AdSlot placement="feed" />
               )}
             </div>

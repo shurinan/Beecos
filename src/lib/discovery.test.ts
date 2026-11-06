@@ -1,5 +1,11 @@
 import { describe, expect, it } from "vitest";
-import { EMPTY_FILTERS, activeFilterCount, parseMoneyInput, searchArgs } from "./discovery";
+import {
+  EMPTY_FILTERS,
+  activeFilterCount,
+  filterByDistance,
+  parseMoneyInput,
+  searchArgs,
+} from "./discovery";
 
 describe("parseMoneyInput", () => {
   it("reads Brazilian numbers", () => {
@@ -63,5 +69,20 @@ describe("activeFilterCount", () => {
       }),
     ).toBe(4);
     expect(activeFilterCount({ ...EMPTY_FILTERS, minPrice: "abc" })).toBe(0);
+  });
+});
+
+describe("filterByDistance", () => {
+  const posts = [{ id: "a" }, { id: "b" }, { id: "c" }];
+  const d = new Map([
+    ["a", { km: 3 }],
+    ["b", { km: 18 }],
+  ]);
+  it("keeps everything without a limit", () => {
+    expect(filterByDistance(posts, d, null)).toEqual({ list: posts, noLocation: 0 });
+  });
+  it("keeps only what is close and counts posts without address", () => {
+    expect(filterByDistance(posts, d, 10)).toEqual({ list: [{ id: "a" }], noLocation: 1 });
+    expect(filterByDistance(posts, d, 20).list.map((p) => p.id)).toEqual(["a", "b"]);
   });
 });

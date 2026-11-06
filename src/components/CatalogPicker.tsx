@@ -1,5 +1,5 @@
 import { useId, useMemo, useRef, useState } from "react";
-import { ChevronDown } from "lucide-react";
+import { Check, ChevronDown } from "lucide-react";
 import { searchCatalog, type Catalog, type CatalogHit } from "@/lib/catalog";
 
 /** O que a pessoa escolheu. `other` = "Outro", uma profissão que não está na lista. */
@@ -50,7 +50,6 @@ export function CatalogPicker({
   const [query, setQuery] = useState("");
   const [open, setOpen] = useState(false);
   const [active, setActive] = useState(0);
-  const [servicesOpen, setServicesOpen] = useState(false);
 
   const profession = value.professionId ? catalog?.professions.get(value.professionId) : undefined;
   const selectedLabel = value.other ? "Outro (não está na lista)" : (profession?.name ?? "");
@@ -63,7 +62,6 @@ export function CatalogPicker({
       onChange({ professionId, other: false, serviceIds: serviceId ? [serviceId] : [] });
       setOpen(false);
       setQuery("");
-      setServicesOpen(false);
     };
     if (q) {
       const hits: CatalogHit[] = searchCatalog(catalog, q, 10);
@@ -96,7 +94,6 @@ export function CatalogPicker({
           onChange({ professionId: null, other: true, serviceIds: [] });
           setOpen(false);
           setQuery("");
-          setServicesOpen(false);
         },
         selected: value.other,
       });
@@ -136,20 +133,11 @@ export function CatalogPicker({
       });
     } else {
       onChange({ ...value, serviceIds: [serviceId] });
-      setServicesOpen(false);
     }
   }
 
   const services = profession?.services ?? [];
   const chosenServices = value.serviceIds.flatMap((sid) => catalog.services.get(sid)?.name ?? []);
-  const servicesSummary =
-    chosenServices.length === 0
-      ? multipleServices
-        ? "Escolher os serviços (opcional)"
-        : "Escolher o serviço (opcional)"
-      : chosenServices.length === 1
-        ? chosenServices[0]!
-        : `${chosenServices.length} serviços escolhidos`;
 
   return (
     <div className="space-y-3">
@@ -238,74 +226,47 @@ export function CatalogPicker({
       )}
 
       {profession && services.length > 0 && (
-        <div className="space-y-1">
+        <div className="space-y-1.5">
           <p id={`${id}-services-label`} className="text-sm font-bold">
-            {servicesLabel}
-          </p>
-          <button
-            type="button"
-            aria-expanded={servicesOpen}
-            aria-labelledby={`${id}-services-label ${id}-services-btn`}
-            id={`${id}-services-btn`}
-            className={field + " flex items-center justify-between gap-2"}
-            onClick={() => setServicesOpen((o) => !o)}
-          >
-            <span className={chosenServices.length === 0 ? "text-muted-foreground" : ""}>
-              {servicesSummary}
+            {servicesLabel}{" "}
+            <span className="font-normal text-muted-foreground">
+              {multipleServices ? "(toque em todos que você faz)" : "(opcional)"}
             </span>
-            <ChevronDown
-              className={
-                "h-4 w-4 shrink-0 transition-transform " + (servicesOpen ? "rotate-180" : "")
-              }
-              aria-hidden="true"
-            />
-          </button>
-          {servicesOpen && (
-            <div
-              role="group"
-              aria-labelledby={`${id}-services-label`}
-              className="max-h-64 space-y-1 overflow-y-auto rounded-lg border-2 border-foreground bg-background p-1"
-            >
-              {!multipleServices && (
-                <label className="flex min-h-11 cursor-pointer items-center gap-3 rounded-md px-3 hover:bg-primary/20">
-                  <input
-                    type="radio"
-                    name={`${id}-service`}
-                    className="h-4 w-4 accent-foreground"
-                    checked={value.serviceIds.length === 0}
-                    onChange={() => {
-                      onChange({ ...value, serviceIds: [] });
-                      setServicesOpen(false);
-                    }}
-                  />
-                  <span>Outro serviço ou não sei</span>
-                </label>
-              )}
-              {services.map((s) => (
-                <label
-                  key={s.id}
-                  className="flex min-h-11 cursor-pointer items-center gap-3 rounded-md px-3 hover:bg-primary/20 has-[:checked]:bg-primary/40"
-                >
-                  <input
-                    type={multipleServices ? "checkbox" : "radio"}
-                    name={`${id}-service`}
-                    className="h-4 w-4 accent-foreground"
-                    checked={value.serviceIds.includes(s.id)}
-                    onChange={() => toggleService(s.id)}
-                  />
-                  <span>{s.name}</span>
-                </label>
-              ))}
-              {multipleServices && (
+          </p>
+          <div
+            role="group"
+            aria-labelledby={`${id}-services-label`}
+            className="flex flex-wrap gap-2"
+          >
+            {services.map((s) => {
+              const on = value.serviceIds.includes(s.id);
+              return (
                 <button
+                  key={s.id}
                   type="button"
-                  className="w-full rounded-md py-2 text-sm font-bold underline"
-                  onClick={() => setServicesOpen(false)}
+                  aria-pressed={on}
+                  onClick={() =>
+                    on && !multipleServices
+                      ? onChange({ ...value, serviceIds: [] })
+                      : toggleService(s.id)
+                  }
+                  className={
+                    "flex min-h-10 items-center gap-1.5 rounded-full border-2 border-foreground px-3 text-left text-sm font-semibold transition-transform active:scale-95 " +
+                    (on ? "bg-primary text-primary-foreground" : "bg-card")
+                  }
                 >
-                  Pronto
+                  {on && <Check className="h-4 w-4 shrink-0" strokeWidth={3} aria-hidden="true" />}
+                  {s.name}
                 </button>
-              )}
-            </div>
+              );
+            })}
+          </div>
+          {chosenServices.length > 0 && (
+            <p className="text-xs text-muted-foreground">
+              {multipleServices
+                ? `${chosenServices.length} ${chosenServices.length === 1 ? "serviço marcado" : "serviços marcados"}. Toque de novo para desmarcar.`
+                : "Toque de novo para desmarcar."}
+            </p>
           )}
         </div>
       )}
