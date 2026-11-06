@@ -69,7 +69,7 @@ export function HomeBanner() {
         </div>
         <Link
           to="/vagas"
-          search={{ q: undefined, tipo: undefined }}
+          search={{ q: undefined, tipo: "vagas" }}
           className="inline-flex shrink-0 items-center rounded-full border-2 border-foreground bg-primary px-4 py-1.5 text-sm font-bold text-primary-foreground"
         >
           Ver vagas

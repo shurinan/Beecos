@@ -257,7 +257,7 @@ function MinhasVagas() {
                 Quando você tocar em “Tenho interesse” numa vaga, ela aparece aqui.
               </p>
               <Button asChild size="sm" variant="outline" className="mt-3">
-                <Link to="/vagas" search={{ q: undefined, tipo: undefined }}>
+                <Link to="/vagas" search={{ q: undefined, tipo: "vagas" }}>
                   Procurar vagas
                 </Link>
               </Button>

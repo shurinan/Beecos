@@ -57,7 +57,7 @@ const FIND = [
     icon: Briefcase,
     title: "Vagas",
     text: "Gente precisando de ajuda hoje, perto de você.",
-    link: { to: "/vagas", search: { q: undefined, tipo: undefined } },
+    link: { to: "/vagas", search: { q: undefined, tipo: "vagas" } },
   },
   {
     icon: Users,

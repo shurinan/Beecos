@@ -77,7 +77,7 @@ function SharedPost() {
         <h1 className="text-2xl">Esta publicação não existe mais</h1>
         <p className="text-sm text-muted-foreground">Veja as outras vagas perto de você.</p>
         <Button asChild>
-          <Link to="/vagas" search={{ q: undefined, tipo: undefined }}>
+          <Link to="/vagas" search={{ q: undefined, tipo: "vagas" }}>
             Ver vagas
           </Link>
         </Button>
@@ -103,7 +103,7 @@ function SharedPost() {
             {post.kind === "job" ? "Esta vaga já foi encerrada." : "Este anúncio já foi encerrado."}
           </p>
           <Button asChild variant="outline">
-            <Link to="/vagas" search={{ q: undefined, tipo: undefined }}>
+            <Link to="/vagas" search={{ q: undefined, tipo: "vagas" }}>
               Ver outras vagas
             </Link>
           </Button>
