@@ -4,6 +4,7 @@ import { MessageCircle } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { PostCard, type PostWithAuthor } from "@/components/PostCard";
 import { Button } from "@/components/ui/button";
+import { ShareButton } from "@/components/ShareButton";
 import { useAuth } from "@/lib/auth";
 import { rememberDestination } from "@/lib/after-login";
 import { photoUrl, sortPhotos } from "@/lib/post-photos";
@@ -112,6 +113,7 @@ function SharedPost() {
           <Button size="lg" className="w-full" onClick={enter}>
             <MessageCircle /> {post.kind === "job" ? "Tenho interesse" : "Conversar e negociar"}
           </Button>
+          <ShareButton post={post} mine={false} />
           <p className="text-center text-xs text-muted-foreground">
             Para conversar, entre ou crie a sua conta grátis. Você volta direto para esta{" "}
             {post.kind === "job" ? "vaga" : "publicação"}.
