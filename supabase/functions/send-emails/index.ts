@@ -80,6 +80,24 @@ function build(r: Row): Mail | null {
             ],
             cta: ["Abrir conversa", "/conversas"],
           };
+    case "new_message": {
+      const n = Number(d.n ?? 1);
+      const de = String(d.de ?? "Alguém");
+      const texto = String(d.texto ?? "");
+      const link =
+        typeof d.link === "string" && d.link.startsWith("/conversas") ? d.link : "/conversas";
+      const title = n > 1 ? `${n} mensagens novas de ${de}` : `Nova mensagem de ${de}`;
+      return {
+        subject: title,
+        pre: texto ? `“${texto}”` : "Abra a conversa para ver.",
+        h: title,
+        p: [
+          texto ? `“${texto}”` : "Mandou um arquivo.",
+          "Responda pelo Beecos para combinar tudo direto.",
+        ],
+        cta: ["Responder", link],
+      };
+    }
     case "unread_digest": {
       const n = Number(d.n ?? 0);
       const itens = ((d.itens as { de: string; texto: string }[]) ?? []).map(

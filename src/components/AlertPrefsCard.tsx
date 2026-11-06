@@ -119,7 +119,7 @@ export function AlertPrefsCard({
         <span>
           <span className="block font-bold">Avisos por e-mail</span>
           <span className="block text-sm text-muted-foreground">
-            Interessados, mensagens não lidas e vagas novas. E-mails de conta, serviço e pagamento
+            Mensagens novas, interessados e vagas novas. E-mails de conta, serviço e pagamento
             chegam sempre.
           </span>
         </span>
