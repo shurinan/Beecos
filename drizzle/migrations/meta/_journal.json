@@ -365,6 +365,13 @@
       "when": 1797446400000,
       "tag": "0051_admin",
       "breakpoints": true
+    },
+    {
+      "idx": 52,
+      "version": "7",
+      "when": 1797532800000,
+      "tag": "0052_posts_public_read",
+      "breakpoints": true
     }
   ]
 }
