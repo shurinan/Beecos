@@ -131,6 +131,24 @@ export type Database = {
         }
         Relationships: []
       }
+      app_keys: {
+        Row: {
+          created_at: string
+          name: string
+          value: string
+        }
+        Insert: {
+          created_at?: string
+          name: string
+          value: string
+        }
+        Update: {
+          created_at?: string
+          name?: string
+          value?: string
+        }
+        Relationships: []
+      }
       asaas_customers: {
         Row: {
           created_at: string
@@ -1513,6 +1531,75 @@ export type Database = {
         }
         Relationships: []
       }
+      push_outbox: {
+        Row: {
+          attempts: number
+          body: string
+          created_at: string
+          id: string
+          last_error: string | null
+          sent_at: string | null
+          tag: string | null
+          title: string
+          url: string
+          user_id: string
+        }
+        Insert: {
+          attempts?: number
+          body?: string
+          created_at?: string
+          id?: string
+          last_error?: string | null
+          sent_at?: string | null
+          tag?: string | null
+          title: string
+          url?: string
+          user_id: string
+        }
+        Update: {
+          attempts?: number
+          body?: string
+          created_at?: string
+          id?: string
+          last_error?: string | null
+          sent_at?: string | null
+          tag?: string | null
+          title?: string
+          url?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      push_subscriptions: {
+        Row: {
+          auth: string
+          created_at: string
+          endpoint: string
+          last_ok_at: string | null
+          p256dh: string
+          user_agent: string | null
+          user_id: string
+        }
+        Insert: {
+          auth: string
+          created_at?: string
+          endpoint: string
+          last_ok_at?: string | null
+          p256dh: string
+          user_agent?: string | null
+          user_id: string
+        }
+        Update: {
+          auth?: string
+          created_at?: string
+          endpoint?: string
+          last_ok_at?: string | null
+          p256dh?: string
+          user_agent?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       referral_rewards: {
         Row: {
           asaas_attempts: number
@@ -1852,36 +1939,6 @@ export type Database = {
           },
         ]
       }
-      push_subscriptions: {
-        Row: {
-          auth: string
-          created_at: string
-          endpoint: string
-          last_ok_at: string | null
-          p256dh: string
-          user_agent: string | null
-          user_id: string
-        }
-        Insert: {
-          auth: string
-          created_at?: string
-          endpoint: string
-          last_ok_at?: string | null
-          p256dh: string
-          user_agent?: string | null
-          user_id: string
-        }
-        Update: {
-          auth?: string
-          created_at?: string
-          endpoint?: string
-          last_ok_at?: string | null
-          p256dh?: string
-          user_agent?: string | null
-          user_id?: string
-        }
-        Relationships: []
-      }
       user_presence: {
         Row: {
           last_seen_at: string
@@ -2123,6 +2180,27 @@ export type Database = {
           isSetofReturn: true
         }
       }
+      claim_pushes: {
+        Args: { _limit?: number }
+        Returns: {
+          attempts: number
+          body: string
+          created_at: string
+          id: string
+          last_error: string | null
+          sent_at: string | null
+          tag: string | null
+          title: string
+          url: string
+          user_id: string
+        }[]
+        SetofOptions: {
+          from: "*"
+          to: "push_outbox"
+          isOneToOne: false
+          isSetofReturn: true
+        }
+      }
       claim_referral: { Args: { _username: string }; Returns: string }
       close_negotiation: {
         Args: { _conversation: string; _post: string; _release?: boolean }
@@ -2237,7 +2315,18 @@ export type Database = {
         Returns: undefined
       }
       queue_job_digests: { Args: never; Returns: undefined }
+      queue_new_message_emails: { Args: never; Returns: undefined }
       queue_premium_ending: { Args: never; Returns: undefined }
+      queue_push: {
+        Args: {
+          _body: string
+          _tag: string
+          _title: string
+          _url: string
+          _user: string
+        }
+        Returns: undefined
+      }
       queue_unread_digests: { Args: never; Returns: undefined }
       referral_inviter: {
         Args: { _username: string }
@@ -2250,8 +2339,6 @@ export type Database = {
       }
       referral_ready: { Args: { _u: string }; Returns: boolean }
       referral_status: { Args: never; Returns: Json }
-      send_test_push: { Args: never; Returns: boolean }
-      vapid_public_key: { Args: never; Returns: string | null }
       reopen_negotiation: {
         Args: { _conversation: string; _post: string }
         Returns: undefined
@@ -2303,6 +2390,7 @@ export type Database = {
           premium: boolean
         }[]
       }
+      send_test_push: { Args: never; Returns: boolean }
       set_show_last_seen: { Args: { _show: boolean }; Returns: undefined }
       slugify: { Args: { _max?: number; _t: string }; Returns: string }
       touch_presence: { Args: never; Returns: undefined }
@@ -2314,6 +2402,7 @@ export type Database = {
         }[]
       }
       username_available: { Args: { _name: string }; Returns: boolean }
+      vapid_public_key: { Args: never; Returns: string }
     }
     Enums: {
       [_ in never]: never
