@@ -1,5 +1,6 @@
 import { Link, useNavigate } from "@tanstack/react-router";
-import { MessageCircle, Users } from "lucide-react";
+import { MessageCircle, Pencil, Users } from "lucide-react";
+import { openPostEditor } from "@/lib/post-editor";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { showInterestError } from "@/lib/interest";
@@ -78,6 +79,19 @@ export function PostActions({
         >
           Colocar selo Urgente — {URGENT_PRICE}
         </CheckoutButton>
+      )}
+      {mine && (
+        <Button
+          type="button"
+          size="lg"
+          className="w-full"
+          onClick={() => {
+            onNavigate?.();
+            openPostEditor(post.id);
+          }}
+        >
+          <Pencil /> {post.kind === "job" ? "Editar vaga" : "Editar anúncio"}
+        </Button>
       )}
       {mine ? (
         post.slug && (

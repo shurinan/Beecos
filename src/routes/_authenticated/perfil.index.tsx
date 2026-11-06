@@ -33,9 +33,8 @@ import { ConfirmButton } from "@/components/ConfirmButton";
 import { cancelSubscription } from "@/lib/billing";
 import { CheckoutButton } from "@/components/CheckoutButton";
 import { ModeratorShortcut } from "@/components/ModeratorShortcut";
-import { PostEditDialog } from "@/components/PostEditDialog";
-import { draftColumns, type PostDraft } from "@/lib/post-form";
-import { removePostPhotoFiles, sortPhotos, syncPhotos } from "@/lib/post-photos";
+import { openPostEditor } from "@/lib/post-editor";
+import { removePostPhotoFiles } from "@/lib/post-photos";
 import { useCatalog } from "@/lib/catalog";
 import { WorkAreaDialog, type WorkAreaInput } from "@/components/WorkAreaDialog";
 import { formatCep, useWorkArea } from "@/lib/geo";
@@ -142,12 +141,6 @@ function Painel() {
   const { data: catalog } = useCatalog();
   const { data: workArea } = useWorkArea(userId);
   const [areaOpen, setAreaOpen] = useState(false);
-  const [editing, setEditing] = useState<{
-    id: string;
-    draft: PostDraft;
-    minVacancies: number;
-  } | null>(null);
-  const [editOpen, setEditOpen] = useState(false);
 
   async function saveWorkArea(a: WorkAreaInput): Promise<boolean> {
     const { error } = await supabase.from("work_areas").upsert({
@@ -243,84 +236,6 @@ function Painel() {
       return;
     }
     qc.invalidateQueries();
-  }
-
-  async function startEdit(p: NonNullable<typeof data>["posts"][number]) {
-    const { data: loc } = await supabase
-      .from("post_locations")
-      .select("postal_code")
-      .eq("post_id", p.id)
-      .maybeSingle();
-    setEditing({
-      id: p.id,
-      minVacancies: slots[p.id]?.taken ?? 0,
-      draft: {
-        kind: p.kind as PostKind,
-        title: p.title,
-        description: p.description,
-        city: p.city,
-        price: p.price,
-        vacancies: p.vacancies,
-        cep: loc ? formatCep(loc.postal_code) : "",
-        place: null,
-        pick: {
-          professionId: p.profession_id,
-          other: p.profession_id === null,
-          serviceIds: p.service_id ? [p.service_id] : [],
-        },
-        look: {
-          coverColor: p.cover_color,
-          icon: p.cover_icon,
-          urgent: p.urgent,
-          negotiable: p.negotiable,
-          highlight: p.highlight,
-        },
-        photos: { kept: sortPhotos(p.post_photos), added: [], removed: [] },
-      },
-    });
-    setEditOpen(true);
-  }
-
-  async function saveEdit(next: PostDraft): Promise<boolean> {
-    if (!editing) return false;
-    const { error } = await supabase.from("posts").update(draftColumns(next)).eq("id", editing.id);
-    if (error) {
-      toast.error(
-        isBlockedTextError(error)
-          ? BLOCKED_TEXT_MESSAGE
-          : error.message.includes("VAGAS_OCUPADAS")
-            ? "Já há mais vagas ocupadas do que esse número."
-            : "Não foi possível salvar as mudanças.",
-      );
-      return false;
-    }
-    if (next.place) {
-      const loc = await supabase.from("post_locations").upsert({
-        post_id: editing.id,
-        postal_code: next.place.cep,
-        lat: next.place.lat,
-        lng: next.place.lng,
-      });
-      if (loc.error) {
-        toast.error("Salvo, mas não foi possível guardar o CEP.");
-        return true;
-      }
-    } else if (next.cep.trim() === "") {
-      await supabase.from("post_locations").delete().eq("post_id", editing.id);
-    }
-    if (next.photos.added.length || next.photos.removed.length) {
-      const failed = await syncPhotos({
-        userId,
-        postId: editing.id,
-        add: next.photos.added,
-        remove: next.photos.removed,
-        startSort: Math.max(-1, ...next.photos.kept.map((x) => x.sort)) + 1,
-      });
-      if (failed) toast.error(`Salvo, mas ${failed} foto(s) não foram enviadas. Tente de novo.`);
-    }
-    toast.success("Publicação atualizada");
-    qc.invalidateQueries();
-    return true;
   }
 
   async function closePost(id: string) {
@@ -703,15 +618,6 @@ function Painel() {
           onSave={saveProfile}
           checkUsername={checkUsername}
         />
-        <PostEditDialog
-          open={editOpen}
-          onOpenChange={setEditOpen}
-          initial={editing?.draft ?? null}
-          catalog={catalog}
-          minVacancies={editing?.minVacancies ?? 0}
-          onSave={saveEdit}
-          premium={!!usage?.premium}
-        />
         <WorkAreaDialog
           open={areaOpen}
           onOpenChange={setAreaOpen}
@@ -810,7 +716,7 @@ function Painel() {
                       size="sm"
                       variant="outline"
                       aria-label={`Editar ${p.title}`}
-                      onClick={() => startEdit(p)}
+                      onClick={() => openPostEditor(p.id)}
                     >
                       <Pencil /> Editar
                     </Button>

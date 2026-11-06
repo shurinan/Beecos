@@ -9,6 +9,7 @@ import { formatKm, type PostDistance } from "@/lib/geo";
 import { isFilled, vacanciesLabel } from "@/lib/services";
 import type { PostSlots } from "@/lib/services-hooks";
 import { postParams } from "@/lib/urls";
+import { openPostEditor } from "@/lib/post-editor";
 
 /** Card de vaga no feed de um grupo: situação, dados rápidos e as duas ações. */
 export function CommunityPostCard({
@@ -107,10 +108,10 @@ export function CommunityPostCard({
           <Button
             type="button"
             variant="outline"
-            aria-label={`Saiba mais: ${post.title}`}
-            onClick={() => setOpen(true)}
+            aria-label={mine ? `Editar ${post.title}` : `Saiba mais: ${post.title}`}
+            onClick={() => (mine && openPostEditor(post.id)) || setOpen(true)}
           >
-            Saiba mais
+            {mine ? "Editar" : "Saiba mais"}
           </Button>
         ) : null}
       </div>
