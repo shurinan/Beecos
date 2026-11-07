@@ -1880,6 +1880,7 @@ export type Database = {
       }
       suggestions: {
         Row: {
+          rewarded_at: string | null
           body: string
           created_at: string
           id: string
@@ -1887,6 +1888,7 @@ export type Database = {
           user_id: string
         }
         Insert: {
+          rewarded_at?: string | null
           body: string
           created_at?: string
           id?: string
@@ -1894,6 +1896,7 @@ export type Database = {
           user_id: string
         }
         Update: {
+          rewarded_at?: string | null
           body?: string
           created_at?: string
           id?: string
@@ -2391,6 +2394,11 @@ export type Database = {
         }[]
       }
       send_test_push: { Args: never; Returns: boolean }
+      reward_suggestion: { Args: { _suggestion: string }; Returns: string | null }
+      admin_payments: { Args: { _status?: string | null; _limit?: number }; Returns: Json }
+      admin_referrals: { Args: never; Returns: Json }
+      admin_emails: { Args: { _only_failed?: boolean; _limit?: number }; Returns: Json }
+      admin_retry_email: { Args: { _id: string }; Returns: undefined }
       set_show_last_seen: { Args: { _show: boolean }; Returns: undefined }
       slugify: { Args: { _max?: number; _t: string }; Returns: string }
       touch_presence: { Args: never; Returns: undefined }

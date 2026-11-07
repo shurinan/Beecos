@@ -1,7 +1,23 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
-import { ExternalLink, Gift, Mail, Search, ShieldOff, ShieldAlert } from "lucide-react";
+import {
+  ArrowLeft,
+  ChevronRight,
+  CreditCard,
+  ExternalLink,
+  Flag,
+  Gift,
+  LayoutDashboard,
+  Lightbulb,
+  Mail,
+  RotateCcw,
+  Search,
+  ShieldAlert,
+  ShieldOff,
+  UserCheck,
+  Users,
+} from "lucide-react";
 import { toast } from "sonner";
 import { Avatar } from "@/components/profile-bits";
 import { Button } from "@/components/ui/button";
@@ -15,8 +31,16 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import {
+  type AdminReferrals,
   brl,
+  EMAIL_KIND,
   grantPremium,
+  PAYMENT_KIND,
+  PAYMENT_STATUS,
+  retryEmail,
+  useAdminEmails,
+  useAdminPayments,
+  useAdminReferrals,
   type Overview,
   type Period,
   planLabel,
@@ -30,20 +54,86 @@ import {
 import { confirmAction } from "@/lib/confirm";
 import { profileParam } from "@/lib/urls";
 
-type Aba = "geral" | "usuarios";
+type Aba = "geral" | "usuarios" | "pagamentos" | "indicacoes" | "emails";
+const ABAS: Aba[] = ["geral", "usuarios", "pagamentos", "indicacoes", "emails"];
 const PERIODS: { id: Period; label: string }[] = [
   { id: "hoje", label: "Hoje" },
   { id: "7dias", label: "7 dias" },
   { id: "mes", label: "Mês" },
 ];
 
+type MenuItem = {
+  label: string;
+  text: string;
+  icon: typeof Gift;
+  aba?: Aba;
+  to?: "/moderacao" | "/verificacoes" | "/sugestoes";
+};
+const MENU: { title: string; items: MenuItem[] }[] = [
+  {
+    title: "Números",
+    items: [
+      {
+        label: "Visão geral",
+        text: "Números do dia, da semana e do mês",
+        icon: LayoutDashboard,
+        aba: "geral",
+      },
+      {
+        label: "Usuários",
+        text: "Buscar, ver a ficha, dar Premium, suspender",
+        icon: Users,
+        aba: "usuarios",
+      },
+    ],
+  },
+  {
+    title: "Dinheiro e crescimento",
+    items: [
+      {
+        label: "Pagamentos",
+        text: "Pagos, aguardando, atrasados e cancelados",
+        icon: CreditCard,
+        aba: "pagamentos",
+      },
+      { label: "Indicações", text: "Quem mais trouxe prestadores", icon: Gift, aba: "indicacoes" },
+      {
+        label: "E-mails",
+        text: "O que saiu, o que espera e o que falhou",
+        icon: Mail,
+        aba: "emails",
+      },
+    ],
+  },
+  {
+    title: "Moderação",
+    items: [
+      { label: "Denúncias", text: "Casos abertos e decisões", icon: Flag, to: "/moderacao" },
+      {
+        label: "Verificações",
+        text: "Documentos esperando análise",
+        icon: UserCheck,
+        to: "/verificacoes",
+      },
+      { label: "Sugestões", text: "Ideias dos usuários", icon: Lightbulb, to: "/sugestoes" },
+    ],
+  },
+];
+const TITLES: Record<Aba, string> = {
+  geral: "Visão geral",
+  usuarios: "Usuários",
+  pagamentos: "Pagamentos",
+  indicacoes: "Indicações",
+  emails: "E-mails",
+};
+
 /** Gestão do Beecos. Só moderadores; fora das buscas e sem link público. */
 export const Route = createFileRoute("/_authenticated/admin")({
   staticData: { sitemap: false },
   validateSearch: (
     q: Record<string, unknown>,
-  ): { aba: Aba; p: Period; u?: string | undefined } => ({
-    aba: q["aba"] === "usuarios" ? "usuarios" : "geral",
+  ): { aba?: Aba | undefined; p: Period; u?: string | undefined } => ({
+    aba: ABAS.includes(q["aba"] as Aba) ? (q["aba"] as Aba) : undefined,
     p: q["p"] === "hoje" || q["p"] === "7dias" ? q["p"] : "mes",
     u: typeof q["u"] === "string" ? q["u"] : undefined,
   }),
@@ -59,8 +149,10 @@ export const Route = createFileRoute("/_authenticated/admin")({
 
 function Admin() {
   const { data: isMod, isLoading } = useIsModerator();
-  const { aba, p, u } = Route.useSearch();
+  const { aba: picked, p, u } = Route.useSearch();
   const navigate = useNavigate({ from: "/admin" });
+  // no celular, sem aba escolhida mostra a lista; no computador abre a Visão geral
+  const aba: Aba = picked ?? "geral";
 
   if (isLoading) return <p className="py-10 text-center text-muted-foreground">Carregando…</p>;
   if (!isMod)
@@ -73,55 +165,109 @@ function Admin() {
       </div>
     );
 
-  const go = (s: Partial<{ aba: Aba; p: Period; u: string | undefined }>) =>
-    void navigate({ search: (old) => ({ ...old, ...s }), replace: true });
+  const go = (s: Partial<{ aba: Aba | undefined; p: Period; u: string | undefined }>) =>
+    void navigate({ search: (old) => ({ ...old, ...s }) });
 
-  const side: { label: string; on?: boolean; onClick?: () => void; to?: string }[] = [
-    { label: "Visão geral", on: aba === "geral", onClick: () => go({ aba: "geral" }) },
-    { label: "Usuários", on: aba === "usuarios", onClick: () => go({ aba: "usuarios" }) },
-    { label: "Denúncias", to: "/moderacao" },
-    { label: "Verificações", to: "/verificacoes" },
-    { label: "Sugestões", to: "/sugestoes" },
-  ];
+  const row = "flex min-h-14 w-full items-center gap-3 py-2.5 text-left";
+  const body = (i: MenuItem) => {
+    const Icon = i.icon;
+    return (
+      <>
+        <Icon className="h-6 w-6 shrink-0" aria-hidden="true" />
+        <span className="min-w-0 flex-1">
+          <span className="block font-semibold leading-tight">{i.label}</span>
+          <span className="block truncate text-sm text-muted-foreground">{i.text}</span>
+        </span>
+        <ChevronRight className="h-5 w-5 shrink-0 text-muted-foreground" aria-hidden="true" />
+      </>
+    );
+  };
 
   return (
-    <div className="lg:grid lg:grid-cols-[200px_minmax(0,1fr)] lg:gap-8">
-      <nav aria-label="Gestão" className="mb-4 lg:mb-0">
-        <h1 className="mb-3 hidden text-2xl lg:block">Gestão</h1>
-        <div className="-mx-4 flex gap-2 overflow-x-auto px-4 pb-1 lg:mx-0 lg:flex-col lg:gap-0.5 lg:px-0">
-          {side.map((s) =>
-            s.to ? (
-              <Link
-                key={s.label}
-                to={s.to}
-                className="shrink-0 rounded-full border border-foreground/25 px-3.5 py-1.5 text-sm font-bold lg:rounded-lg lg:border-0 lg:px-3 lg:py-2 lg:hover:bg-foreground/[0.06]"
-              >
-                {s.label}
-              </Link>
-            ) : (
-              <button
-                key={s.label}
-                type="button"
-                onClick={s.onClick}
-                aria-current={s.on ? "page" : undefined}
-                className={`shrink-0 rounded-full border px-3.5 py-1.5 text-left text-sm font-bold lg:rounded-lg lg:border-0 lg:px-3 lg:py-2 ${s.on ? "border-foreground bg-foreground text-primary dark:text-background" : "border-foreground/25 lg:hover:bg-foreground/[0.06]"}`}
-              >
-                {s.label}
-              </button>
-            ),
-          )}
-        </div>
+    <div className="lg:grid lg:grid-cols-[220px_minmax(0,1fr)] lg:gap-8">
+      {/* celular: menu em lista (como o do perfil) */}
+      {!picked && (
+        <nav aria-label="Gestão" className="lg:hidden">
+          <h1 className="mb-1 text-3xl">Gestão</h1>
+          {MENU.map((g, gi) => (
+            <section
+              key={g.title}
+              className={gi > 0 ? "-mx-4 mt-2 border-t-8 border-muted px-4" : ""}
+            >
+              <h2 className="mt-4 font-sans text-sm font-bold text-muted-foreground">{g.title}</h2>
+              <ul>
+                {g.items.map((i) => (
+                  <li key={i.label}>
+                    {i.to ? (
+                      <Link to={i.to} className={row}>
+                        {body(i)}
+                      </Link>
+                    ) : (
+                      <button type="button" className={row} onClick={() => go({ aba: i.aba })}>
+                        {body(i)}
+                      </button>
+                    )}
+                  </li>
+                ))}
+              </ul>
+            </section>
+          ))}
+        </nav>
+      )}
+      {/* computador: coluna lateral */}
+      <nav aria-label="Gestão" className="hidden lg:block">
+        <h1 className="mb-3 text-2xl">Gestão</h1>
+        {MENU.map((g) => (
+          <div key={g.title} className="mb-3">
+            <p className="mb-1 px-3 text-xs font-bold uppercase tracking-wide text-muted-foreground">
+              {g.title}
+            </p>
+            {g.items.map((i) => {
+              const on = !!i.aba && i.aba === aba;
+              const cls = `flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-sm font-bold ${on ? "bg-foreground text-primary dark:text-background" : "hover:bg-foreground/[0.06]"}`;
+              const Icon = i.icon;
+              return i.to ? (
+                <Link key={i.label} to={i.to} className={cls}>
+                  <Icon className="h-4 w-4" aria-hidden="true" /> {i.label}
+                </Link>
+              ) : (
+                <button
+                  key={i.label}
+                  type="button"
+                  className={cls}
+                  aria-current={on ? "page" : undefined}
+                  onClick={() => go({ aba: i.aba })}
+                >
+                  <Icon className="h-4 w-4" aria-hidden="true" /> {i.label}
+                </button>
+              );
+            })}
+          </div>
+        ))}
       </nav>
-      <div className="min-w-0">
-        {aba === "geral" ? (
+      <div className={`min-w-0 space-y-4 ${picked ? "" : "max-lg:hidden"}`}>
+        <div className="flex items-center gap-2 lg:hidden">
+          <button
+            type="button"
+            aria-label="Voltar ao menu da Gestão"
+            onClick={() => go({ aba: undefined })}
+            className="-ml-2 flex h-10 w-10 items-center justify-center rounded-md"
+          >
+            <ArrowLeft className="h-6 w-6" aria-hidden="true" />
+          </button>
+          <h1 className="text-2xl">{TITLES[aba]}</h1>
+        </div>
+        {aba === "geral" && (
           <OverviewPanel
             period={p}
             onPeriod={(v) => go({ p: v })}
             onUsers={() => go({ aba: "usuarios" })}
           />
-        ) : (
-          <UsersPanel onOpen={(id) => go({ u: id })} />
         )}
+        {aba === "usuarios" && <UsersPanel onOpen={(id) => go({ u: id })} />}
+        {aba === "pagamentos" && <PaymentsPanel onOpen={(id) => go({ u: id })} />}
+        {aba === "indicacoes" && <ReferralsPanel onOpen={(id) => go({ u: id })} />}
+        {aba === "emails" && <EmailsPanel />}
       </div>
       <UserDialog id={u} onClose={() => go({ u: undefined })} />
     </div>
@@ -152,7 +298,7 @@ function OverviewPanel({
   return (
     <div className="space-y-4">
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <h2 className="text-2xl">Visão geral</h2>
+        <h2 className="hidden text-2xl lg:block">Visão geral</h2>
         <div className="flex overflow-hidden rounded-lg border-2 border-foreground bg-card">
           {PERIODS.map((x) => (
             <button
@@ -301,7 +447,7 @@ function UsersPanel({ onOpen }: { onOpen: (id: string) => void }) {
   const { data, isLoading } = useAdminUsers(dq, true);
   return (
     <section className="space-y-3">
-      <h2 className="text-2xl">Usuários</h2>
+      <h2 className="hidden text-2xl lg:block">Usuários</h2>
       <div className="relative">
         <Search
           className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground"
@@ -649,5 +795,295 @@ function SuspendDialog({
         </DialogFooter>
       </DialogContent>
     </Dialog>
+  );
+}
+
+const fmtDay = (iso: string | null | undefined) =>
+  iso ? new Date(iso).toLocaleDateString("pt-BR", { day: "2-digit", month: "2-digit" }) : "—";
+
+function Chips<T extends string>({
+  value,
+  options,
+  onChange,
+  label,
+}: {
+  value: T;
+  options: { id: T; label: string }[];
+  onChange: (v: T) => void;
+  label: string;
+}) {
+  return (
+    <div className="flex flex-wrap gap-2" role="radiogroup" aria-label={label}>
+      {options.map((o) => (
+        <button
+          key={o.id}
+          type="button"
+          role="radio"
+          aria-checked={value === o.id}
+          onClick={() => onChange(o.id)}
+          className={`min-h-9 rounded-full border-2 border-foreground px-3 text-sm font-bold ${value === o.id ? "bg-foreground text-primary dark:text-background" : "bg-card"}`}
+        >
+          {o.label}
+        </button>
+      ))}
+    </div>
+  );
+}
+
+const STATUS_TONE: Record<string, string> = {
+  paid: "bg-[oklch(0.9_0.08_150)] text-[oklch(0.25_0.06_150)]",
+  pending: "bg-primary text-primary-foreground",
+  overdue: "bg-[oklch(0.9_0.06_25)] text-[oklch(0.3_0.1_25)]",
+  canceled: "bg-muted text-muted-foreground",
+  refunded: "bg-muted text-muted-foreground",
+};
+
+function PaymentsPanel({ onOpen }: { onOpen: (userId: string) => void }) {
+  const [status, setStatus] = useState<"todos" | "paid" | "pending" | "overdue" | "canceled">(
+    "todos",
+  );
+  const { data, isLoading, isError, refetch } = useAdminPayments(
+    status === "todos" ? null : status,
+  );
+  const t = data?.totals ?? {};
+  return (
+    <section className="space-y-4">
+      <h2 className="hidden text-2xl lg:block">Pagamentos</h2>
+      {data && (
+        <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+          <Kpi
+            label="Entrou no mês"
+            value={brl(Number(data.paid_month))}
+            hint="pagamentos confirmados"
+          />
+          <Kpi
+            label="Aguardando"
+            value={t["pending"]?.n ?? 0}
+            hint={brl(Number(t["pending"]?.value ?? 0))}
+          />
+          <Kpi
+            label="Atrasados"
+            value={t["overdue"]?.n ?? 0}
+            hint={brl(Number(t["overdue"]?.value ?? 0))}
+          />
+          <Kpi
+            label="Cancelados"
+            value={t["canceled"]?.n ?? 0}
+            hint={brl(Number(t["canceled"]?.value ?? 0))}
+          />
+        </div>
+      )}
+      <Chips
+        label="Situação"
+        value={status}
+        onChange={setStatus}
+        options={[
+          { id: "todos", label: "Todos" },
+          { id: "paid", label: "Pagos" },
+          { id: "pending", label: "Aguardando" },
+          { id: "overdue", label: "Atrasados" },
+          { id: "canceled", label: "Cancelados" },
+        ]}
+      />
+      {isLoading && <p className="text-muted-foreground">Carregando…</p>}
+      {isError && (
+        <Button variant="outline" onClick={() => refetch()}>
+          Tentar de novo
+        </Button>
+      )}
+      {data?.rows.length === 0 && <p className="text-muted-foreground">Nenhum pagamento aqui.</p>}
+      {!!data?.rows.length && (
+        <ul className="block-card divide-y divide-foreground/10 overflow-hidden">
+          {data.rows.map((r) => (
+            <li key={r.id}>
+              <button
+                type="button"
+                onClick={() => onOpen(r.user_id)}
+                className="flex w-full items-center gap-3 px-3 py-2.5 text-left hover:bg-foreground/[0.05]"
+              >
+                <span className="min-w-0 flex-1">
+                  <span className="block truncate font-bold">{r.name}</span>
+                  <span className="block truncate text-xs text-muted-foreground">
+                    {PAYMENT_KIND[r.kind] ?? r.kind} · {fmtDay(r.created_at)}
+                    {r.paid_at ? ` · pago em ${fmtDay(r.paid_at)}` : ""}
+                  </span>
+                </span>
+                <span className="shrink-0 text-right">
+                  <span className="block font-bold">{brl(Number(r.value))}</span>
+                  <span
+                    className={`inline-block rounded-full border-[1.5px] border-foreground px-2 py-px text-[11px] font-bold ${STATUS_TONE[r.status] ?? "bg-muted"}`}
+                  >
+                    {PAYMENT_STATUS[r.status] ?? r.status}
+                  </span>
+                </span>
+              </button>
+            </li>
+          ))}
+        </ul>
+      )}
+      <p className="text-xs text-muted-foreground">
+        Quem está atrasado recebe e-mail com o link de pagamento. Tocar numa linha abre a ficha da
+        pessoa.
+      </p>
+    </section>
+  );
+}
+
+function ReferralsPanel({ onOpen }: { onOpen: (userId: string) => void }) {
+  const { data, isLoading } = useAdminReferrals();
+  const step = (r: AdminReferrals["recent"][number]) =>
+    r.counted
+      ? "Contou ✓"
+      : !r.email
+        ? "Falta e-mail"
+        : !r.skill
+          ? "Falta habilidade"
+          : !r.doc
+            ? "Falta identidade"
+            : "Contou ✓";
+  return (
+    <section className="space-y-4">
+      <h2 className="hidden text-2xl lg:block">Indicações</h2>
+      {isLoading && <p className="text-muted-foreground">Carregando…</p>}
+      {data && (
+        <>
+          <div className="grid grid-cols-3 gap-3">
+            <Kpi label="Convidados" value={data.invited} hint="entraram por um link" />
+            <Kpi label="Contaram" value={data.counted} hint="completaram o cadastro" />
+            <Kpi label="Prêmios" value={data.rewards} hint="meses de Premium dados" />
+          </div>
+          <div className="block-card p-4">
+            <h3 className="mb-2 text-lg">Quem mais indicou</h3>
+            {data.ranking.length === 0 ? (
+              <p className="text-sm text-muted-foreground">Ninguém indicou ainda.</p>
+            ) : (
+              <ol className="divide-y divide-foreground/10">
+                {data.ranking.map((r, i) => (
+                  <li key={r.user_id}>
+                    <button
+                      type="button"
+                      onClick={() => onOpen(r.user_id)}
+                      className="flex w-full items-center gap-3 py-2 text-left text-sm"
+                    >
+                      <span className="w-5 font-bold text-muted-foreground">{i + 1}</span>
+                      <span className="min-w-0 flex-1">
+                        <span className="block truncate font-bold">{r.name}</span>
+                        <span className="block text-xs text-muted-foreground">
+                          {r.invited} convidados · {r.counted} contaram
+                          {r.rewards ? ` · ${r.rewards} prêmio(s)` : ""}
+                        </span>
+                      </span>
+                    </button>
+                  </li>
+                ))}
+              </ol>
+            )}
+          </div>
+          {data.recent.length > 0 && (
+            <div className="block-card p-4">
+              <h3 className="mb-2 text-lg">Últimos convidados</h3>
+              <ul className="divide-y divide-foreground/10 text-sm">
+                {data.recent.map((r, i) => (
+                  <li key={i} className="flex items-center gap-3 py-2">
+                    <span className="min-w-0 flex-1">
+                      <span className="block truncate font-semibold">{r.invitee}</span>
+                      <span className="block truncate text-xs text-muted-foreground">
+                        convidado por {r.referrer} · {fmtDay(r.created_at)}
+                      </span>
+                    </span>
+                    <span
+                      className={`shrink-0 rounded-full border-[1.5px] border-foreground px-2 py-px text-[11px] font-bold ${r.counted ? "bg-[oklch(0.9_0.08_150)] text-[oklch(0.25_0.06_150)]" : "bg-primary text-primary-foreground"}`}
+                    >
+                      {step(r)}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+        </>
+      )}
+    </section>
+  );
+}
+
+function EmailsPanel() {
+  const qc = useQueryClient();
+  const [only, setOnly] = useState<"todos" | "falhas">("todos");
+  const { data, isLoading } = useAdminEmails(only === "falhas");
+  async function retry(id: string) {
+    try {
+      await retryEmail(id);
+      toast.success("Voltou para a fila. Sai em até 1 minuto.");
+      await qc.invalidateQueries({ queryKey: ["admin-emails"] });
+    } catch {
+      toast.error("Não foi possível. Tente de novo.");
+    }
+  }
+  return (
+    <section className="space-y-4">
+      <h2 className="hidden text-2xl lg:block">E-mails</h2>
+      {data && (
+        <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+          <Kpi label="Enviados hoje" value={data.sent_today} hint={`${data.sent_7d} em 7 dias`} />
+          <Kpi label="Na fila" value={data.waiting} hint="saem em até 1 minuto" />
+          <Kpi label="Falharam" value={data.failed} hint="depois de 5 tentativas" />
+          <Kpi label="Remetente" value="avisos@" hint="contato.beecos.com.br" />
+        </div>
+      )}
+      <Chips
+        label="Mostrar"
+        value={only}
+        onChange={setOnly}
+        options={[
+          { id: "todos", label: "Todos" },
+          { id: "falhas", label: "Só com erro" },
+        ]}
+      />
+      {isLoading && <p className="text-muted-foreground">Carregando…</p>}
+      {data?.rows.length === 0 && (
+        <p className="text-muted-foreground">
+          {only === "falhas" ? "Nenhum e-mail com erro. 🎉" : "Nenhum e-mail ainda."}
+        </p>
+      )}
+      {!!data?.rows.length && (
+        <ul className="block-card divide-y divide-foreground/10 overflow-hidden">
+          {data.rows.map((r) => {
+            const failed = !r.sent_at && r.attempts > 0;
+            return (
+              <li key={r.id} className="flex items-center gap-3 px-3 py-2.5">
+                <span className="min-w-0 flex-1">
+                  <span className="block truncate font-bold">
+                    {EMAIL_KIND[r.kind] ?? r.kind}{" "}
+                    <span className="font-normal text-muted-foreground">· {r.name}</span>
+                  </span>
+                  <span className="block truncate text-xs text-muted-foreground">
+                    {r.to_email} · {fmtDay(r.created_at)}{" "}
+                    {new Date(r.created_at).toLocaleTimeString("pt-BR", {
+                      hour: "2-digit",
+                      minute: "2-digit",
+                    })}
+                  </span>
+                  {failed && r.last_error && (
+                    <span className="block truncate text-xs text-destructive">{r.last_error}</span>
+                  )}
+                </span>
+                {r.sent_at ? (
+                  <span className="shrink-0 text-xs font-bold text-[oklch(0.45_0.12_150)]">
+                    Enviado ✓
+                  </span>
+                ) : failed ? (
+                  <Button size="sm" variant="outline" onClick={() => void retry(r.id)}>
+                    <RotateCcw /> Tentar de novo
+                  </Button>
+                ) : (
+                  <span className="shrink-0 text-xs font-bold text-muted-foreground">Na fila</span>
+                )}
+              </li>
+            );
+          })}
+        </ul>
+      )}
+    </section>
   );
 }
