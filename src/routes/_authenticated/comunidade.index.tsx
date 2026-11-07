@@ -112,8 +112,8 @@ function Community() {
 
       {mine.length > 0 && (
         <>
-          <nav aria-label="Seus grupos" className="-mx-4 overflow-x-auto px-4">
-            <ul className="flex gap-2 pb-1">
+          <nav aria-label="Seus grupos">
+            <ul className="flex flex-wrap gap-2">
               <li>
                 <Chip active={!selected} to={undefined}>
                   Todos
