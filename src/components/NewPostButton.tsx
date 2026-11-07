@@ -73,6 +73,7 @@ export function NewPostFab({ hidden }: { hidden: boolean }) {
         type="button"
         aria-label="Publicar: contratar ou oferecer serviço"
         data-ajuda="Publicar"
+        data-tour="publicar-fab"
         onClick={() => setOpen(true)}
         className={`fixed bottom-[5.75rem] right-4 z-20 flex h-14 w-14 items-center justify-center rounded-full border-2 border-foreground bg-primary text-primary-foreground shadow-block transition-transform duration-200 active:scale-95 lg:hidden ${hidden ? "translate-y-[10rem]" : ""}`}
         style={{ marginBottom: "env(safe-area-inset-bottom)" }}
@@ -92,6 +93,7 @@ export function NewPostHeaderButton() {
       <button
         type="button"
         onClick={() => setOpen(true)}
+        data-tour="d-publicar"
         className="ml-2 hidden items-center gap-1 rounded-lg border-2 border-foreground bg-card px-3 py-1 text-sm font-bold text-foreground shadow-block lg:flex"
       >
         <Plus className="h-4 w-4" strokeWidth={3} aria-hidden="true" /> Publicar
