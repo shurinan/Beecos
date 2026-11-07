@@ -34,6 +34,7 @@ import { PRIVACY_CONTACT_EMAIL } from "@/lib/legal";
 import { HoldBanner } from "@/components/HoldBanner";
 import { AssistedHelp } from "@/components/AssistedHelp";
 import { InstallPrompt } from "@/components/InstallPrompt";
+import { WelcomeTour } from "@/components/WelcomeTour";
 
 /** Liga, para quem está logado, o contador de não lidas, os avisos e o "visto por último". */
 function ChatBackground({ userId }: { userId: string }) {
@@ -81,24 +82,27 @@ function AfterLogin({ userId }: { userId: string }) {
 }
 
 const DESKTOP_LINKS = [
-  { to: "/", label: "Início", props: { to: "/" } },
+  { to: "/", label: "Início", tour: "d-inicio", props: { to: "/" } },
   {
     to: "/vagas",
     label: "Vagas",
+    tour: "d-vagas",
     props: { to: "/vagas", search: { q: undefined, tipo: undefined } },
   },
   {
     to: "/comunidade",
     label: "Comunidade",
+    tour: "d-comunidade",
     props: { to: "/comunidade", search: { grupo: undefined } },
   },
   {
     to: "/minhas-vagas",
     label: "Minhas vagas",
+    tour: "d-minhas",
     props: { to: "/minhas-vagas", search: { aba: "contratei" } },
   },
-  { to: "/conversas", label: "Conversas", props: { to: "/conversas" } },
-  { to: "/perfil", label: "Meu perfil", props: { to: "/perfil" } },
+  { to: "/conversas", label: "Conversas", tour: "d-conversas", props: { to: "/conversas" } },
+  { to: "/perfil", label: "Meu perfil", tour: "d-perfil", props: { to: "/perfil" } },
 ] as const;
 
 export function AppShell({ children }: { children: ReactNode }) {
@@ -153,6 +157,7 @@ export function AppShell({ children }: { children: ReactNode }) {
               {DESKTOP_LINKS.map((l) => (
                 <Link
                   key={l.to}
+                  data-tour={l.tour}
                   {...l.props}
                   className="relative rounded-lg px-3 py-1.5 text-sm font-bold text-primary-foreground hover:bg-foreground/10"
                   activeProps={{ className: "bg-foreground! text-primary! dark:text-background!" }}
@@ -178,6 +183,7 @@ export function AppShell({ children }: { children: ReactNode }) {
             {userId && (
               <Link
                 to="/avisos"
+                data-tour="sino"
                 aria-label={alertsUnread > 0 ? `Avisos, ${alertsUnread} não lidos` : "Avisos"}
                 className="relative rounded-md p-1.5 text-primary-foreground sm:p-2"
               >
@@ -195,6 +201,7 @@ export function AppShell({ children }: { children: ReactNode }) {
             {userId && (
               <Link
                 to="/perfil"
+                data-tour="m-perfil"
                 aria-label="Meu perfil"
                 className="rounded-full border-2 border-foreground bg-card p-1 text-foreground lg:hidden"
                 activeProps={{ className: "bg-foreground! text-primary!" }}
@@ -219,6 +226,7 @@ export function AppShell({ children }: { children: ReactNode }) {
       {userId && <AfterLogin userId={userId} />}
       {userId && <InviteClaimer userId={userId} />}
       {userId && <PostEditorHost userId={userId} />}
+      {userId && <WelcomeTour userId={userId} />}
       <main
         id="conteudo"
         tabIndex={-1}
@@ -279,6 +287,7 @@ export function AppShell({ children }: { children: ReactNode }) {
             <Link
               to="/vagas"
               search={{ q: undefined, tipo: undefined }}
+              data-tour="m-vagas"
               className={item}
               activeProps={active}
             >
@@ -291,6 +300,7 @@ export function AppShell({ children }: { children: ReactNode }) {
               to="/comunidade"
               search={{ grupo: undefined }}
               aria-label="Comunidade"
+              data-tour="m-comunidade"
               className="group relative -mt-7 flex flex-1 flex-col items-center gap-0.5 text-xs font-bold text-foreground"
             >
               <span className="flex h-16 w-16 items-center justify-center rounded-full border-2 border-foreground bg-primary text-primary-foreground shadow-md transition-shadow duration-150 group-hover:shadow-lg group-active:scale-95">
@@ -303,6 +313,7 @@ export function AppShell({ children }: { children: ReactNode }) {
                 <Link
                   to="/minhas-vagas"
                   search={{ aba: "contratei" }}
+                  data-tour="m-minhas"
                   className={item + " text-center leading-tight"}
                   activeProps={active}
                   activeOptions={{ includeSearch: false }}
@@ -312,7 +323,7 @@ export function AppShell({ children }: { children: ReactNode }) {
                   </span>
                   Minhas vagas
                 </Link>
-                <Link to="/conversas" className={item} activeProps={active}>
+                <Link to="/conversas" data-tour="m-conversas" className={item} activeProps={active}>
                   <span className={bub + " relative"}>
                     <MessageCircle className="h-5 w-5" />
                     {unread > 0 && (

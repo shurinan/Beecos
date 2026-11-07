@@ -1,6 +1,9 @@
 import { createFileRoute, useRouterState } from "@tanstack/react-router";
 import { useEffect } from "react";
 import { FAQ } from "@/lib/help";
+import { useAuth } from "@/lib/auth";
+import { startTour } from "@/lib/tour";
+import { Button } from "@/components/ui/button";
 
 export const Route = createFileRoute("/ajuda")({
   staticData: { sitemap: true },
@@ -15,6 +18,7 @@ export const Route = createFileRoute("/ajuda")({
 
 function Help() {
   const hash = useRouterState({ select: (s) => s.location.hash });
+  const { userId } = useAuth();
   // um link como /ajuda#avaliacoes abre e mostra aquela pergunta
   useEffect(() => {
     if (!hash) return;
@@ -30,6 +34,11 @@ function Help() {
         Dica: deixe o mouse parado 2 segundos sobre um botão, ou segure o dedo nele por 2 segundos
         no celular, e uma caixinha explica para que ele serve.
       </p>
+      {userId && (
+        <Button type="button" variant="outline" onClick={() => startTour()}>
+          Ver o tutorial de novo
+        </Button>
+      )}
       <ul className="space-y-2">
         {FAQ.map((f) => (
           <li key={f.q} id={f.id} className="scroll-mt-20">

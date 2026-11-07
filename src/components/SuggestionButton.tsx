@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useTourActive } from "@/lib/tour";
 import { useRouterState } from "@tanstack/react-router";
 import { Lightbulb, X } from "lucide-react";
 import { toast } from "sonner";
@@ -36,6 +37,7 @@ export function SuggestionButton() {
   const [topic, setTopic] = useState<SuggestionTopic>("Ideia nova");
   const [busy, setBusy] = useState(false);
   const [nudge, setNudge] = useState(false);
+  const tourOn = useTourActive();
 
   // o balão nunca aparece no meio de uma conversa nem na hora de pagar
   const quiet = path.startsWith("/conversas/") || path === "/checkout" || path === "/pagamento";
@@ -79,6 +81,7 @@ export function SuggestionButton() {
       <button
         type="button"
         aria-label="Dar uma ideia para o Beecos"
+        data-tour="ideia"
         onClick={openBox}
         className="mx-0.5 flex items-center gap-1.5 rounded-full border-2 border-foreground bg-card py-0.5 pl-1 pr-2.5 text-sm font-bold text-foreground shadow-[2px_2px_0_0_var(--foreground)] transition-transform active:translate-x-0.5 active:translate-y-0.5 active:shadow-none dark:border-foreground/40"
       >
@@ -88,7 +91,7 @@ export function SuggestionButton() {
         <span className="max-[374px]:hidden">Ideia?</span>
       </button>
 
-      {nudge && !open && (
+      {nudge && !open && !tourOn && (
         <div
           role="status"
           className="absolute right-0 top-[calc(100%+12px)] z-30 w-60 rounded-xl border-2 border-[#12151B] bg-[#12151B] p-3 text-sm text-white shadow-lg dark:border-white/20"

@@ -11,7 +11,8 @@ import { INVITE_GOAL, useReferralStatus } from "@/lib/referrals";
 import { postParams, profileParam } from "@/lib/urls";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { takeNewSkillRequest } from "@/lib/tour";
 import { toast } from "sonner";
 import {
   ArrowLeft,
@@ -152,6 +153,10 @@ function Painel() {
     open: false,
     initial: null,
   });
+  // chegou pelo "Cadastrar minha habilidade" do tutorial: já abre a janela
+  useEffect(() => {
+    if (data && takeNewSkillRequest()) setSkillDialog({ open: true, initial: null });
+  }, [data]);
   const slots = usePostStats(data?.posts.map((p) => p.id));
   const { data: catalog } = useCatalog();
   const { data: workArea } = useWorkArea(userId);
