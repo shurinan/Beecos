@@ -190,8 +190,8 @@ function Channels() {
       </div>
 
       {usedProfessions.length > 0 && (
-        <nav aria-label="Filtrar por profissão" className="-mx-4 overflow-x-auto px-4">
-          <ul className="flex gap-2 pb-1">
+        <nav aria-label="Filtrar por profissão">
+          <ul className="flex flex-wrap gap-2">
             {[{ id: null as string | null, name: "Todos" }, ...usedProfessions].map((p) => (
               <li key={p.id ?? "all"}>
                 <button
