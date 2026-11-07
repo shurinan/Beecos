@@ -279,7 +279,7 @@ export function ProfileMenuList({
         <ul className="mt-2">
           {moderator && (
             <li>
-              <Link to="/admin" search={{ aba: "geral", p: "mes" }} className={row}>
+              <Link to="/admin" search={{ aba: undefined, p: "mes" }} className={row}>
                 <LayoutDashboard className="h-6 w-6 shrink-0" aria-hidden="true" />
                 <span className="flex-1 font-semibold">Gestão e moderação</span>
                 <ChevronRight className="h-5 w-5 text-muted-foreground" aria-hidden="true" />

@@ -182,3 +182,143 @@ export function planLabel(u: { premium: boolean; plan_term: string | null }): st
 export function brl(v: number): string {
   return v.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
 }
+
+export type AdminPayment = {
+  id: string;
+  user_id: string;
+  name: string;
+  username: string | null;
+  email: string | null;
+  kind: string;
+  value: number;
+  status: string;
+  created_at: string;
+  paid_at: string | null;
+  invoice_url: string | null;
+};
+export type AdminPayments = {
+  totals: Record<string, { n: number; value: number }>;
+  paid_month: number;
+  rows: AdminPayment[];
+};
+
+export function useAdminPayments(status: string | null) {
+  return useQuery({
+    queryKey: ["admin-payments", status],
+    queryFn: async () => {
+      const { data, error } = await supabase.rpc("admin_payments", {
+        _status: status,
+        _limit: 150,
+      });
+      if (error) throw error;
+      return data as unknown as AdminPayments;
+    },
+  });
+}
+
+export type AdminReferrals = {
+  invited: number;
+  counted: number;
+  rewards: number;
+  ranking: {
+    user_id: string;
+    name: string;
+    username: string | null;
+    invited: number;
+    counted: number;
+    rewards: number;
+    last_at: string;
+  }[];
+  recent: {
+    created_at: string;
+    counted: boolean;
+    invitee: string;
+    referrer: string;
+    referrer_username: string | null;
+    email: boolean;
+    skill: boolean;
+    doc: boolean;
+  }[];
+};
+
+export function useAdminReferrals() {
+  return useQuery({
+    queryKey: ["admin-referrals"],
+    queryFn: async () => {
+      const { data, error } = await supabase.rpc("admin_referrals");
+      if (error) throw error;
+      return data as unknown as AdminReferrals;
+    },
+  });
+}
+
+export type AdminEmail = {
+  id: string;
+  to_email: string;
+  kind: string;
+  essential: boolean;
+  created_at: string;
+  sent_at: string | null;
+  attempts: number;
+  last_error: string | null;
+  name: string;
+};
+export type AdminEmails = {
+  sent_today: number;
+  sent_7d: number;
+  waiting: number;
+  failed: number;
+  rows: AdminEmail[];
+};
+
+export function useAdminEmails(onlyFailed: boolean) {
+  return useQuery({
+    queryKey: ["admin-emails", onlyFailed],
+    refetchInterval: 30_000,
+    queryFn: async () => {
+      const { data, error } = await supabase.rpc("admin_emails", {
+        _only_failed: onlyFailed,
+        _limit: 150,
+      });
+      if (error) throw error;
+      return data as unknown as AdminEmails;
+    },
+  });
+}
+
+export async function retryEmail(id: string) {
+  const { error } = await supabase.rpc("admin_retry_email", { _id: id });
+  if (error) throw error;
+}
+
+/** Nomes em português dos tipos de pagamento e de e-mail. */
+export const PAYMENT_KIND: Record<string, string> = {
+  premium: "Premium mensal",
+  annual: "Premium anual",
+  urgent: "Selo Urgente",
+};
+export const PAYMENT_STATUS: Record<string, string> = {
+  paid: "Pago",
+  pending: "Aguardando",
+  overdue: "Atrasado",
+  canceled: "Cancelado",
+  refunded: "Devolvido",
+};
+export const EMAIL_KIND: Record<string, string> = {
+  welcome: "Boas-vindas",
+  interest: "Interessado",
+  new_message: "Mensagem nova",
+  unread_digest: "Mensagens não lidas",
+  chosen: "Escolhido",
+  accepted: "Aceitou",
+  declined: "Recusou",
+  completed: "Concluído",
+  job_digest: "Vagas novas",
+  pay_pending: "Cobrança",
+  pay_confirmed: "Pagamento confirmado",
+  pay_overdue: "Pagamento atrasado",
+  premium_ending: "Premium terminando",
+  verif_approved: "Verificação aprovada",
+  verif_rejected: "Verificação recusada",
+  referral_reward: "Prêmio de indicação",
+};

@@ -50,7 +50,7 @@ export function ModeratorShortcut() {
       <div className="flex flex-wrap gap-2">
         <Link
           to="/admin"
-          search={{ aba: "geral", p: "mes" }}
+          search={{ aba: undefined, p: "mes" }}
           className={item + " basis-full bg-primary"}
         >
           <LayoutDashboard className="h-4 w-4" aria-hidden="true" /> Gestão
