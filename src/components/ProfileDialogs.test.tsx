@@ -38,7 +38,7 @@ describe("EditProfileDialog", () => {
     render(
       <EditProfileDialog open onOpenChange={onOpenChange} initial={profile} onSave={onSave} />,
     );
-    fireEvent.change(screen.getByLabelText("Cidade"), { target: { value: "  Itu - SP  " } });
+    fireEvent.change(screen.getByLabelText("Cidade ou CEP"), { target: { value: "  Itu - SP  " } });
     fireEvent.click(screen.getByRole("button", { name: "Salvar" }));
     await waitFor(() => expect(onSave).toHaveBeenCalledTimes(1));
     expect(onSave.mock.calls[0]![0]).toMatchObject({
