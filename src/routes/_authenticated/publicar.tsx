@@ -1,4 +1,5 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { publicCity } from "@/lib/location";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
@@ -77,7 +78,8 @@ function Publicar() {
         .select("city")
         .eq("id", userId)
         .maybeSingle();
-      return data?.city ?? "";
+      // CEP ou endereço antigo do perfil não vira cidade do anúncio
+      return publicCity(data?.city);
     },
   });
   const kind = tipo === "trabalhar" ? "available" : "job";

@@ -20,6 +20,7 @@ import { isFilled, vacanciesLabel } from "@/lib/services";
 import type { PostSlots } from "@/lib/services-hooks";
 import { postParams, profileParam } from "@/lib/urls";
 import { openPostEditor } from "@/lib/post-editor";
+import { publicCity } from "@/lib/location";
 
 export type PostWithAuthor = {
   id: string;
@@ -172,9 +173,9 @@ export function PostCard({
             </p>
           )}
           <div className="flex flex-wrap gap-1.5 text-sm font-semibold">
-            {post.city && (
+            {publicCity(post.city) && (
               <span className="flex items-center gap-1 rounded-full border-[1.5px] border-foreground bg-card px-2.5 py-0.5">
-                <MapPin className="h-3.5 w-3.5" aria-hidden="true" /> {post.city}
+                <MapPin className="h-3.5 w-3.5" aria-hidden="true" /> {publicCity(post.city)}
               </span>
             )}
             {distance && (

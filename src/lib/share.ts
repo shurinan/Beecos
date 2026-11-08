@@ -1,4 +1,5 @@
 import { SITE_URL } from "@/lib/urls";
+import { publicCity } from "@/lib/location";
 
 /**
  * Link público de uma vaga ou anúncio (beecos.com.br/v/codigo). Abre para qualquer pessoa, com
@@ -12,7 +13,8 @@ type SharePost = { kind: string; title: string; city?: string | null; price?: st
 
 /** A mensagem que vai junto com o link. Quem publicou fala em primeira pessoa. */
 export function postShareText(p: SharePost & { slug: string }, mine: boolean) {
-  const where = p.city ? ` em ${p.city}` : "";
+  const city = publicCity(p.city);
+  const where = city ? ` em ${city}` : "";
   const price = p.price ? ` (${p.price})` : "";
   const url = postShareUrl(p.slug);
   if (p.kind === "job") {
@@ -27,7 +29,8 @@ export function postShareText(p: SharePost & { slug: string }, mine: boolean) {
 
 /** Título e descrição da prévia do link (WhatsApp, Facebook, status). */
 export function postPreview(p: SharePost & { description?: string | null }) {
-  const where = p.city ? ` — ${p.city}` : "";
+  const city = publicCity(p.city);
+  const where = city ? ` — ${city}` : "";
   const title = p.kind === "job" ? `Vaga: ${p.title}${where}` : `${p.title}${where}`;
   const desc = (p.description ?? "").replace(/\s+/g, " ").trim();
   const short = desc.length > 150 ? `${desc.slice(0, 147)}…` : desc;
