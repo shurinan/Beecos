@@ -6,6 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
 import { SITE_HOST } from "@/lib/urls";
+import { CITY_MAX, CITY_OR_CEP_HELP, maskCityOrCep, validateCityOrCep } from "@/lib/location";
 import {
   Dialog,
   DialogContent,
@@ -57,6 +58,7 @@ export function EditProfileDialog({
 }) {
   const [form, setForm] = useState(initial);
   const [error, setError] = useState("");
+  const [cityError, setCityError] = useState("");
   const [saving, setSaving] = useState(false);
   const [userStatus, setUserStatus] = useState<"idle" | "checking" | "free" | "taken" | "bad">(
     "idle",
@@ -90,6 +92,7 @@ export function EditProfileDialog({
     if (open) {
       setForm(initial);
       setError("");
+      setCityError("");
       setSaving(false);
     }
   }, [open, initial]);
@@ -98,6 +101,13 @@ export function EditProfileDialog({
     e.preventDefault();
     if (!form.full_name.trim()) {
       setError("Escreva o seu nome.");
+      return;
+    }
+    // só vale para o que a pessoa digitou agora: o que já estava salvo não é apagado
+    const cityProblem =
+      form.city.trim() !== initial.city.trim() ? validateCityOrCep(form.city) : null;
+    if (cityProblem) {
+      setCityError(cityProblem);
       return;
     }
     if (changed && form.username !== "" && (userStatus === "bad" || userStatus === "taken")) {
@@ -199,13 +209,32 @@ export function EditProfileDialog({
             />
           </div>
           <div>
-            <Label htmlFor="pf-city">Cidade</Label>
+            <Label htmlFor="pf-city">Cidade ou CEP</Label>
             <Input
               id="pf-city"
-              placeholder="Ex: Sorocaba - SP"
+              maxLength={CITY_MAX}
+              placeholder="Ex: Sorocaba - SP ou 18000-000"
+              aria-describedby="pf-city-help"
+              aria-invalid={!!cityError}
               value={form.city}
-              onChange={(e) => setForm({ ...form, city: e.target.value })}
+              onChange={(e) => {
+                setCityError("");
+                setForm({ ...form, city: maskCityOrCep(e.target.value) });
+              }}
             />
+            {cityError ? (
+              <p
+                id="pf-city-help"
+                role="alert"
+                className="mt-1 text-xs font-semibold text-destructive"
+              >
+                {cityError}
+              </p>
+            ) : (
+              <p id="pf-city-help" className="mt-1 text-xs text-muted-foreground">
+                {CITY_OR_CEP_HELP} O CEP fica oculto: no perfil aparece só a cidade.
+              </p>
+            )}
           </div>
           <div>
             <Label htmlFor="pf-area">Onde você atende</Label>
