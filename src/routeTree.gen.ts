@@ -42,6 +42,8 @@ import { Route as AuthenticatedPerfilSlugRouteImport } from './routes/_authentic
 import { Route as AuthenticatedPerfilContatoRouteImport } from './routes/_authenticated/perfil.contato'
 import { Route as AuthenticatedPerfilVerificacaoRouteImport } from './routes/_authenticated/perfil.verificacao'
 import { Route as AuthenticatedVagasIndexRouteImport } from './routes/_authenticated/vagas.index'
+import { Route as ServicosProfissaoIndexRouteImport } from './routes/servicos.$profissao.index'
+import { Route as ServicosProfissaoCidadeRouteImport } from './routes/servicos.$profissao.$cidade'
 import { Route as AuthenticatedVagasProfissaoCodigoIndexRouteImport } from './routes/_authenticated/vagas.$profissao.$codigo.index'
 import { Route as AuthenticatedVagasProfissaoCodigoInteressadosRouteImport } from './routes/_authenticated/vagas.$profissao.$codigo.interessados'
 
@@ -219,6 +221,16 @@ const AuthenticatedVagasIndexRoute = AuthenticatedVagasIndexRouteImport.update({
   path: '/vagas/',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const ServicosProfissaoIndexRoute = ServicosProfissaoIndexRouteImport.update({
+  id: '/servicos/$profissao/',
+  path: '/servicos/$profissao/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ServicosProfissaoCidadeRoute = ServicosProfissaoCidadeRouteImport.update({
+  id: '/servicos/$profissao/$cidade',
+  path: '/servicos/$profissao/$cidade',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthenticatedVagasProfissaoCodigoIndexRoute =
   AuthenticatedVagasProfissaoCodigoIndexRouteImport.update({
     id: '/vagas/$profissao/$codigo/',
@@ -260,11 +272,13 @@ export interface FileRoutesByFullPath {
   '/perfil/$slug': typeof AuthenticatedPerfilSlugRoute
   '/perfil/contato': typeof AuthenticatedPerfilContatoRoute
   '/perfil/verificacao': typeof AuthenticatedPerfilVerificacaoRoute
+  '/servicos/$profissao/$cidade': typeof ServicosProfissaoCidadeRoute
   '/canais/': typeof AuthenticatedCanaisIndexRoute
   '/comunidade/': typeof AuthenticatedComunidadeIndexRoute
   '/conversas/': typeof AuthenticatedConversasIndexRoute
   '/perfil/': typeof AuthenticatedPerfilIndexRoute
   '/vagas/': typeof AuthenticatedVagasIndexRoute
+  '/servicos/$profissao/': typeof ServicosProfissaoIndexRoute
   '/vagas/$profissao/$codigo/interessados': typeof AuthenticatedVagasProfissaoCodigoInteressadosRoute
   '/vagas/$profissao/$codigo/': typeof AuthenticatedVagasProfissaoCodigoIndexRoute
 }
@@ -295,11 +309,13 @@ export interface FileRoutesByTo {
   '/perfil/$slug': typeof AuthenticatedPerfilSlugRoute
   '/perfil/contato': typeof AuthenticatedPerfilContatoRoute
   '/perfil/verificacao': typeof AuthenticatedPerfilVerificacaoRoute
+  '/servicos/$profissao/$cidade': typeof ServicosProfissaoCidadeRoute
   '/canais': typeof AuthenticatedCanaisIndexRoute
   '/comunidade': typeof AuthenticatedComunidadeIndexRoute
   '/conversas': typeof AuthenticatedConversasIndexRoute
   '/perfil': typeof AuthenticatedPerfilIndexRoute
   '/vagas': typeof AuthenticatedVagasIndexRoute
+  '/servicos/$profissao': typeof ServicosProfissaoIndexRoute
   '/vagas/$profissao/$codigo/interessados': typeof AuthenticatedVagasProfissaoCodigoInteressadosRoute
   '/vagas/$profissao/$codigo': typeof AuthenticatedVagasProfissaoCodigoIndexRoute
 }
@@ -333,11 +349,13 @@ export interface FileRoutesById {
   '/_authenticated/perfil/$slug': typeof AuthenticatedPerfilSlugRoute
   '/_authenticated/perfil/contato': typeof AuthenticatedPerfilContatoRoute
   '/_authenticated/perfil/verificacao': typeof AuthenticatedPerfilVerificacaoRoute
+  '/servicos/$profissao/$cidade': typeof ServicosProfissaoCidadeRoute
   '/_authenticated/canais/': typeof AuthenticatedCanaisIndexRoute
   '/_authenticated/comunidade/': typeof AuthenticatedComunidadeIndexRoute
   '/_authenticated/conversas/': typeof AuthenticatedConversasIndexRoute
   '/_authenticated/perfil/': typeof AuthenticatedPerfilIndexRoute
   '/_authenticated/vagas/': typeof AuthenticatedVagasIndexRoute
+  '/servicos/$profissao/': typeof ServicosProfissaoIndexRoute
   '/_authenticated/vagas/$profissao/$codigo/interessados': typeof AuthenticatedVagasProfissaoCodigoInteressadosRoute
   '/_authenticated/vagas/$profissao/$codigo/': typeof AuthenticatedVagasProfissaoCodigoIndexRoute
 }
@@ -371,11 +389,13 @@ export interface FileRouteTypes {
     | '/perfil/$slug'
     | '/perfil/contato'
     | '/perfil/verificacao'
+    | '/servicos/$profissao/$cidade'
     | '/canais/'
     | '/comunidade/'
     | '/conversas/'
     | '/perfil/'
     | '/vagas/'
+    | '/servicos/$profissao/'
     | '/vagas/$profissao/$codigo/interessados'
     | '/vagas/$profissao/$codigo/'
   fileRoutesByTo: FileRoutesByTo
@@ -406,11 +426,13 @@ export interface FileRouteTypes {
     | '/perfil/$slug'
     | '/perfil/contato'
     | '/perfil/verificacao'
+    | '/servicos/$profissao/$cidade'
     | '/canais'
     | '/comunidade'
     | '/conversas'
     | '/perfil'
     | '/vagas'
+    | '/servicos/$profissao'
     | '/vagas/$profissao/$codigo/interessados'
     | '/vagas/$profissao/$codigo'
   id:
@@ -443,11 +465,13 @@ export interface FileRouteTypes {
     | '/_authenticated/perfil/$slug'
     | '/_authenticated/perfil/contato'
     | '/_authenticated/perfil/verificacao'
+    | '/servicos/$profissao/$cidade'
     | '/_authenticated/canais/'
     | '/_authenticated/comunidade/'
     | '/_authenticated/conversas/'
     | '/_authenticated/perfil/'
     | '/_authenticated/vagas/'
+    | '/servicos/$profissao/'
     | '/_authenticated/vagas/$profissao/$codigo/interessados'
     | '/_authenticated/vagas/$profissao/$codigo/'
   fileRoutesById: FileRoutesById
@@ -463,6 +487,8 @@ export interface RootRouteChildren {
   CUsuarioRoute: typeof CUsuarioRoute
   VCodigoRoute: typeof VCodigoRoute
   ServicosIndexRoute: typeof ServicosIndexRoute
+  ServicosProfissaoCidadeRoute: typeof ServicosProfissaoCidadeRoute
+  ServicosProfissaoIndexRoute: typeof ServicosProfissaoIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -698,6 +724,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedVagasIndexRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/servicos/$profissao/': {
+      id: '/servicos/$profissao/'
+      path: '/servicos/$profissao'
+      fullPath: '/servicos/$profissao/'
+      preLoaderRoute: typeof ServicosProfissaoIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/servicos/$profissao/$cidade': {
+      id: '/servicos/$profissao/$cidade'
+      path: '/servicos/$profissao/$cidade'
+      fullPath: '/servicos/$profissao/$cidade'
+      preLoaderRoute: typeof ServicosProfissaoCidadeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_authenticated/vagas/$profissao/$codigo/': {
       id: '/_authenticated/vagas/$profissao/$codigo/'
       path: '/vagas/$profissao/$codigo'
@@ -799,6 +839,8 @@ const rootRouteChildren: RootRouteChildren = {
   CUsuarioRoute: CUsuarioRoute,
   VCodigoRoute: VCodigoRoute,
   ServicosIndexRoute: ServicosIndexRoute,
+  ServicosProfissaoCidadeRoute: ServicosProfissaoCidadeRoute,
+  ServicosProfissaoIndexRoute: ServicosProfissaoIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

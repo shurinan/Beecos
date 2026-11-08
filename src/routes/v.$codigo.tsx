@@ -8,7 +8,8 @@ import { ShareButton } from "@/components/ShareButton";
 import { useAuth } from "@/lib/auth";
 import { rememberDestination } from "@/lib/after-login";
 import { photoUrl, sortPhotos } from "@/lib/post-photos";
-import { postPreview, postShareUrl } from "@/lib/share";
+import { postPreview } from "@/lib/share";
+import { jsonLdString, postCanonical, postJsonLd, postRobots, type SeoPost } from "@/lib/seo";
 import { postParams } from "@/lib/urls";
 
 /** Link público de uma vaga ou anúncio (beecos.com.br/v/codigo), feito para compartilhar. */
@@ -33,13 +34,20 @@ export const Route = createFileRoute("/v/$codigo")({
       : { title: "Vaga no Beecos", description: "Vagas de serviço perto de você." };
     const first = post ? sortPhotos(post.post_photos)[0] : undefined;
     const image = first ? photoUrl(first.path) : null;
+    const seoPost = post as unknown as SeoPost | null;
+    const robots = postRobots(seoPost);
+    const jsonLd = postJsonLd(seoPost);
+    const canonical = postCanonical(post?.slug || params.codigo);
     return {
+      links: [{ rel: "canonical", href: canonical }],
+      scripts: jsonLd ? [{ type: "application/ld+json", children: jsonLdString(jsonLd) }] : [],
       meta: [
+        ...(robots ? [{ name: "robots", content: robots }] : []),
         { title: `${title} — Beecos` },
         { name: "description", content: description },
         { property: "og:title", content: title },
         { property: "og:description", content: description },
-        { property: "og:url", content: postShareUrl(params.codigo) },
+        { property: "og:url", content: canonical },
         { property: "og:type", content: "article" },
         ...(image
           ? [
