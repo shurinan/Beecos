@@ -47,6 +47,41 @@ describe("EditProfileDialog", () => {
     });
     await waitFor(() => expect(onOpenChange).toHaveBeenCalledWith(false));
   });
+
+  it("refuses a street address in the city field", async () => {
+    const onSave = vi.fn(async () => true);
+    render(<EditProfileDialog open onOpenChange={() => {}} initial={profile} onSave={onSave} />);
+    fireEvent.change(screen.getByLabelText("Cidade ou CEP"), {
+      target: { value: "Rua das Flores, 123" },
+    });
+    fireEvent.click(screen.getByRole("button", { name: "Salvar" }));
+    expect(await screen.findByRole("alert")).toBeTruthy();
+    expect(onSave).not.toHaveBeenCalled();
+  });
+
+  it("formats and accepts a CEP", async () => {
+    const onSave = vi.fn(async (_v: ProfileFields) => true);
+    render(<EditProfileDialog open onOpenChange={() => {}} initial={profile} onSave={onSave} />);
+    fireEvent.change(screen.getByLabelText("Cidade ou CEP"), { target: { value: "18010000" } });
+    fireEvent.click(screen.getByRole("button", { name: "Salvar" }));
+    await waitFor(() => expect(onSave).toHaveBeenCalledTimes(1));
+    expect(onSave.mock.calls[0]![0].city).toBe("18010-000");
+  });
+
+  it("keeps an old saved address when the city is not edited", async () => {
+    const onSave = vi.fn(async (_v: ProfileFields) => true);
+    render(
+      <EditProfileDialog
+        open
+        onOpenChange={() => {}}
+        initial={{ ...profile, city: "Rua A, 10 - Centro" }}
+        onSave={onSave}
+      />,
+    );
+    fireEvent.click(screen.getByRole("button", { name: "Salvar" }));
+    await waitFor(() => expect(onSave).toHaveBeenCalledTimes(1));
+    expect(onSave.mock.calls[0]![0].city).toBe("Rua A, 10 - Centro");
+  });
 });
 
 describe("SkillCard", () => {
