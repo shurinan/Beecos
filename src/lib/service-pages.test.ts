@@ -29,7 +29,7 @@ describe("service pages", () => {
     expect(data.posts.map((p) => p.slug)).toEqual(["a"]);
     expect(data.city).toEqual({ slug: "itaquaquecetuba", name: "Itaquaquecetuba" });
     const all = buildServicePage(prof, [row("c", "08500-000")], undefined, NOW);
-    expect(all.posts[0].city).toBe("");
+    expect(all.posts[0]?.city).toBe("");
   });
 
   it("shows at most 30 posts", () => {

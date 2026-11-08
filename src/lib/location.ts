@@ -64,7 +64,7 @@ export function cityName(raw: string | null | undefined): string {
 /** Sigla do estado, quando escrita junto da cidade ("Sorocaba - SP" -> "SP"). */
 export function cityState(raw: string | null | undefined): string {
   const m = publicCity(raw).match(/\s*[-/,]\s*([A-Za-z]{2})$/);
-  return m ? m[1].toUpperCase() : "";
+  return m?.[1] ? m[1].toUpperCase() : "";
 }
 
 export function slugify(text: string): string {

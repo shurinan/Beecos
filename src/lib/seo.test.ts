@@ -50,7 +50,7 @@ describe("postJsonLd", () => {
 
   it("leaves out a CEP or street written in the city", () => {
     const ld = postJsonLd({ ...base, city: "18010-000" }, NOW)!;
-    expect(ld.areaServed).toBeUndefined();
+    expect(ld["areaServed"]).toBeUndefined();
     expect(JSON.stringify(ld)).not.toContain("18010");
   });
 
