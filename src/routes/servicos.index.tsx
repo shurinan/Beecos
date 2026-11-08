@@ -1,11 +1,20 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Button } from "@/components/ui/button";
+import { supabase } from "@/integrations/supabase/client";
 
-type Guide = { id: string; title: string; text: string; tips: string[] };
+type Guide = {
+  id: string;
+  title: string;
+  text: string;
+  tips: string[];
+  /** Profissões do catálogo com página própria (/servicos/profissao). */
+  professions: string[];
+};
 
 const GUIDES: Guide[] = [
   {
     id: "obras-e-reformas",
+    professions: ["pedreiro", "pintor", "azulejista-e-ladrilheiro", "gesseiro-e-drywall", "servente-e-ajudante-de-obra"],
     title: "Obras e reformas",
     text: "Pedreiro, pintor, azulejista, gesseiro e ajudante. ",
     tips: [
@@ -16,6 +25,7 @@ const GUIDES: Guide[] = [
   },
   {
     id: "eletrica",
+    professions: ["eletricista"],
     title: "Elétrica",
     text: "Instalação de tomadas, chuveiros, ventiladores e luminárias, troca de disjuntor e reparos. ",
     tips: [
@@ -26,6 +36,7 @@ const GUIDES: Guide[] = [
   },
   {
     id: "encanamento",
+    professions: ["encanador"],
     title: "Encanamento",
     text: "Vazamentos, desentupimento, troca de torneiras, sifões e registros, caixa d'água. ",
     tips: [
@@ -36,6 +47,7 @@ const GUIDES: Guide[] = [
   },
   {
     id: "limpeza",
+    professions: ["diarista", "limpeza-pos-obra", "limpador-de-estofados-e-tapetes"],
     title: "Limpeza",
     text: "Diarista, limpeza pós-obra, faxina pesada e limpeza de caixa d'água, sofá e estofados.",
     tips: [
@@ -46,6 +58,7 @@ const GUIDES: Guide[] = [
   },
   {
     id: "mudancas-e-fretes",
+    professions: ["freteiro-e-motorista-de-mudanca", "ajudante-de-mudanca", "montador-de-moveis"],
     title: "Mudanças e fretes",
     text: "Carretos, mudanças, montagem e desmontagem de móveis, ajudantes de carga.",
     tips: [
@@ -56,6 +69,7 @@ const GUIDES: Guide[] = [
   },
   {
     id: "saude",
+    professions: ["cuidador-a-de-idosos", "tecnico-de-enfermagem"],
     title: "Saúde e cuidados",
     text: "Cuidadores, acompanhantes e profissionais da área da saúde. Cuidar de pessoas pede confiança e, em alguns casos, registro profissional.",
     tips: [
@@ -66,6 +80,7 @@ const GUIDES: Guide[] = [
   },
   {
     id: "beleza",
+    professions: ["barbeiro", "cabeleireiro-a", "manicure-e-pedicure", "maquiador-a"],
     title: "Beleza",
     text: "Barbeiros, cabeleireiros, manicures e maquiadores, no salão ou em domicílio.",
     tips: [
@@ -76,6 +91,7 @@ const GUIDES: Guide[] = [
   },
   {
     id: "entregas",
+    professions: ["motoboy-e-entregador"],
     title: "Entregas",
     text: "Motoboys, ciclistas e entregadores para levar documentos, encomendas e compras na sua região.",
     tips: [
@@ -88,6 +104,15 @@ const GUIDES: Guide[] = [
 
 export const Route = createFileRoute("/servicos/")({
   staticData: { sitemap: true },
+  // nomes das profissões que existem no catálogo, para ligar cada guia às páginas de profissão
+  loader: async () => {
+    try {
+      const { data } = await supabase.from("professions").select("slug, name").eq("active", true);
+      return { professions: Object.fromEntries((data ?? []).map((p) => [p.slug, p.name])) };
+    } catch {
+      return { professions: {} as Record<string, string> };
+    }
+  },
   head: () => ({
     meta: [
       { title: "Serviços: pedreiro, encanador, diarista e mais | Beecos" },
@@ -103,6 +128,7 @@ export const Route = createFileRoute("/servicos/")({
 });
 
 function Servicos() {
+  const { professions } = Route.useLoaderData();
   return (
     <div className="space-y-8">
       <header className="space-y-2">
@@ -126,6 +152,22 @@ function Servicos() {
               <li key={t}>{t}</li>
             ))}
           </ul>
+          {g.professions.some((s) => professions[s]) && (
+            <p className="flex flex-wrap gap-2 text-sm">
+              {g.professions
+                .filter((s) => professions[s])
+                .map((s) => (
+                  <Link
+                    key={s}
+                    to="/servicos/$profissao"
+                    params={{ profissao: s }}
+                    className="font-semibold underline underline-offset-2"
+                  >
+                    {professions[s]}
+                  </Link>
+                ))}
+            </p>
+          )}
         </section>
       ))}
 

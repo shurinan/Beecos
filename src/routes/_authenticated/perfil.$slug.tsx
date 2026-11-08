@@ -1,4 +1,5 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { publicCity } from "@/lib/location";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import {
@@ -229,9 +230,9 @@ function ProfilePage({ id }: { id: string }) {
               </p>
             )}
             {pr.headline && <p className="font-semibold">{pr.headline}</p>}
-            {pr.city && (
+            {publicCity(pr.city) && (
               <p className="flex items-center gap-1 text-sm text-muted-foreground">
-                <MapPin className="h-4 w-4" /> {pr.city}
+                <MapPin className="h-4 w-4" /> {publicCity(pr.city)}
               </p>
             )}
           </div>

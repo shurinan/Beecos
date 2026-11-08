@@ -207,7 +207,7 @@ export function useAdminPayments(status: string | null) {
     queryKey: ["admin-payments", status],
     queryFn: async () => {
       const { data, error } = await supabase.rpc("admin_payments", {
-        _status: status,
+        ...(status ? { _status: status } : {}),
         _limit: 150,
       });
       if (error) throw error;

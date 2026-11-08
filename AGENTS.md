@@ -12,3 +12,5 @@
 ## Architecture rules
 - Data reads/writes go from the browser through the generated client with RLS (no server functions yet); why: all access is user-scoped and RLS enforces it.
 - Signed-in pages live under `src/routes/_authenticated/`; auth state comes from the single `AuthProvider` in `src/lib/auth.tsx`; why: one auth listener avoids duplicate invalidation.
+- Public city text always passes through `publicCity()` in `src/lib/location.ts` before it reaches a public page, JSON-LD or sitemap; why: old free-text values may hold a CEP or street address.
+- `/sitemap.xml` reads open posts in its server handler with a publishable-key (anon) client, never the service key, and falls back to static routes on failure; why: the sitemap must only list what visitors can already see.

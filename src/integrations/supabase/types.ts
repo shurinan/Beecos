@@ -1880,26 +1880,26 @@ export type Database = {
       }
       suggestions: {
         Row: {
-          rewarded_at: string | null
           body: string
           created_at: string
           id: string
+          rewarded_at: string | null
           status: string
           user_id: string
         }
         Insert: {
-          rewarded_at?: string | null
           body: string
           created_at?: string
           id?: string
+          rewarded_at?: string | null
           status?: string
           user_id: string
         }
         Update: {
-          rewarded_at?: string | null
           body?: string
           created_at?: string
           id?: string
+          rewarded_at?: string | null
           status?: string
           user_id?: string
         }
@@ -2066,12 +2066,22 @@ export type Database = {
       }
       _promote_waitlist: { Args: { _post: string }; Returns: undefined }
       accept_terms: { Args: { _version: string }; Returns: undefined }
+      admin_emails: {
+        Args: { _limit?: number; _only_failed?: boolean }
+        Returns: Json
+      }
       admin_grant_premium: {
         Args: { _days?: number; _id: string }
         Returns: string
       }
       admin_guard: { Args: never; Returns: undefined }
       admin_overview: { Args: { _since: string }; Returns: Json }
+      admin_payments: {
+        Args: { _limit?: number; _status?: string }
+        Returns: Json
+      }
+      admin_referrals: { Args: never; Returns: Json }
+      admin_retry_email: { Args: { _id: string }; Returns: undefined }
       admin_suspend: {
         Args: { _days: number; _id: string; _reason: string }
         Returns: string
@@ -2241,6 +2251,10 @@ export type Database = {
       evaluate_referrals: { Args: { _referrer: string }; Returns: undefined }
       export_my_data: { Args: never; Returns: Json }
       fold_text: { Args: { _t: string }; Returns: string }
+      grant_premium_days: {
+        Args: { _days: number; _id: string }
+        Returns: string
+      }
       grant_referral_reward: {
         Args: { _batch: string[]; _u: string }
         Returns: undefined
@@ -2377,6 +2391,7 @@ export type Database = {
         Args: { _approve: boolean; _id: string; _reason?: string }
         Returns: string[]
       }
+      reward_suggestion: { Args: { _suggestion: string }; Returns: string }
       search_post_ids: {
         Args: {
           _city?: string
@@ -2394,11 +2409,6 @@ export type Database = {
         }[]
       }
       send_test_push: { Args: never; Returns: boolean }
-      reward_suggestion: { Args: { _suggestion: string }; Returns: string | null }
-      admin_payments: { Args: { _status?: string | null; _limit?: number }; Returns: Json }
-      admin_referrals: { Args: never; Returns: Json }
-      admin_emails: { Args: { _only_failed?: boolean; _limit?: number }; Returns: Json }
-      admin_retry_email: { Args: { _id: string }; Returns: undefined }
       set_show_last_seen: { Args: { _show: boolean }; Returns: undefined }
       slugify: { Args: { _max?: number; _t: string }; Returns: string }
       touch_presence: { Args: never; Returns: undefined }
