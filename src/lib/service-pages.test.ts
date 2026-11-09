@@ -74,7 +74,7 @@ describe("service pages", () => {
     const city = cidade ? "Sorocaba - SP" : "Itu";
     const rows = Array.from({ length: n }, (_, i) => row(`p${i}`, city));
     const data = buildServicePage({ name, slug: "x" }, rows, cidade, NOW);
-    return servicePageMeta(data, { profissao: "x", cidade });
+    return servicePageMeta(data, cidade ? { profissao: "x", cidade } : { profissao: "x" });
   };
   const PITCH = "Converse direto pelo chat e combine o serviço. Precisou? Achou. Combinou? Fechou.";
 
