@@ -21,6 +21,8 @@ export type ServicePageData = {
   profession: { name: string; slug: string } | null;
   city: { slug: string; name: string } | null;
   posts: ServicePagePost[];
+  /** Total real de posts abertos desta página (profissão e cidade), não só os exibidos. */
+  total: number;
   /** Outras cidades com posts abertos desta profissão (links internos). */
   cities: { slug: string; name: string }[];
 };
@@ -44,7 +46,7 @@ export function buildServicePage(
   cityParam?: string,
   now = Date.now(),
 ): ServicePageData {
-  if (!profession) return { profession: null, city: null, posts: [], cities: [] };
+  if (!profession) return { profession: null, city: null, posts: [], total: 0, cities: [] };
   const open = rows.filter((r) => r.slug && isPostOpen(r, now));
 
   const cityMap = new Map<string, string>();
@@ -69,6 +71,7 @@ export function buildServicePage(
       price: r.price ?? "",
       created_at: r.created_at,
     })),
+    total: inCity.length,
     cities: [...cityMap]
       .filter(([s]) => s !== cityParam)
       .map(([slug, name]) => ({ slug, name }))
@@ -102,6 +105,37 @@ export async function loadServicePage(
   return buildServicePage({ name: prof.name, slug: prof.slug }, (data ?? []) as Row[], cityParam);
 }
 
+export const SERVICE_TITLE_MAX = 60;
+const SUFFIX = " | Beecos";
+const PITCH = "Converse direto pelo chat e combine o serviço. Precisou? Achou. Combinou? Fechou.";
+
+/** Tira espaços duplicados e das pontas ("Cuidador(a)  de idosos " -> "Cuidador(a) de idosos"). */
+function tidy(text: string): string {
+  return text.replace(/\s+/g, " ").trim();
+}
+
+/** Título com no máximo 60 caracteres: tira " | Beecos" e, se ainda passar, usa só o nome. */
+export function serviceTitle(profession: string, city?: string): string {
+  const name = tidy(profession);
+  const place = city ? tidy(city) : "";
+  const full = place
+    ? `${name} em ${place}: profissionais e vagas`
+    : `${name}: profissionais e vagas perto de você`;
+  const fits = (t: string) => [...t].length <= SERVICE_TITLE_MAX;
+  if (fits(full + SUFFIX)) return full + SUFFIX;
+  if (fits(full)) return full;
+  return place ? `${name} em ${place}` : name;
+}
+
+/** Descrição: com número quando n = 1 ou n >= 3; sem número quando n = 0 ou 2. */
+export function serviceDescription(profession: string, total: number, city?: string): string {
+  const lower = tidy(profession).toLocaleLowerCase("pt-BR");
+  const where = city ? `em ${tidy(city)}` : "perto de você";
+  if (total === 1) return `Veja 1 anúncio aberto de ${lower} ${where}. ${PITCH}`;
+  if (total >= 3) return `Veja ${total} anúncios abertos de ${lower} ${where}. ${PITCH}`;
+  return `Encontre ${lower} ${where} ou ache vagas. ${PITCH}`;
+}
+
 /** Título, descrição, canonical e robots de cada página. Sem post aberto = noindex. */
 export function servicePageMeta(
   data: ServicePageData | undefined,
@@ -118,12 +152,11 @@ export function servicePageMeta(
       robots: NOINDEX as string | null,
     };
   }
-  const where = data.city ? ` em ${data.city.name}` : "";
-  const lower = prof.name.toLowerCase();
+  const city = data.city?.name || undefined;
   return {
-    title: data.city ? `${prof.name}${where} | Beecos` : `${prof.name}: vagas e profissionais | Beecos`,
-    description: `Vagas e profissionais de ${lower}${where} no Beecos. Veja os anúncios abertos e combine direto pelo chat, sem intermediário.`,
+    title: serviceTitle(prof.name, city),
+    description: serviceDescription(prof.name, data.total, city),
     canonical,
-    robots: data.posts.length > 0 ? null : NOINDEX,
+    robots: data.total > 0 ? null : NOINDEX,
   };
 }
