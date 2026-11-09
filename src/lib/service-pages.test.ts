@@ -48,7 +48,8 @@ describe("service pages", () => {
   it("uses a unique title and noindex when there is no open post", () => {
     const empty = buildServicePage(prof, [], "itaquaquecetuba", NOW);
     const meta = servicePageMeta(empty, { profissao: "eletricista", cidade: "itaquaquecetuba" });
-    expect(meta.title).toBe("Eletricista em Itaquaquecetuba: profissionais e vagas | Beecos");
+    // 62 caracteres com " | Beecos": o sufixo sai.
+    expect(meta.title).toBe("Eletricista em Itaquaquecetuba: profissionais e vagas");
     expect(meta.robots).toBe("noindex,nofollow");
     expect(meta.canonical).toBe("https://beecos.com.br/servicos/eletricista/itaquaquecetuba");
 
@@ -115,9 +116,12 @@ describe("service pages", () => {
       `Veja 5 anúncios abertos de freteiro e motorista de mudança em Sorocaba. ${PITCH}`,
     );
     expect(meta("Freteiro e motorista de mudança", 5).title).toBe("Freteiro e motorista de mudança");
-    // Sem " | Beecos" já cabe: fica sem o sufixo, mas com o texto.
     expect(serviceTitle("Servente e ajudante de obra", "Sorocaba")).toBe(
-      "Servente e ajudante de obra em Sorocaba: profissionais e vagas",
+      "Servente e ajudante de obra em Sorocaba",
+    );
+    // Sem " | Beecos" já cabe: fica sem o sufixo, mas com o texto.
+    expect(serviceTitle("Eletricista", "Itaquaquecetuba")).toBe(
+      "Eletricista em Itaquaquecetuba: profissionais e vagas",
     );
     for (const name of ["Freteiro e motorista de mudança", "Servente e ajudante de obra", "Cuidador(a) de idosos"]) {
       for (const city of [undefined, "Itaquaquecetuba", "São José dos Campos"]) {
