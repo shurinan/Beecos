@@ -5,7 +5,8 @@ import { createClient } from "jsr:@supabase/supabase-js@2";
 
 const FROM = Deno.env.get("EMAIL_FROM") ?? "Beecos <avisos@contato.beecos.com.br>";
 const REPLY_TO = Deno.env.get("EMAIL_REPLY_TO") ?? "contato@beecos.com.br";
-const APP = (Deno.env.get("APP_URL") ?? "https://beecos.lovable.app").replace(/\/$/, "");
+// Links dos e-mails sempre no domínio oficial
+const APP = "https://beecos.com.br";
 const GATEWAY = "https://connector-gateway.lovable.dev/resend";
 
 type Row = {
