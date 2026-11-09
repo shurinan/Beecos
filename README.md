@@ -6,7 +6,7 @@ O usuário também pode criar um perfil mostrando suas habilidades e postar que 
 
 This project was built with [Lovable](https://lovable.dev).
 
-**Live app**: https://beecos.lovable.app
+**Live app**: https://beecos.com.br
 
 ## Build with Lovable
 

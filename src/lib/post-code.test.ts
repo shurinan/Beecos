@@ -12,7 +12,7 @@ describe("código da vaga", () => {
     expect(parsePostCode(" #a3f9c1 ")).toBe("a3f9c1");
     expect(parsePostCode("chuveiro-queimou-a3f9c1")).toBe("a3f9c1");
     expect(
-      parsePostCode("https://beecos.lovable.app/vagas/eletricista/chuveiro-queimou-a3f9c1"),
+      parsePostCode("https://beecos.com.br/vagas/eletricista/chuveiro-queimou-a3f9c1"),
     ).toBe("a3f9c1");
   });
   it("não confunde palavras comuns com código", () => {
