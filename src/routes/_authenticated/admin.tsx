@@ -126,7 +126,7 @@ function Admin() {
   };
 
   return (
-    <div className="lg:grid lg:grid-cols-[220px_minmax(0,1fr)] lg:gap-8">
+    <div className="lg:grid lg:grid-cols-[320px_minmax(0,1fr)] lg:gap-10">
       {/* celular: menu em lista (como o do perfil) */}
       {!picked && (
         <nav aria-label="Gestão" className="lg:hidden">
@@ -158,7 +158,7 @@ function Admin() {
       )}
       {/* computador: coluna lateral (a mesma das outras telas da Gestão) */}
       <AdminSidebar aba={aba} onPick={(a) => go({ aba: a })} />
-      <div className={`min-w-0 space-y-4 ${picked ? "" : "max-lg:hidden"}`}>
+      <div className={`min-w-0 space-y-4 lg:max-w-2xl ${picked ? "" : "max-lg:hidden"}`}>
         <div className="flex items-center gap-2 lg:hidden">
           <button
             type="button"

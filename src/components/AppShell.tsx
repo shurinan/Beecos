@@ -116,13 +116,20 @@ export function AppShell({ children }: { children: ReactNode }) {
     "group flex min-w-0 flex-1 flex-col items-center gap-0.5 py-1 text-xs font-semibold text-muted-foreground";
   const active = { className: "text-foreground" };
   const path = useRouterState({ select: (st) => st.location.pathname });
-  // início e lista de vagas usam a largura toda no computador; o resto fica numa coluna
+  // início, vagas e telas com menu lateral usam a largura toda no computador; o resto fica numa coluna
   const wide =
     path === "/" ||
     path === "/perfil" ||
     path === "/vagas" ||
     path === "/vagas/" ||
-    path.startsWith("/conversas");
+    path.startsWith("/conversas") ||
+    // telas com menu lateral (Configurações e Gestão): todas no mesmo molde do Perfil
+    path === "/avisos" ||
+    path === "/admin" ||
+    path === "/moderacao" ||
+    path === "/sugestoes" ||
+    path === "/verificacoes" ||
+    (path === "/ajuda" && !!userId);
   // no celular, a conversa aberta ocupa a tela toda (sem menu inferior), como no WhatsApp
   const inChat = /^\/conversas\/[^/]+/.test(path);
   // o menu de baixo some ao rolar a página para baixo e volta ao puxar para cima

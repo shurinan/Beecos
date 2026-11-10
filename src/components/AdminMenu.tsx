@@ -87,64 +87,70 @@ export function AdminSidebar({
   onPick?: ((a: Aba) => void) | undefined;
 }) {
   const path = useRouterState({ select: (s) => s.location.pathname });
+  const row =
+    "flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left hover:bg-foreground/[0.06]";
   return (
-    <nav aria-label="Gestão" className="hidden lg:block">
-      <p className="mb-3 font-display text-2xl">Gestão</p>
-      {MENU.map((g) => (
-        <div key={g.title} className="mb-3">
-          <p className="mb-1 px-3 text-xs font-bold uppercase tracking-wide text-muted-foreground">
-            {g.title}
-          </p>
-          {g.items.map((i) => {
-            const on = i.to ? path === i.to : path === "/admin" && !!i.aba && i.aba === aba;
-            const cls = `flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-sm font-bold ${on ? "bg-foreground text-primary dark:text-background" : "hover:bg-foreground/[0.06]"}`;
-            const Icon = i.icon;
-            const inner = (
-              <>
-                <Icon className="h-4 w-4" aria-hidden="true" /> {i.label}
-              </>
-            );
-            if (i.to) {
-              return (
-                <Link
-                  key={i.label}
-                  to={i.to}
-                  aria-current={on ? "page" : undefined}
-                  className={cls}
-                >
-                  {inner}
-                </Link>
-              );
-            }
-            if (onPick && i.aba) {
-              const pick = i.aba;
-              return (
-                <button
-                  key={i.label}
-                  type="button"
-                  className={cls}
-                  aria-current={on ? "page" : undefined}
-                  onClick={() => onPick(pick)}
-                >
-                  {inner}
-                </button>
-              );
-            }
-            return (
-              <Link
-                key={i.label}
-                to="/admin"
-                search={{ aba: i.aba, p: "mes" }}
-                aria-current={on ? "page" : undefined}
-                className={cls}
-              >
-                {inner}
-              </Link>
-            );
-          })}
-        </div>
-      ))}
-    </nav>
+    <aside className="hidden lg:block">
+      <nav aria-label="Gestão" className="sticky top-24 space-y-4">
+        <p className="font-display text-2xl">Gestão</p>
+        {MENU.map((g) => (
+          <div key={g.title}>
+            <p className="mb-1 px-3 text-xs font-bold uppercase tracking-wide text-muted-foreground">
+              {g.title}
+            </p>
+            <ul className="space-y-0.5">
+              {g.items.map((i) => {
+                const on = i.to ? path === i.to : path === "/admin" && !!i.aba && i.aba === aba;
+                const cls = row + (on ? " bg-foreground/[0.09]" : "");
+                const Icon = i.icon;
+                const inner = (
+                  <>
+                    <Icon className="h-5 w-5 shrink-0 text-muted-foreground" aria-hidden="true" />
+                    <span className="min-w-0">
+                      <span className="block font-semibold leading-tight">{i.label}</span>
+                      <span className="block truncate text-sm text-muted-foreground">{i.text}</span>
+                    </span>
+                  </>
+                );
+                const current = on ? ("page" as const) : undefined;
+                let el: ReactNode;
+                if (i.to) {
+                  el = (
+                    <Link to={i.to} aria-current={current} className={cls}>
+                      {inner}
+                    </Link>
+                  );
+                } else if (onPick && i.aba) {
+                  const pick = i.aba;
+                  el = (
+                    <button
+                      type="button"
+                      className={cls}
+                      aria-current={current}
+                      onClick={() => onPick(pick)}
+                    >
+                      {inner}
+                    </button>
+                  );
+                } else {
+                  el = (
+                    <Link
+                      to="/admin"
+                      search={{ aba: i.aba, p: "mes" }}
+                      aria-current={current}
+                      className={cls}
+                    >
+                      {inner}
+                    </Link>
+                  );
+                }
+                return <li key={i.label}>{el}</li>;
+              })}
+            </ul>
+          </div>
+        ))}
+      </nav>
+    </aside>
   );
 }
 
@@ -153,9 +159,9 @@ export function AdminFrame({ children }: { children: ReactNode }) {
   const { data: isMod } = useIsModerator();
   if (!isMod) return <>{children}</>;
   return (
-    <div className="lg:grid lg:grid-cols-[220px_minmax(0,1fr)] lg:gap-8">
+    <div className="lg:grid lg:grid-cols-[320px_minmax(0,1fr)] lg:gap-10">
       <AdminSidebar />
-      <div className="min-w-0">{children}</div>
+      <div className="min-w-0 lg:max-w-2xl">{children}</div>
     </div>
   );
 }
