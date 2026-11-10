@@ -1,3 +1,4 @@
+import { AdminFrame } from "@/components/AdminMenu";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Gift } from "lucide-react";
@@ -10,7 +11,7 @@ import { confirmAction } from "@/lib/confirm";
 export const Route = createFileRoute("/_authenticated/sugestoes")({
   staticData: { sitemap: false },
   head: () => ({ meta: [{ title: "Sugestões — Beecos" }, { name: "robots", content: "noindex" }] }),
-  component: Suggestions,
+  component: SuggestionsPage,
 });
 
 type Row = {
@@ -23,6 +24,14 @@ type Row = {
 };
 
 const STATUS = { new: "Nova", read: "Lida", done: "Feita" } as const;
+
+function SuggestionsPage() {
+  return (
+    <AdminFrame>
+      <Suggestions />
+    </AdminFrame>
+  );
+}
 
 function Suggestions() {
   const qc = useQueryClient();

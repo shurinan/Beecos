@@ -1,3 +1,4 @@
+import { SettingsFrame } from "@/components/SettingsFrame";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { BellOff } from "lucide-react";
 import { toast } from "sonner";
@@ -17,8 +18,16 @@ export const Route = createFileRoute("/_authenticated/avisos")({
       { name: "description", content: "Vagas novas da sua profissão perto de você." },
     ],
   }),
-  component: Alerts,
+  component: AlertsPage,
 });
+
+function AlertsPage() {
+  return (
+    <SettingsFrame>
+      <Alerts />
+    </SettingsFrame>
+  );
+}
 
 function Alerts() {
   const { userId } = Route.useRouteContext();

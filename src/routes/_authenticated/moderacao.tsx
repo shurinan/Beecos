@@ -1,3 +1,4 @@
+import { AdminFrame } from "@/components/AdminMenu";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
@@ -14,7 +15,7 @@ import { confirmAction } from "@/lib/confirm";
 export const Route = createFileRoute("/_authenticated/moderacao")({
   staticData: { sitemap: false },
   head: () => ({ meta: [{ title: "Moderação — Beecos" }, { name: "robots", content: "noindex" }] }),
-  component: Moderation,
+  component: ModerationPage,
 });
 
 type Row = {
@@ -26,6 +27,14 @@ type Row = {
   details: string;
   created_at: string;
 };
+
+function ModerationPage() {
+  return (
+    <AdminFrame>
+      <Moderation />
+    </AdminFrame>
+  );
+}
 
 function Moderation() {
   const qc = useQueryClient();
