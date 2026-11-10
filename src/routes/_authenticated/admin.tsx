@@ -19,6 +19,7 @@ import {
   Users,
 } from "lucide-react";
 import { toast } from "sonner";
+import { ABAS, type Aba, AdminSidebar, MENU, type MenuItem } from "@/components/AdminMenu";
 import { Avatar } from "@/components/profile-bits";
 import { Button } from "@/components/ui/button";
 import {
@@ -54,71 +55,12 @@ import {
 import { confirmAction } from "@/lib/confirm";
 import { profileParam } from "@/lib/urls";
 
-type Aba = "geral" | "usuarios" | "pagamentos" | "indicacoes" | "emails";
-const ABAS: Aba[] = ["geral", "usuarios", "pagamentos", "indicacoes", "emails"];
 const PERIODS: { id: Period; label: string }[] = [
   { id: "hoje", label: "Hoje" },
   { id: "7dias", label: "7 dias" },
   { id: "mes", label: "Mês" },
 ];
 
-type MenuItem = {
-  label: string;
-  text: string;
-  icon: typeof Gift;
-  aba?: Aba;
-  to?: "/moderacao" | "/verificacoes" | "/sugestoes";
-};
-const MENU: { title: string; items: MenuItem[] }[] = [
-  {
-    title: "Números",
-    items: [
-      {
-        label: "Visão geral",
-        text: "Números do dia, da semana e do mês",
-        icon: LayoutDashboard,
-        aba: "geral",
-      },
-      {
-        label: "Usuários",
-        text: "Buscar, ver a ficha, dar Premium, suspender",
-        icon: Users,
-        aba: "usuarios",
-      },
-    ],
-  },
-  {
-    title: "Dinheiro e crescimento",
-    items: [
-      {
-        label: "Pagamentos",
-        text: "Pagos, aguardando, atrasados e cancelados",
-        icon: CreditCard,
-        aba: "pagamentos",
-      },
-      { label: "Indicações", text: "Quem mais trouxe prestadores", icon: Gift, aba: "indicacoes" },
-      {
-        label: "E-mails",
-        text: "O que saiu, o que espera e o que falhou",
-        icon: Mail,
-        aba: "emails",
-      },
-    ],
-  },
-  {
-    title: "Moderação",
-    items: [
-      { label: "Denúncias", text: "Casos abertos e decisões", icon: Flag, to: "/moderacao" },
-      {
-        label: "Verificações",
-        text: "Documentos esperando análise",
-        icon: UserCheck,
-        to: "/verificacoes",
-      },
-      { label: "Sugestões", text: "Ideias dos usuários", icon: Lightbulb, to: "/sugestoes" },
-    ],
-  },
-];
 const TITLES: Record<Aba, string> = {
   geral: "Visão geral",
   usuarios: "Usuários",
@@ -214,37 +156,8 @@ function Admin() {
           ))}
         </nav>
       )}
-      {/* computador: coluna lateral */}
-      <nav aria-label="Gestão" className="hidden lg:block">
-        <h1 className="mb-3 text-2xl">Gestão</h1>
-        {MENU.map((g) => (
-          <div key={g.title} className="mb-3">
-            <p className="mb-1 px-3 text-xs font-bold uppercase tracking-wide text-muted-foreground">
-              {g.title}
-            </p>
-            {g.items.map((i) => {
-              const on = !!i.aba && i.aba === aba;
-              const cls = `flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-sm font-bold ${on ? "bg-foreground text-primary dark:text-background" : "hover:bg-foreground/[0.06]"}`;
-              const Icon = i.icon;
-              return i.to ? (
-                <Link key={i.label} to={i.to} className={cls}>
-                  <Icon className="h-4 w-4" aria-hidden="true" /> {i.label}
-                </Link>
-              ) : (
-                <button
-                  key={i.label}
-                  type="button"
-                  className={cls}
-                  aria-current={on ? "page" : undefined}
-                  onClick={() => go({ aba: i.aba })}
-                >
-                  <Icon className="h-4 w-4" aria-hidden="true" /> {i.label}
-                </button>
-              );
-            })}
-          </div>
-        ))}
-      </nav>
+      {/* computador: coluna lateral (a mesma das outras telas da Gestão) */}
+      <AdminSidebar aba={aba} onPick={(a) => go({ aba: a })} />
       <div className={`min-w-0 space-y-4 ${picked ? "" : "max-lg:hidden"}`}>
         <div className="flex items-center gap-2 lg:hidden">
           <button

@@ -1,4 +1,4 @@
-import { Link } from "@tanstack/react-router";
+import { Link, useRouterState } from "@tanstack/react-router";
 import { useState } from "react";
 import {
   Bell,
@@ -101,12 +101,13 @@ export function SettingsMenu({
   avatarPath,
   onSignOut,
 }: {
-  current: Section;
+  current: Section | null;
   name: string;
   headline: string;
   avatarPath: string | null | undefined;
   onSignOut: () => void;
 }) {
+  const path = useRouterState({ select: (s) => s.location.pathname });
   const [q, setQ] = useState("");
   const term = q.trim().toLowerCase();
   const items = ITEMS.filter((i) => !term || `${i.title} ${i.text}`.toLowerCase().includes(term));
@@ -168,7 +169,11 @@ export function SettingsMenu({
                       {body}
                     </Link>
                   ) : (
-                    <Link to={i.to} className={base}>
+                    <Link
+                      to={i.to}
+                      aria-current={path === i.to ? "page" : undefined}
+                      className={base + (path === i.to ? " bg-foreground/[0.09]" : "")}
+                    >
                       {body}
                     </Link>
                   )}

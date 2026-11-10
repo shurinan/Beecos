@@ -1,3 +1,4 @@
+import { SettingsFrame } from "@/components/SettingsFrame";
 import { createFileRoute, useRouterState } from "@tanstack/react-router";
 import { useEffect } from "react";
 import { FAQ } from "@/lib/help";
@@ -13,8 +14,16 @@ export const Route = createFileRoute("/ajuda")({
       { name: "description", content: "Como usar o Beecos e respostas às dúvidas mais comuns." },
     ],
   }),
-  component: Help,
+  component: HelpPage,
 });
+
+function HelpPage() {
+  return (
+    <SettingsFrame>
+      <Help />
+    </SettingsFrame>
+  );
+}
 
 function Help() {
   const hash = useRouterState({ select: (s) => s.location.hash });

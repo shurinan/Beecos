@@ -1,3 +1,4 @@
+import { AdminFrame } from "@/components/AdminMenu";
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
@@ -16,7 +17,7 @@ export const Route = createFileRoute("/_authenticated/verificacoes")({
   head: () => ({
     meta: [{ title: "Verificações — Beecos" }, { name: "robots", content: "noindex" }],
   }),
-  component: Reviews,
+  component: ReviewsPage,
 });
 
 type Row = {
@@ -154,6 +155,14 @@ function Case({ row, onDone }: { row: Row; onDone: () => void }) {
         </Button>
       </div>
     </article>
+  );
+}
+
+function ReviewsPage() {
+  return (
+    <AdminFrame>
+      <Reviews />
+    </AdminFrame>
   );
 }
 
