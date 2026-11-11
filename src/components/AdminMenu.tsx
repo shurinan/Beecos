@@ -5,6 +5,7 @@ import {
   Flag,
   Gift,
   LayoutDashboard,
+  Newspaper,
   Lightbulb,
   Mail,
   UserCheck,
@@ -20,7 +21,7 @@ export type MenuItem = {
   text: string;
   icon: typeof Gift;
   aba?: Aba;
-  to?: "/moderacao" | "/verificacoes" | "/sugestoes";
+  to?: "/moderacao" | "/verificacoes" | "/sugestoes" | "/revisar-artigos";
 };
 
 export const MENU: { title: string; items: MenuItem[] }[] = [
@@ -70,6 +71,12 @@ export const MENU: { title: string; items: MenuItem[] }[] = [
         to: "/verificacoes",
       },
       { label: "Sugestões", text: "Ideias dos usuários", icon: Lightbulb, to: "/sugestoes" },
+      {
+        label: "Artigos",
+        text: "Aprovar, ajustar ou recusar artigos do blog",
+        icon: Newspaper,
+        to: "/revisar-artigos",
+      },
     ],
   },
 ];

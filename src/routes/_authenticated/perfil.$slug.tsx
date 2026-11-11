@@ -1,3 +1,5 @@
+import { ArticleCardView } from "@/components/blog/ArticleView";
+import { useAuthorArticles } from "@/lib/blog";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { publicCity } from "@/lib/location";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
@@ -12,6 +14,7 @@ import {
   Route as RouteIcon,
   Smartphone,
   Zap,
+  Newspaper,
 } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
@@ -311,6 +314,8 @@ function ProfilePage({ id }: { id: string }) {
 
       <Reviews profileId={id} viewerId={userId} data={data} />
 
+      <AuthorArticles authorId={id} />
+
       <h2 className="text-xl">Publicações</h2>
       {data.posts.length === 0 && <p className="text-muted-foreground">Nenhuma publicação.</p>}
       {data.posts.map((p) => (
@@ -531,6 +536,26 @@ function Reviews({
           )}
         </article>
       ))}
+    </section>
+  );
+}
+
+/** Artigos que a pessoa publicou no blog do Beecos. */
+function AuthorArticles({ authorId }: { authorId: string }) {
+  const { data } = useAuthorArticles(authorId);
+  if (!data?.length) return null;
+  return (
+    <section className="space-y-2">
+      <h2 className="flex items-center gap-2 text-xl">
+        <Newspaper className="h-5 w-5" aria-hidden="true" /> Artigos no blog ({data.length})
+      </h2>
+      <ul className="grid gap-3 sm:grid-cols-2">
+        {data.map((a) => (
+          <li key={a.id}>
+            <ArticleCardView article={a} />
+          </li>
+        ))}
+      </ul>
     </section>
   );
 }

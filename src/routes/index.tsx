@@ -12,6 +12,7 @@ import {
   Scissors,
   Sparkles,
   Star,
+  Newspaper,
   Truck,
   Users,
   Zap,
@@ -175,6 +176,22 @@ function Index() {
                 </p>
                 <p className="text-sm text-muted-foreground">
                   Grupos de pedreiros, eletricistas, diaristas e outros, com as vagas de cada área.
+                </p>
+              </div>
+            </Link>
+
+            <Link
+              to="/blog"
+              search={{ assunto: undefined }}
+              className="block-card flex items-start gap-3 p-4"
+            >
+              <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md border-2 border-foreground bg-primary">
+                <Newspaper className="h-5 w-5" aria-hidden="true" />
+              </span>
+              <div className="min-w-0">
+                <p className="font-display">Blog do Beecos</p>
+                <p className="text-sm text-muted-foreground">
+                  Dicas de quem faz: profissionais contando o que aprenderam no dia a dia.
                 </p>
               </div>
             </Link>

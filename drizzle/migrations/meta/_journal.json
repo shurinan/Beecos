@@ -400,6 +400,13 @@
       "when": 1797878400000,
       "tag": "0056_admin_lists",
       "breakpoints": true
+    },
+    {
+      "idx": 57,
+      "version": "7",
+      "when": 1797964800000,
+      "tag": "0057_blog",
+      "breakpoints": true
     }
   ]
 }
