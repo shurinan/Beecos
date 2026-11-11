@@ -6,6 +6,7 @@ import { supabase } from "@/integrations/supabase/client";
 /** Aviso de vaga nova, como o banco entrega. */
 export type Alert = {
   id: string;
+  kind: string;
   title: string;
   body: string;
   created_at: string;
@@ -72,7 +73,7 @@ export function useAlerts(userId: string | null) {
       const { data, error } = await supabase
         .from("notifications")
         .select(
-          "id, title, body, created_at, read_at, post_id, actor_id, posts(slug, professions(slug))",
+          "id, kind, title, body, created_at, read_at, post_id, actor_id, posts(slug, professions(slug))",
         )
         .order("created_at", { ascending: false })
         .limit(50);

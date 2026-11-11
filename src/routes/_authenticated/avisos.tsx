@@ -101,6 +101,16 @@ function Alerts() {
                 >
                   {card}
                 </Link>
+              ) : a.kind.startsWith("article_") ? (
+                <Link
+                  to={a.kind === "article_review" ? "/revisar-artigos" : "/meus-artigos"}
+                  className={"block-card block space-y-1 p-4 " + (a.read_at ? "opacity-80" : "")}
+                  onClick={() => {
+                    if (!a.read_at) void quiet(markRead([a.id]));
+                  }}
+                >
+                  {card}
+                </Link>
               ) : (
                 <div className="block-card space-y-1 p-4">{card}</div>
               )}

@@ -10,6 +10,7 @@ import {
   Hammer,
   HelpCircle,
   Lock,
+  Newspaper,
   LogOut,
   Search,
   UserRound,
@@ -29,7 +30,13 @@ export const SECTIONS: Section[] = [
 
 type Item =
   | { kind: "section"; key: Section; title: string; text: string; icon: typeof Bell }
-  | { kind: "link"; to: "/avisos" | "/ajuda"; title: string; text: string; icon: typeof Bell };
+  | {
+      kind: "link";
+      to: "/avisos" | "/ajuda" | "/meus-artigos";
+      title: string;
+      text: string;
+      icon: typeof Bell;
+    };
 
 const ITEMS: Item[] = [
   {
@@ -52,6 +59,13 @@ const ITEMS: Item[] = [
     title: "Minhas publicações",
     text: "Vagas e disponibilidades",
     icon: FileText,
+  },
+  {
+    kind: "link",
+    to: "/meus-artigos",
+    title: "Meus artigos",
+    text: "Escreva no blog do Beecos",
+    icon: Newspaper,
   },
   {
     kind: "section",
@@ -199,7 +213,7 @@ export function SettingsMenu({
 }
 
 const GROUPS: { title: string; keys: string[] }[] = [
-  { title: "Sua conta", keys: ["perfil", "habilidades", "publicacoes"] },
+  { title: "Sua conta", keys: ["perfil", "habilidades", "publicacoes", "/meus-artigos"] },
   { title: "Plano e indicações", keys: ["plano", "indique"] },
   { title: "Configurações", keys: ["/avisos", "privacidade", "/ajuda"] },
 ];

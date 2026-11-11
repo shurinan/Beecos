@@ -19,6 +19,7 @@ import {
   Users,
 } from "lucide-react";
 import { toast } from "sonner";
+import { useAdminArticles } from "@/lib/blog";
 import { ABAS, type Aba, AdminSidebar, MENU, type MenuItem } from "@/components/AdminMenu";
 import { Avatar } from "@/components/profile-bits";
 import { Button } from "@/components/ui/button";
@@ -268,7 +269,9 @@ function OverviewPanel({
 }
 
 function Todo({ todo }: { todo: Overview["todo"] }) {
+  const articles = useAdminArticles().data?.pending.length ?? 0;
   const rows: { n: number; text: string; to?: string; note?: string }[] = [
+    { n: articles, text: "Artigos do blog para revisar", to: "/revisar-artigos" },
     { n: todo.overdue, text: "Pagamentos atrasados", note: "a pessoa recebe e-mail com o link" },
     { n: todo.verifications, text: "Verificações de identidade esperando", to: "/verificacoes" },
     { n: todo.reports, text: "Denúncias abertas", to: "/moderacao" },

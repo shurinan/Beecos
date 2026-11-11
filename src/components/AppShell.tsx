@@ -129,9 +129,15 @@ export function AppShell({ children }: { children: ReactNode }) {
     path === "/moderacao" ||
     path === "/sugestoes" ||
     path === "/verificacoes" ||
+    path === "/revisar-artigos" ||
+    path === "/meus-artigos" ||
+    path === "/blog" ||
+    path === "/blog/" ||
     (path === "/ajuda" && !!userId);
   // no celular, a conversa aberta ocupa a tela toda (sem menu inferior), como no WhatsApp
   const inChat = /^\/conversas\/[^/]+/.test(path);
+  // escrevendo ou revisando artigo: o "+" sairia em cima dos botões de enviar/publicar
+  const writing = path.startsWith("/escrever/") || path === "/revisar-artigos";
   // o menu de baixo some ao rolar a página para baixo e volta ao puxar para cima
   const navHidden = useHideOnScroll(!!userId && !inChat, path);
   return (
@@ -259,6 +265,10 @@ export function AppShell({ children }: { children: ReactNode }) {
             Serviços
           </Link>{" "}
           ·{" "}
+          <Link to="/blog" search={{ assunto: undefined }} className="underline">
+            Blog
+          </Link>{" "}
+          ·{" "}
           <Link to="/ajuda" className="underline">
             Ajuda
           </Link>{" "}
@@ -279,7 +289,7 @@ export function AppShell({ children }: { children: ReactNode }) {
           </span>
         </p>
       </main>
-      {userId && !inChat && <NewPostFab hidden={navHidden} />}
+      {userId && !inChat && !writing && <NewPostFab hidden={navHidden} />}
       {userId ? (
         <nav
           className={`fixed inset-x-0 bottom-0 z-20 border-t-2 border-foreground bg-background transition-transform duration-200 lg:hidden ${inChat ? "hidden" : ""} ${navHidden ? "translate-y-[calc(100%+2.5rem)]" : ""}`}

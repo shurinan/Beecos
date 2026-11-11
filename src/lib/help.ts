@@ -126,6 +126,11 @@ export const FAQ: { q: string; a: string; id?: string }[] = [
     a: "Um plano com mais vagas por mês e recursos extras. Veja o comparativo na página de Planos.",
   },
   {
+    id: "blog",
+    q: "Como escrevo no blog?",
+    a: "Escrever no blog é do Premium. Vá em Meu perfil › Meus artigos › Escrever artigo. O editor funciona como um bloco de notas: use os botões para títulos, listas, fotos e a caixa de destaque (quem sabe HTML pode usar a aba HTML). O rascunho é salvo sozinho. Quando terminar, toque em Enviar para revisão: a equipe lê antes de publicar e pode aprovar, fazer pequenos ajustes (você recebe um aviso) ou pedir correções. Se quiser, assine o artigo: no fim aparece o seu perfil profissional com o botão Chamar no Beecos.",
+  },
+  {
     q: "Como denuncio algo?",
     a: "Use o botão Denunciar na vaga ou no perfil. Quem denunciou e quem foi denunciado ficam 2 horas sem negociar, publicar vagas nem receber propostas, e a moderação avalia o caso. Se a denúncia for descartada, a vigilância acaba na hora.",
   },

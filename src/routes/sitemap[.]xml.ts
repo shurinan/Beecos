@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { getRouterInstance } from "@tanstack/react-start";
-import { createClient } from "@supabase/supabase-js";
+import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 import type { Database } from "@/integrations/supabase/types";
 import { SITE_URL } from "@/lib/urls";
 import { sitemapStaticPaths, sitemapXML, type SitemapEntry } from "@/lib/sitemap";
@@ -10,13 +10,13 @@ import {
   type SitemapPostRow,
 } from "@/lib/sitemap-dynamic";
 
-/** Publicações abertas, lidas com a chave pública (anon): valem as mesmas regras de acesso do site. */
-async function loadOpenPosts(): Promise<SitemapPostRow[]> {
+/** Cliente com a chave pública (anon): valem as mesmas regras de acesso do site. */
+function publicClient() {
   const url = process.env["SUPABASE_URL"] || import.meta.env["VITE_SUPABASE_URL"];
   const key =
     process.env["SUPABASE_PUBLISHABLE_KEY"] || import.meta.env["VITE_SUPABASE_PUBLISHABLE_KEY"];
   if (!url || !key) throw new Error("backend not configured");
-  const client = createClient<Database>(url, key, {
+  return createClient<Database>(url, key, {
     auth: { storage: undefined, persistSession: false, autoRefreshToken: false },
     global: {
       fetch: (input, init) => {
@@ -30,6 +30,11 @@ async function loadOpenPosts(): Promise<SitemapPostRow[]> {
       },
     },
   });
+}
+
+/** Publicações abertas. */
+async function loadOpenPosts(): Promise<SitemapPostRow[]> {
+  const client = publicClient();
   const { data, error } = await client
     .from("posts")
     .select("slug, city, created_at, expires_at, closed_at, hidden_at, professions(slug)")
@@ -42,6 +47,22 @@ async function loadOpenPosts(): Promise<SitemapPostRow[]> {
   return (data ?? []) as unknown as SitemapPostRow[];
 }
 
+/** Artigos do blog no ar (de 50 em 50, até 1000). */
+async function loadArticles(): Promise<SitemapEntry[]> {
+  const client = publicClient() as unknown as SupabaseClient;
+  const out: SitemapEntry[] = [];
+  let before: string | null = null;
+  for (let page = 0; page < 20; page++) {
+    const { data, error } = await client.rpc("blog_list", { _before: before, _limit: 50 });
+    if (error) return out;
+    const rows = (data ?? []) as { slug: string; published_at: string }[];
+    out.push(...rows.map((r) => ({ path: `/blog/${r.slug}`, lastmod: r.published_at })));
+    if (rows.length < 50) break;
+    before = rows[rows.length - 1]!.published_at;
+  }
+  return out;
+}
+
 export const Route = createFileRoute("/sitemap.xml")({
   staticData: { sitemap: false },
   server: {
@@ -51,6 +72,7 @@ export const Route = createFileRoute("/sitemap.xml")({
         const entries: SitemapEntry[] = [
           ...sitemapStaticPaths(router).map((path) => ({ path })),
           ...(await loadDynamicSitemapEntries(loadOpenPosts)),
+          ...(await loadArticles().catch(() => [])),
         ];
         if (entries.length === 0) {
           return new Response("No pages are included in this sitemap.", {

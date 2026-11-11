@@ -20,13 +20,17 @@ import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/
 import { Route as AuthenticatedAvisosRouteImport } from './routes/_authenticated/avisos'
 import { Route as AuthenticatedCheckoutRouteImport } from './routes/_authenticated/checkout'
 import { Route as AuthenticatedConversasRouteImport } from './routes/_authenticated/conversas'
+import { Route as AuthenticatedMeusArtigosRouteImport } from './routes/_authenticated/meus-artigos'
 import { Route as AuthenticatedMinhasVagasRouteImport } from './routes/_authenticated/minhas-vagas'
 import { Route as AuthenticatedModeracaoRouteImport } from './routes/_authenticated/moderacao'
 import { Route as AuthenticatedPagamentoRouteImport } from './routes/_authenticated/pagamento'
 import { Route as AuthenticatedPlanoRouteImport } from './routes/_authenticated/plano'
 import { Route as AuthenticatedPublicarRouteImport } from './routes/_authenticated/publicar'
+import { Route as AuthenticatedRevisarArtigosRouteImport } from './routes/_authenticated/revisar-artigos'
 import { Route as AuthenticatedSugestoesRouteImport } from './routes/_authenticated/sugestoes'
 import { Route as AuthenticatedVerificacoesRouteImport } from './routes/_authenticated/verificacoes'
+import { Route as BlogIndexRouteImport } from './routes/blog.index'
+import { Route as BlogSlugRouteImport } from './routes/blog.$slug'
 import { Route as CUsuarioRouteImport } from './routes/c.$usuario'
 import { Route as ServicosIndexRouteImport } from './routes/servicos.index'
 import { Route as VCodigoRouteImport } from './routes/v.$codigo'
@@ -37,6 +41,7 @@ import { Route as AuthenticatedComunidadeIndexRouteImport } from './routes/_auth
 import { Route as AuthenticatedComunidadeGruposRouteImport } from './routes/_authenticated/comunidade.grupos'
 import { Route as AuthenticatedConversasIndexRouteImport } from './routes/_authenticated/conversas.index'
 import { Route as AuthenticatedConversasSlugRouteImport } from './routes/_authenticated/conversas.$slug'
+import { Route as AuthenticatedEscreverIdRouteImport } from './routes/_authenticated/escrever.$id'
 import { Route as AuthenticatedPerfilIndexRouteImport } from './routes/_authenticated/perfil.index'
 import { Route as AuthenticatedPerfilSlugRouteImport } from './routes/_authenticated/perfil.$slug'
 import { Route as AuthenticatedPerfilContatoRouteImport } from './routes/_authenticated/perfil.contato'
@@ -101,6 +106,12 @@ const AuthenticatedConversasRoute = AuthenticatedConversasRouteImport.update({
   path: '/conversas',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedMeusArtigosRoute =
+  AuthenticatedMeusArtigosRouteImport.update({
+    id: '/meus-artigos',
+    path: '/meus-artigos',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedMinhasVagasRoute =
   AuthenticatedMinhasVagasRouteImport.update({
     id: '/minhas-vagas',
@@ -127,6 +138,12 @@ const AuthenticatedPublicarRoute = AuthenticatedPublicarRouteImport.update({
   path: '/publicar',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedRevisarArtigosRoute =
+  AuthenticatedRevisarArtigosRouteImport.update({
+    id: '/revisar-artigos',
+    path: '/revisar-artigos',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedSugestoesRoute = AuthenticatedSugestoesRouteImport.update({
   id: '/sugestoes',
   path: '/sugestoes',
@@ -138,6 +155,16 @@ const AuthenticatedVerificacoesRoute =
     path: '/verificacoes',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const BlogIndexRoute = BlogIndexRouteImport.update({
+  id: '/blog/',
+  path: '/blog/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BlogSlugRoute = BlogSlugRouteImport.update({
+  id: '/blog/$slug',
+  path: '/blog/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const CUsuarioRoute = CUsuarioRouteImport.update({
   id: '/c/$usuario',
   path: '/c/$usuario',
@@ -193,6 +220,11 @@ const AuthenticatedConversasSlugRoute =
     path: '/$slug',
     getParentRoute: () => AuthenticatedConversasRoute,
   } as any)
+const AuthenticatedEscreverIdRoute = AuthenticatedEscreverIdRouteImport.update({
+  id: '/escrever/$id',
+  path: '/escrever/$id',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedPerfilIndexRoute =
   AuthenticatedPerfilIndexRouteImport.update({
     id: '/perfil/',
@@ -255,20 +287,25 @@ export interface FileRoutesByFullPath {
   '/avisos': typeof AuthenticatedAvisosRoute
   '/checkout': typeof AuthenticatedCheckoutRoute
   '/conversas': typeof AuthenticatedConversasRouteWithChildren
+  '/meus-artigos': typeof AuthenticatedMeusArtigosRoute
   '/minhas-vagas': typeof AuthenticatedMinhasVagasRoute
   '/moderacao': typeof AuthenticatedModeracaoRoute
   '/pagamento': typeof AuthenticatedPagamentoRoute
   '/plano': typeof AuthenticatedPlanoRoute
   '/publicar': typeof AuthenticatedPublicarRoute
+  '/revisar-artigos': typeof AuthenticatedRevisarArtigosRoute
   '/sugestoes': typeof AuthenticatedSugestoesRoute
   '/verificacoes': typeof AuthenticatedVerificacoesRoute
+  '/blog/$slug': typeof BlogSlugRoute
   '/c/$usuario': typeof CUsuarioRoute
   '/v/$codigo': typeof VCodigoRoute
+  '/blog/': typeof BlogIndexRoute
   '/servicos/': typeof ServicosIndexRoute
   '/canais/$slug': typeof AuthenticatedCanaisSlugRoute
   '/canais/novo': typeof AuthenticatedCanaisNovoRoute
   '/comunidade/grupos': typeof AuthenticatedComunidadeGruposRoute
   '/conversas/$slug': typeof AuthenticatedConversasSlugRoute
+  '/escrever/$id': typeof AuthenticatedEscreverIdRoute
   '/perfil/$slug': typeof AuthenticatedPerfilSlugRoute
   '/perfil/contato': typeof AuthenticatedPerfilContatoRoute
   '/perfil/verificacao': typeof AuthenticatedPerfilVerificacaoRoute
@@ -292,20 +329,25 @@ export interface FileRoutesByTo {
   '/admin': typeof AuthenticatedAdminRoute
   '/avisos': typeof AuthenticatedAvisosRoute
   '/checkout': typeof AuthenticatedCheckoutRoute
+  '/meus-artigos': typeof AuthenticatedMeusArtigosRoute
   '/minhas-vagas': typeof AuthenticatedMinhasVagasRoute
   '/moderacao': typeof AuthenticatedModeracaoRoute
   '/pagamento': typeof AuthenticatedPagamentoRoute
   '/plano': typeof AuthenticatedPlanoRoute
   '/publicar': typeof AuthenticatedPublicarRoute
+  '/revisar-artigos': typeof AuthenticatedRevisarArtigosRoute
   '/sugestoes': typeof AuthenticatedSugestoesRoute
   '/verificacoes': typeof AuthenticatedVerificacoesRoute
+  '/blog/$slug': typeof BlogSlugRoute
   '/c/$usuario': typeof CUsuarioRoute
   '/v/$codigo': typeof VCodigoRoute
+  '/blog': typeof BlogIndexRoute
   '/servicos': typeof ServicosIndexRoute
   '/canais/$slug': typeof AuthenticatedCanaisSlugRoute
   '/canais/novo': typeof AuthenticatedCanaisNovoRoute
   '/comunidade/grupos': typeof AuthenticatedComunidadeGruposRoute
   '/conversas/$slug': typeof AuthenticatedConversasSlugRoute
+  '/escrever/$id': typeof AuthenticatedEscreverIdRoute
   '/perfil/$slug': typeof AuthenticatedPerfilSlugRoute
   '/perfil/contato': typeof AuthenticatedPerfilContatoRoute
   '/perfil/verificacao': typeof AuthenticatedPerfilVerificacaoRoute
@@ -332,20 +374,25 @@ export interface FileRoutesById {
   '/_authenticated/avisos': typeof AuthenticatedAvisosRoute
   '/_authenticated/checkout': typeof AuthenticatedCheckoutRoute
   '/_authenticated/conversas': typeof AuthenticatedConversasRouteWithChildren
+  '/_authenticated/meus-artigos': typeof AuthenticatedMeusArtigosRoute
   '/_authenticated/minhas-vagas': typeof AuthenticatedMinhasVagasRoute
   '/_authenticated/moderacao': typeof AuthenticatedModeracaoRoute
   '/_authenticated/pagamento': typeof AuthenticatedPagamentoRoute
   '/_authenticated/plano': typeof AuthenticatedPlanoRoute
   '/_authenticated/publicar': typeof AuthenticatedPublicarRoute
+  '/_authenticated/revisar-artigos': typeof AuthenticatedRevisarArtigosRoute
   '/_authenticated/sugestoes': typeof AuthenticatedSugestoesRoute
   '/_authenticated/verificacoes': typeof AuthenticatedVerificacoesRoute
+  '/blog/$slug': typeof BlogSlugRoute
   '/c/$usuario': typeof CUsuarioRoute
   '/v/$codigo': typeof VCodigoRoute
+  '/blog/': typeof BlogIndexRoute
   '/servicos/': typeof ServicosIndexRoute
   '/_authenticated/canais/$slug': typeof AuthenticatedCanaisSlugRoute
   '/_authenticated/canais/novo': typeof AuthenticatedCanaisNovoRoute
   '/_authenticated/comunidade/grupos': typeof AuthenticatedComunidadeGruposRoute
   '/_authenticated/conversas/$slug': typeof AuthenticatedConversasSlugRoute
+  '/_authenticated/escrever/$id': typeof AuthenticatedEscreverIdRoute
   '/_authenticated/perfil/$slug': typeof AuthenticatedPerfilSlugRoute
   '/_authenticated/perfil/contato': typeof AuthenticatedPerfilContatoRoute
   '/_authenticated/perfil/verificacao': typeof AuthenticatedPerfilVerificacaoRoute
@@ -372,20 +419,25 @@ export interface FileRouteTypes {
     | '/avisos'
     | '/checkout'
     | '/conversas'
+    | '/meus-artigos'
     | '/minhas-vagas'
     | '/moderacao'
     | '/pagamento'
     | '/plano'
     | '/publicar'
+    | '/revisar-artigos'
     | '/sugestoes'
     | '/verificacoes'
+    | '/blog/$slug'
     | '/c/$usuario'
     | '/v/$codigo'
+    | '/blog/'
     | '/servicos/'
     | '/canais/$slug'
     | '/canais/novo'
     | '/comunidade/grupos'
     | '/conversas/$slug'
+    | '/escrever/$id'
     | '/perfil/$slug'
     | '/perfil/contato'
     | '/perfil/verificacao'
@@ -409,20 +461,25 @@ export interface FileRouteTypes {
     | '/admin'
     | '/avisos'
     | '/checkout'
+    | '/meus-artigos'
     | '/minhas-vagas'
     | '/moderacao'
     | '/pagamento'
     | '/plano'
     | '/publicar'
+    | '/revisar-artigos'
     | '/sugestoes'
     | '/verificacoes'
+    | '/blog/$slug'
     | '/c/$usuario'
     | '/v/$codigo'
+    | '/blog'
     | '/servicos'
     | '/canais/$slug'
     | '/canais/novo'
     | '/comunidade/grupos'
     | '/conversas/$slug'
+    | '/escrever/$id'
     | '/perfil/$slug'
     | '/perfil/contato'
     | '/perfil/verificacao'
@@ -448,20 +505,25 @@ export interface FileRouteTypes {
     | '/_authenticated/avisos'
     | '/_authenticated/checkout'
     | '/_authenticated/conversas'
+    | '/_authenticated/meus-artigos'
     | '/_authenticated/minhas-vagas'
     | '/_authenticated/moderacao'
     | '/_authenticated/pagamento'
     | '/_authenticated/plano'
     | '/_authenticated/publicar'
+    | '/_authenticated/revisar-artigos'
     | '/_authenticated/sugestoes'
     | '/_authenticated/verificacoes'
+    | '/blog/$slug'
     | '/c/$usuario'
     | '/v/$codigo'
+    | '/blog/'
     | '/servicos/'
     | '/_authenticated/canais/$slug'
     | '/_authenticated/canais/novo'
     | '/_authenticated/comunidade/grupos'
     | '/_authenticated/conversas/$slug'
+    | '/_authenticated/escrever/$id'
     | '/_authenticated/perfil/$slug'
     | '/_authenticated/perfil/contato'
     | '/_authenticated/perfil/verificacao'
@@ -484,8 +546,10 @@ export interface RootRouteChildren {
   PrivacidadeRoute: typeof PrivacidadeRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   TermosRoute: typeof TermosRoute
+  BlogSlugRoute: typeof BlogSlugRoute
   CUsuarioRoute: typeof CUsuarioRoute
   VCodigoRoute: typeof VCodigoRoute
+  BlogIndexRoute: typeof BlogIndexRoute
   ServicosIndexRoute: typeof ServicosIndexRoute
   ServicosProfissaoCidadeRoute: typeof ServicosProfissaoCidadeRoute
   ServicosProfissaoIndexRoute: typeof ServicosProfissaoIndexRoute
@@ -570,6 +634,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedConversasRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/meus-artigos': {
+      id: '/_authenticated/meus-artigos'
+      path: '/meus-artigos'
+      fullPath: '/meus-artigos'
+      preLoaderRoute: typeof AuthenticatedMeusArtigosRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/minhas-vagas': {
       id: '/_authenticated/minhas-vagas'
       path: '/minhas-vagas'
@@ -605,6 +676,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedPublicarRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/revisar-artigos': {
+      id: '/_authenticated/revisar-artigos'
+      path: '/revisar-artigos'
+      fullPath: '/revisar-artigos'
+      preLoaderRoute: typeof AuthenticatedRevisarArtigosRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/sugestoes': {
       id: '/_authenticated/sugestoes'
       path: '/sugestoes'
@@ -618,6 +696,20 @@ declare module '@tanstack/react-router' {
       fullPath: '/verificacoes'
       preLoaderRoute: typeof AuthenticatedVerificacoesRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/blog/': {
+      id: '/blog/'
+      path: '/blog'
+      fullPath: '/blog/'
+      preLoaderRoute: typeof BlogIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/blog/$slug': {
+      id: '/blog/$slug'
+      path: '/blog/$slug'
+      fullPath: '/blog/$slug'
+      preLoaderRoute: typeof BlogSlugRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/c/$usuario': {
       id: '/c/$usuario'
@@ -688,6 +780,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/conversas/$slug'
       preLoaderRoute: typeof AuthenticatedConversasSlugRouteImport
       parentRoute: typeof AuthenticatedConversasRoute
+    }
+    '/_authenticated/escrever/$id': {
+      id: '/_authenticated/escrever/$id'
+      path: '/escrever/$id'
+      fullPath: '/escrever/$id'
+      preLoaderRoute: typeof AuthenticatedEscreverIdRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/perfil/': {
       id: '/_authenticated/perfil/'
@@ -776,16 +875,19 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedAvisosRoute: typeof AuthenticatedAvisosRoute
   AuthenticatedCheckoutRoute: typeof AuthenticatedCheckoutRoute
   AuthenticatedConversasRoute: typeof AuthenticatedConversasRouteWithChildren
+  AuthenticatedMeusArtigosRoute: typeof AuthenticatedMeusArtigosRoute
   AuthenticatedMinhasVagasRoute: typeof AuthenticatedMinhasVagasRoute
   AuthenticatedModeracaoRoute: typeof AuthenticatedModeracaoRoute
   AuthenticatedPagamentoRoute: typeof AuthenticatedPagamentoRoute
   AuthenticatedPlanoRoute: typeof AuthenticatedPlanoRoute
   AuthenticatedPublicarRoute: typeof AuthenticatedPublicarRoute
+  AuthenticatedRevisarArtigosRoute: typeof AuthenticatedRevisarArtigosRoute
   AuthenticatedSugestoesRoute: typeof AuthenticatedSugestoesRoute
   AuthenticatedVerificacoesRoute: typeof AuthenticatedVerificacoesRoute
   AuthenticatedCanaisSlugRoute: typeof AuthenticatedCanaisSlugRoute
   AuthenticatedCanaisNovoRoute: typeof AuthenticatedCanaisNovoRoute
   AuthenticatedComunidadeGruposRoute: typeof AuthenticatedComunidadeGruposRoute
+  AuthenticatedEscreverIdRoute: typeof AuthenticatedEscreverIdRoute
   AuthenticatedPerfilSlugRoute: typeof AuthenticatedPerfilSlugRoute
   AuthenticatedPerfilContatoRoute: typeof AuthenticatedPerfilContatoRoute
   AuthenticatedPerfilVerificacaoRoute: typeof AuthenticatedPerfilVerificacaoRoute
@@ -802,16 +904,19 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAvisosRoute: AuthenticatedAvisosRoute,
   AuthenticatedCheckoutRoute: AuthenticatedCheckoutRoute,
   AuthenticatedConversasRoute: AuthenticatedConversasRouteWithChildren,
+  AuthenticatedMeusArtigosRoute: AuthenticatedMeusArtigosRoute,
   AuthenticatedMinhasVagasRoute: AuthenticatedMinhasVagasRoute,
   AuthenticatedModeracaoRoute: AuthenticatedModeracaoRoute,
   AuthenticatedPagamentoRoute: AuthenticatedPagamentoRoute,
   AuthenticatedPlanoRoute: AuthenticatedPlanoRoute,
   AuthenticatedPublicarRoute: AuthenticatedPublicarRoute,
+  AuthenticatedRevisarArtigosRoute: AuthenticatedRevisarArtigosRoute,
   AuthenticatedSugestoesRoute: AuthenticatedSugestoesRoute,
   AuthenticatedVerificacoesRoute: AuthenticatedVerificacoesRoute,
   AuthenticatedCanaisSlugRoute: AuthenticatedCanaisSlugRoute,
   AuthenticatedCanaisNovoRoute: AuthenticatedCanaisNovoRoute,
   AuthenticatedComunidadeGruposRoute: AuthenticatedComunidadeGruposRoute,
+  AuthenticatedEscreverIdRoute: AuthenticatedEscreverIdRoute,
   AuthenticatedPerfilSlugRoute: AuthenticatedPerfilSlugRoute,
   AuthenticatedPerfilContatoRoute: AuthenticatedPerfilContatoRoute,
   AuthenticatedPerfilVerificacaoRoute: AuthenticatedPerfilVerificacaoRoute,
@@ -836,8 +941,10 @@ const rootRouteChildren: RootRouteChildren = {
   PrivacidadeRoute: PrivacidadeRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   TermosRoute: TermosRoute,
+  BlogSlugRoute: BlogSlugRoute,
   CUsuarioRoute: CUsuarioRoute,
   VCodigoRoute: VCodigoRoute,
+  BlogIndexRoute: BlogIndexRoute,
   ServicosIndexRoute: ServicosIndexRoute,
   ServicosProfissaoCidadeRoute: ServicosProfissaoCidadeRoute,
   ServicosProfissaoIndexRoute: ServicosProfissaoIndexRoute,
