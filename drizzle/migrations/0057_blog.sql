@@ -261,11 +261,26 @@ REVOKE EXECUTE ON FUNCTION public.admin_articles() FROM PUBLIC, anon;
 GRANT EXECUTE ON FUNCTION public.admin_articles() TO authenticated;
 
 -- ── leitura pública (só a versão no ar) ─────────────────────────────────────────────────────────
+-- Cidade que pode aparecer em público (mesma regra de publicCity() em src/lib/location.ts):
+-- CEP, rua, número ou qualquer texto de endereço vira ''.
+CREATE OR REPLACE FUNCTION public.public_city(_raw text)
+RETURNS text LANGUAGE sql IMMUTABLE SET search_path = public AS $$
+  SELECT CASE
+    WHEN v IS NULL OR char_length(v) < 2 OR char_length(v) > 60 THEN ''
+    WHEN v ~ '[0-9]' THEN ''
+    WHEN position(',' IN v) > 0 AND v !~ '^[^,]+,\s*[A-Za-z]{2}$' THEN ''
+    WHEN v ~* '^(rua|r\.|av|av\.|avenida|travessa|tv\.?|alameda|al\.|estrada|rodovia|rod\.|pra[cç]a|viela|beco)(\s|$)' THEN ''
+    WHEN v ~* '(^|\s)(bairro|apto|apartamento|bloco|complemento|n[uú]mero|n[º°]|cep)(\s|$|\.)' THEN ''
+    WHEN replace(v, ',', '') !~ '^[A-Za-zÀ-ÖØ-öø-ÿ][A-Za-zÀ-ÖØ-öø-ÿ .''’/-]*$' THEN ''
+    ELSE v END
+  FROM (SELECT btrim(_raw) AS v) s
+$$;
+
 CREATE OR REPLACE FUNCTION public.article_author(_id uuid)
 RETURNS jsonb LANGUAGE sql STABLE SECURITY DEFINER SET search_path = public AS $$
   SELECT jsonb_build_object(
     'id', p.id, 'name', coalesce(nullif(p.full_name, ''), 'Autor'), 'username', p.slug,
-    'avatar_path', p.avatar_path, 'headline', p.headline, 'city', p.city,
+    'avatar_path', p.avatar_path, 'headline', p.headline, 'city', public.public_city(p.city),
     'verified', EXISTS (SELECT 1 FROM public.user_checks c WHERE c.user_id = p.id AND c.document_at IS NOT NULL),
     'team', EXISTS (SELECT 1 FROM public.moderators m WHERE m.user_id = p.id))
   FROM public.profiles p WHERE p.id = _id
