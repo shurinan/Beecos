@@ -1,5 +1,5 @@
 // Envia os e-mails que o banco colocou na fila (email_outbox). Chamada de minuto em minuto pelo pg_cron.
-// Não recebe nada de quem chama: só envia o que já está na fila, então pode ser chamada sem login.
+// Só aceita chamada do próprio banco (segredo interno de app_keys); envia o que já está na fila.
 // Envio pelo conector Resend do Lovable (segredos LOVABLE_API_KEY e RESEND_API_KEY).
 import { createClient } from "jsr:@supabase/supabase-js@2";
 
@@ -33,6 +33,22 @@ const esc = (s: unknown) =>
     /[&<>"']/g,
     (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]!,
   );
+/**
+ * Texto escrito por usuários (mensagem do chat, nome) antes de sair do app por e-mail ou aviso:
+ * tira caracteres de controle, troca qualquer coisa com cara de link por "[link removido]",
+ * junta espaços e corta no tamanho máximo. O banco já bloqueia links no chat; isto é a segunda barreira.
+ */
+const LINKISH =
+  /(https?:\/\/|ftp:\/\/|www\.)\S*|\b[a-z0-9-]+(\.[a-z0-9-]+)*\.(com|net|org|edu|gov|br|io|me|app|link|ly|gl|co|info|xyz|site|online|store|shop|tv|cc|gg|dev|page|click|top|biz|us|ai)\b\S*/gi;
+export function safeUserText(s: unknown, max: number): string {
+  const clean = String(s ?? "")
+    // deno-lint-ignore no-control-regex
+    .replace(/[\u0000-\u001f\u007f-\u009f\u200b-\u200f\u202a-\u202e\u2066-\u2069]/g, " ")
+    .replace(LINKISH, "[link removido]")
+    .replace(/\s+/g, " ")
+    .trim();
+  return clean.length > max ? clean.slice(0, max - 1).trimEnd() + "…" : clean;
+}
 const money = (v: unknown) =>
   typeof v === "number" ? "R$ " + v.toFixed(2).replace(".", ",") : String(v ?? "");
 const plural = (n: number, um: string, varios: string) => (n === 1 ? um : varios);
@@ -83,8 +99,8 @@ function build(r: Row): Mail | null {
           };
     case "new_message": {
       const n = Number(d.n ?? 1);
-      const de = String(d.de ?? "Alguém");
-      const texto = String(d.texto ?? "");
+      const de = safeUserText(d.de ?? "Alguém", 60) || "Alguém";
+      const texto = safeUserText(d.texto, 140);
       const link =
         typeof d.link === "string" && d.link.startsWith("/conversas") ? d.link : "/conversas";
       const title = n > 1 ? `${n} mensagens novas de ${de}` : `Nova mensagem de ${de}`;
@@ -102,7 +118,10 @@ function build(r: Row): Mail | null {
     case "unread_digest": {
       const n = Number(d.n ?? 0);
       const itens = ((d.itens as { de: string; texto: string }[]) ?? []).map(
-        (i) => [ini(i.de), `${i.de} · “${i.texto}”`] as [string, string],
+        (i) => {
+          const de = safeUserText(i.de, 60) || "Alguém";
+          return [ini(de), `${de} · “${safeUserText(i.texto, 140)}”`] as [string, string];
+        },
       );
       return {
         subject: `Você tem ${n} ${plural(n, "mensagem não lida", "mensagens não lidas")}`,
@@ -366,11 +385,21 @@ async function send(to: string, m: Mail, r: Row): Promise<{ id?: string; error?:
   return { id: (data as { id?: string }).id ?? "" };
 }
 
-Deno.serve(async () => {
+/** Só o próprio banco chama esta função: confere o segredo interno guardado em app_keys. */
+async function fromDatabase(req: Request, db: ReturnType<typeof createClient>): Promise<boolean> {
+  const sent = req.headers.get("x-internal-secret");
+  if (!sent) return false;
+  const { data } = await db.from("app_keys").select("value").eq("name", "internal_secret").maybeSingle();
+  const expected = (data as { value?: string } | null)?.value;
+  return !!expected && sent === expected;
+}
+
+Deno.serve(async (req: Request) => {
   const url = Deno.env.get("SUPABASE_URL");
   const key = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
   if (!url || !key) return new Response("configuração ausente", { status: 500 });
   const db = createClient(url, key, { auth: { persistSession: false } });
+  if (!(await fromDatabase(req, db))) return new Response("não autorizado", { status: 401 });
 
   const { data, error } = await db.rpc("claim_emails", { _limit: 40 });
   if (error) return new Response(`erro ao ler a fila: ${error.message}`, { status: 500 });

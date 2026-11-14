@@ -1,6 +1,6 @@
 // Indique e ganhe: quem já paga o Premium mensal ganha a próxima cobrança adiada em 30 dias.
 // O banco já somou os 30 dias ao Premium (grant_referral_reward); aqui mudamos a data no Asaas.
-// Chamada pelo pg_cron a cada 10 minutos. Não recebe dados de fora: só processa a fila do banco.
+// Chamada só pelo pg_cron a cada 10 minutos, com o segredo interno de app_keys.
 import { createClient } from "jsr:@supabase/supabase-js@2";
 
 async function asaas(path: string, method: string, body?: unknown) {
@@ -28,11 +28,21 @@ export function plus30(day: string): string {
   return t.toISOString().slice(0, 10);
 }
 
-Deno.serve(async () => {
+/** Só o próprio banco chama esta função: confere o segredo interno guardado em app_keys. */
+async function fromDatabase(req: Request, db: ReturnType<typeof createClient>): Promise<boolean> {
+  const sent = req.headers.get("x-internal-secret");
+  if (!sent) return false;
+  const { data } = await db.from("app_keys").select("value").eq("name", "internal_secret").maybeSingle();
+  const expected = (data as { value?: string } | null)?.value;
+  return !!expected && sent === expected;
+}
+
+Deno.serve(async (req: Request) => {
   const url = Deno.env.get("SUPABASE_URL");
   const key = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
   if (!url || !key) return new Response("configuração ausente", { status: 500 });
   const db = createClient(url, key, { auth: { persistSession: false } });
+  if (!(await fromDatabase(req, db))) return new Response("não autorizado", { status: 401 });
 
   const { data, error } = await db.rpc("claim_postpones", { _limit: 20 });
   if (error) return new Response(`erro ao ler a fila: ${error.message}`, { status: 500 });

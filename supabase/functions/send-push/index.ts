@@ -1,16 +1,43 @@
 // Envia os avisos do sistema (Web Push) da fila push_outbox para os aparelhos autorizados.
-// Chamada pelo banco (na hora e, de reserva, a cada minuto). Não recebe dados de fora.
+// Chamada só pelo banco (na hora e, de reserva, a cada minuto), com o segredo interno de app_keys.
 // Na primeira vez cria as chaves VAPID e guarda em app_keys (só o servidor lê a privada).
 import { createClient } from "jsr:@supabase/supabase-js@2";
 import webpush from "npm:web-push@3.6.7";
 
+/**
+ * Texto escrito por usuários (mensagem do chat, nome) antes de sair do app por e-mail ou aviso:
+ * tira caracteres de controle, troca qualquer coisa com cara de link por "[link removido]",
+ * junta espaços e corta no tamanho máximo. O banco já bloqueia links no chat; isto é a segunda barreira.
+ */
+const LINKISH =
+  /(https?:\/\/|ftp:\/\/|www\.)\S*|\b[a-z0-9-]+(\.[a-z0-9-]+)*\.(com|net|org|edu|gov|br|io|me|app|link|ly|gl|co|info|xyz|site|online|store|shop|tv|cc|gg|dev|page|click|top|biz|us|ai)\b\S*/gi;
+export function safeUserText(s: unknown, max: number): string {
+  const clean = String(s ?? "")
+    // deno-lint-ignore no-control-regex
+    .replace(/[\u0000-\u001f\u007f-\u009f\u200b-\u200f\u202a-\u202e\u2066-\u2069]/g, " ")
+    .replace(LINKISH, "[link removido]")
+    .replace(/\s+/g, " ")
+    .trim();
+  return clean.length > max ? clean.slice(0, max - 1).trimEnd() + "…" : clean;
+}
+
 const SUBJECT = "mailto:contato@beecos.com.br";
 
-Deno.serve(async () => {
+/** Só o próprio banco chama esta função: confere o segredo interno guardado em app_keys. */
+async function fromDatabase(req: Request, db: ReturnType<typeof createClient>): Promise<boolean> {
+  const sent = req.headers.get("x-internal-secret");
+  if (!sent) return false;
+  const { data } = await db.from("app_keys").select("value").eq("name", "internal_secret").maybeSingle();
+  const expected = (data as { value?: string } | null)?.value;
+  return !!expected && sent === expected;
+}
+
+Deno.serve(async (req: Request) => {
   const url = Deno.env.get("SUPABASE_URL");
   const key = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
   if (!url || !key) return new Response("configuração ausente", { status: 500 });
   const db = createClient(url, key, { auth: { persistSession: false } });
+  if (!(await fromDatabase(req, db))) return new Response("não autorizado", { status: 401 });
 
   // chaves do servidor
   const { data: keys } = await db
@@ -55,7 +82,14 @@ Deno.serve(async () => {
       .from("push_subscriptions")
       .select("endpoint, p256dh, auth")
       .eq("user_id", j.user_id);
-    const payload = JSON.stringify({ title: j.title, body: j.body, url: j.url, tag: j.tag });
+    // só caminhos do próprio app; o texto escrito por usuários passa pela limpeza
+    const path = typeof j.url === "string" && j.url.startsWith("/") && !j.url.startsWith("//") ? j.url : "/";
+    const payload = JSON.stringify({
+      title: safeUserText(j.title, 120) || "Beecos",
+      body: safeUserText(j.body, 200),
+      url: path,
+      tag: j.tag,
+    });
     let ok = 0;
     let lastErr = "";
     for (const s of subs ?? []) {

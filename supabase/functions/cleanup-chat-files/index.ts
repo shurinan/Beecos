@@ -1,16 +1,26 @@
 // Apaga as fotos e PDFs do chat com mais de 48 horas, e os documentos da verificação de quem excluiu a conta. O texto da mensagem fica; a mensagem é marcada
 // com attachment_expired_at para o app mostrar "arquivo expirado". Chamada de hora em hora pelo banco
-// (pg_cron). Não recebe nada de quem chama: só apaga o que já venceu, então pode ser chamada sem login.
+// (pg_cron), com o segredo interno de app_keys; quem chama sem ele é recusado.
 import { createClient } from "jsr:@supabase/supabase-js@2";
 
 const HOURS = 48;
 const BATCH = 200;
 
-Deno.serve(async () => {
+/** Só o próprio banco chama esta função: confere o segredo interno guardado em app_keys. */
+async function fromDatabase(req: Request, db: ReturnType<typeof createClient>): Promise<boolean> {
+  const sent = req.headers.get("x-internal-secret");
+  if (!sent) return false;
+  const { data } = await db.from("app_keys").select("value").eq("name", "internal_secret").maybeSingle();
+  const expected = (data as { value?: string } | null)?.value;
+  return !!expected && sent === expected;
+}
+
+Deno.serve(async (req: Request) => {
   const url = Deno.env.get("SUPABASE_URL");
   const key = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
   if (!url || !key) return new Response("configuração ausente", { status: 500 });
   const db = createClient(url, key, { auth: { persistSession: false } });
+  if (!(await fromDatabase(req, db))) return new Response("não autorizado", { status: 401 });
   const cutoff = new Date(Date.now() - HOURS * 3600_000).toISOString();
 
   let removed = 0;
