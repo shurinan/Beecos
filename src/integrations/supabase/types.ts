@@ -2239,6 +2239,10 @@ export type Database = {
         }
         Returns: Json
       }
+      call_internal_function: {
+        Args: { _name: string; _timeout?: number }
+        Returns: number
+      }
       can_review: {
         Args: { _reviewee: string; _reviewer: string }
         Returns: boolean
