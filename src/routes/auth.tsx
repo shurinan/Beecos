@@ -1,4 +1,5 @@
 import { authErrorMessage } from "@/lib/auth-errors";
+import { reportSignupOnce } from "@/lib/google-ads";
 import { createFileRoute, useNavigate, useRouter } from "@tanstack/react-router";
 import { takeDestination } from "@/lib/after-login";
 import { useEffect, useState } from "react";
@@ -114,6 +115,7 @@ function AuthPage() {
           },
         });
         if (error) throw error;
+        if (data.user) reportSignupOnce(data.user.id);
         if (!data.session) toast.success("Conta criada! Confira seu email para confirmar.");
       } else {
         const { error } = await supabase.auth.signInWithPassword({ email, password });

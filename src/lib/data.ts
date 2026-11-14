@@ -1,4 +1,5 @@
 import { supabase } from "@/integrations/supabase/client";
+import { reportConversion } from "@/lib/google-ads";
 
 export type PostKind = "job" | "available";
 
@@ -56,5 +57,6 @@ export async function openConversation(me: string, other: string, postId: string
     }
     throw error; // pode ser LIMITE_CHATS, do plano grátis
   }
+  void reportConversion("chat");
   return data;
 }

@@ -17,6 +17,9 @@ import { AppShell } from "@/components/AppShell";
 import { Toaster } from "@/components/ui/sonner";
 import { ConfirmHost } from "@/components/ConfirmHost";
 import { THEME_INIT_SCRIPT } from "@/lib/theme";
+import { CONSENT_DEFAULTS_SCRIPT } from "@/lib/consent-defaults";
+import { CookieBanner } from "@/components/CookieBanner";
+import { GoogleAdsTag } from "@/components/GoogleAdsTag";
 
 function NotFoundComponent() {
   return (
@@ -112,8 +115,8 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "apple-mobile-web-app-capable", content: "yes" },
       { name: "apple-mobile-web-app-title", content: "Beecos" },
     ],
-    // define o tema antes de desenhar a página (sem piscar claro e depois escuro)
-    scripts: [{ children: THEME_INIT_SCRIPT }],
+    // 1º: padrões de consentimento antes de qualquer tag; 2º: tema antes de desenhar a página
+    scripts: [{ children: CONSENT_DEFAULTS_SCRIPT }, { children: THEME_INIT_SCRIPT }],
     links: [
       {
         rel: "stylesheet",
@@ -163,6 +166,8 @@ function RootComponent() {
         </AppShell>
         <Toaster />
         <ConfirmHost />
+        <CookieBanner />
+        <GoogleAdsTag />
       </AuthProvider>
     </QueryClientProvider>
   );

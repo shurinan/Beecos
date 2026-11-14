@@ -69,6 +69,11 @@ function Privacy() {
         <li>Calcular a distância e avisar sobre vagas da sua profissão perto de você.</li>
         <li>Cuidar da segurança, prevenir golpes e avaliar denúncias.</li>
         <li>Cobrar o plano Premium e o selo Urgente.</li>
+        <li>
+          Medir e melhorar os anúncios do próprio Beecos no Google: saber quais anúncios trazem
+          visitas, cadastros, publicações e conversas, e mostrar os anúncios a quem já visitou o
+          site. Isso depende da sua escolha no aviso de cookies, onde ele aparece.
+        </li>
       </ul>
       <p>
         As bases legais são a execução do contrato (o uso do app), o seu consentimento (por exemplo,
@@ -87,7 +92,24 @@ function Privacy() {
           do app (Supabase e Lovable); login com Google, se você usar; as fontes de letra do site
           (Google Fonts, que recebe o seu endereço IP ao carregar a página); a busca do CEP e da
           cidade (BrasilAPI e OpenStreetMap, que recebem o CEP digitado); pagamento (Asaas) e e-mail
-          (Resend). Elas só tratam os dados para nos prestar o serviço. Ao pagar, o Asaas pede o seu
+          (Resend). Elas só tratam os dados para nos prestar o serviço.
+        </li>
+        <li>
+          <b>Google Ads (publicidade):</b> quando permitido, a tag do Google recebe a página
+          visitada, o seu endereço IP, dados do navegador e do aparelho, identificadores de cookie e
+          o aviso de que você criou a conta, publicou ou abriu uma conversa. Não enviamos nome,
+          e-mail, telefone nem o conteúdo das mensagens. O Google usa esses dados para medir e
+          otimizar os anúncios do Beecos e para mostrá-los a quem já visitou o site. Veja como o
+          Google trata os dados em{" "}
+          <a
+            className="underline"
+            href="https://business.safety.google/privacy/"
+            target="_blank"
+            rel="noreferrer"
+          >
+            business.safety.google/privacy
+          </a>
+          . Ao pagar, o Asaas pede o seu
           CPF: ele fica com o Asaas e o Beecos não o guarda.
         </li>
         <li>
@@ -102,8 +124,25 @@ function Privacy() {
 
       <h2>Cookies e armazenamento</h2>
       <p>
-        Usamos apenas o que é necessário: manter você conectado e lembrar do tema claro ou escuro.
-        Não usamos cookies de publicidade nem de rastreamento.
+        O que é necessário fica sempre ligado: manter você conectado e lembrar do tema claro ou
+        escuro. A contagem de visitas do site não usa cookies e não identifica você.
+      </p>
+      <p>
+        Usamos também cookies de publicidade do Google para medir os anúncios do Beecos. Na Europa,
+        no Reino Unido, na Suíça e no Canadá, eles só funcionam se você aceitar no aviso de
+        cookies. Nos demais lugares, como o Brasil, ficam ligados até você recusar. Você pode mudar
+        a escolha quando quiser pelo link “Cookies” no rodapé, e a mudança vale na hora. Se o seu
+        navegador enviar o sinal “Global Privacy Control”, a publicidade fica desligada. Também dá
+        para ajustar os anúncios do Google em{" "}
+        <a
+          className="underline"
+          href="https://myadcenter.google.com/"
+          target="_blank"
+          rel="noreferrer"
+        >
+          myadcenter.google.com
+        </a>
+        .
       </p>
 
       <h2>Por quanto tempo</h2>

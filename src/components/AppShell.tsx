@@ -35,6 +35,8 @@ import { HoldBanner } from "@/components/HoldBanner";
 import { AssistedHelp } from "@/components/AssistedHelp";
 import { InstallPrompt } from "@/components/InstallPrompt";
 import { WelcomeTour } from "@/components/WelcomeTour";
+import { openCookieSettings } from "@/components/CookieBanner";
+import { isFreshAccount, reportSignupOnce } from "@/lib/google-ads";
 
 /** Liga, para quem está logado, o contador de não lidas, os avisos e o "visto por último". */
 function ChatBackground({ userId }: { userId: string }) {
@@ -78,6 +80,18 @@ function AfterLogin({ userId }: { userId: string }) {
     const dest = takeDestination();
     if (dest) router.history.replace(dest);
   }, [userId, path, router]);
+  return null;
+}
+
+/** Conta nova pelo Google: informa o cadastro ao Google Ads uma vez. */
+function SignupConversion({ userId }: { userId: string }) {
+  const { session } = useAuth();
+  useEffect(() => {
+    const user = session?.user;
+    if (user && user.app_metadata?.provider === "google" && isFreshAccount(user.created_at)) {
+      reportSignupOnce(userId);
+    }
+  }, [userId, session]);
   return null;
 }
 
@@ -238,6 +252,7 @@ export function AppShell({ children }: { children: ReactNode }) {
       {userId && <ChatBackground userId={userId} />}
       {userId && <AfterLogin userId={userId} />}
       {userId && <InviteClaimer userId={userId} />}
+      {userId && <SignupConversion userId={userId} />}
       {userId && <PostEditorHost userId={userId} />}
       {userId && <WelcomeTour userId={userId} />}
       <main
@@ -279,7 +294,11 @@ export function AppShell({ children }: { children: ReactNode }) {
           ·{" "}
           <Link to="/privacidade" className="underline">
             Privacidade
-          </Link>
+          </Link>{" "}
+          ·{" "}
+          <button type="button" onClick={openCookieSettings} className="underline">
+            Cookies
+          </button>
           <span className="mx-auto mt-2 block max-w-md">
             O Beecos conecta pessoas. Não emprega ninguém, não garante clientes nem serviços e não
             recebe o pagamento do serviço: vocês combinam tudo direto.

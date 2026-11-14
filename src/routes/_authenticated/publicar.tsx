@@ -1,4 +1,5 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { reportConversion } from "@/lib/google-ads";
 import { publicCity } from "@/lib/location";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
@@ -171,6 +172,7 @@ function Publicar() {
     }
     setBusy(false);
     toast.success("Publicado!");
+    void reportConversion("post");
     void qc.invalidateQueries();
     navigate({
       to: "/vagas/$profissao/$codigo",
