@@ -6,14 +6,15 @@ vi.mock("@/lib/ad-consent", () => ({
   updateGoogleAdConsent: vi.fn(),
 }));
 
-import { CONVERSION_LABELS, GOOGLE_ADS_ID, isFreshAccount, reportConversion } from "./google-ads";
+import { CONVERSIONS, GOOGLE_ADS_ID, isFreshAccount, reportConversion } from "./google-ads";
 
 describe("Google Ads tag", () => {
   beforeEach(() => {
     document.head.innerHTML = "";
     window.dataLayer = [];
     window.gtag = vi.fn();
-    CONVERSION_LABELS.signup = null;
+    CONVERSIONS.signup = null;
+    CONVERSIONS.post = null;
   });
   afterEach(() => vi.clearAllMocks());
 
@@ -21,14 +22,14 @@ describe("Google Ads tag", () => {
     expect(GOOGLE_ADS_ID).toBe("AW-16550391468");
   });
 
-  it("sends nothing for a result without a conversion label", async () => {
+  it("sends nothing for a result without a conversion", async () => {
     permits.mockResolvedValue(true);
-    expect(await reportConversion("signup")).toBe(false);
+    expect(await reportConversion("chat")).toBe(false);
     expect(window.gtag).not.toHaveBeenCalledWith("event", "conversion", expect.anything());
   });
 
   it("sends nothing when advertising was refused", async () => {
-    CONVERSION_LABELS.signup = "TESTE";
+    CONVERSIONS.signup = { event: "ads_conversion_Inscri_o_1" };
     permits.mockResolvedValue(false);
     expect(await reportConversion("signup")).toBe(false);
     expect(window.gtag).not.toHaveBeenCalled();
@@ -36,12 +37,30 @@ describe("Google Ads tag", () => {
   });
 
   it("sends the conversion to the right label when allowed", async () => {
-    CONVERSION_LABELS.signup = "TESTE";
+    CONVERSIONS.post = { label: "TESTE" };
     permits.mockResolvedValue(true);
-    expect(await reportConversion("signup")).toBe(true);
+    expect(await reportConversion("post")).toBe(true);
     expect(window.gtag).toHaveBeenCalledWith("event", "conversion", {
       send_to: "AW-16550391468/TESTE",
     });
+  });
+});
+
+describe("sign-up conversion", () => {
+  it("is wired to the Google Ads event the user gave", async () => {
+    vi.resetModules();
+    const mod = await import("./google-ads");
+    expect(mod.CONVERSIONS.signup).toEqual({ event: "ads_conversion_Inscri_o_1" });
+  });
+
+  it("fires the sign-up event when advertising is allowed", async () => {
+    vi.resetModules();
+    const mod = await import("./google-ads");
+    document.head.innerHTML = "";
+    window.gtag = vi.fn();
+    permits.mockResolvedValue(true);
+    expect(await mod.reportConversion("signup")).toBe(true);
+    expect(window.gtag).toHaveBeenCalledWith("event", "ads_conversion_Inscri_o_1", {});
   });
 });
 

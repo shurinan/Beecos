@@ -7,11 +7,14 @@ export const GOOGLE_ADS_ID = "AW-16550391468";
 export type AdOutcome = "signup" | "post" | "chat";
 
 /**
- * Rótulo de cada conversão criada no Google Ads (a parte depois da barra em
- * send_to: "AW-16550391468/ROTULO"). Sem rótulo, nada é enviado para aquele resultado.
+ * Como cada conversão chega ao Google Ads. Duas formas, conforme o trecho que o Google Ads gerou:
+ * - { event: "ads_conversion_..." }: trecho gtag('event', 'ads_conversion_...');
+ * - { label: "ROTULO" }: trecho com send_to: "AW-16550391468/ROTULO".
+ * Sem nada (null), nada é enviado para aquele resultado.
  */
-export const CONVERSION_LABELS: Record<AdOutcome, string | null> = {
-  signup: null, // cadastro concluído
+export type ConversionTarget = { event: string } | { label: string };
+export const CONVERSIONS: Record<AdOutcome, ConversionTarget | null> = {
+  signup: { event: "ads_conversion_Inscri_o_1" }, // cadastro concluído ("Inscrição" no Google Ads)
   post: null, // publicação criada (vaga ou anúncio de disponível)
   chat: null, // conversa aberta pelo chat
 };
@@ -58,14 +61,15 @@ export async function reportPageView(path: string): Promise<void> {
   });
 }
 
-/** Informa um resultado que acabou de dar certo. Não faz nada sem rótulo ou sem permissão. */
+/** Informa um resultado que acabou de dar certo. Não faz nada sem conversão configurada ou sem permissão. */
 export async function reportConversion(outcome: AdOutcome): Promise<boolean> {
-  const label = CONVERSION_LABELS[outcome];
-  if (!label) return false;
+  const target = CONVERSIONS[outcome];
+  if (!target) return false;
   if (!(await loadGoogleAds())) return false;
   // confere de novo: a pessoa pode ter recusado enquanto a tag carregava
   if (!(await permitsOrdinaryAds())) return false;
-  window.gtag?.("event", "conversion", { send_to: `${GOOGLE_ADS_ID}/${label}` });
+  if ("event" in target) window.gtag?.("event", target.event, {});
+  else window.gtag?.("event", "conversion", { send_to: `${GOOGLE_ADS_ID}/${target.label}` });
   return true;
 }
 
