@@ -149,6 +149,99 @@ export type Database = {
         }
         Relationships: []
       }
+      articles: {
+        Row: {
+          adjusted: boolean
+          author_id: string
+          body_html: string
+          cover_path: string | null
+          created_at: string
+          draft: Json
+          excerpt: string
+          id: string
+          live_updated_at: string | null
+          published_at: string | null
+          reading_min: number
+          removed_note: string | null
+          review: string
+          review_note: string | null
+          reviewed_at: string | null
+          reviewed_by: string | null
+          signature: boolean
+          slug: string | null
+          status: string
+          submitted_at: string | null
+          title: string
+          topic: string | null
+          updated_at: string
+        }
+        Insert: {
+          adjusted?: boolean
+          author_id: string
+          body_html?: string
+          cover_path?: string | null
+          created_at?: string
+          draft?: Json
+          excerpt?: string
+          id?: string
+          live_updated_at?: string | null
+          published_at?: string | null
+          reading_min?: number
+          removed_note?: string | null
+          review?: string
+          review_note?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          signature?: boolean
+          slug?: string | null
+          status?: string
+          submitted_at?: string | null
+          title?: string
+          topic?: string | null
+          updated_at?: string
+        }
+        Update: {
+          adjusted?: boolean
+          author_id?: string
+          body_html?: string
+          cover_path?: string | null
+          created_at?: string
+          draft?: Json
+          excerpt?: string
+          id?: string
+          live_updated_at?: string | null
+          published_at?: string | null
+          reading_min?: number
+          removed_note?: string | null
+          review?: string
+          review_note?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          signature?: boolean
+          slug?: string | null
+          status?: string
+          submitted_at?: string | null
+          title?: string
+          topic?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "articles_author_id_fkey"
+            columns: ["author_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "articles_reviewed_by_fkey"
+            columns: ["reviewed_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       asaas_customers: {
         Row: {
           created_at: string
@@ -2066,6 +2159,7 @@ export type Database = {
       }
       _promote_waitlist: { Args: { _post: string }; Returns: undefined }
       accept_terms: { Args: { _version: string }; Returns: undefined }
+      admin_articles: { Args: never; Returns: Json }
       admin_emails: {
         Args: { _limit?: number; _only_failed?: boolean }
         Returns: Json
@@ -2105,6 +2199,9 @@ export type Database = {
           username: string
         }[]
       }
+      article_author: { Args: { _id: string }; Returns: Json }
+      article_slug: { Args: { _id: string; _title: string }; Returns: string }
+      article_text: { Args: { _html: string }; Returns: string }
       asaas_apply_payment: {
         Args: {
           _customer: string
@@ -2132,10 +2229,21 @@ export type Database = {
         }[]
       }
       base_radius_km: { Args: never; Returns: number }
+      blog_article: { Args: { _slug: string }; Returns: Json }
+      blog_list: {
+        Args: {
+          _author?: string
+          _before?: string
+          _limit?: number
+          _topic?: string
+        }
+        Returns: Json
+      }
       can_review: {
         Args: { _reviewee: string; _reviewer: string }
         Returns: boolean
       }
+      can_write_blog: { Args: { _uid: string }; Returns: boolean }
       cancel_engagement: { Args: { _id: string }; Returns: undefined }
       channel_overview: {
         Args: { _ids: string[] }
@@ -2244,6 +2352,7 @@ export type Database = {
         Args: { _conversation: string }
         Returns: string
       }
+      create_article: { Args: never; Returns: string }
       current_terms_version: { Args: never; Returns: string }
       delete_my_account: { Args: never; Returns: undefined }
       effective_radius_km: { Args: { _user_id: string }; Returns: number }
@@ -2320,6 +2429,7 @@ export type Database = {
           post_id: string
         }[]
       }
+      public_city: { Args: { _raw: string }; Returns: string }
       purge_expired_records: { Args: never; Returns: undefined }
       queue_email: {
         Args: {
@@ -2356,6 +2466,10 @@ export type Database = {
       }
       referral_ready: { Args: { _u: string }; Returns: boolean }
       referral_status: { Args: never; Returns: Json }
+      remove_article: {
+        Args: { _id: string; _note: string }
+        Returns: undefined
+      }
       reopen_negotiation: {
         Args: { _conversation: string; _post: string }
         Returns: undefined
@@ -2387,6 +2501,10 @@ export type Database = {
         Args: { _accept: boolean; _id: string }
         Returns: undefined
       }
+      review_article: {
+        Args: { _decision: string; _draft?: Json; _id: string; _note?: string }
+        Returns: string
+      }
       review_verification: {
         Args: { _approve: boolean; _id: string; _reason?: string }
         Returns: string[]
@@ -2411,6 +2529,7 @@ export type Database = {
       send_test_push: { Args: never; Returns: boolean }
       set_show_last_seen: { Args: { _show: boolean }; Returns: undefined }
       slugify: { Args: { _max?: number; _t: string }; Returns: string }
+      submit_article: { Args: { _id: string }; Returns: undefined }
       touch_presence: { Args: never; Returns: undefined }
       unread_counts: {
         Args: never
@@ -2421,6 +2540,7 @@ export type Database = {
       }
       username_available: { Args: { _name: string }; Returns: boolean }
       vapid_public_key: { Args: never; Returns: string }
+      withdraw_article: { Args: { _id: string }; Returns: undefined }
     }
     Enums: {
       [_ in never]: never
