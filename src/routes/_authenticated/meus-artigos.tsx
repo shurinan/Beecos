@@ -154,6 +154,12 @@ function MyArticles() {
                   </span>
                 ))}
               </div>
+              {a.status === "published" && (
+                <p className="text-sm text-muted-foreground">
+                  {a.view_count ?? 0} visualizações · {a.like_count ?? 0} curtidas ·{" "}
+                  {a.comment_count ?? 0} comentários
+                </p>
+              )}
               {note?.text && (
                 <div className="rounded-lg border-2 border-foreground/30 bg-muted/50 p-3 text-sm">
                   <span className="block font-bold">{note.label}</span>

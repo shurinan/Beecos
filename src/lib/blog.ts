@@ -95,6 +95,9 @@ export type MyArticle = {
   title: string;
   adjusted: boolean;
   removed_note: string | null;
+  view_count?: number;
+  like_count?: number;
+  comment_count?: number;
   published_at: string | null;
   submitted_at: string | null;
   updated_at: string;
@@ -190,7 +193,7 @@ export function useCanWriteBlog(userId: string | null | undefined) {
 }
 
 const MY_COLS =
-  "id, draft, review, review_note, status, slug, title, adjusted, removed_note, published_at, submitted_at, updated_at";
+  "id, draft, review, review_note, status, slug, title, adjusted, removed_note, view_count, like_count, comment_count, published_at, submitted_at, updated_at";
 
 export function useMyArticles(userId: string | null | undefined) {
   return useQuery({
@@ -368,6 +371,11 @@ const ERRORS: Record<string, string> = {
   MOTIVO_OBRIGATORIO: "Escreva o motivo: o autor vai ler.",
   FORA_DA_FILA: "Este artigo não está mais na fila (outra pessoa já revisou ou o autor retirou).",
   NAO_ENCONTRADO: "Artigo não encontrado.",
+  LOGIN: "Entre na sua conta para continuar.",
+  COMENTARIO_VAZIO: "Escreva algo antes de enviar.",
+  COMENTARIO_LONGO: "O comentário passou de 1000 letras.",
+  MUITOS_COMENTARIOS: "Você comentou muito em pouco tempo. Tente de novo daqui a pouco.",
+  SEM_PERMISSAO: "Você não pode apagar este comentário.",
 };
 
 export function blogError(e: unknown): string {
@@ -395,4 +403,78 @@ export function articleState(a: Pick<MyArticle, "review" | "status" | "adjusted"
     });
   }
   return out;
+}
+
+// ── visualizações, curtidas e comentários ────────────────────────────────────────────────────
+
+export type ArticleStats = { views: number; likes: number; comments: number; liked: boolean };
+
+export type ArticleComment = {
+  id: string;
+  body: string;
+  created_at: string;
+  mine: boolean | null;
+  author: { id: string; name: string; username: string | null; avatar_path: string | null };
+};
+
+/** Código do navegador para não contar a mesma visita duas vezes (visitante sem conta). */
+function visitorId(): string | null {
+  try {
+    let v = localStorage.getItem("beecos-visitor");
+    if (!v) {
+      v = crypto.randomUUID();
+      localStorage.setItem("beecos-visitor", v);
+    }
+    return v;
+  } catch {
+    return null;
+  }
+}
+
+/** Conta a visualização (o servidor ignora quem escreveu o artigo). Falha em silêncio. */
+export async function recordView(slug: string) {
+  try {
+    await db.rpc("record_article_view", { _slug: slug, _visitor: visitorId() });
+  } catch {
+    /* contagem não é essencial */
+  }
+}
+
+export function useArticleStats(slug: string, userId: string | null | undefined) {
+  return useQuery({
+    queryKey: ["article-stats", slug, userId ?? null],
+    queryFn: async () => {
+      const { data, error } = await db.rpc("article_stats", { _slug: slug });
+      if (error) throw error;
+      return (data as ArticleStats | null) ?? null;
+    },
+    staleTime: 30_000,
+  });
+}
+
+export async function toggleLike(id: string) {
+  const { data, error } = await db.rpc("toggle_article_like", { _id: id });
+  if (error) throw error;
+  return data as { liked: boolean; likes: number };
+}
+
+export function useArticleComments(slug: string, userId: string | null | undefined) {
+  return useQuery({
+    queryKey: ["article-comments", slug, userId ?? null],
+    queryFn: async () => {
+      const { data, error } = await db.rpc("article_comments_list", { _slug: slug, _limit: 50 });
+      if (error) throw error;
+      return (data ?? []) as ArticleComment[];
+    },
+  });
+}
+
+export async function addComment(id: string, body: string) {
+  const { error } = await db.rpc("add_article_comment", { _id: id, _body: body });
+  if (error) throw error;
+}
+
+export async function deleteComment(id: string) {
+  const { error } = await db.rpc("delete_article_comment", { _id: id });
+  if (error) throw error;
 }
