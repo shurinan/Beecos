@@ -2,6 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowLeft, Copy, MessageCircle, Share2 } from "lucide-react";
 import { toast } from "sonner";
 import { ArticleView } from "@/components/blog/ArticleView";
+import { Engagement } from "@/components/blog/Engagement";
 import { Button } from "@/components/ui/button";
 import { articleUrl, blogImageUrl, fetchArticle } from "@/lib/blog";
 import { SITE_URL } from "@/lib/urls";
@@ -117,6 +118,8 @@ function ArticlePage() {
       </Link>
 
       <ArticleView article={article} />
+
+      <Engagement slug={article.slug} articleId={article.id} authorId={article.author.id} />
 
       <div className="flex flex-wrap gap-2">
         <Button type="button" variant="outline" onClick={share}>

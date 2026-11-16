@@ -428,6 +428,13 @@
       "when": 1798224000000,
       "tag": "0060_cron_economia",
       "breakpoints": true
+    },
+    {
+      "idx": 61,
+      "version": "7",
+      "when": 1798310400000,
+      "tag": "0061_blog_interacao",
+      "breakpoints": true
     }
   ]
 }
