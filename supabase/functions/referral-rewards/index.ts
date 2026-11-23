@@ -2,6 +2,7 @@
 // O banco já somou os 30 dias ao Premium (grant_referral_reward); aqui mudamos a data no Asaas.
 // Chamada só pelo pg_cron a cada 10 minutos, com o segredo interno de app_keys.
 import { createClient } from "jsr:@supabase/supabase-js@2";
+import type { SupabaseClient } from "jsr:@supabase/supabase-js@2";
 
 async function asaas(path: string, method: string, body?: unknown) {
   const base =
@@ -29,7 +30,7 @@ export function plus30(day: string): string {
 }
 
 /** Só o próprio banco chama esta função: confere o segredo interno guardado em app_keys. */
-async function fromDatabase(req: Request, db: ReturnType<typeof createClient>): Promise<boolean> {
+async function fromDatabase(req: Request, db: SupabaseClient): Promise<boolean> {
   const sent = req.headers.get("x-internal-secret");
   if (!sent) return false;
   const { data } = await db.from("app_keys").select("value").eq("name", "internal_secret").maybeSingle();

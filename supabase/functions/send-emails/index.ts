@@ -2,6 +2,7 @@
 // Só aceita chamada do próprio banco (segredo interno de app_keys); envia o que já está na fila.
 // Envio pelo conector Resend do Lovable (segredos LOVABLE_API_KEY e RESEND_API_KEY).
 import { createClient } from "jsr:@supabase/supabase-js@2";
+import type { SupabaseClient } from "jsr:@supabase/supabase-js@2";
 
 const FROM = Deno.env.get("EMAIL_FROM") ?? "Beecos <avisos@contato.beecos.com.br>";
 const REPLY_TO = Deno.env.get("EMAIL_REPLY_TO") ?? "contato@beecos.com.br";
@@ -407,7 +408,7 @@ async function send(to: string, m: Mail, r: Row): Promise<{ id?: string; error?:
 }
 
 /** Só o próprio banco chama esta função: confere o segredo interno guardado em app_keys. */
-async function fromDatabase(req: Request, db: ReturnType<typeof createClient>): Promise<boolean> {
+async function fromDatabase(req: Request, db: SupabaseClient): Promise<boolean> {
   const sent = req.headers.get("x-internal-secret");
   if (!sent) return false;
   const { data } = await db.from("app_keys").select("value").eq("name", "internal_secret").maybeSingle();

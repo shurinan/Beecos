@@ -2,12 +2,13 @@
 // com attachment_expired_at para o app mostrar "arquivo expirado". Chamada de hora em hora pelo banco
 // (pg_cron), com o segredo interno de app_keys; quem chama sem ele é recusado.
 import { createClient } from "jsr:@supabase/supabase-js@2";
+import type { SupabaseClient } from "jsr:@supabase/supabase-js@2";
 
 const HOURS = 48;
 const BATCH = 200;
 
 /** Só o próprio banco chama esta função: confere o segredo interno guardado em app_keys. */
-async function fromDatabase(req: Request, db: ReturnType<typeof createClient>): Promise<boolean> {
+async function fromDatabase(req: Request, db: SupabaseClient): Promise<boolean> {
   const sent = req.headers.get("x-internal-secret");
   if (!sent) return false;
   const { data } = await db.from("app_keys").select("value").eq("name", "internal_secret").maybeSingle();

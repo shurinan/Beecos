@@ -2,6 +2,7 @@
 // Chamada só pelo banco (na hora e, de reserva, a cada minuto), com o segredo interno de app_keys.
 // Na primeira vez cria as chaves VAPID e guarda em app_keys (só o servidor lê a privada).
 import { createClient } from "jsr:@supabase/supabase-js@2";
+import type { SupabaseClient } from "jsr:@supabase/supabase-js@2";
 import webpush from "npm:web-push@3.6.7";
 
 /**
@@ -24,7 +25,7 @@ export function safeUserText(s: unknown, max: number): string {
 const SUBJECT = "mailto:contato@beecos.com.br";
 
 /** Só o próprio banco chama esta função: confere o segredo interno guardado em app_keys. */
-async function fromDatabase(req: Request, db: ReturnType<typeof createClient>): Promise<boolean> {
+async function fromDatabase(req: Request, db: SupabaseClient): Promise<boolean> {
   const sent = req.headers.get("x-internal-secret");
   if (!sent) return false;
   const { data } = await db.from("app_keys").select("value").eq("name", "internal_secret").maybeSingle();
