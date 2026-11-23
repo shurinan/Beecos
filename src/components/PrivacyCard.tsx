@@ -1,10 +1,12 @@
 import { Link } from "@tanstack/react-router";
 import { Download, Trash2 } from "lucide-react";
 import { useState } from "react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { removeAllMyPhotoFiles } from "@/lib/post-photos";
 import { Button } from "@/components/ui/button";
+import { Switch } from "@/components/ui/switch";
 import { ConfirmButton } from "@/components/ConfirmButton";
 import { accountErrorMessage } from "@/lib/legal";
 import { cancelSubscription, hasRenewingSubscription } from "@/lib/billing";
@@ -20,6 +22,38 @@ export function PrivacyCard({
   onDeleted: () => void;
 }) {
   const [busy, setBusy] = useState(false);
+  const qc = useQueryClient();
+
+  // convite: por padrão nome e foto aparecem para quem ainda não tem conta
+  const { data: hidden } = useQuery({
+    queryKey: ["hide-from-visitors", userId],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("profiles")
+        .select("hide_from_visitors")
+        .eq("id", userId)
+        .maybeSingle();
+      if (error) throw error;
+      return data?.hide_from_visitors ?? false;
+    },
+  });
+
+  async function setHidden(v: boolean) {
+    const { error } = await supabase
+      .from("profiles")
+      .update({ hide_from_visitors: v })
+      .eq("id", userId);
+    if (error) {
+      toast.error("Não foi possível salvar. Tente de novo.");
+      return;
+    }
+    qc.setQueryData(["hide-from-visitors", userId], v);
+    toast.success(
+      v
+        ? "Pronto: quem não tem conta vê só o seu primeiro nome."
+        : "Pronto: o convite mostra nome e foto.",
+    );
+  }
 
   async function download() {
     setBusy(true);
@@ -92,6 +126,21 @@ export function PrivacyCard({
         </Link>
         .
       </p>
+      <label className="flex items-start justify-between gap-3 rounded-xl border-2 border-foreground/30 p-3">
+        <span className="min-w-0">
+          <span className="block font-bold">Esconder meu nome e foto de quem não tem conta</span>
+          <span className="block text-sm text-muted-foreground">
+            Quem abre o seu link de convite sem estar logado vê só o seu primeiro nome. Desligado,
+            aparecem o nome completo e a foto.
+          </span>
+        </span>
+        <Switch
+          aria-label="Esconder meu nome e foto de quem não tem conta"
+          checked={!!hidden}
+          disabled={hidden === undefined}
+          onCheckedChange={(v) => void setHidden(v)}
+        />
+      </label>
       <div className="flex flex-wrap gap-2">
         <Button type="button" variant="outline" disabled={busy} onClick={download}>
           <Download /> Baixar meus dados
