@@ -1584,6 +1584,7 @@ export type Database = {
           experience_years: number | null
           full_name: string
           headline: string
+          hide_from_visitors: boolean
           id: string
           service_area: string
           slug: string | null
@@ -1600,6 +1601,7 @@ export type Database = {
           experience_years?: number | null
           full_name?: string
           headline?: string
+          hide_from_visitors?: boolean
           id: string
           service_area?: string
           slug?: string | null
@@ -1616,6 +1618,7 @@ export type Database = {
           experience_years?: number | null
           full_name?: string
           headline?: string
+          hide_from_visitors?: boolean
           id?: string
           service_area?: string
           slug?: string | null
