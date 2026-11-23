@@ -49,6 +49,27 @@ export function safeUserText(s: unknown, max: number): string {
     .trim();
   return clean.length > max ? clean.slice(0, max - 1).trimEnd() + "…" : clean;
 }
+/**
+ * Textos escritos por pessoas (nome, título da vaga, quem chamou…) passam pelo mesmo filtro das
+ * mensagens: sem link nem endereço de site, para o e-mail do Beecos não virar canal de golpe.
+ * Campos do sistema (valor, link interno, datas) e o motivo escrito pela equipe ficam como estão.
+ */
+const PEOPLE_TEXT: Record<string, number> = {
+  nome: 80,
+  quem: 60,
+  vaga: 100,
+  prestador: 80,
+  cliente: 80,
+  outro: 80,
+  produto: 80,
+};
+function payloadOf(r: Row): Record<string, any> {
+  const d = { ...(r.payload as Record<string, any>) };
+  for (const [k, max] of Object.entries(PEOPLE_TEXT)) {
+    if (typeof d[k] === "string") d[k] = safeUserText(d[k], max);
+  }
+  return d;
+}
 const money = (v: unknown) =>
   typeof v === "number" ? "R$ " + v.toFixed(2).replace(".", ",") : String(v ?? "");
 const plural = (n: number, um: string, varios: string) => (n === 1 ? um : varios);
@@ -61,7 +82,7 @@ const ini = (nome: string) =>
     .join("") || "•";
 
 function build(r: Row): Mail | null {
-  const d = r.payload as Record<string, any>;
+  const d = payloadOf(r);
   const vaga = d.vaga ? `“${d.vaga}”` : "o serviço";
   switch (r.kind) {
     case "welcome":
@@ -317,7 +338,7 @@ function build(r: Row): Mail | null {
 
 const B = "border:2px solid #12151B";
 function html(m: Mail, r: Row): string {
-  const d = r.payload as Record<string, any>;
+  const d = payloadOf(r);
   const hello = r.kind === "welcome" ? `Oi, ${esc(d.nome)}!` : `Oi, ${esc(d.nome)}!`;
   let body = m.p
     .map((x) => `<p style="margin:0 0 10px;font-size:15px;line-height:1.5">${esc(x)}</p>`)

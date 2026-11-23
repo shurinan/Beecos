@@ -346,7 +346,7 @@ function Chat({ id }: { id: string }) {
   });
   const { data: otherReadAt } = useQuery({
     queryKey: ["other-read", id],
-    refetchInterval: () => (document.hidden ? false : 5_000),
+    refetchInterval: () => (document.hidden ? false : 30_000),
     queryFn: async () => {
       const { data } = await supabase.rpc("conversation_other_read", { _conversation: id });
       return (data as string | null) ?? null;
