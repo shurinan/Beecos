@@ -34,7 +34,7 @@ function publicClient() {
 
 /** Publicações abertas. */
 async function loadOpenPosts(): Promise<SitemapPostRow[]> {
-  const client = publicClient();
+  const client = publicClient() as SupabaseClient;
   const { data, error } = await client
     .from("posts")
     .select("slug, city, created_at, expires_at, closed_at, hidden_at, professions(slug)")
@@ -44,12 +44,12 @@ async function loadOpenPosts(): Promise<SitemapPostRow[]> {
     .order("created_at", { ascending: false })
     .limit(SITEMAP_POST_LIMIT);
   if (error) throw error;
-  return (data ?? []) as unknown as SitemapPostRow[];
+  return (data ?? []) as SitemapPostRow[];
 }
 
 /** Artigos do blog no ar (de 50 em 50, até 1000). */
 async function loadArticles(): Promise<SitemapEntry[]> {
-  const client = publicClient() as unknown as SupabaseClient;
+  const client = publicClient() as SupabaseClient;
   const out: SitemapEntry[] = [];
   let before: string | null = null;
   for (let page = 0; page < 20; page++) {

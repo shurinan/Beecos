@@ -164,7 +164,7 @@ function ProfilePage({ id }: { id: string }) {
         posts: (posts.data ?? []) as PostWithAuthor[],
         reviewCount: stats.data?.review_count ?? 0,
         avgRating: stats.data?.avg_rating ?? null,
-        reviews: (reviews.data ?? []) as unknown as ReviewRow[],
+        reviews: (reviews.data ?? []) as ReviewRow[],
       };
     },
   });

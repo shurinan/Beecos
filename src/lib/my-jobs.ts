@@ -126,9 +126,9 @@ export function useMyJobs(userId: string | null | undefined) {
       const error = mine.error ?? links.error ?? engs.error;
       if (error) throw error;
 
-      const myPosts = (mine.data ?? []) as unknown as PostRow[];
+      const myPosts = (mine.data ?? []) as PostRow[];
       const myIds = new Set(myPosts.map((p) => p.id));
-      const linkRows = (links.data ?? []) as unknown as {
+      const linkRows = (links.data ?? []) as {
         post_id: string;
         created_at: string;
         closed_at: string | null;
@@ -176,7 +176,7 @@ export function useMyJobs(userId: string | null | undefined) {
         };
       });
 
-      const otherRows = (others.data ?? []) as unknown as PostRow[];
+      const otherRows = (others.data ?? []) as PostRow[];
       const ownerIds = [...new Set(otherRows.map((p) => p.user_id))];
       const owners = ownerIds.length
         ? await supabase.from("profiles").select("id, full_name, slug").in("id", ownerIds)

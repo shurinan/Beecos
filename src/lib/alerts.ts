@@ -78,7 +78,7 @@ export function useAlerts(userId: string | null) {
         .order("created_at", { ascending: false })
         .limit(50);
       if (error) throw error;
-      return (data ?? []) as unknown as Alert[];
+      return (data ?? []) as Alert[];
     },
   });
 

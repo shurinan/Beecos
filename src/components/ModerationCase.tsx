@@ -72,7 +72,7 @@ export function ModerationCase({
     queryFn: async () => {
       const { data, error } = await supabase.rpc("moderator_case", { _report: reportId });
       if (error) throw error;
-      return data as unknown as CaseData;
+      return data as CaseData;
     },
   });
   const { data: badFaith } = useQuery({

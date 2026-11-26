@@ -115,7 +115,7 @@ export function useAdminOverview(period: Period, enabled: boolean) {
         _since: periodStart(period).toISOString(),
       });
       if (error) throw error;
-      return data as unknown as Overview;
+      return data as Overview;
     },
   });
 }
@@ -139,7 +139,7 @@ export function useAdminUser(id: string | undefined) {
     queryFn: async () => {
       const { data, error } = await supabase.rpc("admin_user", { _id: id! });
       if (error) throw error;
-      return data as unknown as AdminUser | null;
+      return data as AdminUser | null;
     },
   });
 }
@@ -211,7 +211,7 @@ export function useAdminPayments(status: string | null) {
         _limit: 150,
       });
       if (error) throw error;
-      return data as unknown as AdminPayments;
+      return data as AdminPayments;
     },
   });
 }
@@ -247,7 +247,7 @@ export function useAdminReferrals() {
     queryFn: async () => {
       const { data, error } = await supabase.rpc("admin_referrals");
       if (error) throw error;
-      return data as unknown as AdminReferrals;
+      return data as AdminReferrals;
     },
   });
 }
@@ -281,7 +281,7 @@ export function useAdminEmails(onlyFailed: boolean) {
         _limit: 150,
       });
       if (error) throw error;
-      return data as unknown as AdminEmails;
+      return data as AdminEmails;
     },
   });
 }

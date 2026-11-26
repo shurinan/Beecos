@@ -46,7 +46,7 @@ function PostPage() {
         .eq("slug", codigo)
         .maybeSingle();
       if (error) throw error;
-      return data as unknown as PostWithAuthor | null;
+      return data as PostWithAuthor | null;
     },
   });
 
