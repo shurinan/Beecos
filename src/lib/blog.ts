@@ -12,7 +12,7 @@ import { SITE_URL } from "@/lib/urls";
  */
 
 // as tabelas do blog ainda não estão nos tipos gerados do banco
-const db = supabase as unknown as SupabaseClient;
+const db = supabase as SupabaseClient;
 
 export const BLOG_BUCKET = "blog";
 

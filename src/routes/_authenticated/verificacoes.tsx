@@ -188,7 +188,7 @@ function Reviews() {
         .eq("status", "pending")
         .order("created_at");
       if (error) throw error;
-      return (data ?? []) as unknown as Row[];
+      return (data ?? []) as Row[];
     },
   });
 

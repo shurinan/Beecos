@@ -22,7 +22,7 @@ export const Route = createFileRoute("/v/$codigo")({
         .select("*, professions(name, slug), services(name), post_photos(id, path, sort)")
         .eq("slug", params.codigo)
         .maybeSingle();
-      return { post: (data as unknown as PostWithAuthor | null) ?? null };
+      return { post: (data as PostWithAuthor | null) ?? null };
     } catch {
       return { post: null };
     }
@@ -34,7 +34,7 @@ export const Route = createFileRoute("/v/$codigo")({
       : { title: "Vaga no Beecos", description: "Vagas de serviço perto de você." };
     const first = post ? sortPhotos(post.post_photos)[0] : undefined;
     const image = first ? photoUrl(first.path) : null;
-    const seoPost = post as unknown as SeoPost | null;
+    const seoPost = post as SeoPost | null;
     const robots = postRobots(seoPost);
     const jsonLd = postJsonLd(seoPost);
     const canonical = postCanonical(post?.slug || params.codigo);

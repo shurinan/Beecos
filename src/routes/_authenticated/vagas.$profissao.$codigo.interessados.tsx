@@ -113,7 +113,7 @@ function Interested({ id }: { id: string }) {
         .eq("post_id", id);
       if (convs.error) throw convs.error;
       const rows = (
-        (convs.data ?? []) as unknown as {
+        (convs.data ?? []) as {
           created_at: string;
           closed_at: string | null;
           released: boolean;

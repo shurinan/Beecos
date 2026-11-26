@@ -135,7 +135,7 @@ export function useReferralStatus(userId: string | null | undefined) {
     queryFn: async () => {
       const { data, error } = await supabase.rpc("referral_status");
       if (error) throw error;
-      return data as unknown as ReferralStatus;
+      return data as ReferralStatus;
     },
   });
 }

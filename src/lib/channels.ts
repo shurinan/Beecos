@@ -77,7 +77,7 @@ export function useChannels() {
         .order("created_at", { ascending: false })
         .limit(200);
       if (error) throw error;
-      const channels = (data ?? []) as unknown as Channel[];
+      const channels = (data ?? []) as Channel[];
       const numbers = new Map<string, ChannelNumbers>();
       for (let i = 0; i < channels.length; i += 100) {
         const ids = channels.slice(i, i + 100).map((c) => c.id);
@@ -105,7 +105,7 @@ export function useChannel(slug: string) {
         .eq("slug", slug)
         .limit(1);
       if (error) throw error;
-      const channel = ((data ?? [])[0] as unknown as Channel | undefined) ?? null;
+      const channel = ((data ?? [])[0] as Channel | undefined) ?? null;
       if (!channel) return null;
       const { data: nums, error: e2 } = await supabase.rpc("channel_overview", {
         _ids: [channel.id],
@@ -189,7 +189,7 @@ export function useChannelFeed(channelId: string | undefined, order: FeedOrder) 
         .order("created_at", { ascending: false })
         .limit(40);
       if (error) throw error;
-      return (data ?? []) as unknown as PostWithAuthor[];
+      return (data ?? []) as PostWithAuthor[];
     },
   });
 }

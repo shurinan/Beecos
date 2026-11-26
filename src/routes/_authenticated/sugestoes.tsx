@@ -53,7 +53,7 @@ function Suggestions() {
         .order("created_at", { ascending: false })
         .limit(200);
       if (error) throw error;
-      return (data ?? []) as unknown as Row[];
+      return (data ?? []) as Row[];
     },
   });
 
